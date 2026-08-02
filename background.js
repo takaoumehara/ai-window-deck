@@ -2,7 +2,6 @@ const DEFAULTS = {
   columns: 4,
   rows: 2,
   gap: 8,
-  attention: true,
   spotlightSize: "full",   // full | height | tall | half | custom
   spotlightWidth: 70,      // percent of the work area, custom only
   spotlightHeight: 90,
@@ -485,43 +484,6 @@ async function step(offset) {
 const focusNext = () => step(1);
 const focusPrevious = () => step(-1);
 
-// ---- attention --------------------------------------------------------
-
-async function setAttentionTabs(ids) {
-  await chrome.storage.session.set({ attentionTabs: ids });
-  await chrome.action.setBadgeText({ text: ids.length ? String(ids.length) : "" });
-  await chrome.action.setBadgeBackgroundColor({ color: "#6D4FE0" });
-  await chrome.action.setBadgeTextColor({ color: "#FFFFFF" });
-}
-
-async function flagAttention(tab) {
-  const { attention } = await settings();
-  if (!attention) return;
-  const ids = await session("attentionTabs", []);
-  if (!ids.includes(tab.id)) await setAttentionTabs([...ids, tab.id]);
-  await chrome.windows.update(tab.windowId, { drawAttention: true });
-}
-
-// The control panel needs to know what each window is doing, so activity is
-// remembered per tab: busy while the page is changing, done once it has been
-// still for a moment, and cleared the instant the user looks at it.
-async function noteActivity(tab, state) {
-  const activity = await session("activity", {});
-  if (state === "seen") delete activity[tab.id];
-  else activity[tab.id] = { state, at: Date.now() };
-  await chrome.storage.session.set({ activity });
-}
-
-async function handleActivity(tab, message) {
-  await noteActivity(tab, message.state);
-  if (message.state === "done" && message.hidden) await flagAttention(tab);
-}
-
-async function clearAttention(tabId) {
-  const ids = await session("attentionTabs", []);
-  if (ids.includes(tabId)) await setAttentionTabs(ids.filter((id) => id !== tabId));
-}
-
 // ---- wiring -----------------------------------------------------------
 
 const ACTIONS = {
@@ -627,11 +589,9 @@ chrome.windows.onBoundsChanged?.addListener(async (window) => {
 // One row per open window for the control panel: what it is, which screen it
 // is on, and what it looks like it is doing.
 async function listWindows() {
-  const [windows, groups, activity, flagged, focused] = await Promise.all([
+  const [windows, groups, focused] = await Promise.all([
     chrome.windows.getAll({ populate: true }),
     chrome.tabGroups.query({}).catch(() => []),
-    session("activity", {}),
-    session("attentionTabs", []),
     chrome.windows.getLastFocused(),
   ]);
   const displays = await chrome.system.display.getInfo();
@@ -640,9 +600,6 @@ async function listWindows() {
   return inReadingOrder(windows.filter((window) => window.type === "normal")).map((window) => {
     const active = window.tabs.find((tab) => tab.active) ?? window.tabs[0];
     const group = groups.find((entry) => entry.windowId === window.id);
-    const needsAttention = window.tabs.some((tab) => flagged.includes(tab.id));
-    const busy = window.tabs.some((tab) => activity[tab.id]?.state === "busy");
-    const done = window.tabs.some((tab) => activity[tab.id]?.state === "done");
     const screen = ordered.findIndex((display) => contains(display, centreOf(window)));
     return {
       id: window.id,
@@ -654,11 +611,7 @@ async function listWindows() {
       screen: screen < 0 ? null : screen + 1,
       minimized: window.state === "minimized",
       isFocused: window.id === focused.id,
-      // "attention" outranks the rest: it is the one the user asked to be told
-      // about. A focused window is never reported as needing anything.
-      status: window.id === focused.id ? "here"
-        : needsAttention || done ? "done"
-        : busy ? "busy" : "idle",
+      status: window.id === focused.id ? "here" : "idle",
     };
   });
 }
@@ -771,10 +724,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       () => sendResponse({ ok: true }), () => sendResponse({ ok: false }));
     return true;
   }
-  if (message.type === "activity" && sender.tab?.id) {
-    handleActivity(sender.tab, message).then(() => sendResponse({ ok: true }), () => sendResponse({ ok: false }));
-    return true;
-  }
   if (message.type === "capture") {
     captureWindows().then((result) => sendResponse(result), () => sendResponse({ ok: false }));
     return true;
@@ -795,18 +744,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   return false;
 });
-
-// Installing or updating replaces the code, but tabs that were already open
-// keep running the previous copy until they are reloaded — orphaned, unable to
-// reach the worker, and until v1.0.1 noisy about it. Re-injecting puts a live
-// copy in every open page so the update takes effect without touching a thing.
-chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  if (reason !== "update" && reason !== "install") return;
-  const tabs = await chrome.tabs.query({ url: ["http://*/*", "https://*/*"] });
-  await Promise.all(tabs.map((tab) =>
-    chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["attention.js"] })
-      .catch(() => {})));  // chrome:// pages, the store, and PDFs refuse; that is fine
-});
-
-chrome.tabs.onActivated.addListener(({ tabId }) => clearAttention(tabId));
-chrome.tabs.onRemoved.addListener((tabId) => clearAttention(tabId));

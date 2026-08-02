@@ -1,13 +1,12 @@
 {
   "manifest_version": 3,
   "name": "AI Window Deck",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "default_locale": "en",
   "description": "__MSG_extDescription__",
   "permissions": [
     "tabs",
     "tabGroups",
-    "scripting",
     "windows",
     "storage",
     "system.display"
@@ -93,16 +92,5 @@
     "focus-tile-8": {
       "description": "Focus window 8"
     }
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "attention.js"
-      ],
-      "run_at": "document_idle"
-    }
-  ]
+  }
 }

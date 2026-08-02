@@ -16,7 +16,7 @@ Productivity
 
 **Short description**
 
-Tile AI workspaces, spotlight one with a shortcut, and softly flag finished background work.
+Tile AI workspaces, spotlight one with a shortcut, and switch between windows quickly.
 
 **Detailed description**
 
@@ -25,8 +25,6 @@ AI Window Deck turns a busy Chrome desktop into an intentional AI workspace. Sav
 Build a window set for research, drafting, review, or any workflow that benefits from having several conversations and references visible at once. Choose an even grid or a layout with a larger central window, give each window a name, and open multiple URLs as tabs in that window. AI Window Deck can color and name the resulting tab groups so the workspace stays easy to scan.
 
 When you need to concentrate, enlarge the current window with a shortcut and press it again to return to the tile. You can also re-tile windows already open, move through them with shortcuts, restore a previous arrangement, and send the current window to full screen.
-
-The optional Gentle heads-up feature watches for a background page to stop changing and highlights the window when it may be ready. It is a local, best-effort signal, not a claim that a task is complete, and it can be turned off at any time.
 
 Key features:
 
@@ -53,7 +51,7 @@ Productivity
 
 **短い説明**
 
-AI の作業ウィンドウを並べ、ショートカットで 1 つを大きくし、裏で終わった作業をそっと知らせます。
+AI の作業ウィンドウを並べ、ショートカットで 1 つを大きくし、すばやく切り替えます。
 
 **詳細説明**
 
@@ -62,8 +60,6 @@ AI Window Deck は、AI を使うときの散らかった Chrome デスクトッ
 調査、下書き、レビューなど、複数の会話と資料を同時に見たい作業のために構成を作れます。均等なグリッドだけでなく、中央を大きくしたレイアウトも選択できます。各ウィンドウに名前を付け、複数の URL をタブとして開けます。作成したタブグループには名前と色が付くため、どの作業かをすぐ見分けられます。
 
 集中したいときは、ショートカットでいまのウィンドウを大きくし、もう一度押すと元のタイルへ戻せます。すでに開いているウィンドウの並べ直し、ショートカットでの移動、直前の配置への復帰、全画面表示にも対応しています。
-
-任意の「やさしくお知らせ」では、背景ページの更新が止まったときに、作業が終わったかもしれないウィンドウを知らせます。これは端末内だけで動く目安であり、処理の完了を保証するものではありません。設定からいつでもオフにできます。
 
 主な機能:
 
@@ -90,7 +86,7 @@ Productivity
 
 **简短说明**
 
-平铺 AI 工作窗口，用快捷键突出一个窗口，并在后台工作可能完成时轻柔提醒。
+平铺 AI 工作窗口，用快捷键突出一个窗口，并快速切换窗口。
 
 **详细说明**
 
@@ -99,8 +95,6 @@ AI Window Deck 可将繁忙的 Chrome 桌面整理成清晰的 AI 工作空间�
 为研究、写作、审阅或任何需要同时查看多个对话和参考资料的工作创建窗口组合。您可以选择均匀网格，或选择中央窗口更大的布局；为每个窗口命名，并在其中以标签页形式打开多个 URL。AI Window Deck 还能为生成的标签页组添加名称和颜色，让工作区一目了然。
 
 需要专注时，可通过快捷键放大当前窗口；再次按下即可回到平铺布局。您还可以重新排列已打开的窗口、使用快捷键在窗口间移动、恢复上一次布局，或将当前窗口全屏显示。
-
-可选的“轻柔提醒”会在后台页面停止变化时高亮显示该窗口，提示它可能已准备就绪。这是仅在本地运行的尽力而为提示，并不表示任务一定完成；您可以随时在设置中关闭它。
 
 主要功能:
 
@@ -127,7 +121,7 @@ Productivity
 
 **짧은 설명**
 
-AI 작업 창을 타일로 정리하고, 단축키로 하나에 집중하며, 백그라운드 작업이 끝난 듯할 때 조용히 알려줍니다.
+AI 작업 창을 타일로 정리하고, 단축키로 하나에 집중하며, 빠르게 전환합니다.
 
 **상세 설명**
 
@@ -136,8 +130,6 @@ AI Window Deck은 복잡한 Chrome 데스크톱을 의도적인 AI 작업 공간
 조사, 초안 작성, 검토처럼 여러 대화와 참고 자료를 동시에 볼 필요가 있는 작업을 위해 창 세트를 만들 수 있습니다. 균등한 그리드 또는 가운데 창이 더 큰 레이아웃을 선택하고, 각 창에 이름을 붙인 뒤 여러 URL을 탭으로 열 수 있습니다. 생성된 탭 그룹에는 이름과 색상을 적용할 수 있어 작업 공간을 빠르게 훑어볼 수 있습니다.
 
 집중해야 할 때는 단축키로 현재 창을 키우고, 다시 누르면 타일 레이아웃으로 돌아갑니다. 이미 열려 있는 창을 다시 정렬하고, 단축키로 창 사이를 이동하고, 이전 배치를 복원하거나 현재 창을 전체 화면으로 표시할 수도 있습니다.
-
-선택 사항인 ‘부드러운 알림’ 기능은 백그라운드 페이지의 변경이 멈추면 해당 창을 강조해 준비되었을 수 있음을 알립니다. 이 기능은 로컬에서만 동작하는 최선의 추정 신호이며, 작업 완료를 보장하지 않습니다. 설정에서 언제든 끌 수 있습니다.
 
 주요 기능:
 
@@ -164,7 +156,7 @@ Productivity
 
 **Descripción breve**
 
-Organiza espacios de trabajo con IA en mosaico, destaca una ventana con un atajo y avisa discretamente cuando parece terminar el trabajo en segundo plano.
+Organiza espacios de trabajo con IA en mosaico, destaca una ventana con un atajo y cambia rápidamente entre ventanas.
 
 **Descripción detallada**
 
@@ -173,8 +165,6 @@ AI Window Deck transforma un escritorio de Chrome lleno de ventanas en un espaci
 Crea conjuntos de ventanas para investigar, redactar, revisar o cualquier flujo de trabajo en el que necesites ver varias conversaciones y referencias a la vez. Elige una cuadrícula uniforme o una distribución con una ventana central más grande, nombra cada ventana y abre varias URL como pestañas dentro de ella. AI Window Deck puede asignar nombre y color a los grupos de pestañas resultantes para que el espacio de trabajo sea fácil de recorrer.
 
 Cuando necesites concentrarte, amplía la ventana actual con un atajo y vuelve al mosaico al pulsarlo de nuevo. También puedes reorganizar ventanas ya abiertas, moverte entre ellas con atajos, restaurar la distribución anterior y poner la ventana actual a pantalla completa.
-
-La función opcional Aviso discreto observa si una página en segundo plano deja de cambiar y resalta la ventana cuando podría estar lista. Es una señal local y orientativa, no una afirmación de que una tarea haya terminado, y se puede desactivar en cualquier momento.
 
 Funciones principales:
 
@@ -201,7 +191,7 @@ Productivity
 
 **Description courte**
 
-Organisez vos espaces de travail IA en mosaïque, mettez une fenêtre en avant avec un raccourci et recevez un signal discret lorsqu’un travail en arrière-plan semble terminé.
+Organisez vos espaces de travail IA en mosaïque, mettez une fenêtre en avant avec un raccourci et passez rapidement d’une fenêtre à l’autre.
 
 **Description détaillée**
 
@@ -210,8 +200,6 @@ AI Window Deck transforme un bureau Chrome encombré en espace de travail IA org
 Créez un ensemble de fenêtres pour la recherche, la rédaction, la révision ou tout flux de travail qui gagne à afficher plusieurs conversations et références simultanément. Choisissez une grille régulière ou une disposition avec une fenêtre centrale plus grande, donnez un nom à chaque fenêtre et ouvrez plusieurs URL sous forme d’onglets dans cette fenêtre. AI Window Deck peut nommer et colorer les groupes d’onglets obtenus pour faciliter la lecture de l’espace de travail.
 
 Lorsque vous devez vous concentrer, agrandissez la fenêtre active avec un raccourci, puis appuyez à nouveau pour revenir à la mosaïque. Vous pouvez aussi redisposer les fenêtres déjà ouvertes, naviguer entre elles avec des raccourcis, restaurer la disposition précédente et passer la fenêtre active en plein écran.
-
-La fonction facultative Alerte discrète observe si une page en arrière-plan cesse de changer et met en évidence sa fenêtre lorsqu’elle semble prête. C’est un signal local et indicatif, pas la confirmation qu’une tâche est terminée, et il peut être désactivé à tout moment.
 
 Fonctionnalités principales:
 
@@ -238,7 +226,7 @@ Productivity
 
 **Kurzbeschreibung**
 
-Ordne KI-Arbeitsbereiche als Kacheln an, hebe ein Fenster per Tastenkürzel hervor und weise dezent auf möglicherweise abgeschlossene Hintergrundarbeit hin.
+Ordne KI-Arbeitsbereiche als Kacheln an, hebe ein Fenster per Tastenkürzel hervor und wechsle schnell zwischen Fenstern.
 
 **Detaillierte Beschreibung**
 
@@ -247,8 +235,6 @@ AI Window Deck macht aus einem unübersichtlichen Chrome-Desktop einen klaren KI
 Erstelle Fenstersets für Recherche, Entwürfe, Überprüfung oder jeden Ablauf, bei dem mehrere Gespräche und Quellen gleichzeitig sichtbar sein sollen. Wähle ein gleichmäßiges Raster oder ein Layout mit einem größeren mittleren Fenster, benenne jedes Fenster und öffne mehrere URLs als Tabs darin. AI Window Deck kann die entstehenden Tabgruppen benennen und einfärben, damit der Arbeitsbereich übersichtlich bleibt.
 
 Wenn du dich konzentrieren möchtest, vergrößere das aktuelle Fenster mit einem Tastenkürzel und drücke es erneut, um zur Kachelanordnung zurückzukehren. Du kannst bereits geöffnete Fenster auch neu anordnen, mit Tastenkürzeln zwischen ihnen wechseln, die vorherige Anordnung wiederherstellen und das aktuelle Fenster im Vollbild anzeigen.
-
-Die optionale Funktion Dezenter Hinweis beobachtet, ob sich eine Hintergrundseite nicht mehr verändert, und hebt ihr Fenster hervor, wenn es bereit sein könnte. Sie ist ein lokales, unverbindliches Signal und keine Zusage, dass eine Aufgabe abgeschlossen ist. Du kannst sie jederzeit in den Einstellungen ausschalten.
 
 Wichtige Funktionen:
 
@@ -275,7 +261,7 @@ Productivity
 
 **Descrição curta**
 
-Organize espaços de trabalho com IA em mosaico, destaque uma janela com um atalho e receba um aviso discreto quando o trabalho em segundo plano parecer concluído.
+Organize espaços de trabalho com IA em mosaico, destaque uma janela com um atalho e alterne rapidamente entre janelas.
 
 **Descrição detalhada**
 
@@ -284,8 +270,6 @@ AI Window Deck transforma uma área de trabalho movimentada do Chrome em um espa
 Crie conjuntos de janelas para pesquisa, rascunhos, revisão ou qualquer fluxo de trabalho em que seja útil ver várias conversas e referências ao mesmo tempo. Escolha uma grade uniforme ou um layout com uma janela central maior, dê nome a cada janela e abra várias URLs como guias nessa janela. O AI Window Deck pode nomear e colorir os grupos de guias resultantes para facilitar a leitura do espaço de trabalho.
 
 Quando precisar se concentrar, amplie a janela atual com um atalho e pressione-o novamente para voltar ao mosaico. Você também pode reorganizar janelas já abertas, alternar entre elas com atalhos, restaurar o layout anterior e colocar a janela atual em tela cheia.
-
-O recurso opcional Aviso discreto observa quando uma página em segundo plano deixa de mudar e destaca a janela quando ela pode estar pronta. É um sinal local e aproximado, não uma confirmação de que uma tarefa foi concluída, e pode ser desativado a qualquer momento.
 
 Principais recursos:
 

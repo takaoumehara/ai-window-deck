@@ -17,7 +17,7 @@
 
 ## Manifest description
 
-Tile AI workspaces, spotlight one with a shortcut, and softly flag finished background work.
+Tile AI workspaces, spotlight one with a shortcut, and switch between windows quickly.
 
 ## Detailed description
 
@@ -26,8 +26,6 @@ AI Window Deck turns a busy Chrome desktop into an intentional AI workspace. Sav
 Build a window set for research, drafting, review, or any workflow that benefits from having several conversations and references visible at once. Choose an even grid or a layout with a larger central window, give each window a name, and open multiple URLs as tabs in that window. AI Window Deck can color and name the resulting tab groups so the workspace stays easy to scan.
 
 When you need to concentrate, enlarge the current window with a shortcut and press it again to return to the tile. You can also re-tile windows already open, move through them with shortcuts, restore a previous arrangement, and send the current window to full screen.
-
-The optional Gentle heads-up feature watches for a background page to stop changing and highlights the window when it may be ready. It is a local, best-effort signal, not a claim that a task is complete, and it can be turned off at any time.
 
 Key features:
 

@@ -69,7 +69,6 @@ try {
       ],
     }],
     activePreset: 0,
-    attention: true,
     spotlightSize: "tall",
     spotlightAnchor: "center",
     targetDisplays: [],

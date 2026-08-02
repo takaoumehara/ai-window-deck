@@ -85,7 +85,6 @@ fieldset { border:0; margin:0; padding:0; }
 .check { margin-top:10px; }
 .check:first-of-type { margin-top:0; }
 .options input, .check input { accent-color:var(--accent); width:16px; height:16px; flex:none; margin:1px 0 0; }
-#attention { accent-color:var(--accent-teal); }
 .check small, .options small { display:block; color:var(--ink-muted); margin-top:3px; line-height:1.45; }
 
 .actions { display:flex; gap:10px; margin:18px 0 8px; }

@@ -1,7 +1,6 @@
 const DEFAULTS = {
   columns: 4,
   rows: 2,
-  attention: true,
   spotlightSize: "full",
   spotlightWidth: 70,
   spotlightHeight: 90,
@@ -661,7 +660,6 @@ async function render() {
   $("#sameDisplayOnly").checked = state.sameDisplayOnly;
   $("#groupTabs").checked = state.groupTabs;
   $("#openEmpty").checked = state.openEmpty;
-  $("#attention").checked = state.attention;
 
   const bulk = $("#bulkText");
   if (bulk) { bulk.placeholder = t("bulk_placeholder"); paintBulkPreview(); }
@@ -823,7 +821,7 @@ document.querySelectorAll("input[name=anchor]").forEach((radio) => {
   });
 });
 
-for (const id of ["skipMinimized", "keepOrder", "sameDisplayOnly", "groupTabs", "openEmpty", "attention"]) {
+for (const id of ["skipMinimized", "keepOrder", "sameDisplayOnly", "groupTabs", "openEmpty"]) {
   $(`#${id}`).addEventListener("change", async (event) => {
     state = { ...state, [id]: event.target.checked };
     await save({ [id]: event.target.checked });
