@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AI Window Deck</title>
+    <link rel="stylesheet" href="deck.css">
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <span class="orb" aria-hidden="true"></span>
+        <div class="title"><h1>AI Window Deck</h1><p data-i18n="tagline"></p></div>
+        <label class="lang">
+          <span class="visually-hidden" data-i18n="language"></span>
+          <select id="language"></select>
+        </label>
+      </header>
+
+      <div class="deck-head">
+        <h2 class="bar-title"><span data-i18n="sec_commands"></span></h2>
+        <button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_actions">i</button>
+        <button id="fullscreen" class="pop-out" data-i18n="fullscreen" hidden></button>
+        <button id="openBig" class="pop-out" data-i18n="open_big"></button>
+      </div>
+      <p class="help" id="help_actions" data-i18n="help_actions" hidden></p>
+
+      <div class="deck-actions">
+        <button id="spotlight" class="primary">
+          <span class="glyph" aria-hidden="true">◫</span>
+          <span class="stack"><b data-i18n="act_spotlight"></b><small class="keys" id="spotlightKeys"></small></span>
+        </button>
+        <button id="prev">
+          <span class="glyph" aria-hidden="true">←</span>
+          <span class="stack"><b data-i18n="act_prev"></b><small class="keys" id="prevKeys"></small></span>
+        </button>
+        <button id="next">
+          <span class="glyph" aria-hidden="true">→</span>
+          <span class="stack"><b data-i18n="act_next"></b><small class="keys" id="nextKeys"></small></span>
+        </button>
+        <button id="retile">
+          <span class="glyph" aria-hidden="true">▦</span>
+          <span class="stack"><b data-i18n="act_tile"></b><small class="keys" id="tileKeys"></small></span>
+        </button>
+        <button id="launch">
+          <span class="glyph" aria-hidden="true">⊞</span>
+          <span class="stack"><b data-i18n="launch"></b><small class="keys"></small></span>
+        </button>
+        <button id="home">
+          <span class="glyph" aria-hidden="true">⌂</span>
+          <span class="stack"><b data-i18n="act_home"></b><small class="keys" id="homeKeys"></small></span>
+        </button>
+        <button id="undo">
+          <span class="glyph" aria-hidden="true">↺</span>
+          <span class="stack"><b data-i18n="undo"></b><small class="keys" id="undoKeys"></small></span>
+        </button>
+        <button id="fullscreenWindow">
+          <span class="glyph" aria-hidden="true">⤢</span>
+          <span class="stack"><b data-i18n="act_fullscreen"></b><small class="keys" id="fullscreenKeys"></small></span>
+        </button>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-arrange" aria-controls="panel-arrange" aria-selected="true" data-i18n="tab_arrange"></button>
+        <button role="tab" id="tab-resize" aria-controls="panel-resize" aria-selected="false" data-i18n="tab_resize"></button>
+        <button role="tab" id="tab-windows" aria-controls="panel-windows" aria-selected="false" data-i18n="tab_windows"></button>
+      </div>
+
+      <div class="scroll">
+        <section id="panel-arrange" role="tabpanel" aria-labelledby="tab-arrange">
+          <div class="card decks">
+            <h2><span data-i18n="saved_decks"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_presets">i</button></h2>
+            <p class="help" id="help_presets" data-i18n="help_presets" hidden></p>
+            <p class="hint" id="noSaved" data-i18n="no_saved" hidden></p>
+            <div class="preset-bar">
+              <label class="preset-pick">
+                <span class="visually-hidden" data-i18n="preset_pick"></span>
+                <select id="presetSelect"></select>
+              </label>
+              <input id="presetName" class="preset-name" type="text" hidden>
+              <div class="preset-tools">
+                <button id="presetNew" class="tool" data-i18n="preset_new"></button>
+                <button id="presetRename" class="tool" data-i18n="preset_rename"></button>
+                <button id="presetDelete" class="tool" data-i18n="preset_delete"></button>
+              </div>
+            </div>
+            <p class="hint sync" data-i18n="sync_note"></p>
+          </div>
+
+          <div class="flow">
+            <div class="card step" id="stepScreen">
+              <h2><b class="num">1</b><span data-i18n="step_screen"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_display">i</button></h2>
+              <p class="help" id="help_display" data-i18n="help_display" hidden></p>
+              <div class="display-map" id="displayMap"></div>
+              <label class="check"><input type="checkbox" id="sameDisplayOnly"><span><span data-i18n="same_display_only"></span><small data-i18n="same_display_hint"></small></span></label>
+            </div>
+
+            <div class="card step">
+              <h2><b class="num">2</b><span data-i18n="step_split"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_layout">i</button></h2>
+              <p class="help" id="help_layout" data-i18n="help_layout" hidden></p>
+              <div class="shapes" id="shapes" role="radiogroup" data-i18n-label="shape_label"></div>
+              <details class="sub">
+                <summary data-i18n="layout_custom"></summary>
+                <div class="custom-grid" id="customGrid">
+                <label class="row" for="cols"><span data-i18n="cols_label"></span><output id="colsValue">4</output></label>
+                <input id="cols" type="range" min="1" max="6" step="1" value="4">
+                <label class="row" for="rows"><span data-i18n="rows_label"></span><output id="rowsValue">2</output></label>
+                <input id="rows" type="range" min="1" max="4" step="1" value="2">
+                </div>
+              </details>
+              <details class="sub">
+                <summary data-i18n="arrange_options"></summary>
+                <label class="check"><input type="checkbox" id="skipMinimized"><span data-i18n="skip_minimized"></span></label>
+                <label class="check"><input type="checkbox" id="keepOrder"><span><span data-i18n="keep_order"></span><small data-i18n="keep_order_hint"></small></span></label>
+              </details>
+            </div>
+          </div>
+
+          <div class="card step">
+            <h2><b class="num">3</b><span data-i18n="step_open"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_slots">i</button></h2>
+            <p class="help" id="help_slots" data-i18n="help_slots" hidden></p>
+            <p class="hint" data-i18n="step_open_hint"></p>
+            <details class="bulk">
+              <summary data-i18n="bulk_paste"></summary>
+              <ol class="rules">
+                <li data-i18n="bulk_rule_1"></li>
+                <li data-i18n="bulk_rule_2"></li>
+                <li data-i18n="bulk_rule_3"></li>
+              </ol>
+              <p class="hint" data-i18n="name_safe"></p>
+              <textarea id="bulkText" rows="9" spellcheck="false"></textarea>
+              <div class="bulk-actions">
+                <button id="bulkApply" class="primary" data-i18n="bulk_apply"></button>
+                <button id="bulkExample" class="tool" data-i18n="bulk_example"></button>
+                <small data-i18n="bulk_replace"></small>
+              </div>
+              <h3 class="pv-title" data-i18n="bulk_preview"></h3>
+              <div class="preview" id="bulkPreview"></div>
+            </details>
+            <p class="hint" data-i18n="reorder_hint"></p>
+            <div class="slots" id="slots"></div>
+            <label class="check"><input type="checkbox" id="openEmpty"><span><span data-i18n="open_empty"></span><small data-i18n="open_empty_hint"></small></span></label>
+            <label class="check"><input type="checkbox" id="groupTabs"><span><span data-i18n="group_tabs"></span><small data-i18n="group_tabs_hint"></small></span></label>
+          </div>
+
+          <div class="card step go">
+            <h2><b class="num">4</b><span data-i18n="step_go"></span></h2>
+            <div class="actions">
+              <button id="launch2" class="primary" data-i18n="launch"></button>
+              <button id="retile2" data-i18n="retile"></button>
+              <button id="presetCapture" data-i18n="save_current"></button>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-resize" role="tabpanel" aria-labelledby="tab-resize" hidden>
+          <div class="card">
+            <h2><span data-i18n="spotlight_size"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_size">i</button></h2>
+            <p class="help" id="help_size" data-i18n="help_size" hidden></p>
+            <div class="sizes" id="sizes" role="radiogroup" data-i18n-label="spotlight_size"></div>
+            <div id="customSize" hidden>
+              <label class="row" for="spotlightWidth"><span data-i18n="width"></span><output id="widthValue">70%</output></label>
+              <input id="spotlightWidth" type="range" min="20" max="100" step="5" value="70">
+              <label class="row" for="spotlightHeight"><span data-i18n="height"></span><output id="heightValue">90%</output></label>
+              <input id="spotlightHeight" type="range" min="20" max="100" step="5" value="90">
+            </div>
+          </div>
+
+          <div class="card" id="anchorCard">
+            <h2><span data-i18n="anchor"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_anchor">i</button></h2>
+            <p class="help" id="help_anchor" data-i18n="help_anchor" hidden></p>
+            <fieldset>
+              <legend class="visually-hidden" data-i18n="anchor"></legend>
+              <div class="options">
+                <label><input type="radio" name="anchor" value="keep"><span data-i18n="anchor_keep"></span></label>
+                <label><input type="radio" name="anchor" value="center"><span data-i18n="anchor_center"></span></label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <section id="panel-windows" role="tabpanel" aria-labelledby="tab-windows" hidden>
+          <div class="card">
+            <h2><span data-i18n="sec_open_windows"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_windows">i</button></h2>
+            <p class="help" id="help_windows" data-i18n="help_windows" hidden></p>
+            <p class="hint" data-i18n="dock_hint"></p>
+            <div class="list-tools">
+              <button id="openDock" data-i18n="open_dock"></button>
+              <button id="closeAll" class="tool" data-i18n="close_all"></button>
+            </div>
+            <div class="window-list" id="windowList"></div>
+          </div>
+        </section>
+
+        <div class="card common">
+          <h2><span data-i18n="sec_shortcuts"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_shortcuts">i</button></h2>
+            <p class="help" id="help_shortcuts" data-i18n="help_shortcuts" hidden></p>
+          <dl id="shortcutList"></dl>
+          <p class="hint" data-i18n="help_rotate"></p>
+          <p class="hint" data-i18n="help_fullscreen"></p>
+          <p class="hint" data-i18n="shortcut_hint"></p>
+          <button id="editShortcuts" data-i18n="change_shortcuts"></button>
+        </div>
+
+        <div class="card common">
+          <h2><span data-i18n="sec_notify"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_notify">i</button></h2>
+            <p class="help" id="help_notify" data-i18n="help_notify" hidden></p>
+          <label class="check"><input type="checkbox" id="attention"><span><span data-i18n="attention"></span><small data-i18n="attention_hint"></small></span></label>
+        </div>
+      </div>
+
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <script src="strings.js"></script>
+    <script src="keys.js"></script>
+    <script src="i18n.js"></script>
+    <script src="layout-model.js"></script>
+    <script src="deck.js"></script>
+  </body>
+</html>

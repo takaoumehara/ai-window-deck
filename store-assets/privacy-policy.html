@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — AI Window Deck</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0b0e14; color: #e8ecf3; }
+    body { max-width: 760px; margin: 0 auto; padding: 56px 24px 80px; line-height: 1.65; }
+    h1, h2 { line-height: 1.2; } h1 { font-size: 2rem; } h2 { margin-top: 2.2rem; font-size: 1.25rem; }
+    p, li { color: #cbd3e1; } a { color: #8aa4ff; } .updated { color: #98a3b8; }
+  </style>
+</head>
+<body>
+  <h1>Privacy Policy for AI Window Deck</h1>
+  <p class="updated">Effective date: August 2, 2026</p>
+  <p>AI Window Deck is a Chrome extension that arranges Chrome windows, opens user-configured window sets, and can optionally indicate when a background page appears to have stopped updating. This policy explains the extension’s handling of data.</p>
+
+  <h2>Information the extension handles</h2>
+  <p>The extension handles only the information necessary for its user-facing features:</p>
+  <ul>
+    <li><strong>User-configured window sets and preferences.</strong> Names, URLs entered by the user, layout settings, display preferences, and language preferences are stored through Chrome’s storage service so that the extension can reopen and arrange the user’s windows.</li>
+    <li><strong>Current Chrome window and tab metadata.</strong> The extension reads window bounds, window state, active tab title, URL, tab count, and tab-group information to arrange windows, show the window list, save a current setup, and focus or close a window when the user asks.</li>
+    <li><strong>Background page activity signals.</strong> If the optional “Gentle heads-up” setting is enabled, the extension observes whether the document structure of a background page is changing and records only a temporary busy/done state for that tab. It does not read, store, transmit, or interpret page text, form fields, messages, credentials, or page content.</li>
+  </ul>
+
+  <h2>How information is used</h2>
+  <p>Information is used only to provide the extension’s disclosed features: opening and arranging Chrome windows, restoring a previous layout, showing the state of open windows, grouping tabs, and optionally drawing attention to a background window that appears finished.</p>
+
+  <h2>Storage and retention</h2>
+  <p>Preferences and saved window sets are stored in Chrome’s synchronized extension storage, which may synchronize them between Chrome browsers signed in to the same Google account. Temporary undo, attention, and activity state is stored in Chrome’s session storage and is cleared according to Chrome’s session-storage lifecycle. The extension has no developer-operated server and does not send this information to a developer-operated server.</p>
+
+  <h2>Sharing and sale</h2>
+  <p>AI Window Deck does not sell, rent, transfer, or share user data with third parties. It does not use user data for advertising, retargeting, profiling, or creditworthiness or lending purposes. No person working for the publisher can access users’ extension data through the extension.</p>
+
+  <h2>Permissions and website access</h2>
+  <p>The extension requests access to Chrome tabs, windows, tab groups, display information, and storage because those capabilities are required to arrange and manage the user’s workspace. It runs a local page-activity detector on websites only for the optional “Gentle heads-up” feature. This detector is not site-specific, does not communicate with external services, and can be turned off at any time in the extension settings.</p>
+
+  <h2>Your choices</h2>
+  <p>You can disable “Gentle heads-up” in the extension settings. You can edit or delete saved window sets in the extension. Removing the extension removes its locally stored extension data; any synchronized data is handled according to Chrome and Google Account settings.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, the effective date above will be updated and the revised policy will be published at this URL.</p>
+
+  <h2>Contact</h2>
+  <p>For privacy questions, use the support contact listed on the AI Window Deck Chrome Web Store page.</p>
+
+  <p>This extension’s use and transfer of information received from Google APIs, if any, adheres to the <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq">Chrome Web Store User Data Policy</a>, including the Limited Use requirements.</p>
+</body>
+</html>
