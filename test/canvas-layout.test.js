@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { appendSlot, applyLayoutFamily, replaceSlot, slotsWithCount } from "../src/lib/canvas-layout.js";
+import { appendSlot, applyLayoutFamily, placeDroppedSlot, replaceSlot, slotsWithCount } from "../src/lib/canvas-layout.js";
 
 test("stack layout makes four full-width vertical tiles", () => {
   const slots = slotsWithCount([], 4, "stack");
@@ -32,4 +32,22 @@ test("an empty canvas accepts a background append", () => {
   assert.equal(slots.length, 1);
   assert.equal(slots[0].registeredWindowId, "win-first");
   assert.deepEqual([slots[0].gridX, slots[0].gridY, slots[0].gridW, slots[0].gridH], [0, 0, 12, 12]);
+});
+
+test("dropping on an occupied tile or its visible gutter appends a new slot", () => {
+  const filled = applyLayoutFamily([{ id: "slot-a", name: "Existing", urls: "https://existing.example" }], "grid");
+  const result = placeDroppedSlot(filled, 0, { id: "win-next", name: "Next", urls: "https://next.example" }, "grid");
+
+  assert.equal(result.length, 2);
+  assert.equal(result[0].name, "Existing");
+  assert.equal(result[1].registeredWindowId, "win-next");
+});
+
+test("dropping on a blank tile replaces that tile without increasing the count", () => {
+  const blank = applyLayoutFamily([{ id: "slot-a", name: "Empty", urls: "" }], "grid");
+  const result = placeDroppedSlot(blank, 0, { id: "win-next", name: "Next", urls: "https://next.example" }, "grid");
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].id, "slot-a");
+  assert.equal(result[0].registeredWindowId, "win-next");
 });

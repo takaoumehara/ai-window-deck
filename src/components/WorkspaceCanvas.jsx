@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { computeDynamicLayout } from "@/lib/layout-model";
-import { appendSlot, applyLayoutFamily, LAYOUT_FAMILIES, replaceSlot, slotsWithCount } from "@/lib/canvas-layout";
+import { applyLayoutFamily, LAYOUT_FAMILIES, placeDroppedSlot, slotsWithCount } from "@/lib/canvas-layout";
 import { getTranslation } from "@/lib/i18n";
 import { Plus, Minus, ChevronDown, Edit2, Trash2, Check, Play, Move, RotateCcw, Grid, Undo2, Redo2, Columns2, Rows2 } from "lucide-react";
 
@@ -155,14 +155,7 @@ export function WorkspaceCanvas({
         const items = JSON.parse(json);
         if (Array.isArray(items) && items.length) {
           const newItem = items[0];
-          if (index !== undefined && !isBlankSlot(canvasSlots[index])) {
-            onNotice?.(t("dropEmptySlotHint"));
-            return;
-          }
-          const nextSlots = index === undefined
-            ? appendSlot(canvasSlots, newItem, layoutFamily)
-            : replaceSlot(canvasSlots, index, newItem);
-          commitSlots(nextSlots);
+          commitSlots(placeDroppedSlot(canvasSlots, index, newItem, layoutFamily));
         }
       } catch {
         onNotice?.(t("dropEmptySlotHint"));
@@ -543,13 +536,11 @@ export function WorkspaceCanvas({
                 key={slot.id || i}
                 onDoubleClick={() => onOpenEditModal(slot)}
                 onDragEnter={(event) => {
-                  if (!canAcceptDrop) return;
                   event.preventDefault();
                   event.stopPropagation();
                   setDropTargetIdx(i);
                 }}
                 onDragOver={(event) => {
-                  if (!canAcceptDrop) return;
                   event.preventDefault();
                   event.stopPropagation();
                   event.dataTransfer.dropEffect = "copy";

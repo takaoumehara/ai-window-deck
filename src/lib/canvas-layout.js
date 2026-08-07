@@ -77,3 +77,17 @@ export function replaceSlot(slots, index, item) {
       : { ...slot }
   ));
 }
+
+function isBlankSlot(slot) {
+  const urls = Array.isArray(slot.urls) ? slot.urls : String(slot.urls ?? "").split("\n");
+  return !urls.some((url) => String(url).trim());
+}
+
+// A visible gap can belong to an occupied tile's outer hit area. Treat every
+// occupied target as an append so a saved card is never blocked by that hit area.
+export function placeDroppedSlot(slots, index, item, family) {
+  if (Number.isInteger(index) && index >= 0 && index < slots.length && isBlankSlot(slots[index])) {
+    return replaceSlot(slots, index, item);
+  }
+  return appendSlot(slots, item, family);
+}
