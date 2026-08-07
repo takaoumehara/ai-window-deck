@@ -36,9 +36,9 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
   const top = centered ? (100 - height) / 2 : clamp(base.top + base.height / 2 - height / 2, 0, 100 - height);
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-zinc-800 bg-zinc-950/70 p-2.5">
-      <div className="flex items-center justify-between gap-3 text-[10px]">
-        <span className="font-bold text-zinc-300">{t("spotlightPreviewTitle")}</span>
+    <div className="flex flex-col gap-2.5 rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
+      <div className="flex items-center justify-between gap-3 text-xs">
+        <span className="font-semibold text-zinc-200">{t("spotlightPreviewTitle")}</span>
         <span className="text-zinc-500">{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
       </div>
       <div className="mx-auto w-full max-w-[360px] rounded-md border border-zinc-700 bg-zinc-950 p-1.5" style={{ aspectRatio: targetAspectRatio }}>
@@ -47,7 +47,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
             <div key={index} className="absolute border border-zinc-700 bg-zinc-800/80" style={{ left: `${slot.left}%`, top: `${slot.top}%`, width: `${slot.width}%`, height: `${slot.height}%` }} />
           ))}
           <div className="spotlight-preview-target absolute border-2 border-blue-300 bg-blue-500/30 shadow-[0_0_0_1px_rgba(96,165,250,0.35)]" style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%` }}>
-            <span className="absolute left-1 top-1 rounded bg-blue-500 px-1 py-0.5 text-[8px] font-bold text-white">{t("spotlightPreviewActive")}</span>
+            <span className="absolute left-1 top-1 rounded bg-blue-500 px-1 py-0.5 text-[10px] font-semibold text-white">{t("spotlightPreviewActive")}</span>
           </div>
         </div>
       </div>

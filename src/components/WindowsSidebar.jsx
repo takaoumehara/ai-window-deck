@@ -12,24 +12,25 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
   };
 
   return (
-    <aside className="w-72 flex flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-950/80 p-3 max-h-[660px]">
+    <aside className="flex max-h-[660px] w-72 flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-950/80 p-3.5">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold text-zinc-100">{t("windowsHeader")}</h3>
-          <span className="text-[10px] text-zinc-500 font-mono">({windows.length})</span>
+          <span className="font-mono text-[11px] text-zinc-500">({windows.length})</span>
         </div>
         <Button
           variant="outline"
           size="icon"
           onClick={onOpenAddModal}
+          aria-label={t("regTitleAdd")}
           title={t("regTitleAdd")}
-          className="h-7 w-7 min-w-[28px] min-h-[28px] max-w-[28px] max-h-[28px] rounded-full border-zinc-700 bg-zinc-900 hover:bg-blue-600 hover:border-blue-500 hover:text-white p-0 flex items-center justify-center shrink-0"
+          className="h-8 w-8 min-h-[32px] min-w-[32px] max-h-[32px] max-w-[32px] shrink-0 rounded-full border-zinc-700 bg-zinc-900 p-0 hover:border-blue-500 hover:bg-blue-600 hover:text-white"
         >
           <Plus className="w-3.5 h-3.5" />
         </Button>
       </div>
 
-      <p className="text-[10px] text-zinc-500 px-1 -mt-1">{t("windowsHint")}</p>
+      <p className="-mt-1 px-1 text-[11px] leading-4 text-zinc-500">{t("windowsHint")}</p>
 
       <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
         {windows.length === 0 ? (
@@ -52,7 +53,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                 draggable
                 onDragStart={(e) => handleDragStart(e, item)}
                 onDoubleClick={() => onEditWindow(item)}
-                className={`group relative flex flex-col gap-1.5 p-2.5 rounded-lg border transition-all shadow-sm cursor-grab active:cursor-grabbing ${
+                className={`group relative flex cursor-grab flex-col gap-2 rounded-lg border p-3 transition-[background-color,border-color,box-shadow] active:cursor-grabbing ${
                   isPlaced
                     ? "border-blue-500/60 bg-blue-950/20 hover:border-blue-400"
                     : "border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-850"
@@ -70,11 +71,11 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
 
                   <div className="flex items-center gap-1 shrink-0">
                     {isPlaced && (
-                      <span className="text-[9px] font-bold text-blue-300 bg-blue-500/20 border border-blue-500/40 px-1.5 py-0.2 rounded">
+                      <span className="rounded border border-blue-500/40 bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300">
                         {t("inCanvasTag")}
                       </span>
                     )}
-                    <span className="text-[10px] text-zinc-500 bg-zinc-950 px-1.5 py-0.5 rounded border border-zinc-800 font-mono">
+                    <span className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
                       {urlLines.length} urls
                     </span>
                     <button
@@ -83,7 +84,8 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                         e.stopPropagation();
                         onDeleteWindow(item.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 p-0.5 text-zinc-500 hover:text-red-400 transition-opacity"
+                      aria-label={`${item.name || "Untitled"} を削除`}
+                      className="p-1 text-zinc-500 opacity-0 transition-opacity hover:text-red-400 focus:opacity-100"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -92,7 +94,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
 
                 <div className="flex flex-col gap-1">
                   {urlLines.slice(0, 2).map((url, i) => (
-                    <div key={i} className="text-[10px] text-zinc-400 truncate bg-zinc-950/60 px-1.5 py-0.5 rounded font-mono">
+                    <div key={i} className="truncate rounded bg-zinc-950/60 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
                       tab {i + 1}: {url.replace(/^https?:\/\//i, "")}
                     </div>
                   ))}

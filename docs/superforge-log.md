@@ -15,3 +15,9 @@ Ran: Inline TDD · `test/background.test.js` をRED→GREENで追加
 Wrote: docs/superpowers/specs/2026-08-07-canvas-drop-preview-design.md, docs/superpowers/plans/2026-08-07-canvas-drop-preview.md
 Corrected: 「並べ直す」は全通常ウィンドウではなく、Deckが起動したウィンドウだけを対象にする
 Wrong: Chrome実機のドラッグ&ドロップとアニメーション確認はユーザー確認待ち
+
+## 2026-08-07 · superforge-ui → frontend-design → impeccable → superforge-a11y · 作業画面の可読性と操作優先度の調整
+Ran: Inline UI refinement + source-level WCAG 2.2 AA audit
+Wrote: `.impeccable.md`, `docs/accessibility.md`; updated `docs/design.md`, `docs/design.html`
+Corrected: 極小文字、グラデーションCTA、クリック可能な`div`、通知の非通知性、ばらついたキーボードフォーカス
+Wrong: 実機のZoom／VoiceOver／Drag操作は未実施。キャンバスの自由移動・リサイズにはキーボード代替が未実装

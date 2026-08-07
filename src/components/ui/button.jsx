@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
@@ -17,8 +17,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-lg shadow-blue-500/20 hover:from-blue-500 hover:to-indigo-500 border border-blue-400/30",
-        heroAlt: "bg-zinc-900 border border-zinc-700 text-white font-bold shadow-md hover:bg-zinc-800",
+        hero: "border border-blue-400/40 bg-blue-600 text-white font-semibold shadow-[0_8px_20px_rgba(37,99,235,0.2)] hover:bg-blue-500 hover:shadow-[0_10px_24px_rgba(37,99,235,0.28)]",
+        heroAlt: "border border-zinc-700 bg-zinc-900 text-white font-semibold shadow-sm hover:border-zinc-600 hover:bg-zinc-800",
       },
       size: {
         default: "h-9 px-4 py-2",

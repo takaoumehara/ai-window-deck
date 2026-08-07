@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <title>AI Window Deck — Design System & Component Preview</title>
   <style>
-    body { font-family: Inter, sans-serif; background: #0B0E14; color: #E8ECF3; padding: 24px; }
+    body { font-family: Inter, system-ui, sans-serif; background: #0B0E14; color: #E8ECF3; padding: 24px; line-height: 1.5; }
     h1 { color: #8AA4FF; }
     .swatch-group { display: flex; gap: 12px; margin-bottom: 24px; }
     .swatch { width: 100px; height: 60px; border-radius: 8px; display: flex; align-items: flex-end; padding: 8px; font-size: 11px; font-weight: 600; }
-    .btn-preview { padding: 8px 16px; border-radius: 6px; border: none; background: #2F5BFF; color: #fff; cursor: pointer; font-weight: 600; }
+    .btn-preview { padding: 9px 16px; border-radius: 6px; border: 1px solid rgba(138,164,255,.45); background: #2F5BFF; color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 8px 20px rgba(47,91,255,.2); }
     .spotlight-preview { max-width: 700px; border: 1px solid #303949; border-radius: 12px; background: #111723; padding: 16px; }
     .spotlight-preview header { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid #303949; }
     .spotlight-preview h3 { margin: 0; color: #fff; font-size: 14px; }
     .spotlight-preview p { margin: 4px 0 0; color: #AAB4C5; font-size: 12px; }
     .preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
-    .preview-option { border: 1px solid #303949; border-radius: 8px; padding: 10px; color: #CBD5E1; background: #151B27; font-size: 12px; }
+    .preview-option { border: 1px solid #303949; border-radius: 8px; padding: 11px; color: #CBD5E1; background: #151B27; font-size: 12px; line-height: 1.4; }
     .preview-option.active { border-color: #2F5BFF; background: #1A2B5A; color: #fff; }
     .preview-option small { display: block; margin-top: 4px; color: #AAB4C5; font-size: 10px; }
     .preview-shortcuts { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #303949; font-size: 11px; color: #AAB4C5; }
@@ -39,6 +39,9 @@
 
   <h2>Button Components</h2>
   <button class="btn-preview">⚡ Launch Selected Windows</button>
+
+  <h2>Typography</h2>
+  <p><strong style="font-size:17px">AI Window Deck</strong><br><span style="font-size:14px;font-weight:600">Panel heading</span><br><span style="font-size:12px">Operational description — readable at dense working scale.</span><br><code style="font-size:11px;color:#AAB4C5">https://example.com/session</code></p>
 
   <h2>Spotlight Configuration</h2>
   <section class="spotlight-preview" aria-label="Spotlight configuration preview">

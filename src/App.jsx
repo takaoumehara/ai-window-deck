@@ -64,6 +64,11 @@ export function App() {
     }
   }, [isPageMode, isDockMode]);
 
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = lang === "ja" ? "AI Window Deck — ウィンドウ配置" : "AI Window Deck — Window arrangement";
+  }, [lang]);
+
   // Fetch displays for physical monitor aspect ratio
   useEffect(() => {
     if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
@@ -375,7 +380,8 @@ export function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-zinc-950 text-zinc-100 p-5 selection:bg-blue-600/30 ${isPageMode ? "w-full" : ""}`}>
+    <div className={`min-h-screen bg-zinc-950 p-4 text-zinc-100 selection:bg-blue-600/30 sm:p-5 ${isPageMode ? "w-full" : ""}`}>
+      <a className="skip-link" href="#workspace-main">メインコンテンツへ移動</a>
       <div className={`${isPageMode ? "max-w-[1600px] w-full" : "max-w-6xl"} mx-auto flex flex-col min-h-full`}>
         {/* Header */}
         <Header
@@ -414,17 +420,20 @@ export function App() {
         />
 
         {/* Notification Banner */}
+        <div aria-live="polite" aria-atomic="true">
         {notification && (
-          <div className="mb-4 p-3 rounded-xl bg-blue-600/25 border border-blue-500/50 text-blue-200 text-xs font-bold text-center animate-in fade-in shadow-lg">
+          <div className="mb-4 rounded-xl border border-blue-500/50 bg-blue-600/20 p-3 text-center text-xs font-semibold text-blue-100 shadow-lg animate-in fade-in">
             {notification}
           </div>
         )}
+        </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-zinc-800 mb-4">
+        <nav className="mb-5 flex border-b border-zinc-800" aria-label="Settings sections">
           <button
             onClick={() => setActiveTab("arrange")}
-            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+            aria-current={activeTab === "arrange" ? "page" : undefined}
+            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
               activeTab === "arrange"
                 ? "border-blue-500 text-white"
                 : "border-transparent text-zinc-400 hover:text-zinc-200"
@@ -434,7 +443,8 @@ export function App() {
           </button>
           <button
             onClick={() => setActiveTab("windows")}
-            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+            aria-current={activeTab === "windows" ? "page" : undefined}
+            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
               activeTab === "windows"
                 ? "border-blue-500 text-white"
                 : "border-transparent text-zinc-400 hover:text-zinc-200"
@@ -444,7 +454,8 @@ export function App() {
           </button>
           <button
             onClick={() => setActiveTab("profiles")}
-            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+            aria-current={activeTab === "profiles" ? "page" : undefined}
+            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
               activeTab === "profiles"
                 ? "border-blue-500 text-white"
                 : "border-transparent text-zinc-400 hover:text-zinc-200"
@@ -452,11 +463,12 @@ export function App() {
           >
             {t("profilesTab")}
           </button>
-        </div>
+        </nav>
 
         {/* Main View Panels */}
+        <main id="workspace-main" tabIndex="-1">
         {activeTab === "arrange" ? (
-          <div className="flex flex-wrap md:flex-nowrap gap-4 flex-1">
+          <div className="flex flex-1 flex-wrap gap-4 md:flex-nowrap">
             {/* Left Windows Library Sidebar */}
             <WindowsSidebar
               lang={lang}
@@ -510,6 +522,7 @@ export function App() {
             />
           </div>
         )}
+        </main>
       </div>
 
       {/* Modal Dialog */}

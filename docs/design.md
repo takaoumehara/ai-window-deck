@@ -13,11 +13,16 @@
 - `fill`: `#2F5BFF` (Brand primary CTA)
 - `danger`: `#D93025` (Destructive action)
 
-### Typography Scale (1.25 Major Third)
-- `h1`: `18px` (Font weight 600)
-- `h2`: `15px` (Font weight 600)
-- `body`: `13px` (Line height 1.5)
-- `small`: `11px` (Line height 1.3)
+### Typography Scale
+- `display`: `17px` (Font weight 600; product identity only)
+- `section`: `14px` (Font weight 600; panel headings)
+- `control`: `12px` (Font weight 600; buttons and settings labels)
+- `body`: `12px` (Line height 1.5; explanatory copy)
+- `data`: `11px` (monospace; URL and counts only)
+
+The interface keeps one sans-serif family for controls and copy. Monospace is
+reserved for URLs, dimensions, counts, and other values that benefit from a
+stable scan line. Text below 11px is not used in the product UI.
 
 ### Layout & Viewport
 - `Popup Viewport`: 800px x 600px
@@ -32,6 +37,8 @@
 6. **Spotlight Configuration**: A compact operational settings surface with six target sizes, two placement strategies, conditional width/height controls, and a direct link to Chrome's shortcut editor. It uses the existing Cobalt selection state, preserves keyboard focus visibility, and keeps the irreversible restore action visually secondary.
 7. **Targeted Canvas Drop**: Empty slots are the only droppable targets. Their Cobalt highlight changes drag-and-drop from an ambiguous append action into a stable replacement action that preserves the existing grid.
 8. **Display-ratio Spotlight Preview**: A compact live diagram preserves the selected monitor's aspect ratio and the canvas' current split. The active tile transitions to its selected size and anchor; reduced-motion users receive the same final state without animation.
+9. **Quiet operational hierarchy**: Cobalt is reserved for the active action, active selection, and the live Spotlight target. The remaining commands use the raised surface so the page can be scanned without every control competing for attention.
+10. **Focus and status treatment**: Interactive elements share a visible two-pixel Cobalt focus ring; command feedback uses a polite live region. A skip link moves keyboard users straight to the current workspace.
 
 ## Spotlight interaction contract
 
