@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Monitor, Check } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
 
-export function DisplaySelector({ lang, targetDisplays, onToggleDisplay }) {
+export function DisplaySelector({ lang, targetDisplays, onToggleDisplay, showGuide = false }) {
   const [displays, setDisplays] = useState([]);
   const t = (key) => getTranslation(lang, key);
   const largestEdge = Math.max(1, ...displays.map((display) => Math.max(display.bounds?.width || 0, display.bounds?.height || 0)));
@@ -30,6 +30,7 @@ export function DisplaySelector({ lang, targetDisplays, onToggleDisplay }) {
             <span>{t("displaySelectTitle")}</span>
           </h2>
           <p className="mt-1 text-xs leading-5 text-zinc-400">{t("displaySelectSubtitle")}</p>
+          {showGuide && <p className="mt-2 inline-flex items-center gap-2 rounded-md border border-blue-400/60 bg-blue-500/15 px-2.5 py-1.5 text-xs font-semibold text-blue-100"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">1</span>{t("guideStep1Description")}</p>}
         </div>
       </div>
 

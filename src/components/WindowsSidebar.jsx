@@ -3,7 +3,7 @@ import { Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getTranslation } from "@/lib/i18n";
 
-export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal, onEditWindow, onDeleteWindow }) {
+export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal, onEditWindow, onDeleteWindow, showGuide = false }) {
   const t = (key) => getTranslation(lang, key);
 
   const handleDragStart = (e, item) => {
@@ -31,6 +31,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
       </div>
 
       <p className="-mt-1 px-1 text-[11px] leading-4 text-zinc-500">{t("windowsHint")}</p>
+      {showGuide && <p className="-mt-1 rounded-md border border-blue-400/60 bg-blue-500/15 px-2 py-1.5 text-[11px] font-semibold leading-4 text-blue-100"><span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">3</span>{t("guideStep3Description")}</p>}
 
       <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
         {windows.length === 0 ? (

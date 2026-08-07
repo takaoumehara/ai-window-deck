@@ -30,6 +30,7 @@ export function WorkspaceCanvas({
   onOpenEditModal,
   layoutFamily = "auto",
   onLayoutFamilyChange,
+  showGuide = false,
 }) {
   const t = (key) => getTranslation(lang, key);
   const canvasRef = useRef(null);
@@ -44,6 +45,30 @@ export function WorkspaceCanvas({
 
   const count = canvasSlots.length;
   const currentPresetName = presets[activePreset]?.name || "A";
+
+  const snapshot = (slots) => slots.map((slot) => ({ ...slot }));
+  const saveHistory = (before) => {
+    setHistory(({ past }) => ({ past: [...past, snapshot(before)].slice(-40), future: [] }));
+  };
+
+  const commitSlots = (nextSlots, before = canvasSlots) => {
+    saveHistory(before);
+    setCanvasSlots(nextSlots);
+  };
+
+  const handleUndo = () => {
+    if (!history.past.length) return;
+    const previous = history.past[history.past.length - 1];
+    setHistory(({ past, future }) => ({ past: past.slice(0, -1), future: [snapshot(canvasSlots), ...future].slice(0, 40) }));
+    setCanvasSlots(snapshot(previous));
+  };
+
+  const handleRedo = () => {
+    if (!history.future.length) return;
+    const next = history.future[0];
+    setHistory(({ past, future }) => ({ past: [...past, snapshot(canvasSlots)].slice(-40), future: future.slice(1) }));
+    setCanvasSlots(snapshot(next));
+  };
 
   // Initialize grid positions for slots if they don't have them
   const ensureGridPositions = useCallback((slots) => {
@@ -288,6 +313,7 @@ export function WorkspaceCanvas({
               <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
+          {showGuide && <span className="hidden items-center gap-1 rounded-md border border-blue-400/60 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold text-blue-100 sm:inline-flex"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">2</span>{t("guideStep2Description")}</span>}
         </div>
 
         <div className="order-3 flex w-full flex-wrap items-center gap-1.5 border-t border-zinc-800 pt-2 lg:order-2 lg:w-auto lg:border-0 lg:pt-0">
@@ -475,6 +501,7 @@ export function WorkspaceCanvas({
         aria-label="ウィンドウ配置キャンバス"
         className="relative min-h-[380px] w-full max-h-[620px] overflow-hidden rounded-xl border-2 border-zinc-700 bg-zinc-950 shadow-inner transition-all"
       >
+        {showGuide && <p className="absolute left-3 top-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md border border-blue-300 bg-blue-600 px-3 py-2 text-xs font-semibold leading-5 text-white shadow-lg">{t("guideCanvasHint")}</p>}
         {/* Grid lines (subtle visual guide) */}
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.08 }}>
           {Array.from({ length: GRID_COLS - 1 }).map((_, i) => (
@@ -634,26 +661,3 @@ export function WorkspaceCanvas({
     </div>
   );
 }
-  const snapshot = (slots) => slots.map((slot) => ({ ...slot }));
-  const saveHistory = (before) => {
-    setHistory(({ past }) => ({ past: [...past, snapshot(before)].slice(-40), future: [] }));
-  };
-
-  const commitSlots = (nextSlots, before = canvasSlots) => {
-    saveHistory(before);
-    setCanvasSlots(nextSlots);
-  };
-
-  const handleUndo = () => {
-    if (!history.past.length) return;
-    const previous = history.past[history.past.length - 1];
-    setHistory(({ past, future }) => ({ past: past.slice(0, -1), future: [snapshot(canvasSlots), ...future].slice(0, 40) }));
-    setCanvasSlots(snapshot(previous));
-  };
-
-  const handleRedo = () => {
-    if (!history.future.length) return;
-    const next = history.future[0];
-    setHistory(({ past, future }) => ({ past: [...past, snapshot(canvasSlots)].slice(-40), future: future.slice(1) }));
-    setCanvasSlots(snapshot(next));
-  };

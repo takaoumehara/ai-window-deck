@@ -33,3 +33,9 @@ Ran: 仕様合意後のインライン実装。`onboard-generator` は未導入�
 Wrote: `docs/superpowers/specs/2026-08-07-canvas-workflow-design.md`, `docs/superpowers/plans/2026-08-07-canvas-workflow.md`, `src/lib/canvas-layout.js`, `test/canvas-layout.test.js`
 Corrected: 0枚キャンバスへの追加不可、背景ドロップの拒否、空枠置換と追加の混同、枚数変更時の一律均等化、固定サイズのモニター図、バルク登録の配置先不明
 Wrong: Chrome実機で、背景追加・空枠置換・0→1・16枚・複数ディスプレイ・ガイド再表示を確認する必要がある
+
+## 2026-08-07 · systematic-debugging → onboard · キャンバス操作不能とガイドの視認性
+Ran: 操作ハンドラのスコープ追跡 + 回帰テスト
+Wrote: `test/workspace-canvas-scope.test.js`
+Corrected: `commitSlots` などの履歴関数が `WorkspaceCanvas` の外にあり、削除・クリア・リサイズ・レイアウト変更時に未定義となっていた。ガイドは黒い固定カードをやめ、操作箇所に明るい番号付きヒントとして配置
+Wrong: Chrome実機でドラッグ・リサイズ・削除・クリアを確認する必要がある

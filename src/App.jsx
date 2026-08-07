@@ -480,6 +480,7 @@ export function App() {
           lang={lang}
           targetDisplays={state.targetDisplays || []}
           onToggleDisplay={handleToggleDisplay}
+          showGuide={onboardingOpen}
         />
 
         {/* Notification Banner */}
@@ -540,6 +541,7 @@ export function App() {
               onOpenAddModal={handleOpenAddModal}
               onEditWindow={(item) => handleOpenEditModal(item, "library")}
               onDeleteWindow={deleteWindow}
+              showGuide={onboardingOpen}
             />
 
             {/* Right Workspace Canvas */}
@@ -560,6 +562,7 @@ export function App() {
               onOpenEditModal={(item) => handleOpenEditModal(item, "canvas")}
               layoutFamily={layoutFamily}
               onLayoutFamilyChange={handleLayoutFamilyChange}
+              showGuide={onboardingOpen}
             />
           </div>
         ) : activeTab === "windows" ? (
