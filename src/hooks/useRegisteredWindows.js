@@ -29,8 +29,10 @@ export function useRegisteredWindows() {
   };
 
   const addWindow = (item) => {
-    const updated = [...windows, { ...item, id: `win-${Date.now()}` }];
+    const createdWindow = { ...item, id: `win-${Date.now()}` };
+    const updated = [...windows, createdWindow];
     saveWindows(updated);
+    return createdWindow;
   };
 
   const updateWindow = (id, updatedItem) => {

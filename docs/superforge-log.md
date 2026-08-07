@@ -21,3 +21,9 @@ Ran: Inline UI refinement + source-level WCAG 2.2 AA audit
 Wrote: `.impeccable.md`, `docs/accessibility.md`; updated `docs/design.md`, `docs/design.html`
 Corrected: 極小文字、グラデーションCTA、クリック可能な`div`、通知の非通知性、ばらついたキーボードフォーカス
 Wrong: 実機のZoom／VoiceOver／Drag操作は未実施。キャンバスの自由移動・リサイズにはキーボード代替が未実装
+
+## 2026-08-07 · systematic-debugging · キャンバス編集の保存先不一致
+Ran: ID経路の追跡 + RED/GREENユニットテスト
+Wrote: `src/lib/window-sync.js`, `test/window-sync.test.js`
+Corrected: キャンバス固有の`slot-*` IDで登録済みの`win-*` IDを更新しようとしていたため、保存が失われていた。登録元IDを保持し、既存の同名・同URL配置も一度だけ関連付ける
+Wrong: Chrome実機での永続化再読込は未実施

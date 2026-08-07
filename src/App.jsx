@@ -13,6 +13,7 @@ import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation } from "@/lib/i18n";
+import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
 
 export function App() {
   const { state, updateState, defaultState } = useExtensionState();
@@ -45,6 +46,7 @@ export function App() {
   const [displays, setDisplays] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [editingSource, setEditingSource] = useState(null);
   const [notification, setNotification] = useState(null);
 
   const lang = state.language || "ja";
@@ -273,20 +275,46 @@ export function App() {
   // Modal Handlers
   const handleOpenAddModal = () => {
     setEditingItem(null);
+    setEditingSource(null);
     setModalOpen(true);
   };
 
-  const handleOpenEditModal = (item) => {
+  const handleOpenEditModal = (item, source) => {
     setEditingItem(item);
+    setEditingSource(source);
     setModalOpen(true);
   };
 
   const handleSaveWindow = ({ id, name, urls }) => {
-    if (id) {
+    if (editingSource === "canvas") {
+      const saved = applyCanvasWindowEdit({ windows, canvasSlots, editingItem, name, urls });
+      if (saved.registeredWindowId) {
+        setWindows(saved.windows);
+        setCanvasSlots(saved.canvasSlots);
+        return;
+      }
+
+      const createdWindow = addWindow({ name, urls, color: "auto" });
+      setCanvasSlots((prev) => prev.map((slot) => (
+        slot.id === editingItem.id
+          ? { ...slot, registeredWindowId: createdWindow.id, name, urls }
+          : slot
+      )));
+    } else if (id) {
       updateWindow(id, { name, urls });
+      setCanvasSlots((prev) => prev.map((slot) => (
+        resolveRegisteredWindowId(slot, windows) === id
+          ? { ...slot, registeredWindowId: id, name, urls }
+          : slot
+      )));
     } else {
-      addWindow({ name, urls, color: "auto" });
-      setCanvasSlots((prev) => [...prev, { id: `slot-${Date.now()}`, name, urls }]);
+      const createdWindow = addWindow({ name, urls, color: "auto" });
+      setCanvasSlots((prev) => [...prev, {
+        id: `slot-${Date.now()}`,
+        registeredWindowId: createdWindow.id,
+        name,
+        urls,
+      }]);
     }
   };
 
@@ -475,7 +503,7 @@ export function App() {
               windows={windows}
               canvasSlots={canvasSlots}
               onOpenAddModal={handleOpenAddModal}
-              onEditWindow={handleOpenEditModal}
+              onEditWindow={(item) => handleOpenEditModal(item, "library")}
               onDeleteWindow={deleteWindow}
             />
 
@@ -494,7 +522,7 @@ export function App() {
               onLaunch={() => handleCommandAction("launch")}
               onRetile={() => handleCommandAction("retile")}
               onNotice={showNote}
-              onOpenEditModal={handleOpenEditModal}
+              onOpenEditModal={(item) => handleOpenEditModal(item, "canvas")}
             />
           </div>
         ) : activeTab === "windows" ? (
@@ -503,7 +531,7 @@ export function App() {
               lang={lang}
               windows={windows}
               onOpenAddModal={handleOpenAddModal}
-              onEditWindow={handleOpenEditModal}
+              onEditWindow={(item) => handleOpenEditModal(item, "library")}
               onDeleteWindow={deleteWindow}
             />
             <DangerZone lang={lang} onFactoryReset={handleFactoryReset} />

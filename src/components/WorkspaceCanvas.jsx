@@ -142,7 +142,12 @@ export function WorkspaceCanvas({
             return;
           }
           const nextSlots = [...canvasSlots];
-          nextSlots[index] = { ...nextSlots[index], ...newItem, id: nextSlots[index].id };
+          nextSlots[index] = {
+            ...nextSlots[index],
+            ...newItem,
+            id: nextSlots[index].id,
+            registeredWindowId: newItem.id,
+          };
           setCanvasSlots(nextSlots);
         }
       } catch {
