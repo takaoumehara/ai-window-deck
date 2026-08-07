@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { computeDynamicLayout } from "@/lib/layout-model";
+import { appendSlot, applyLayoutFamily, LAYOUT_FAMILIES, replaceSlot, slotsWithCount } from "@/lib/canvas-layout";
 import { getTranslation } from "@/lib/i18n";
-import { Plus, Minus, ChevronDown, Edit2, Trash2, Check, Play, Move, RotateCcw, Grid } from "lucide-react";
+import { Plus, Minus, ChevronDown, Edit2, Trash2, Check, Play, Move, RotateCcw, Grid, Undo2, Redo2, Columns2, Rows2 } from "lucide-react";
 
 // 12-column grid system for snapping
 const GRID_COLS = 12;
@@ -27,6 +28,8 @@ export function WorkspaceCanvas({
   onRetile,
   onNotice,
   onOpenEditModal,
+  layoutFamily = "auto",
+  onLayoutFamilyChange,
 }) {
   const t = (key) => getTranslation(lang, key);
   const canvasRef = useRef(null);
@@ -37,6 +40,7 @@ export function WorkspaceCanvas({
   const [draggingIdx, setDraggingIdx] = useState(null);
   const [resizingInfo, setResizingInfo] = useState(null);
   const [dropTargetIdx, setDropTargetIdx] = useState(null);
+  const [history, setHistory] = useState({ past: [], future: [] });
 
   const count = canvasSlots.length;
   const currentPresetName = presets[activePreset]?.name || "A";
@@ -67,27 +71,15 @@ export function WorkspaceCanvas({
     const hasPositions = canvasSlots.every(
       (s) => s.gridX !== undefined && s.gridY !== undefined
     );
-    if (!hasPositions && canvasSlots.length > 0) {
+    if (!hasPositions && canvasSlots.length > 0 && layoutFamily !== "custom") {
       setCanvasSlots(ensureGridPositions(canvasSlots));
     }
-  }, [canvasSlots.length]);
+  }, [canvasSlots.length, layoutFamily]);
 
   const handleCountChange = (val) => {
-    const targetCount = Math.max(1, Math.min(16, val));
-    let nextSlots = [...canvasSlots];
-    while (nextSlots.length < targetCount) {
-      nextSlots.push({
-        id: `slot-${Date.now()}-${nextSlots.length}`,
-        name: `Window ${nextSlots.length + 1}`,
-        urls: "",
-        color: "auto",
-      });
-    }
-    while (nextSlots.length > targetCount) {
-      nextSlots.pop();
-    }
-    nextSlots = equalizeSlots(nextSlots);
-    setCanvasSlots(nextSlots);
+    const targetCount = Math.max(0, Math.min(16, val));
+    const family = layoutFamily === "custom" ? "custom" : layoutFamily;
+    commitSlots(slotsWithCount(canvasSlots, targetCount, family));
   };
 
   // Equalize all slots to evenly fill the grid
@@ -110,13 +102,14 @@ export function WorkspaceCanvas({
   };
 
   const handleEqualize = () => {
-    setCanvasSlots(equalizeSlots([...canvasSlots]));
+    onLayoutFamilyChange?.("auto");
+    commitSlots(applyLayoutFamily([...canvasSlots], "auto"));
   };
 
   const handleRemoveSlot = (index) => {
     const nextSlots = [...canvasSlots];
     nextSlots.splice(index, 1);
-    setCanvasSlots(equalizeSlots(nextSlots));
+    commitSlots(layoutFamily === "custom" ? nextSlots : applyLayoutFamily(nextSlots, layoutFamily));
   };
 
   const isBlankSlot = (slot) => {
@@ -137,18 +130,14 @@ export function WorkspaceCanvas({
         const items = JSON.parse(json);
         if (Array.isArray(items) && items.length) {
           const newItem = items[0];
-          if (index === undefined || !isBlankSlot(canvasSlots[index])) {
+          if (index !== undefined && !isBlankSlot(canvasSlots[index])) {
             onNotice?.(t("dropEmptySlotHint"));
             return;
           }
-          const nextSlots = [...canvasSlots];
-          nextSlots[index] = {
-            ...nextSlots[index],
-            ...newItem,
-            id: nextSlots[index].id,
-            registeredWindowId: newItem.id,
-          };
-          setCanvasSlots(nextSlots);
+          const nextSlots = index === undefined
+            ? appendSlot(canvasSlots, newItem, layoutFamily)
+            : replaceSlot(canvasSlots, index, newItem);
+          commitSlots(nextSlots);
         }
       } catch {
         onNotice?.(t("dropEmptySlotHint"));
@@ -169,6 +158,7 @@ export function WorkspaceCanvas({
 
     const startX = e.clientX;
     const startY = e.clientY;
+    const before = snapshot(canvasSlots);
     const slot = canvasSlots[idx];
     const origGridX = slot.gridX;
     const origGridY = slot.gridY;
@@ -194,6 +184,7 @@ export function WorkspaceCanvas({
 
     const onMouseUp = () => {
       setDraggingIdx(null);
+      saveHistory(before);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
@@ -213,6 +204,7 @@ export function WorkspaceCanvas({
 
     const startX = e.clientX;
     const startY = e.clientY;
+    const before = snapshot(canvasSlots);
     const slot = canvasSlots[idx];
     const origX = slot.gridX;
     const origY = slot.gridY;
@@ -251,6 +243,7 @@ export function WorkspaceCanvas({
 
     const onMouseUp = () => {
       setResizingInfo(null);
+      saveHistory(before);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
@@ -277,10 +270,13 @@ export function WorkspaceCanvas({
             </button>
             <input
               type="number"
-              min="1"
+              min="0"
               max="16"
               value={count}
-              onChange={(e) => handleCountChange(parseInt(e.target.value) || 1)}
+              onChange={(e) => {
+                const nextCount = Number(e.target.value);
+                handleCountChange(Number.isFinite(nextCount) ? nextCount : 0);
+              }}
               className="w-9 h-7 text-center text-xs font-bold text-white bg-transparent border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
@@ -292,6 +288,31 @@ export function WorkspaceCanvas({
               <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
+        </div>
+
+        <div className="order-3 flex w-full flex-wrap items-center gap-1.5 border-t border-zinc-800 pt-2 lg:order-2 lg:w-auto lg:border-0 lg:pt-0">
+          {LAYOUT_FAMILIES.filter(({ id }) => id !== "custom").map(({ id }) => {
+            const active = layoutFamily === id;
+            const Icon = id === "stack" ? Rows2 : id === "row" ? Columns2 : Grid;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  onLayoutFamilyChange?.(id);
+                  commitSlots(applyLayoutFamily(canvasSlots, id));
+                }}
+                className={`inline-flex h-8 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${active ? "border-blue-500 bg-blue-500/15 text-blue-200" : "border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"}`}
+              >
+                <Icon className="h-3 w-3" />{id === "auto" ? t("layoutAuto") : id === "stack" ? t("layoutStack") : id === "row" ? t("layoutRow") : id === "grid" ? t("layoutGrid") : t("layoutFocus")}
+              </button>
+            );
+          })}
+          <button type="button" aria-pressed={layoutFamily === "custom"} onClick={() => onLayoutFamilyChange?.("custom")} className={`inline-flex h-8 items-center rounded-md border px-2 text-[11px] font-semibold ${layoutFamily === "custom" ? "border-blue-500 bg-blue-500/15 text-blue-200" : "border-zinc-800 bg-zinc-900 text-zinc-400"}`}>{t("layoutFreeform")}</button>
+          <span className="mx-1 h-5 border-l border-zinc-800" />
+          <button type="button" onClick={handleUndo} disabled={!history.past.length} aria-label={t("undo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 disabled:opacity-35"><Undo2 className="h-3.5 w-3.5" /></button>
+          <button type="button" onClick={handleRedo} disabled={!history.future.length} aria-label={t("redo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 disabled:opacity-35"><Redo2 className="h-3.5 w-3.5" /></button>
         </div>
 
         {/* Layout Preset Dropdown + Equalize + Clear + Retile + Launch */}
@@ -414,7 +435,7 @@ export function WorkspaceCanvas({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCanvasSlots([])}
+            onClick={() => commitSlots([])}
             className="h-9 border-zinc-700 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
           >
             {t("clearCanvas")}
@@ -449,11 +470,7 @@ export function WorkspaceCanvas({
         ref={canvasRef}
         onDragOver={(e) => e.preventDefault()}
         onDragEnd={() => setDropTargetIdx(null)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDropTargetIdx(null);
-          onNotice?.(t("dropEmptySlotHint"));
-        }}
+        onDrop={(e) => handleDropOnCanvas(e)}
         style={{ aspectRatio: targetAspectRatio || "16/9" }}
         aria-label="ウィンドウ配置キャンバス"
         className="relative min-h-[380px] w-full max-h-[620px] overflow-hidden rounded-xl border-2 border-zinc-700 bg-zinc-950 shadow-inner transition-all"
@@ -617,3 +634,26 @@ export function WorkspaceCanvas({
     </div>
   );
 }
+  const snapshot = (slots) => slots.map((slot) => ({ ...slot }));
+  const saveHistory = (before) => {
+    setHistory(({ past }) => ({ past: [...past, snapshot(before)].slice(-40), future: [] }));
+  };
+
+  const commitSlots = (nextSlots, before = canvasSlots) => {
+    saveHistory(before);
+    setCanvasSlots(nextSlots);
+  };
+
+  const handleUndo = () => {
+    if (!history.past.length) return;
+    const previous = history.past[history.past.length - 1];
+    setHistory(({ past, future }) => ({ past: past.slice(0, -1), future: [snapshot(canvasSlots), ...future].slice(0, 40) }));
+    setCanvasSlots(snapshot(previous));
+  };
+
+  const handleRedo = () => {
+    if (!history.future.length) return;
+    const next = history.future[0];
+    setHistory(({ past, future }) => ({ past: [...past, snapshot(canvasSlots)].slice(-40), future: future.slice(1) }));
+    setCanvasSlots(snapshot(next));
+  };

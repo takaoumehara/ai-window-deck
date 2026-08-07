@@ -9,11 +9,14 @@ import { WindowsTab } from "@/components/WindowsTab";
 import { ConfigProfileManager } from "@/components/ConfigProfileManager";
 import { DangerZone } from "@/components/DangerZone";
 import { SpotlightConfig } from "@/components/SpotlightConfig";
+import { BulkPlacementChoice } from "@/components/BulkPlacementChoice";
+import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
+import { appendSlot } from "@/lib/canvas-layout";
 
 export function App() {
   const { state, updateState, defaultState } = useExtensionState();
@@ -48,6 +51,8 @@ export function App() {
   const [editingItem, setEditingItem] = useState(null);
   const [editingSource, setEditingSource] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [bulkItems, setBulkItems] = useState([]);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
 
   const lang = state.language || "ja";
   const t = (key) => getTranslation(lang, key);
@@ -70,6 +75,10 @@ export function App() {
     document.documentElement.lang = lang;
     document.title = lang === "ja" ? "AI Window Deck — ウィンドウ配置" : "AI Window Deck — Window arrangement";
   }, [lang]);
+
+  useEffect(() => {
+    if (!state.onboardingSeen) setOnboardingOpen(true);
+  }, [state.onboardingSeen]);
 
   // Fetch displays for physical monitor aspect ratio
   useEffect(() => {
@@ -197,11 +206,20 @@ export function App() {
 
   const handleCreatePreset = () => {
     const newName = String.fromCharCode(65 + state.presets.length);
-    const newPreset = { name: newName, columns: 2, rows: 2, slots: [] };
+    const newPreset = { name: newName, columns: 2, rows: 2, layoutFamily: "auto", slots: [] };
     const nextPresets = [...state.presets, newPreset];
     updateState({ presets: nextPresets, activePreset: nextPresets.length - 1 });
     setCanvasSlotsRaw([]);
     showNote(t("presetCreatedMsg"));
+  };
+
+  const layoutFamily = activePresetObj?.layoutFamily || "auto";
+  const handleLayoutFamilyChange = (nextFamily) => {
+    const presetIdx = state.activePreset || 0;
+    const nextPresets = [...(state.presets || [])];
+    if (!nextPresets[presetIdx]) return;
+    nextPresets[presetIdx] = { ...nextPresets[presetIdx], layoutFamily: nextFamily };
+    updateState({ presets: nextPresets });
   };
 
   // Profile Handlers
@@ -318,7 +336,7 @@ export function App() {
     }
   };
 
-  const handleBulkSave = (text) => {
+  const parseBulkItems = (text) => {
     const lines = text.split("\n");
     let currentName = "";
     let currentUrls = [];
@@ -351,10 +369,27 @@ export function App() {
       });
     }
 
-    if (newItems.length) {
-      setWindows([...windows, ...newItems]);
-      setCanvasSlots((prev) => [...prev, ...newItems]);
+    return newItems;
+  };
+
+  const handleBulkSave = (text) => {
+    const newItems = parseBulkItems(text);
+    if (newItems.length) setBulkItems(newItems);
+  };
+
+  const commitBulkItems = (placement) => {
+    if (!bulkItems.length) return;
+    setWindows([...windows, ...bulkItems]);
+    if (placement === "auto") {
+      setCanvasSlots((previous) => bulkItems.reduce((slots, item) => appendSlot(slots, item, layoutFamily), previous));
+    } else {
+      const newName = String.fromCharCode(65 + state.presets.length);
+      const nextPreset = { name: newName, columns: 2, rows: 2, layoutFamily: "auto", slots: [] };
+      updateState({ presets: [...state.presets, nextPreset], activePreset: state.presets.length });
+      setCanvasSlotsRaw([]);
+      setActiveTab("arrange");
     }
+    setBulkItems([]);
   };
 
   const handleExportFile = () => {
@@ -523,6 +558,8 @@ export function App() {
               onRetile={() => handleCommandAction("retile")}
               onNotice={showNote}
               onOpenEditModal={(item) => handleOpenEditModal(item, "canvas")}
+              layoutFamily={layoutFamily}
+              onLayoutFamilyChange={handleLayoutFamilyChange}
             />
           </div>
         ) : activeTab === "windows" ? (
@@ -564,6 +601,8 @@ export function App() {
         onExportFile={handleExportFile}
         onImportFile={handleImportFile}
       />
+      <BulkPlacementChoice lang={lang} count={bulkItems.length} open={bulkItems.length > 0} onAutoPlace={() => commitBulkItems("auto")} onLibraryOnly={() => commitBulkItems("manual")} onClose={() => setBulkItems([])} />
+      <OnboardingGuide lang={lang} open={onboardingOpen} onComplete={() => { setOnboardingOpen(false); updateState({ onboardingSeen: true }); }} onReplay={() => setOnboardingOpen(true)} />
     </div>
   );
 }

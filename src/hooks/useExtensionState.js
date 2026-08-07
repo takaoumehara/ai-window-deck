@@ -40,6 +40,7 @@ const DEFAULTS = {
   spotlightAnchor: "keep",
   oddMode: "blank",
   splitMode: "auto",
+  onboardingSeen: false,
 };
 
 export function useExtensionState() {

@@ -5,6 +5,7 @@ import { getTranslation } from "@/lib/i18n";
 export function DisplaySelector({ lang, targetDisplays, onToggleDisplay }) {
   const [displays, setDisplays] = useState([]);
   const t = (key) => getTranslation(lang, key);
+  const largestEdge = Math.max(1, ...displays.map((display) => Math.max(display.bounds?.width || 0, display.bounds?.height || 0)));
 
   const fetchDisplays = () => {
     if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
@@ -69,21 +70,13 @@ export function DisplaySelector({ lang, targetDisplays, onToggleDisplay }) {
                         {t("currentDisplay")}
                       </span>
                     )}
-                    {disp.isPrimary && (
-                      <span className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium text-zinc-300">
-                        {t("primaryDisplay")}
-                      </span>
-                    )}
                     {isSelected && <Check className="w-3.5 h-3.5 text-blue-400 ml-1" />}
                   </div>
                 </div>
 
                 {/* Aspect Ratio Screen Visual Frame */}
                 <div className="w-full flex items-center justify-center py-2 bg-zinc-950/80 rounded-lg border border-zinc-800/80 my-1">
-                  <div
-                    style={{ aspectRatio: `${ratio}` }}
-                    className="w-20 rounded border border-blue-500/30 bg-blue-500/5 flex flex-col items-center justify-center p-1"
-                  >
+                  <div style={{ width: `${Math.max(44, (width / largestEdge) * 160)}px`, height: `${Math.max(30, (height / largestEdge) * 160)}px` }} className="rounded border border-blue-500/30 bg-blue-500/5 flex flex-col items-center justify-center p-1">
                     <div className="w-full h-full border border-dashed border-blue-400/40 rounded flex items-center justify-center">
                       <span className="font-mono text-[10px] text-zinc-400">
                         {width}×{height}

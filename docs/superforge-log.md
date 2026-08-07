@@ -27,3 +27,9 @@ Ran: ID経路の追跡 + RED/GREENユニットテスト
 Wrote: `src/lib/window-sync.js`, `test/window-sync.test.js`
 Corrected: キャンバス固有の`slot-*` IDで登録済みの`win-*` IDを更新しようとしていたため、保存が失われていた。登録元IDを保持し、既存の同名・同URL配置も一度だけ関連付ける
 Wrong: Chrome実機での永続化再読込は未実施
+
+## 2026-08-07 · brainstorming → writing-plans → executing-plans → onboard · キャンバス配置ワークフロー
+Ran: 仕様合意後のインライン実装。`onboard-generator` は未導入のため、同等の `onboard` スキルで代替
+Wrote: `docs/superpowers/specs/2026-08-07-canvas-workflow-design.md`, `docs/superpowers/plans/2026-08-07-canvas-workflow.md`, `src/lib/canvas-layout.js`, `test/canvas-layout.test.js`
+Corrected: 0枚キャンバスへの追加不可、背景ドロップの拒否、空枠置換と追加の混同、枚数変更時の一律均等化、固定サイズのモニター図、バルク登録の配置先不明
+Wrong: Chrome実機で、背景追加・空枠置換・0→1・16枚・複数ディスプレイ・ガイド再表示を確認する必要がある
