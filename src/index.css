@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 6.5%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 6.5%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 224.3 76.3% 48%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-primary;
+    margin: 0;
+    padding: 0;
+    background-color: #09090b;
+    color: #f4f4f5;
+    overflow-x: hidden !important;
+  }
+}
+
+/* Mode-specific container dimensions */
+body.mode-popup, body.mode-popup #root {
+  width: 780px;
+  max-width: 780px;
+  min-width: 780px;
+  min-height: 580px;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+}
+
+body.mode-page, body.mode-page #root,
+body.mode-dock, body.mode-dock #root {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+}
+
+/* Custom 3D Keycap styling for shortcuts */
+.key-cap {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
+  border: 1px solid #3f3f46;
+  border-bottom: 2px solid #09090b;
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Hide scrollbars for clean UI where appropriate */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

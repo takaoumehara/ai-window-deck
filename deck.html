@@ -6,58 +6,67 @@
     <title>AI Window Deck</title>
     <link rel="stylesheet" href="deck.css">
   </head>
-  <body>
+  <body class="as-popup">
     <div class="page">
       <header>
         <span class="orb" aria-hidden="true"></span>
         <div class="title"><h1>AI Window Deck</h1><p data-i18n="tagline"></p></div>
-        <label class="lang">
-          <span class="visually-hidden" data-i18n="language"></span>
-          <select id="language"></select>
-        </label>
+        <div class="header-right-tools">
+          <button id="openBig" type="button" class="btn-open-big-top">↗ 大画面で開く</button>
+          <label class="lang">
+            <span class="visually-hidden" data-i18n="language"></span>
+            <select id="language"></select>
+          </label>
+        </div>
       </header>
 
       <div class="deck-head">
         <h2 class="bar-title"><span data-i18n="sec_commands"></span></h2>
         <button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_actions">i</button>
         <button id="fullscreen" class="pop-out" data-i18n="fullscreen" hidden></button>
-        <button id="openBig" class="pop-out" data-i18n="open_big"></button>
       </div>
       <p class="help" id="help_actions" data-i18n="help_actions" hidden></p>
 
-      <div class="deck-actions">
-        <button id="spotlight" class="primary">
-          <span class="glyph" aria-hidden="true">◫</span>
-          <span class="stack"><b data-i18n="act_spotlight"></b><small class="keys" id="spotlightKeys"></small></span>
-        </button>
-        <button id="prev">
-          <span class="glyph" aria-hidden="true">←</span>
-          <span class="stack"><b data-i18n="act_prev"></b><small class="keys" id="prevKeys"></small></span>
-        </button>
-        <button id="next">
-          <span class="glyph" aria-hidden="true">→</span>
-          <span class="stack"><b data-i18n="act_next"></b><small class="keys" id="nextKeys"></small></span>
-        </button>
-        <button id="retile">
-          <span class="glyph" aria-hidden="true">▦</span>
-          <span class="stack"><b data-i18n="act_tile"></b><small class="keys" id="tileKeys"></small></span>
-        </button>
-        <button id="launch">
-          <span class="glyph" aria-hidden="true">⊞</span>
-          <span class="stack"><b data-i18n="launch"></b><small class="keys"></small></span>
-        </button>
-        <button id="home">
-          <span class="glyph" aria-hidden="true">⌂</span>
-          <span class="stack"><b data-i18n="act_home"></b><small class="keys" id="homeKeys"></small></span>
-        </button>
-        <button id="undo">
-          <span class="glyph" aria-hidden="true">↺</span>
-          <span class="stack"><b data-i18n="undo"></b><small class="keys" id="undoKeys"></small></span>
-        </button>
-        <button id="fullscreenWindow">
-          <span class="glyph" aria-hidden="true">⤢</span>
-          <span class="stack"><b data-i18n="act_fullscreen"></b><small class="keys" id="fullscreenKeys"></small></span>
-        </button>
+      <div class="deck-actions-container">
+        <!-- Primary Commands (Hero 2x Height Row: Spotlight & Tile Restore) -->
+        <div class="deck-actions-primary">
+          <button id="spotlight" class="cmd-hero primary">
+            <span class="glyph" aria-hidden="true">◫</span>
+            <span class="stack"><b data-i18n="act_spotlight"></b><small class="keys" id="spotlightKeys"></small></span>
+          </button>
+          <button id="home" class="cmd-hero primary-alt">
+            <span class="glyph" aria-hidden="true">⌂</span>
+            <span class="stack"><b data-i18n="act_home"></b><small class="keys" id="homeKeys"></small></span>
+          </button>
+        </div>
+
+        <!-- Secondary Commands (Compact & Uniform Height Row) -->
+        <div class="deck-actions-secondary">
+          <button id="prev" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">←</span>
+            <span class="stack"><b data-i18n="act_prev"></b><small class="keys" id="prevKeys"></small></span>
+          </button>
+          <button id="next" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">→</span>
+            <span class="stack"><b data-i18n="act_next"></b><small class="keys" id="nextKeys"></small></span>
+          </button>
+          <button id="retile" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">▦</span>
+            <span class="stack"><b data-i18n="act_tile"></b><small class="keys" id="tileKeys"></small></span>
+          </button>
+          <button id="launch" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">⊞</span>
+            <span class="stack"><b data-i18n="launch"></b><small class="keys"></small></span>
+          </button>
+          <button id="undo" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">↺</span>
+            <span class="stack"><b data-i18n="undo"></b><small class="keys" id="undoKeys"></small></span>
+          </button>
+          <button id="fullscreenWindow" class="cmd-sub">
+            <span class="glyph" aria-hidden="true">⤢</span>
+            <span class="stack"><b data-i18n="act_fullscreen"></b><small class="keys" id="fullscreenKeys"></small></span>
+          </button>
+        </div>
       </div>
 
       <div class="tabs" role="tablist">
@@ -68,89 +77,87 @@
 
       <div class="scroll">
         <section id="panel-arrange" role="tabpanel" aria-labelledby="tab-arrange">
-          <div class="card decks">
-            <h2><span data-i18n="saved_decks"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_presets">i</button></h2>
-            <p class="help" id="help_presets" data-i18n="help_presets" hidden></p>
-            <p class="hint" id="noSaved" data-i18n="no_saved" hidden></p>
-            <div class="preset-bar">
-              <label class="preset-pick">
-                <span class="visually-hidden" data-i18n="preset_pick"></span>
-                <select id="presetSelect"></select>
-              </label>
-              <input id="presetName" class="preset-name" type="text" hidden>
-              <div class="preset-tools">
-                <button id="presetNew" class="tool" data-i18n="preset_new"></button>
-                <button id="presetRename" class="tool" data-i18n="preset_rename"></button>
-                <button id="presetDelete" class="tool" data-i18n="preset_delete"></button>
-              </div>
-            </div>
-            <p class="hint sync" data-i18n="sync_note"></p>
+          <!-- Hidden Legacy Saved Arrangements -->
+          <div class="card" id="legacyPresetCard" style="display:none;">
+            <select id="presetSelect"></select>
+            <input id="presetName" class="preset-name" type="text" hidden>
+            <button id="presetNew" class="tool"></button>
+            <button id="presetRename" class="tool"></button>
+            <button id="presetDelete" class="tool"></button>
           </div>
 
           <div class="flow">
-            <div class="card step" id="stepScreen">
-              <h2><b class="num">1</b><span data-i18n="step_screen"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_display">i</button></h2>
-              <p class="help" id="help_display" data-i18n="help_display" hidden></p>
-              <div class="display-map" id="displayMap"></div>
-              <label class="check"><input type="checkbox" id="sameDisplayOnly"><span><span data-i18n="same_display_only"></span><small data-i18n="same_display_hint"></small></span></label>
-            </div>
-
-            <div class="card step">
-              <h2><b class="num">2</b><span data-i18n="step_split"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_layout">i</button></h2>
-              <p class="help" id="help_layout" data-i18n="help_layout" hidden></p>
-              <div class="shapes" id="shapes" role="radiogroup" data-i18n-label="shape_label"></div>
-              <details class="sub">
-                <summary data-i18n="layout_custom"></summary>
-                <div class="custom-grid" id="customGrid">
-                <label class="row" for="cols"><span data-i18n="cols_label"></span><output id="colsValue">4</output></label>
-                <input id="cols" type="range" min="1" max="6" step="1" value="4">
-                <label class="row" for="rows"><span data-i18n="rows_label"></span><output id="rowsValue">2</output></label>
-                <input id="rows" type="range" min="1" max="4" step="1" value="2">
-                </div>
-              </details>
-              <details class="sub">
-                <summary data-i18n="arrange_options"></summary>
-                <label class="check"><input type="checkbox" id="skipMinimized"><span data-i18n="skip_minimized"></span></label>
-                <label class="check"><input type="checkbox" id="keepOrder"><span><span data-i18n="keep_order"></span><small data-i18n="keep_order_hint"></small></span></label>
-              </details>
+            <!-- Screen 1 / Screen 2 / Screen 3 Selector Cards (Wireframe Image 1 & 2) -->
+            <div class="card step screen-selector-card">
+              <h2>Select which monitors to open browser windows.</h2>
+              <p class="sidebar-hint" style="margin-bottom: 8px;">You can select multiple monitors</p>
+              <div class="screens-grid" id="screensGrid"></div>
+              <label class="check" style="margin-top: 10px;"><input type="checkbox" id="sameDisplayOnly"><span><span data-i18n="same_display_only"></span></span></label>
             </div>
           </div>
 
-          <div class="card step">
-            <h2><b class="num">3</b><span data-i18n="step_open"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_slots">i</button></h2>
-            <p class="help" id="help_slots" data-i18n="help_slots" hidden></p>
-            <p class="hint" data-i18n="step_open_hint"></p>
-            <details class="bulk">
-              <summary data-i18n="bulk_paste"></summary>
-              <ol class="rules">
-                <li data-i18n="bulk_rule_1"></li>
-                <li data-i18n="bulk_rule_2"></li>
-                <li data-i18n="bulk_rule_3"></li>
-              </ol>
-              <p class="hint" data-i18n="name_safe"></p>
-              <textarea id="bulkText" rows="9" spellcheck="false"></textarea>
-              <div class="bulk-actions">
-                <button id="bulkApply" class="primary" data-i18n="bulk_apply"></button>
-                <button id="bulkExample" class="tool" data-i18n="bulk_example"></button>
-                <small data-i18n="bulk_replace"></small>
+          <!-- Main Integrated Workspace: Left Windows Library + Right Workspace Canvas (Wireframe Image 2) -->
+          <div class="workspace-layout">
+            <!-- Left Panel: Windows Library -->
+            <aside class="windows-sidebar">
+              <div class="sidebar-header">
+                <h3>Windows</h3>
+                <button id="btnOpenRegisterModal" type="button" class="btn-add-icon" title="新規ウィンドウを登録">＋</button>
               </div>
-              <h3 class="pv-title" data-i18n="bulk_preview"></h3>
-              <div class="preview" id="bulkPreview"></div>
-            </details>
-            <p class="hint" data-i18n="reorder_hint"></p>
-            <div class="slots" id="slots"></div>
-            <label class="check"><input type="checkbox" id="openEmpty"><span><span data-i18n="open_empty"></span><small data-i18n="open_empty_hint"></small></span></label>
-            <label class="check"><input type="checkbox" id="groupTabs"><span><span data-i18n="group_tabs"></span><small data-i18n="group_tabs_hint"></small></span></label>
+              <p class="sidebar-hint">double click to edit</p>
+              <div class="windows-list" id="libraryTray"></div>
+            </aside>
+
+            <!-- Right Panel: Screen Canvas & Browser Grid -->
+            <main class="workspace-main">
+              <div class="workspace-toolbar">
+                <div class="browser-count-adjuster">
+                  <span data-i18n="how_many_browsers">how many browsers</span>
+                  <button id="btnSlotDec" type="button" class="step-btn">-</button>
+                  <input type="number" id="slotCountInput" class="count-input" min="1" max="16" value="8">
+                  <button id="btnSlotInc" type="button" class="step-btn">+</button>
+                </div>
+
+                <div class="workspace-actions">
+                  <!-- Layout Dropdown Selector (Image 4 & 5) -->
+                  <div class="layout-dropdown-container" id="layoutDropdownContainer">
+                    <button id="btnLayoutPicker" type="button" class="layout-picker-btn">
+                      <span>🗂 STANDARD <b id="currentLayoutName">layout A</b></span>
+                      <small>▼</small>
+                    </button>
+                    <div class="layout-dropdown-menu" id="layoutDropdownMenu" hidden>
+                      <div class="layout-list" id="layoutList"></div>
+                      <button id="btnCreateNewLayout" type="button" class="btn-create-new-layout" data-i18n="btn_create_new_layout">＋ 新しいウィンドウレイアウトを作成</button>
+                    </div>
+                  </div>
+
+                  <button id="btnEqualize" type="button" class="tool-sm" data-i18n="btn_equalize"></button>
+                  <button id="btnCanvasUndo" type="button" class="tool-sm" data-i18n="btn_undo_canvas"></button>
+                  <button id="btnCanvasClear" type="button" class="tool-sm danger" data-i18n="btn_clear_canvas"></button>
+                  <button id="btnLaunchSelected" type="button" class="primary-sm" data-i18n="btn_launch_selected"></button>
+                </div>
+              </div>
+
+              <!-- Main Screen Outer Frame -->
+              <div class="screen-frame-container" id="launchCanvas">
+                <p class="canvas-empty-hint" id="canvasEmptyHint" data-i18n="canvas_empty_hint"></p>
+                <div class="canvas-grid" id="canvasGrid"></div>
+              </div>
+            </main>
           </div>
 
-          <div class="card step go">
-            <h2><b class="num">4</b><span data-i18n="step_go"></span></h2>
-            <div class="actions">
-              <button id="launch2" class="primary" data-i18n="launch"></button>
-              <button id="retile2" data-i18n="retile"></button>
-              <button id="presetCapture" data-i18n="save_current"></button>
-            </div>
-          </div>
+          <!-- Hidden Legacy Details Container for Custom Grid compatibility -->
+          <details class="sub" style="display:none;">
+            <summary data-i18n="layout_custom"></summary>
+            <input id="cols" type="range" min="1" max="6" value="4">
+            <input id="rows" type="range" min="1" max="4" value="2">
+            <div id="shapes"></div>
+            <div id="displayMap"></div>
+            <div id="slots"></div>
+            <textarea id="bulkText"></textarea>
+            <button id="bulkApply"></button>
+            <button id="bulkAppend"></button>
+          </details>
         </section>
 
         <section id="panel-resize" role="tabpanel" aria-labelledby="tab-resize" hidden>
@@ -180,7 +187,14 @@
         </section>
 
         <section id="panel-windows" role="tabpanel" aria-labelledby="tab-windows" hidden>
-          <div class="card">
+          <!-- Section 1: Global Registered Windows Library -->
+          <div class="card" id="registeredWindowsCard">
+            <h2><span data-i18n="sec_registered_windows">登録済みウィンドウ</span> <button id="btnOpenRegisterModal2" type="button" class="btn-add-icon-sm" title="新規ウィンドウを登録">＋ 新規追加</button></h2>
+            <div class="registered-windows-full-list" id="registeredWindowsList"></div>
+          </div>
+
+          <!-- Section 2: Currently Open Browser Windows -->
+          <div class="card" id="openWindowsCard">
             <h2><span data-i18n="sec_open_windows"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_windows">i</button></h2>
             <p class="help" id="help_windows" data-i18n="help_windows" hidden></p>
             <p class="hint" data-i18n="dock_hint"></p>
@@ -202,9 +216,67 @@
           <button id="editShortcuts" data-i18n="change_shortcuts"></button>
         </div>
 
+        <div class="card danger-zone">
+          <h2 class="danger-title">⚠️ <span data-i18n="sec_danger_zone">Danger Zone</span></h2>
+          <p class="hint" data-i18n="danger_reset_hint">Reset all saved window decks, layouts, and configurations to factory defaults.</p>
+          <button id="btnFactoryReset" type="button" class="btn-danger-reset" data-i18n="btn_factory_reset">Reset All Data & Settings</button>
+        </div>
+
       </div>
 
       <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- Modal: Register a window / Bulk Create with text (Wireframe Image 3) -->
+    <div class="modal-overlay" id="registerModal" hidden>
+      <div class="modal-card">
+        <div class="modal-header">
+          <button id="modalBackBtn" type="button" class="modal-back-btn" hidden>←</button>
+          <h2 id="modalTitle" data-i18n="register_window_title">Register a window</h2>
+          <button id="modalCloseBtn" type="button" class="modal-close-btn">✕</button>
+        </div>
+        
+        <!-- Mode A: Single Window Register -->
+        <div class="modal-body" id="modalSingleBody">
+          <input type="text" id="regWindowName" class="modal-input" placeholder="Window name" data-i18n-placeholder="window_name_placeholder">
+          <div class="url-inputs-list" id="regUrlList">
+            <div class="url-input-row">
+              <input type="url" class="modal-input reg-url" placeholder="https://..." spellcheck="false">
+              <button type="button" class="btn-remove-url-row" title="Delete URL">✕</button>
+            </div>
+            <div class="url-input-row">
+              <input type="url" class="modal-input reg-url" placeholder="https://..." spellcheck="false">
+              <button type="button" class="btn-remove-url-row" title="Delete URL">✕</button>
+              <button id="btnAddUrlRow" type="button" class="btn-add-url">＋</button>
+            </div>
+          </div>
+          
+          <div class="modal-actions">
+            <button id="btnRegClear" type="button" class="tool" data-i18n="btn_clear">Clear</button>
+            <button id="btnRegSubmit" type="button" class="primary" data-i18n="btn_register_window">Register this window</button>
+          </div>
+
+          <div class="modal-divider"><span data-i18n="or_word">Or</span></div>
+
+          <button id="btnSwitchToBulk" type="button" class="tool-block" data-i18n="btn_bulk_create">Bulk create with text / file</button>
+        </div>
+
+        <!-- Mode B: Bulk Create with text / File Import/Export -->
+        <div class="modal-body" id="modalBulkBody" hidden>
+          <div class="bulk-file-tools">
+            <button id="btnExportTxt" type="button" class="tool-sm">📥 Export to File (.txt)</button>
+            <button id="btnImportTxt" type="button" class="tool-sm">📤 Import from File (.txt)</button>
+            <input type="file" id="fileImportInput" accept=".txt,.json" hidden>
+          </div>
+
+          <textarea id="modalBulkText" class="modal-textarea" rows="12" spellcheck="false" placeholder="Window Name&#10;https://example.com/1&#10;https://example.com/2&#10;&#10;Second Window&#10;https://example.com/3"></textarea>
+          
+          <div class="modal-actions">
+            <button id="btnBulkClear" type="button" class="tool" data-i18n="btn_clear">Clear</button>
+            <button id="btnBulkSubmit" type="button" class="primary" data-i18n="btn_register_window">Register All Windows</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="strings.js"></script>

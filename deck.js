@@ -388,32 +388,52 @@ function paintSlots() {
   }
 }
 
+function renderKeycaps(container, shortcut) {
+  if (!container) return;
+  container.textContent = "";
+  if (!shortcut) {
+    const unset = document.createElement("span");
+    unset.className = "unset";
+    unset.textContent = t("unset");
+    container.append(unset);
+    return;
+  }
+  const keys = shortcutKeys(shortcut);
+  keys.forEach((key, index) => {
+    if (index > 0) {
+      const plus = document.createElement("span");
+      plus.className = "key-plus";
+      plus.textContent = " + ";
+      container.append(plus);
+    }
+    const kbd = document.createElement("kbd");
+    kbd.className = "key-cap";
+    let icon = "";
+    if (key === "Alt" || key === "Option") icon = "⌥ ";
+    else if (key === "Command" || key === "Cmd") icon = "⌘ ";
+    else if (key === "Shift") icon = "⇧ ";
+    else if (key === "Control" || key === "Ctrl") icon = "⌃ ";
+    kbd.textContent = `${icon}${key}`;
+    container.append(kbd);
+  });
+}
+
 async function paintShortcuts() {
   if (orphaned()) return;
   const commands = await chrome.commands.getAll();
   paintInlineShortcuts(commands);
   const list = $("#shortcutList");
+  if (!list) return;
   list.textContent = "";
   const labels = { ...COMMAND_LABELS };
   for (let i = 1; i <= 8; i++) labels[`focus-tile-${i}`] = null;
   for (const [name, key] of Object.entries(labels)) {
     const command = commands.find((entry) => entry.name === name);
     if (!command) continue;
-    const { words, native } = shortcutForms(command.shortcut);
     const term = document.createElement("dt");
     term.textContent = key ? t(key) : `${t("cmd_tile_n")} ${name.replace("focus-tile-", "")}`;
     const value = document.createElement("dd");
-    if (words) {
-      value.textContent = words;
-      if (native) {
-        const chip = document.createElement("kbd");
-        chip.textContent = native;
-        value.append(" ", chip);
-      }
-    } else {
-      value.textContent = t("unset");
-      value.classList.add("unset");
-    }
+    renderKeycaps(value, command.shortcut);
     list.append(term, value);
   }
 }
@@ -422,120 +442,52 @@ async function paintShortcuts() {
 // the picker is the arrangement rather than a list of indistinguishable names.
 // Each one can be flashed, the way macOS does in Arrangement.
 async function paintDisplayOptions() {
-  const map = $("#displayMap");
+  const container = $("#screensGrid");
   const response = await ask({ type: "displays" });
   const displays = response?.displays ?? [];
-  map.textContent = "";
+  if (container) container.textContent = "";
   if (!displays.length) return;
-  // With one monitor there is no decision to make, so the step collapses to a
-  // single line instead of a picker showing one option.
-  $("#stepScreen")?.classList.toggle("solo", displays.length < 2);
-  if (displays.length < 2) {
-    const only = document.createElement("p");
-    only.className = "hint";
-    only.textContent = `${t("screen_one")} — ${displays[0].bounds.width}×${displays[0].bounds.height}`;
-    map.append(only);
-    return;
+
+  const activeDisplay = displays.find((d) => String(d.id) === state.targetDisplay)
+    || displays.find((d) => d.isFocused)
+    || displays[0];
+
+  if (activeDisplay?.bounds) {
+    const { width, height } = activeDisplay.bounds;
+    const canvas = $("#launchCanvas");
+    if (canvas && width && height) {
+      canvas.style.aspectRatio = `${width} / ${height}`;
+    }
   }
 
-  const selected = new Set(state.targetDisplays ?? []);
-  const follow = document.createElement("button");
-  follow.type = "button";
-  follow.className = "follow";
-  follow.setAttribute("aria-pressed", String(selected.size === 0));
-  const here = displays.find((display) => display.isFocused);
-  follow.textContent = here
-    ? `${t("display_focused")}（${t("display_word")} ${here.number}）`
-    : t("display_focused");
-  follow.addEventListener("click", async () => {
-    state.targetDisplays = [];
-    await save({ targetDisplays: [], targetDisplay: "focused" });
-    await paintDisplayOptions();
-    say("saved");
-  });
-  map.append(follow);
+  displays.forEach((display, idx) => {
+    const card = document.createElement("div");
+    const isThisScreen = display.isFocused || idx === 0;
+    const isSelected = (state.targetDisplay === String(display.id)) || (state.targetDisplay === "focused" && isThisScreen);
+    card.className = isSelected ? "screen-card active" : "screen-card";
+    
+    const icon = document.createElement("div");
+    icon.className = "screen-monitor-icon";
 
-  // One shared scale keeps the proportions honest: a 4K next to a laptop
-  // screen looks like a 4K next to a laptop screen.
-  const minLeft = Math.min(...displays.map((d) => d.bounds.left));
-  const minTop = Math.min(...displays.map((d) => d.bounds.top));
-  const maxRight = Math.max(...displays.map((d) => d.bounds.left + d.bounds.width));
-  const maxBottom = Math.max(...displays.map((d) => d.bounds.top + d.bounds.height));
-  const scale = Math.min(360 / (maxRight - minLeft), 150 / (maxBottom - minTop));
+    const title = document.createElement("span");
+    title.className = "screen-title";
+    title.textContent = `screen ${idx + 1}${isThisScreen ? ` (${t("screen_this")})` : ""}`;
 
-  const stage = document.createElement("div");
-  stage.className = "stage";
-  stage.style.width = `${Math.round((maxRight - minLeft) * scale)}px`;
-  stage.style.height = `${Math.round((maxBottom - minTop) * scale)}px`;
+    const deviceName = document.createElement("span");
+    deviceName.className = "screen-device-name";
+    deviceName.textContent = display.name ? display.name : "";
 
-  for (const display of displays) {
-    const badges = [
-      display.isInternal ? t("display_internal") : null,
-      display.isPrimary ? t("display_primary") : null,
-      display.isMirrored ? t("display_mirror") : null,
-      display.isFocused ? t("display_here") : null,
-    ].filter(Boolean);
-
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "screen";
-    card.setAttribute("aria-pressed", String(selected.has(display.id)));
-    // Chosen directly is filled; "wherever I am" resolving here is outlined.
-    // Painting both the same blue would hide which of the two is happening.
-    if (!selected.size && display.isFocused) card.classList.add("resolved");
-    card.style.left = `${Math.round((display.bounds.left - minLeft) * scale)}px`;
-    card.style.top = `${Math.round((display.bounds.top - minTop) * scale)}px`;
-    card.style.width = `${Math.round(display.bounds.width * scale)}px`;
-    card.style.height = `${Math.round(display.bounds.height * scale)}px`;
-    card.title = `${display.name || ""} ${display.bounds.width}×${display.bounds.height}`.trim();
-    card.innerHTML = "";
-
-    const number = document.createElement("b");
-    number.textContent = String(display.number);
-    const size = document.createElement("small");
-    size.textContent = `${display.bounds.width}×${display.bounds.height}`;
-    card.append(number, size);
-    if (badges.length) {
-      const tag = document.createElement("em");
-      tag.textContent = badges.join(" · ");
-      card.append(tag);
-    }
-    card.setAttribute("aria-label",
-      `${t("display_word")} ${display.number} ${display.bounds.width}×${display.bounds.height} ${badges.join(" ")}`);
+    card.append(icon, title, deviceName);
 
     card.addEventListener("click", async () => {
-      const next = new Set(state.targetDisplays ?? []);
-      if (next.has(display.id)) next.delete(display.id); else next.add(display.id);
-      state.targetDisplays = [...next];
-      await save({ targetDisplays: state.targetDisplays, targetDisplay: "focused" });
+      state.targetDisplay = String(display.id);
+      await save({ targetDisplay: state.targetDisplay });
       await paintDisplayOptions();
-      say("saved");
+      note(`screen ${idx + 1} を選択しました`);
     });
 
-    const flash = document.createElement("span");
-    flash.className = "flash";
-    flash.setAttribute("role", "button");
-    flash.setAttribute("tabindex", "0");
-    flash.textContent = "◉";
-    flash.title = t("display_identify");
-    flash.setAttribute("aria-label", `${t("display_identify")} ${display.number}`);
-    const identify = (event) => {
-      event.stopPropagation();
-      ask({
-        type: "identify",
-        displayId: display.id,
-        number: display.number,
-        label: badges.join(" · "),
-      });
-    };
-    flash.addEventListener("click", identify);
-    flash.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") identify(event);
-    });
-    card.append(flash);
-    stage.append(card);
-  }
-  map.append(stage);
+    container?.append(card);
+  });
 }
 
 function paintLanguageOptions() {
@@ -592,16 +544,17 @@ function paintSizes() {
 }
 
 function paintResize() {
-  document.querySelector(`input[name=anchor][value="${state.spotlightAnchor}"]`)?.setAttribute("checked", "checked");
   const anchorInput = document.querySelector(`input[name=anchor][value="${state.spotlightAnchor}"]`);
-  if (anchorInput) anchorInput.checked = true;
-  $("#spotlightWidth").value = state.spotlightWidth;
-  $("#widthValue").value = `${state.spotlightWidth}%`;
-  $("#spotlightHeight").value = state.spotlightHeight;
-  $("#heightValue").value = `${state.spotlightHeight}%`;
-  $("#customSize").hidden = state.spotlightSize !== "custom";
-  // A full-screen window has nowhere to land, so the choice is meaningless.
-  $("#anchorCard").hidden = state.spotlightSize === "full";
+  if (anchorInput) {
+    anchorInput.setAttribute("checked", "checked");
+    anchorInput.checked = true;
+  }
+  const spW = $("#spotlightWidth"); if (spW) spW.value = state.spotlightWidth;
+  const wVal = $("#widthValue"); if (wVal) wVal.value = `${state.spotlightWidth}%`;
+  const spH = $("#spotlightHeight"); if (spH) spH.value = state.spotlightHeight;
+  const hVal = $("#heightValue"); if (hVal) hVal.value = `${state.spotlightHeight}%`;
+  const cSize = $("#customSize"); if (cSize) cSize.hidden = state.spotlightSize !== "custom";
+  const aCard = $("#anchorCard"); if (aCard) aCard.hidden = state.spotlightSize === "full";
 }
 
 // The same page is the toolbar popup and the full-page options screen. In a
@@ -626,12 +579,12 @@ function paintInlineShortcuts(commands) {
   for (const [id, name] of Object.entries(INLINE_KEYS)) {
     const node = $(`#${id}Keys`);
     if (!node) continue;
-    // Undo ships without a key — Chrome allows only four suggested ones — so
-    // its line stays blank rather than shouting "not set" every time.
-    const words = shortcutForms(commands.find((entry) => entry.name === name)?.shortcut).words;
-    // Full screen and undo ship without a key — Chrome allows only four
-    // defaults — so their line stays blank rather than shouting "not set".
-    node.textContent = words || (id === "undo" || id === "fullscreen" ? "" : t("unset"));
+    const command = commands.find((entry) => entry.name === name);
+    if (!command?.shortcut) {
+      node.textContent = (id === "undo" || id === "fullscreen") ? "" : t("unset");
+    } else {
+      renderKeycaps(node, command.shortcut);
+    }
   }
 }
 
@@ -646,26 +599,29 @@ async function render() {
   });
 
   const preset = current();
-  $("#cols").value = preset.columns;
-  $("#colsValue").value = preset.columns;
-  $("#rows").value = preset.rows;
-  $("#rowsValue").value = preset.rows;
+  const cols = $("#cols"); if (cols) cols.value = preset.columns;
+  const colsVal = $("#colsValue"); if (colsVal) colsVal.value = preset.columns;
+  const rows = $("#rows"); if (rows) rows.value = preset.rows;
+  const rowsVal = $("#rowsValue"); if (rowsVal) rowsVal.value = preset.rows;
   const customDetails = $("#customGrid")?.closest("details");
   if (customDetails) {
     customDetails.open = currentLayoutId() === "custom";
     customDetails.classList.toggle("selected", currentLayoutId() === "custom");
   }
-  $("#skipMinimized").checked = state.skipMinimized;
-  $("#keepOrder").checked = state.keepOrder;
-  $("#sameDisplayOnly").checked = state.sameDisplayOnly;
-  $("#groupTabs").checked = state.groupTabs;
-  $("#openEmpty").checked = state.openEmpty;
+  const sMin = $("#skipMinimized"); if (sMin) sMin.checked = state.skipMinimized;
+  const kOrd = $("#keepOrder"); if (kOrd) kOrd.checked = state.keepOrder;
+  const sDisp = $("#sameDisplayOnly"); if (sDisp) sDisp.checked = state.sameDisplayOnly;
+  const gTabs = $("#groupTabs"); if (gTabs) gTabs.checked = state.groupTabs;
+  const oEmp = $("#openEmpty"); if (oEmp) oEmp.checked = state.openEmpty;
 
   const bulk = $("#bulkText");
   if (bulk) { bulk.placeholder = t("bulk_placeholder"); paintBulkPreview(); }
   paintPresetTabs();
-  $("#noSaved").hidden = state.presets.some((preset) =>
-    (preset.slots ?? []).some((slot) => (slot?.urls ?? "").trim()));
+  const noSaved = $("#noSaved");
+  if (noSaved) {
+    noSaved.hidden = state.presets.some((preset) =>
+      (preset.slots ?? []).some((slot) => (slot?.urls ?? "").trim()));
+  }
   paintLayoutOptions();
   paintPreview();
   paintSlots();
@@ -675,6 +631,9 @@ async function render() {
   await paintDisplayOptions();
   await paintShortcuts();
   await paintFullscreen();
+  syncTrayFromPreset();
+  renderLibraryTray();
+  renderLaunchCanvas();
 }
 
 let listTimer;
@@ -713,9 +672,9 @@ customDetails?.addEventListener("toggle", async () => {
 
 for (const id of ["cols", "rows"]) {
   const input = $(`#${id}`);
-  input.addEventListener("input", () => { $(`#${id}Value`).value = input.value; });
-  input.addEventListener("change", async () => {
-    applyCustomGrid(current(), $("#cols").value, $("#rows").value);
+  input?.addEventListener("input", () => { const o = $(`#${id}Value`); if (o) o.value = input.value; });
+  input?.addEventListener("change", async () => {
+    applyCustomGrid(current(), $("#cols")?.value || 4, $("#rows")?.value || 2);
     customDetails?.classList.add("selected");
     paintLayoutOptions();
     paintPreview();
@@ -797,8 +756,8 @@ $("#presetDelete")?.addEventListener("click", async () => {
 for (const [id, key] of [["spotlightWidth", "spotlightWidth"], ["spotlightHeight", "spotlightHeight"]]) {
   const input = $(`#${id}`);
   const output = id === "spotlightWidth" ? $("#widthValue") : $("#heightValue");
-  input.addEventListener("input", () => { output.value = `${input.value}%`; });
-  input.addEventListener("change", async () => {
+  input?.addEventListener("input", () => { if (output) output.value = `${input.value}%`; });
+  input?.addEventListener("change", async () => {
     state = { ...state, [key]: Number(input.value) };
     await save({ [key]: Number(input.value) });
     say("saved");
@@ -822,7 +781,7 @@ document.querySelectorAll("input[name=anchor]").forEach((radio) => {
 });
 
 for (const id of ["skipMinimized", "keepOrder", "sameDisplayOnly", "groupTabs", "openEmpty"]) {
-  $(`#${id}`).addEventListener("change", async (event) => {
+  $(`#${id}`)?.addEventListener("change", async (event) => {
     state = { ...state, [id]: event.target.checked };
     await save({ [id]: event.target.checked });
     say("saved");
@@ -972,20 +931,936 @@ $("#bulkExample")?.addEventListener("click", () => {
   $("#bulkText").focus();
 });
 
-$("#bulkApply")?.addEventListener("click", async () => {
-  const parsed = parsePastedList($("#bulkText").value);
-  if (!parsed.length) { say("bulk_empty"); return; }
+// --- Interactive Deck Canvas & Tray State ---
+let trayItems = [];
+let canvasSlots = [];
+let selectedTrayIndices = new Set();
+let canvasHistory = [];
+let splitMode = "auto";
+let oddMode = "blank";
+let editingItem = null;
+let editingSource = null;
+
+function normalizeUrls(urlsStr) {
+  return String(urlsStr || "").split("\n").map((line) => line.trim().toLowerCase()).filter(Boolean).sort().join("\n");
+}
+
+function isDuplicateWindow(name, urls, list, excludeId = null) {
+  const normName = String(name || "").trim().toLowerCase();
+  const normUrls = normalizeUrls(urls);
+  return list.some((item) => {
+    if (excludeId && item.id === excludeId) return false;
+    const existingName = String(item.name || "").trim().toLowerCase();
+    const existingUrls = normalizeUrls(item.urls);
+    return existingName === normName && existingUrls === normUrls;
+  });
+}
+
+function pushCanvasHistory() {
+  canvasHistory.push(JSON.stringify(canvasSlots));
+  if (canvasHistory.length > 20) canvasHistory.shift();
+}
+
+function popCanvasHistory() {
+  if (!canvasHistory.length) return;
+  canvasSlots = JSON.parse(canvasHistory.pop());
+  renderLaunchCanvas();
+}
+
+function syncTrayFromPreset() {
   const preset = current();
-  applyBulkLayout(preset, parsed.length);
-  preset.slots = parsed.map((slot, index) => ({
-    ...slot,
-    color: preset.slots?.[index]?.color ?? "auto",
-  }));
-  await savePresets();
-  await render();
-  paintBulkPreview();
-  $("#status").textContent = `${parsed.length} ${t("bulk_done")}`;
-});
+  if (preset?.slots?.length) {
+    trayItems = preset.slots
+      .filter((s) => (s.urls || s.name || "").trim())
+      .map((s, idx) => ({ id: `tray-${idx}-${Date.now()}`, name: s.name || `Window ${idx+1}`, urls: s.urls || "", color: s.color || "auto" }));
+  } else {
+    trayItems = [];
+  }
+}
+
+function createUrlRow(value = "") {
+  const row = document.createElement("div");
+  row.className = "url-input-row";
+
+  const input = document.createElement("input");
+  input.type = "url";
+  input.className = "modal-input reg-url";
+  input.placeholder = "https://...";
+  input.spellcheck = false;
+  input.value = value;
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "btn-remove-url-row";
+  removeBtn.textContent = "✕";
+  removeBtn.title = "URLを削除";
+  removeBtn.addEventListener("click", () => {
+    const allRows = document.querySelectorAll(".url-input-row");
+    if (allRows.length > 1) {
+      row.remove();
+    } else {
+      input.value = "";
+    }
+  });
+
+  row.append(input, removeBtn);
+  return row;
+}
+
+function openModalForEdit(item, source = "library") {
+  editingItem = item;
+  editingSource = source;
+  const modal = $("#registerModal");
+  const modalSingleBody = $("#modalSingleBody");
+  const modalBulkBody = $("#modalBulkBody");
+  const modalTitle = $("#modalTitle");
+  const modalBackBtn = $("#modalBackBtn");
+
+  if (!modal) return;
+  modal.hidden = false;
+  modalSingleBody.hidden = false;
+  modalBulkBody.hidden = true;
+  modalBackBtn.hidden = true;
+  if (modalTitle) modalTitle.textContent = "ウィンドウの編集";
+
+  const nameInput = $("#regWindowName");
+  if (nameInput) nameInput.value = item.name || "";
+
+  const list = $("#regUrlList");
+  if (list) {
+    list.textContent = "";
+    const lines = String(item.urls || "").split("\n").map(l => l.trim()).filter(Boolean);
+    if (!lines.length) lines.push("");
+    lines.forEach((urlLine) => {
+      list.append(createUrlRow(urlLine));
+    });
+  }
+}
+
+function renderRegisteredWindowsList() {
+  const container = $("#registeredWindowsList");
+  if (!container) return;
+  container.textContent = "";
+
+  if (!trayItems.length) {
+    const empty = document.createElement("p");
+    empty.className = "hint";
+    empty.textContent = t("no_saved") || "登録されたウィンドウがありません。＋ボタンから追加してください。";
+    container.append(empty);
+    return;
+  }
+
+  trayItems.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "reg-win-row";
+
+    const info = document.createElement("div");
+    info.className = "reg-win-info";
+    const name = document.createElement("b");
+    name.textContent = item.name || t("unnamed");
+    const urls = document.createElement("small");
+    const count = (item.urls || "").split("\n").filter(Boolean).length;
+    urls.textContent = `${count} ${t("tabs_count") || "tabs"}: ${item.urls ? item.urls.split("\n")[0] : ""}`;
+    info.append(name, urls);
+
+    const tools = document.createElement("div");
+    tools.className = "reg-win-tools";
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "tool-icon";
+    editBtn.textContent = "✏️";
+    editBtn.title = "編集";
+    editBtn.addEventListener("click", () => openModalForEdit(item, "library"));
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "tool-icon danger";
+    delBtn.textContent = "🗑";
+    delBtn.title = "削除";
+    delBtn.addEventListener("click", async () => {
+      trayItems.splice(index, 1);
+      await saveRegisteredWindows();
+      renderLibraryTray();
+      renderRegisteredWindowsList();
+      note(`${item.name || 'ウィンドウ'} を削除しました`);
+    });
+
+    tools.append(editBtn, delBtn);
+    row.append(info, tools);
+    container.append(row);
+  });
+}
+
+function renderLibraryTray() {
+  const trayContainer = $("#libraryTray");
+  if (!trayContainer) return;
+  trayContainer.textContent = "";
+
+  if (!trayItems.length) {
+    const empty = document.createElement("p");
+    empty.className = "hint";
+    empty.style.gridColumn = "1 / -1";
+    empty.textContent = t("no_saved");
+    trayContainer.append(empty);
+    return;
+  }
+
+  trayItems.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "window-library-card";
+    if (selectedTrayIndices.has(index)) card.classList.add("selected");
+    card.draggable = true;
+    card.dataset.index = String(index);
+
+    const titleBar = document.createElement("div");
+    titleBar.className = "card-title-bar";
+
+    const title = document.createElement("span");
+    title.textContent = item.name || t("unnamed");
+
+    const badge = document.createElement("small");
+    const urlCount = (item.urls || "").split("\n").filter(Boolean).length;
+    badge.textContent = `${urlCount} urls`;
+
+    titleBar.append(title, badge);
+    card.append(titleBar);
+
+    const urlLines = (item.urls || "").split("\n").filter(Boolean);
+    urlLines.slice(0, 3).forEach((line, i) => {
+      const tab = document.createElement("div");
+      tab.className = "tab-item";
+      tab.textContent = `tab ${i + 1}: ${line.replace(/^https?:\/\//i, '')}`;
+      card.append(tab);
+    });
+
+    card.addEventListener("dblclick", () => {
+      openModalForEdit(item, "library");
+    });
+
+    card.addEventListener("click", (e) => {
+      if (e.shiftKey || e.metaKey || e.ctrlKey) {
+        if (selectedTrayIndices.has(index)) {
+          selectedTrayIndices.delete(index);
+        } else {
+          selectedTrayIndices.add(index);
+        }
+      } else {
+        selectedTrayIndices.clear();
+        selectedTrayIndices.add(index);
+      }
+      renderLibraryTray();
+    });
+
+    card.addEventListener("dragstart", (e) => {
+      if (!selectedTrayIndices.has(index)) {
+        selectedTrayIndices.clear();
+        selectedTrayIndices.add(index);
+        renderLibraryTray();
+      }
+      const itemsToDrag = Array.from(selectedTrayIndices).map((i) => trayItems[i]).filter(Boolean);
+      e.dataTransfer.setData("application/json", JSON.stringify(itemsToDrag));
+      e.dataTransfer.effectAllowed = "copy";
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+
+    trayContainer.append(card);
+  });
+}
+
+function renderLaunchCanvas() {
+  const canvasGrid = $("#canvasGrid");
+  const hint = $("#canvasEmptyHint");
+  const countInput = $("#slotCountInput");
+  if (countInput) countInput.value = String(canvasSlots.length);
+  if (!canvasGrid) return;
+
+  canvasGrid.textContent = "";
+  if (!canvasSlots.length) {
+    if (hint) hint.hidden = false;
+    return;
+  }
+  if (hint) hint.hidden = true;
+
+  const count = canvasSlots.length;
+  let layout = globalThis.AIWindowDeckLayout.computeDynamicLayout(count, oddMode);
+
+  canvasGrid.style.gridTemplateColumns = `repeat(${layout.cols}, 1fr)`;
+  canvasGrid.style.gridTemplateRows = `repeat(${layout.rows}, 1fr)`;
+
+  canvasSlots.forEach((slot, i) => {
+    const cell = layout.cells[i] || { x: i % layout.cols, y: Math.floor(i / layout.cols), w: 1, h: 1 };
+    const card = document.createElement("div");
+    card.className = "canvas-card";
+    
+    const cellW = slot.customW ? Math.min(layout.cols, slot.customW) : cell.w;
+    const cellH = slot.customH ? Math.min(layout.rows, slot.customH) : cell.h;
+    card.style.gridColumn = `${cell.x + 1} / span ${cellW}`;
+    card.style.gridRow = `${cell.y + 1} / span ${cellH}`;
+
+    // Mac Browser Dots Header (O O O  X)
+    const macHeader = document.createElement("div");
+    macHeader.className = "canvas-card-mac-header";
+
+    const dots = document.createElement("div");
+    dots.className = "mac-dots";
+    for (let d = 0; d < 3; d++) {
+      const dot = document.createElement("span");
+      dot.className = "mac-dot";
+      dots.append(dot);
+    }
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "card-remove-btn";
+    removeBtn.textContent = "✕";
+    removeBtn.title = "このウィンドウを削除";
+    removeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pushCanvasHistory();
+      canvasSlots.splice(i, 1);
+      renderLaunchCanvas();
+    });
+
+    macHeader.append(dots, removeBtn);
+
+    const body = document.createElement("div");
+    body.className = "canvas-card-content";
+
+    const name = document.createElement("div");
+    name.className = "card-name";
+    name.textContent = `${slot.name || t("unnamed")}`;
+
+    const urls = document.createElement("div");
+    urls.className = "card-urls";
+    urls.textContent = slot.urls || "";
+
+    body.append(name, urls);
+
+    // Grid Snap Hover Overlay Controls
+    const overlay = document.createElement("div");
+    overlay.className = "canvas-card-hover-controls";
+
+    const label = document.createElement("span");
+    label.className = "overlay-label";
+    label.textContent = "Grid Snap:";
+
+    const btn1x1 = document.createElement("button");
+    btn1x1.type = "button";
+    btn1x1.className = "snap-btn";
+    btn1x1.textContent = "1×1";
+    btn1x1.title = "標準 1x1";
+    btn1x1.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pushCanvasHistory();
+      delete slot.customW;
+      delete slot.customH;
+      renderLaunchCanvas();
+    });
+
+    const btnHalf = document.createElement("button");
+    btnHalf.type = "button";
+    btnHalf.className = "snap-btn";
+    btnHalf.textContent = "Half";
+    btnHalf.title = "横幅半分";
+    btnHalf.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pushCanvasHistory();
+      slot.customW = Math.max(1, Math.floor(layout.cols / 2));
+      renderLaunchCanvas();
+    });
+
+    const btnFull = document.createElement("button");
+    btnFull.type = "button";
+    btnFull.className = "snap-btn";
+    btnFull.textContent = "Full";
+    btnFull.title = "全幅";
+    btnFull.addEventListener("click", (e) => {
+      e.stopPropagation();
+      pushCanvasHistory();
+      slot.customW = layout.cols;
+      renderLaunchCanvas();
+    });
+
+    overlay.append(label, btn1x1, btnHalf, btnFull);
+
+    card.append(macHeader, body, overlay);
+
+    // Double click canvas card to edit
+    card.addEventListener("dblclick", () => {
+      openModalForEdit(slot, "canvas");
+    });
+
+    // Specific slot drop target highlighting & replacement
+    card.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      card.style.borderColor = "#2f5bff";
+      card.style.boxShadow = "0 0 12px rgba(47, 91, 255, 0.4)";
+    });
+    card.addEventListener("dragleave", () => {
+      card.style.borderColor = "";
+      card.style.boxShadow = "";
+    });
+    card.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      card.style.borderColor = "";
+      card.style.boxShadow = "";
+      const json = e.dataTransfer.getData("application/json");
+      if (json) {
+        try {
+          const items = JSON.parse(json);
+          if (Array.isArray(items) && items.length) {
+            pushCanvasHistory();
+            canvasSlots[i] = { ...items[0] };
+            renderLaunchCanvas();
+            note(`${items[0].name || 'ウィンドウ'} をこの枠に配置しました`);
+          }
+        } catch {}
+      }
+    });
+
+    canvasGrid.append(card);
+  });
+}
+
+function closeModal() {
+  const modal = $("#registerModal");
+  if (modal) {
+    modal.hidden = true;
+  }
+  editingItem = null;
+  editingSource = null;
+}
+
+function openModal(mode = "single") {
+  const modal = $("#registerModal");
+  const modalSingleBody = $("#modalSingleBody");
+  const modalBulkBody = $("#modalBulkBody");
+  const modalTitle = $("#modalTitle");
+  const modalBackBtn = $("#modalBackBtn");
+
+  if (!modal) return;
+  editingItem = null;
+  editingSource = null;
+  modal.hidden = false;
+  if (mode === "bulk") {
+    if (modalSingleBody) modalSingleBody.hidden = true;
+    if (modalBulkBody) modalBulkBody.hidden = false;
+    if (modalBackBtn) modalBackBtn.hidden = false;
+    if (modalTitle) modalTitle.textContent = t("bulk_create_title");
+  } else {
+    if (modalSingleBody) modalSingleBody.hidden = false;
+    if (modalBulkBody) modalBulkBody.hidden = true;
+    if (modalBackBtn) modalBackBtn.hidden = true;
+    if (modalTitle) modalTitle.textContent = t("register_window_title");
+    if ($("#regWindowName")) $("#regWindowName").value = "";
+    const list = $("#regUrlList");
+    if (list) {
+      list.textContent = "";
+      list.append(createUrlRow(""), createUrlRow(""));
+    }
+  }
+}
+
+function initRegisterModal() {
+  const modal = $("#registerModal");
+
+  if (modal && !modal.dataset.initialized) {
+    modal.dataset.initialized = "true";
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    $("#btnOpenRegisterModal")?.addEventListener("click", () => openModal("single"));
+    $("#btnOpenRegisterModal2")?.addEventListener("click", () => openModal("single"));
+    $("#modalCloseBtn")?.addEventListener("click", closeModal);
+    $("#modalBackBtn")?.addEventListener("click", () => openModal("single"));
+    $("#btnSwitchToBulk")?.addEventListener("click", () => openModal("bulk"));
+
+    // Dynamic URL Input Rows
+    $("#btnAddUrlRow")?.addEventListener("click", () => {
+      const list = $("#regUrlList");
+      if (!list) return;
+      list.append(createUrlRow(""));
+    });
+
+    // Single submit with deduplication
+    $("#btnRegSubmit")?.addEventListener("click", async () => {
+      const name = $("#regWindowName")?.value.trim() || `Window ${trayItems.length + 1}`;
+      const urlInputs = document.querySelectorAll(".reg-url");
+      const urls = Array.from(urlInputs).map(i => i.value.trim()).filter(Boolean).join("\n");
+
+      if (!urls && !name) {
+        note("名前またはURLを入力してください");
+        return;
+      }
+
+      if (isDuplicateWindow(name, urls, trayItems, editingItem?.id)) {
+        note("同名の同じURLセットが既に登録されています（重複のためスキップ）");
+        return;
+      }
+
+      if (editingItem) {
+        editingItem.name = name;
+        editingItem.urls = urls;
+        if (!trayItems.some(t => t.id === editingItem.id)) {
+          trayItems.push({ ...editingItem });
+        }
+        note(`${name} を更新しました`);
+      } else {
+        const newCard = { id: `tray-reg-${Date.now()}`, name, urls, color: "auto" };
+        trayItems.push(newCard);
+        pushCanvasHistory();
+        canvasSlots.push({ ...newCard });
+        note(`${name} を登録しました`);
+      }
+
+      await saveRegisteredWindows();
+      renderLibraryTray();
+      renderRegisteredWindowsList();
+      renderLaunchCanvas();
+      closeModal();
+    });
+
+    $("#btnRegClear")?.addEventListener("click", () => {
+      if ($("#regWindowName")) $("#regWindowName").value = "";
+      document.querySelectorAll(".reg-url").forEach(i => { i.value = ""; });
+    });
+
+    // Bulk File Export (.txt)
+    $("#btnExportTxt")?.addEventListener("click", () => {
+      const lines = [];
+      trayItems.forEach((item, idx) => {
+        if (idx > 0) lines.push("");
+        lines.push(item.name || `Window ${idx + 1}`);
+        if (item.urls) lines.push(item.urls);
+      });
+      const textContent = lines.join("\n");
+      const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ai-window-deck-windows.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      note("ウィンドウ登録一覧をテキストファイルとして書き出しました");
+    });
+
+    // Bulk File Import (.txt)
+    $("#btnImportTxt")?.addEventListener("click", () => {
+      $("#fileImportInput")?.click();
+    });
+
+    $("#fileImportInput")?.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        const text = evt.target?.result || "";
+        const parsed = parsePastedList(text);
+        if (!parsed.length) { note("ファイルに有効なウィンドウ情報がありませんでした"); return; }
+
+        let addedCount = 0;
+        parsed.forEach((slot, index) => {
+          const name = slot.name || `Window ${trayItems.length + index + 1}`;
+          const urls = slot.urls || "";
+          if (!isDuplicateWindow(name, urls, trayItems)) {
+            trayItems.push({
+              id: `tray-file-${Date.now()}-${index}`,
+              name,
+              urls,
+              color: "auto",
+            });
+            addedCount++;
+          }
+        });
+
+        await saveRegisteredWindows();
+        renderLibraryTray();
+        renderRegisteredWindowsList();
+        renderLaunchCanvas();
+        note(`ファイルから ${addedCount} 個の新しいウィンドウを読み込みました`);
+        e.target.value = "";
+      };
+      reader.readAsText(file);
+    });
+
+    // Bulk submit
+    $("#btnBulkSubmit")?.addEventListener("click", async () => {
+      const text = $("#modalBulkText")?.value || "";
+      const parsed = parsePastedList(text);
+      if (!parsed.length) { note("有効な入力がありませんでした"); return; }
+
+      let addedCount = 0;
+      parsed.forEach((slot, index) => {
+        const name = slot.name || `Window ${trayItems.length + index + 1}`;
+        const urls = slot.urls || "";
+        if (!isDuplicateWindow(name, urls, trayItems)) {
+          const newCard = {
+            id: `tray-bulk-${Date.now()}-${index}`,
+            name,
+            urls,
+            color: "auto",
+          };
+          trayItems.push(newCard);
+          pushCanvasHistory();
+          canvasSlots.push({ ...newCard });
+          addedCount++;
+        }
+      });
+
+      await saveRegisteredWindows();
+      renderLibraryTray();
+      renderRegisteredWindowsList();
+      renderLaunchCanvas();
+      closeModal();
+      note(`${addedCount} 個のウィンドウを一括登録しました`);
+
+      if ($("#modalBulkText")) $("#modalBulkText").value = "";
+    });
+
+    $("#btnBulkClear")?.addEventListener("click", () => {
+      if ($("#modalBulkText")) $("#modalBulkText").value = "";
+    });
+  }
+}
+
+function initCanvasControls() {
+  const dropzone = $("#launchCanvas");
+  if (dropzone && !dropzone.dataset.initialized) {
+    dropzone.dataset.initialized = "true";
+
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("drag-over");
+    });
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.classList.remove("drag-over");
+    });
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("drag-over");
+      const json = e.dataTransfer.getData("application/json");
+      if (json) {
+        try {
+          const items = JSON.parse(json);
+          if (Array.isArray(items) && items.length) {
+            pushCanvasHistory();
+            canvasSlots.push(...items.map((item) => ({ ...item })));
+            renderLaunchCanvas();
+          }
+        } catch {}
+      }
+    });
+
+    const countInput = $("#slotCountInput");
+    if (countInput) {
+      const handleCountChange = () => {
+        const targetCount = Math.max(1, Math.min(16, parseInt(countInput.value) || 1));
+        countInput.value = String(targetCount);
+        pushCanvasHistory();
+        while (canvasSlots.length < targetCount) {
+          canvasSlots.push({
+            id: `slot-blank-${Date.now()}-${canvasSlots.length}`,
+            name: `Window ${canvasSlots.length + 1}`,
+            urls: "",
+            color: "auto",
+          });
+        }
+        while (canvasSlots.length > targetCount) {
+          canvasSlots.pop();
+        }
+        renderLaunchCanvas();
+      };
+
+      countInput.addEventListener("change", handleCountChange);
+      countInput.addEventListener("input", handleCountChange);
+    }
+
+    // Slot + / - controls (step by 1)
+    $("#btnSlotInc")?.addEventListener("click", () => {
+      const targetCount = Math.min(16, canvasSlots.length + 1);
+      if (countInput) countInput.value = String(targetCount);
+      pushCanvasHistory();
+      canvasSlots.push({
+        id: `slot-blank-${Date.now()}`,
+        name: `Window ${canvasSlots.length}`,
+        urls: "",
+        color: "auto",
+      });
+      renderLaunchCanvas();
+    });
+
+    $("#btnSlotDec")?.addEventListener("click", () => {
+      if (!canvasSlots.length) return;
+      const targetCount = Math.max(1, canvasSlots.length - 1);
+      if (countInput) countInput.value = String(targetCount);
+      pushCanvasHistory();
+      canvasSlots.pop();
+      renderLaunchCanvas();
+      note(t("slot_removed_hint") || "ウィンドウを1つ減らしました");
+    });
+
+    // Factory Reset with double confirmation
+    const btnReset = $("#btnFactoryReset");
+    let confirmResetState = false;
+    let resetTimer = null;
+
+    btnReset?.addEventListener("click", async () => {
+      if (!confirmResetState) {
+        confirmResetState = true;
+        btnReset.textContent = "🔴 本当に全データを初期化しますか？ (再度クリックで確定)";
+        btnReset.classList.add("confirming");
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          confirmResetState = false;
+          btnReset.textContent = t("btn_factory_reset") || "Reset All Data & Settings";
+          btnReset.classList.remove("confirming");
+        }, 4000);
+      } else {
+        clearTimeout(resetTimer);
+        confirmResetState = false;
+        await chrome.storage.sync.clear();
+        await chrome.storage.session.clear();
+        state = { ...DEFAULTS };
+        trayItems = [];
+        canvasSlots = [];
+        canvasHistory = [];
+        await render();
+        await renderCanvasAll();
+        note("全データと設定を完全初期化しました");
+        if (btnReset) {
+          btnReset.textContent = t("btn_factory_reset") || "Reset All Data & Settings";
+          btnReset.classList.remove("confirming");
+        }
+      }
+    });
+
+    // Equalize Layout button
+    $("#btnEqualize")?.addEventListener("click", () => {
+      pushCanvasHistory();
+      oddMode = "blank";
+      const blankRadio = document.querySelector("input[name='oddMode'][value='blank']");
+      if (blankRadio) blankRadio.checked = true;
+      renderLaunchCanvas();
+      note("レイアウトを全均等にリセットしました");
+    });
+
+    $("#btnCanvasAddAll")?.addEventListener("click", () => {
+      if (!trayItems.length) return;
+      pushCanvasHistory();
+      canvasSlots.push(...trayItems.map((item) => ({ ...item })));
+      renderLaunchCanvas();
+    });
+
+    $("#btnCanvasUndo")?.addEventListener("click", () => {
+      popCanvasHistory();
+    });
+
+    $("#btnCanvasClear")?.addEventListener("click", () => {
+      if (!canvasSlots.length) return;
+      pushCanvasHistory();
+      canvasSlots = [];
+      renderLaunchCanvas();
+    });
+
+    $("#btnLaunchSelected")?.addEventListener("click", async () => {
+      if (!canvasSlots.length) {
+        note("起動するウィンドウがキャンバスに配置されていません");
+        return;
+      }
+      const count = canvasSlots.length;
+      let layout;
+      if (splitMode === "fixed") {
+        const preset = current();
+        const cells = layoutCells(preset);
+        const board = boardOf(cells, preset.columns);
+        layout = { cols: board.cols, rows: board.rows, cells };
+      } else {
+        layout = globalThis.AIWindowDeckLayout.computeDynamicLayout(count, oddMode);
+      }
+
+      const payload = {
+        type: "launch",
+        preset: {
+          columns: layout.cols,
+          rows: layout.rows,
+          cells: layout.cells,
+          slots: canvasSlots,
+        },
+        targetDisplay: state.targetDisplay,
+        sameDisplayOnly: state.sameDisplayOnly,
+        groupTabs: state.groupTabs,
+        openEmpty: state.openEmpty,
+      };
+      const response = await ask(payload);
+      if (response?.ok) {
+        say("launched");
+      } else {
+        note("起動に失敗しました");
+      }
+    });
+  }
+}
+
+function initLayoutDropdown() {
+  const container = $("#layoutDropdownContainer");
+  const btnPicker = $("#btnLayoutPicker");
+  const menu = $("#layoutDropdownMenu");
+  const list = $("#layoutList");
+  const btnCreate = $("#btnCreateNewLayout");
+  const currentNameBadge = $("#currentLayoutName");
+
+  if (!btnPicker || !menu) return;
+
+  const renderDropdownList = () => {
+    if (!list) return;
+    list.textContent = "";
+    const activePreset = current();
+    if (currentNameBadge) currentNameBadge.textContent = activePreset?.name || "layout A";
+
+    (state.presets || []).forEach((preset, idx) => {
+      const item = document.createElement("div");
+      const isActive = state.presets[state.activePreset] === preset;
+      item.className = isActive ? "layout-item active" : "layout-item";
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "layout-item-title";
+      nameSpan.textContent = `🗂 ${preset.name || `layout ${String.fromCharCode(65 + idx)}`}`;
+
+      const actionTools = document.createElement("div");
+      actionTools.className = "layout-item-tools";
+
+      // Inline rename button ✏️
+      const renameBtn = document.createElement("button");
+      renameBtn.type = "button";
+      renameBtn.className = "layout-action-btn";
+      renameBtn.textContent = "✏️";
+      renameBtn.title = "名前を変更";
+      renameBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "layout-rename-input";
+        input.value = preset.name || "";
+        nameSpan.replaceWith(input);
+        input.focus();
+        input.select();
+
+        const commitName = async () => {
+          const newName = input.value.trim();
+          if (newName) {
+            preset.name = newName;
+            await savePresets();
+          }
+          renderDropdownList();
+        };
+
+        input.addEventListener("keydown", (evt) => {
+          if (evt.key === "Enter") commitName();
+          if (evt.key === "Escape") renderDropdownList();
+        });
+        input.addEventListener("blur", commitName);
+      });
+
+      // Delete layout button 🗑
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "layout-action-btn danger";
+      deleteBtn.textContent = "🗑";
+      deleteBtn.title = "レイアウトを削除";
+      deleteBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (state.presets.length <= 1) {
+          note(t("preset_last") || "最後の構成は削除できません");
+          return;
+        }
+        const delIdx = state.presets.indexOf(preset);
+        if (delIdx !== -1) {
+          state.presets.splice(delIdx, 1);
+          state.activePreset = Math.max(0, state.activePreset - 1);
+          await savePresets();
+          await render();
+          renderDropdownList();
+          note("レイアウトを削除しました");
+        }
+      });
+
+      const checkBadge = document.createElement("small");
+      checkBadge.textContent = isActive ? "✓" : "";
+
+      actionTools.append(renameBtn, deleteBtn, checkBadge);
+      item.append(nameSpan, actionTools);
+
+      item.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const realIdx = state.presets.indexOf(preset);
+        if (realIdx !== -1) {
+          state.activePreset = realIdx;
+          await save({ activePreset: realIdx });
+          menu.hidden = true;
+          await render();
+          await renderCanvasAll();
+          note(`${preset.name} に切り替えました`);
+        }
+      });
+
+      list.append(item);
+    });
+  };
+
+  // Initialize dropdown event listeners ONLY ONCE
+  if (!container.dataset.initialized) {
+    container.dataset.initialized = "true";
+
+    btnPicker.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+      if (!menu.hidden) {
+        renderDropdownList();
+      }
+    });
+
+    btnCreate?.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const newName = `layout ${String.fromCharCode(65 + state.presets.length)}`;
+      state.presets.push({
+        name: newName,
+        layoutId: "2x2", columns: 2, rows: 2, cells: null, shape: null, slots: [],
+      });
+      state.activePreset = state.presets.length - 1;
+      await savePresets();
+      menu.hidden = true;
+      await render();
+      await renderCanvasAll();
+      note(`新しいレイアウト ${newName} を作成しました`);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (container && !container.contains(e.target)) {
+        menu.hidden = true;
+      }
+    });
+  }
+
+  renderDropdownList();
+}
+
+async function renderCanvasAll() {
+  await loadRegisteredWindows();
+  renderLibraryTray();
+  renderRegisteredWindowsList();
+  renderLaunchCanvas();
+  initCanvasControls();
+  initRegisterModal();
+  initLayoutDropdown();
+}
 
 // Only the pop-out window can go full screen; the toolbar popup cannot.
 async function paintFullscreen() {
@@ -1033,4 +1908,5 @@ chrome.storage.sync.get(DEFAULTS).then(async (values) => {
   state = { ...DEFAULTS, ...values };
   await markSurface();
   await render();
+  await renderCanvasAll();
 });
