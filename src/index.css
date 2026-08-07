@@ -95,3 +95,13 @@ body.mode-dock, body.mode-dock #root {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.spotlight-preview-target {
+  transition: left 420ms ease-out, top 420ms ease-out, width 420ms ease-out, height 420ms ease-out, opacity 180ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-preview-target {
+    transition: none;
+  }
+}

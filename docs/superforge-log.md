@@ -9,3 +9,9 @@ Ran: Inline single-agent · subagentsなし（変更が同じメッセージ経�
 Wrote: docs/superforge.md, docs/superpowers/specs/2026-08-07-spotlight-retile-design.md, docs/plan.md, docs/verification.md
 Corrected: 「Option+Z は拡大前へ」ではなく「途中で手動リサイズしても、最初に立ち上げたタイル位置・サイズへ戻す」
 Wrong: Chrome実機の操作確認はユーザー確認待ち
+
+## 2026-08-07 · systematic-debugging → writing-plans · 再整列で設定画面まで動く、空き枠ドロップ、拡大の見え方
+Ran: Inline TDD · `test/background.test.js` をRED→GREENで追加
+Wrote: docs/superpowers/specs/2026-08-07-canvas-drop-preview-design.md, docs/superpowers/plans/2026-08-07-canvas-drop-preview.md
+Corrected: 「並べ直す」は全通常ウィンドウではなく、Deckが起動したウィンドウだけを対象にする
+Wrong: Chrome実機のドラッグ&ドロップとアニメーション確認はユーザー確認待ち

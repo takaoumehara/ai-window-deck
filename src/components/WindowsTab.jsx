@@ -9,9 +9,10 @@ export function WindowsTab({ lang, windows, onOpenAddModal, onEditWindow, onDele
   const [openWindows, setOpenWindows] = useState([]);
 
   const fetchOpenWindows = async () => {
-    if (typeof chrome !== "undefined" && chrome.windows) {
-      const wins = await chrome.windows.getAll({ populate: true });
-      setOpenWindows(wins.filter((w) => w.type === "normal"));
+    if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
+      chrome.runtime.sendMessage({ type: "windowList" }, (result) => {
+        if (result?.ok && Array.isArray(result.windows)) setOpenWindows(result.windows);
+      });
     }
   };
 
@@ -116,7 +117,6 @@ export function WindowsTab({ lang, windows, onOpenAddModal, onEditWindow, onDele
               <p className="text-xs text-zinc-500 text-center py-4">{t("noWindows")}</p>
             ) : (
               openWindows.map((win, idx) => {
-                const activeTab = win.tabs?.find((t) => t.active) || win.tabs?.[0];
                 return (
                   <div
                     key={win.id || idx}
@@ -124,10 +124,10 @@ export function WindowsTab({ lang, windows, onOpenAddModal, onEditWindow, onDele
                   >
                     <div className="flex flex-col gap-0.5 min-w-0">
                       <span className="text-xs font-bold text-zinc-200 truncate">
-                        Window #{win.id} {win.focused ? t("activeWinTag") : ""}
+                        {win.title || t("untitledWindow")} {win.isFocused ? t("activeWinTag") : ""}
                       </span>
                       <span className="text-[10px] text-zinc-500 truncate font-mono">
-                        {win.tabs?.length || 0} {t("tabsCount")}: {activeTab?.title || activeTab?.url || ""}
+                        {win.tabs || 0} {t("tabsCount")}: {win.url || ""}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">

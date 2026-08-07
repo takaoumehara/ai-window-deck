@@ -1,4 +1,4 @@
-# キャンバス再整列と拡大設定 — Verification
+# キャンバス再整列・空き枠ドロップ・拡大設定 — Verification
 
 Mode: single-pass (grader = implementer)
 
@@ -41,10 +41,10 @@ ok 4 - bulk URL entry chooses an even layout when no uneven shape is selected
 # Subtest: computeDynamicLayout correctly computes grid for odd and even counts with blank and hero modes
 ok 5 - computeDynamicLayout correctly computes grid for odd and even counts with blank and hero modes
 1..5
-# tests 5
-# pass 5
+# tests 8
+# pass 8
 # fail 0
-# duration_ms 38.146708
+# duration_ms 43.14775
 ```
 
 ### Grade A — production build
@@ -64,8 +64,8 @@ transforming...
 rendering chunks...
 computing gzip size...
 dist/index.html                   0.47 kB │ gzip:  0.32 kB
-dist/assets/popup-CxXGNXGd.css   29.10 kB │ gzip:  6.12 kB
-dist/assets/popup-uponx0o5.js   242.45 kB │ gzip: 73.62 kB
+dist/assets/popup-B0GGhQ_O.css   30.02 kB │ gzip:  6.30 kB
+dist/assets/popup-BHeAslaJ.js   246.84 kB │ gzip: 74.80 kB
 ✓ built in 1.16s
 ```
 
@@ -83,11 +83,14 @@ Output: command exited with code 0 and produced no output.
 
 - Grade C, based on the production build: the React component graph compiles with the new Spotlight configuration and retile action wiring.
 - Grade C, based on the Node syntax check: the packaged service-worker source parses after accepting the canvas-layout message.
+- Grade A, based on `test/background.test.js`: a Deck-only retile updates only a window ID stored as a Deck launch; an extension settings window and an unrelated website window are not updated.
 
 ## 確認していないこと
 
-- Chromeの拡張機能を再読み込みして、実際のウィンドウをキャンバス配置へ再整列する操作。
+- Chromeの拡張機能を再読み込みして、Deckから起動済みの実ウィンドウだけをキャンバス配置へ再整列する操作。
 - `Option+X` での拡大／直前サイズの交互切替、手動リサイズ後の `Option+Z` 復元。
+- 空きキャンバス枠が青くハイライトした状態でのドロップ置換と、背景へのドロップが分割を増やさないこと。
+- 選択ディスプレイの実アスペクト比に沿ったSpotlightプレビューのアニメーション。
 - `chrome://extensions/shortcuts` でのショートカット変更と、変更後の表示反映。
 - 実ディスプレイ複数台での配置と、macOSのグローバルショートカット競合。
 

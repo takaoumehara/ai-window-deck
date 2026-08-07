@@ -136,9 +136,10 @@ export function App() {
             targetDisplay: state.targetDisplay,
             targetDisplays: state.targetDisplays,
             sameDisplayOnly: state.sameDisplayOnly,
+            deckOnly: true,
           },
           (res) => {
-            if (res?.ok) showNote(t("actionExecutedMsg"));
+            showNote(res?.ok ? t("actionExecutedMsg") : t("deckWindowsMissing"));
           }
         );
       } else {
@@ -401,6 +402,8 @@ export function App() {
           state={state}
           updateState={updateState}
           onAction={handleCommandAction}
+          targetAspectRatio={targetAspectRatio}
+          canvasSlots={canvasSlots}
         />
 
         {/* Multi-Monitor Display Cards */}
@@ -478,6 +481,7 @@ export function App() {
               onCreatePreset={handleCreatePreset}
               onLaunch={() => handleCommandAction("launch")}
               onRetile={() => handleCommandAction("retile")}
+              onNotice={showNote}
               onOpenEditModal={handleOpenEditModal}
             />
           </div>

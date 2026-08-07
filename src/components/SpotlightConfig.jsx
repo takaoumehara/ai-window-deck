@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ExternalLink, Keyboard, LocateFixed, Maximize2, Sparkles } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
+import { SpotlightPreview } from "@/components/SpotlightPreview";
 
 const DEFAULT_SHORTCUTS = {
   "toggle-spotlight": "⌥ X",
   "restore-home": "⌥ Z",
 };
 
-export function SpotlightConfig({ lang, state, updateState, onAction }) {
+export function SpotlightConfig({ lang, state, updateState, onAction, targetAspectRatio, canvasSlots }) {
   const t = (key) => getTranslation(lang, key);
   const currentSize = state.spotlightSize || "full";
   const currentAnchor = state.spotlightAnchor || "keep";
@@ -126,6 +127,8 @@ export function SpotlightConfig({ lang, state, updateState, onAction }) {
           </div>
         </div>
       </div>
+
+      <SpotlightPreview lang={lang} state={state} canvasSlots={canvasSlots} targetAspectRatio={targetAspectRatio} />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-zinc-800/80 pt-3">
         <span className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-300"><Keyboard className="h-3.5 w-3.5 text-blue-400" />{t("spotlightShortcutLabel")}</span>

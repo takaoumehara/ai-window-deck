@@ -105,15 +105,23 @@ function inReadingOrder(windows) {
 }
 
 async function normalWindows(config, displays) {
+  const ownUrl = chrome.runtime.getURL("");
   let windows = (await chrome.windows.getAll({ populate: true })).filter(
     (window) => window.type === "normal"
       && !(config.skipMinimized && window.state === "minimized")
+      && !(window.tabs ?? []).some((tab) => (tab.url || tab.pendingUrl || "").startsWith(ownUrl))
   );
   if (displays?.length && config.sameDisplayOnly) {
     windows = windows.filter((window) =>
       displays.some((display) => contains(display, centreOf(window))));
   }
   return config.keepOrder ? inReadingOrder(windows) : windows;
+}
+
+async function deckWindows(config, displays) {
+  const ids = new Set(await session("deckWindowIds", []));
+  if (!ids.size) return [];
+  return (await normalWindows(config, displays)).filter((window) => ids.has(window.id));
 }
 
 // ---- undo -------------------------------------------------------------
@@ -224,8 +232,10 @@ async function layOut(windows, displays, columns, gap, cells) {
 async function tileWindows(options = {}) {
   const config = { ...(await settings()), ...(options || {}) };
   const displays = await targetDisplays(config);
-  const windows = await normalWindows(config, displays);
-  if (!windows.length) return { ok: false, reason: "empty" };
+  const windows = options.deckOnly
+    ? await deckWindows(config, displays)
+    : await normalWindows(config, displays);
+  if (!windows.length) return { ok: false, reason: options.deckOnly ? "deck-empty" : "empty" };
   await pushUndo(windows);
   const shape = options?.preset
     ? {
@@ -302,6 +312,7 @@ async function launchDeck(options = {}) {
   }
 
   if (config.groupTabs) await groupWindows(created, planned);
+  await chrome.storage.session.set({ deckWindowIds: created.map((window) => window.id) });
 
   // A window keeps settling for a moment after it is created, and Chrome
   // re-applies its remembered size over anything set before that finishes.
@@ -520,7 +531,7 @@ const ACTIONS = {
 
 const COMMANDS = {
   "toggle-spotlight": toggleSpotlight,
-  "tile-windows": tileWindows,
+  "tile-windows": () => tileWindows({ deckOnly: true }),
   "focus-next": focusNext,
   "focus-previous": focusPrevious,
   "undo-layout": undoLayout,
@@ -621,7 +632,11 @@ async function listWindows() {
   const displays = await chrome.system.display.getInfo();
   const ordered = [...displays].sort((a, b) => a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
 
-  return inReadingOrder(windows.filter((window) => window.type === "normal")).map((window) => {
+  const ownUrl = chrome.runtime.getURL("");
+  return inReadingOrder(windows.filter((window) =>
+    window.type === "normal"
+      && !(window.tabs ?? []).some((tab) => (tab.url || tab.pendingUrl || "").startsWith(ownUrl))
+  )).map((window) => {
     const active = window.tabs.find((tab) => tab.active) ?? window.tabs[0];
     const group = groups.find((entry) => entry.windowId === window.id);
     const screen = ordered.findIndex((display) => contains(display, centreOf(window)));

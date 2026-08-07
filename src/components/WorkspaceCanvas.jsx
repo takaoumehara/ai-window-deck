@@ -25,6 +25,7 @@ export function WorkspaceCanvas({
   onCreatePreset,
   onLaunch,
   onRetile,
+  onNotice,
   onOpenEditModal,
 }) {
   const t = (key) => getTranslation(lang, key);
@@ -35,6 +36,7 @@ export function WorkspaceCanvas({
   const [editingName, setEditingName] = useState("");
   const [draggingIdx, setDraggingIdx] = useState(null);
   const [resizingInfo, setResizingInfo] = useState(null);
+  const [dropTargetIdx, setDropTargetIdx] = useState(null);
 
   const count = canvasSlots.length;
   const currentPresetName = presets[activePreset]?.name || "A";
@@ -117,6 +119,15 @@ export function WorkspaceCanvas({
     setCanvasSlots(equalizeSlots(nextSlots));
   };
 
+  const isBlankSlot = (slot) => {
+    const urls = Array.isArray(slot.urls) ? slot.urls : String(slot.urls ?? "").split("\n");
+    return !urls.some((url) => String(url).trim());
+  };
+
+  const slotUrls = (slot) => (Array.isArray(slot.urls) ? slot.urls : String(slot.urls ?? "").split("\n"))
+    .map((url) => String(url).trim())
+    .filter(Boolean);
+
   const handleDropOnCanvas = (e, index) => {
     e.preventDefault();
     e.stopPropagation();
@@ -126,16 +137,19 @@ export function WorkspaceCanvas({
         const items = JSON.parse(json);
         if (Array.isArray(items) && items.length) {
           const newItem = items[0];
-          let nextSlots = [...canvasSlots];
-          if (index !== undefined && index < nextSlots.length) {
-            nextSlots[index] = { ...nextSlots[index], ...newItem, id: nextSlots[index].id };
-          } else {
-            nextSlots.push({ ...newItem, id: `slot-${Date.now()}-${nextSlots.length}` });
-            nextSlots = equalizeSlots(nextSlots);
+          if (index === undefined || !isBlankSlot(canvasSlots[index])) {
+            onNotice?.(t("dropEmptySlotHint"));
+            return;
           }
+          const nextSlots = [...canvasSlots];
+          nextSlots[index] = { ...nextSlots[index], ...newItem, id: nextSlots[index].id };
           setCanvasSlots(nextSlots);
         }
-      } catch {}
+      } catch {
+        onNotice?.(t("dropEmptySlotHint"));
+      } finally {
+        setDropTargetIdx(null);
+      }
     }
   };
 
@@ -419,7 +433,12 @@ export function WorkspaceCanvas({
       <div
         ref={canvasRef}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => handleDropOnCanvas(e)}
+        onDragEnd={() => setDropTargetIdx(null)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDropTargetIdx(null);
+          onNotice?.(t("dropEmptySlotHint"));
+        }}
         style={{ aspectRatio: targetAspectRatio || "16/9" }}
         className="relative rounded-xl border-2 border-zinc-700 bg-zinc-950 min-h-[380px] max-h-[620px] transition-all overflow-hidden shadow-inner w-full"
       >
@@ -456,11 +475,30 @@ export function WorkspaceCanvas({
 
             const isDragging = draggingIdx === i;
             const isResizing = resizingInfo?.idx === i;
+            const isDropTarget = dropTargetIdx === i;
+            const canAcceptDrop = isBlankSlot(slot);
 
             return (
               <div
                 key={slot.id || i}
                 onDoubleClick={() => onOpenEditModal(slot)}
+                onDragEnter={(event) => {
+                  if (!canAcceptDrop) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setDropTargetIdx(i);
+                }}
+                onDragOver={(event) => {
+                  if (!canAcceptDrop) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  event.dataTransfer.dropEffect = "copy";
+                  setDropTargetIdx(i);
+                }}
+                onDragLeave={(event) => {
+                  if (event.currentTarget === event.target) setDropTargetIdx(null);
+                }}
+                onDrop={(event) => handleDropOnCanvas(event, i)}
                 style={{
                   position: "absolute",
                   left: `${(gx / GRID_COLS) * 100}%`,
@@ -477,6 +515,8 @@ export function WorkspaceCanvas({
                       ? "border-blue-400 ring-2 ring-blue-500/40 shadow-xl"
                       : isResizing
                       ? "border-yellow-400 ring-2 ring-yellow-500/30"
+                      : isDropTarget
+                      ? "border-blue-400 ring-2 ring-blue-500/50 shadow-xl"
                       : "border-zinc-700 hover:border-zinc-500"
                   }`}
                 >
@@ -509,13 +549,25 @@ export function WorkspaceCanvas({
                   </div>
 
                   {/* Window Content */}
-                  <div className="p-2 flex flex-col gap-0.5 bg-zinc-900/90 flex-1 overflow-hidden">
+                  <div className="p-2 flex flex-col gap-1 bg-zinc-900/90 flex-1 overflow-hidden">
                     <span className="text-[11px] font-extrabold text-white truncate">
                       {slot.name || "Window"}
                     </span>
-                    <span className="text-[10px] text-zinc-400 truncate font-mono bg-zinc-950/70 px-1.5 py-0.5 rounded border border-zinc-800">
-                      {slot.urls ? slot.urls.split("\n")[0] : t("noUrls")}
-                    </span>
+                    {canAcceptDrop ? (
+                      <span className={`flex flex-1 items-center justify-center rounded border border-dashed px-2 text-center text-[10px] font-semibold transition-colors ${
+                        isDropTarget ? "border-blue-400 bg-blue-500/10 text-blue-200" : "border-zinc-700 text-zinc-500"
+                      }`}>
+                        {isDropTarget ? t("dropHere") : t("dropEmptySlot")}
+                      </span>
+                    ) : (
+                      <div className="flex flex-col gap-1 overflow-y-auto pr-0.5 no-scrollbar">
+                        {slotUrls(slot).map((url, urlIndex) => (
+                          <span key={`${url}-${urlIndex}`} title={url} className="text-[10px] text-zinc-400 truncate font-mono bg-zinc-950/70 px-1.5 py-0.5 rounded border border-zinc-800">
+                            tab {urlIndex + 1}: {url}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* 4-Edge Resize Handles */}

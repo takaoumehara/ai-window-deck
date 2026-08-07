@@ -30,9 +30,12 @@
 4. **Append-mode Bulk Ingest**: Safe text ingestion that appends cards without overwriting existing data.
 5. **Active Windows Manager**: Real-time list of opened browser windows with single and bulk close CTAs.
 6. **Spotlight Configuration**: A compact operational settings surface with six target sizes, two placement strategies, conditional width/height controls, and a direct link to Chrome's shortcut editor. It uses the existing Cobalt selection state, preserves keyboard focus visibility, and keeps the irreversible restore action visually secondary.
+7. **Targeted Canvas Drop**: Empty slots are the only droppable targets. Their Cobalt highlight changes drag-and-drop from an ambiguous append action into a stable replacement action that preserves the existing grid.
+8. **Display-ratio Spotlight Preview**: A compact live diagram preserves the selected monitor's aspect ratio and the canvas' current split. The active tile transitions to its selected size and anchor; reduced-motion users receive the same final state without animation.
 
 ## Spotlight interaction contract
 
 - `Option+X` alternates between the configured size and the immediately previous size.
 - `Option+Z` restores the first tile position and size recorded before the window was enlarged, even after manual resizing while enlarged.
 - The canvas action immediately left of Launch applies the visible 12×12 cell positions to already-open windows.
+- The action only affects windows launched by AI Window Deck; extension windows and unrelated Chrome windows never enter the layout.

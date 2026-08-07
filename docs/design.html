@@ -18,6 +18,9 @@
     .preview-option.active { border-color: #2F5BFF; background: #1A2B5A; color: #fff; }
     .preview-option small { display: block; margin-top: 4px; color: #AAB4C5; font-size: 10px; }
     .preview-shortcuts { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #303949; font-size: 11px; color: #AAB4C5; }
+    .drop-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 700px; }
+    .drop-preview div { min-height: 70px; border: 1px solid #303949; border-radius: 8px; padding: 10px; background: #151B27; color: #AAB4C5; font-size: 12px; }
+    .drop-preview .target { border: 2px solid #60A5FA; background: #1A2B5A; color: #fff; box-shadow: 0 0 0 1px rgba(96,165,250,.35); }
     kbd { border: 1px solid #4B5563; border-bottom-width: 2px; border-radius: 4px; background: #1B2331; color: #fff; padding: 2px 6px; font-family: inherit; font-weight: 700; }
   </style>
 </head>
@@ -59,5 +62,11 @@
       <span><kbd>⌥ Z</kbd> 最初のタイル位置・サイズへ戻す</span>
     </div>
   </section>
+
+  <h2>Targeted Canvas Drop</h2>
+  <div class="drop-preview">
+    <div>既存のウィンドウ<br><small>ドロップ対象外。分割数を増やしません。</small></div>
+    <div class="target">空きウィンドウ<br><small>青くハイライトして、登録済みの全URLをここへ設定。</small></div>
+  </div>
 </body>
 </html>
