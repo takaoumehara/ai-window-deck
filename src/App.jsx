@@ -89,14 +89,19 @@ export function App() {
           showNote(t("noWindows"));
           return;
         }
-        const layout = computeDynamicLayout(canvasSlots.length, state.oddMode);
+        const cells = canvasSlots.map((slot, idx) => ({
+          x: slot.gridX ?? (idx % 2) * 6,
+          y: slot.gridY ?? Math.floor(idx / 2) * 6,
+          w: slot.gridW ?? 6,
+          h: slot.gridH ?? 6,
+        }));
         chrome.runtime.sendMessage(
           {
             type: "launch",
             preset: {
-              columns: layout.cols,
-              rows: layout.rows,
-              cells: layout.cells,
+              columns: 12,
+              rows: 12,
+              cells: cells,
               slots: canvasSlots,
             },
             targetDisplay: state.targetDisplay,
@@ -417,6 +422,7 @@ export function App() {
             <WindowsSidebar
               lang={lang}
               windows={windows}
+              canvasSlots={canvasSlots}
               onOpenAddModal={handleOpenAddModal}
               onEditWindow={handleOpenEditModal}
               onDeleteWindow={deleteWindow}
