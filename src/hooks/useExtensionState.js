@@ -34,6 +34,10 @@ const DEFAULTS = {
   targetDisplay: "focused",
   targetDisplays: [],
   sameDisplayOnly: true,
+  spotlightSize: "full",
+  spotlightWidth: 70,
+  spotlightHeight: 90,
+  spotlightAnchor: "keep",
   oddMode: "blank",
   splitMode: "auto",
 };

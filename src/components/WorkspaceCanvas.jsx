@@ -2,15 +2,11 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation } from "@/lib/i18n";
-import { Plus, Minus, ChevronDown, Edit2, Trash2, Check, Play, Move, RotateCcw } from "lucide-react";
+import { Plus, Minus, ChevronDown, Edit2, Trash2, Check, Play, Move, RotateCcw, Grid } from "lucide-react";
 
 // 12-column grid system for snapping
 const GRID_COLS = 12;
 const GRID_ROWS = 12;
-
-function snapToGrid(val, gridSize) {
-  return Math.round(val * gridSize) / gridSize;
-}
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
@@ -28,6 +24,7 @@ export function WorkspaceCanvas({
   onDeletePreset,
   onCreatePreset,
   onLaunch,
+  onRetile,
   onOpenEditModal,
 }) {
   const t = (key) => getTranslation(lang, key);
@@ -51,7 +48,6 @@ export function WorkspaceCanvas({
         return slot;
       }
       const cell = layout.cells[i] || { x: i % layout.cols, y: Math.floor(i / layout.cols), w: 1, h: 1 };
-      // Map the layout cell to our 12-column grid
       const colScale = GRID_COLS / layout.cols;
       const rowScale = GRID_ROWS / layout.rows;
       return {
@@ -88,7 +84,6 @@ export function WorkspaceCanvas({
     while (nextSlots.length > targetCount) {
       nextSlots.pop();
     }
-    // Re-equalize when changing count
     nextSlots = equalizeSlots(nextSlots);
     setCanvasSlots(nextSlots);
   };
@@ -278,7 +273,7 @@ export function WorkspaceCanvas({
           </div>
         </div>
 
-        {/* Layout Preset Dropdown + Equalize + Clear + Launch */}
+        {/* Layout Preset Dropdown + Equalize + Clear + Retile + Launch */}
         <div className="flex items-center gap-2">
           <div className="relative">
             <Button
@@ -394,6 +389,18 @@ export function WorkspaceCanvas({
             className="h-8 text-xs border-zinc-700 text-zinc-300 hover:bg-zinc-800 font-semibold"
           >
             {t("clearCanvas")}
+          </Button>
+
+          {/* Re-tile Open Windows button directly to the left of Launch */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRetile}
+            title="起動済みウィンドウをキャンバスの最新配置に並べ直す"
+            className="h-8 gap-1.5 text-xs font-bold border-blue-500/40 bg-blue-950/30 text-blue-300 hover:bg-blue-900/50 hover:border-blue-400"
+          >
+            <Grid className="w-3.5 h-3.5 text-blue-400" />
+            <span>{t("retile")}</span>
           </Button>
 
           <Button

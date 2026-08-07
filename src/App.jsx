@@ -8,6 +8,7 @@ import { RegisterModal } from "@/components/RegisterModal";
 import { WindowsTab } from "@/components/WindowsTab";
 import { ConfigProfileManager } from "@/components/ConfigProfileManager";
 import { DangerZone } from "@/components/DangerZone";
+import { SpotlightConfig } from "@/components/SpotlightConfig";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
 import { computeDynamicLayout } from "@/lib/layout-model";
@@ -111,6 +112,33 @@ export function App() {
           },
           (res) => {
             if (res?.ok) showNote(t("launchedMsg"));
+          }
+        );
+      } else if (actionType === "retile") {
+        if (!canvasSlots.length) {
+          showNote(t("noWindows"));
+          return;
+        }
+        const cells = canvasSlots.map((slot, idx) => ({
+          x: slot.gridX ?? (idx % 2) * 6,
+          y: slot.gridY ?? Math.floor(idx / 2) * 6,
+          w: slot.gridW ?? 6,
+          h: slot.gridH ?? 6,
+        }));
+        chrome.runtime.sendMessage(
+          {
+            type: "tile",
+            preset: {
+              columns: 12,
+              rows: 12,
+              cells: cells,
+            },
+            targetDisplay: state.targetDisplay,
+            targetDisplays: state.targetDisplays,
+            sameDisplayOnly: state.sameDisplayOnly,
+          },
+          (res) => {
+            if (res?.ok) showNote(t("actionExecutedMsg"));
           }
         );
       } else {
@@ -367,6 +395,14 @@ export function App() {
         {/* Command Bar */}
         <CommandBar lang={lang} onAction={handleCommandAction} />
 
+        {/* Spotlight Configuration (Enlarge Size & Anchor Settings) */}
+        <SpotlightConfig
+          lang={lang}
+          state={state}
+          updateState={updateState}
+          onAction={handleCommandAction}
+        />
+
         {/* Multi-Monitor Display Cards */}
         <DisplaySelector
           lang={lang}
@@ -441,6 +477,7 @@ export function App() {
               onDeletePreset={handleDeletePreset}
               onCreatePreset={handleCreatePreset}
               onLaunch={() => handleCommandAction("launch")}
+              onRetile={() => handleCommandAction("retile")}
               onOpenEditModal={handleOpenEditModal}
             />
           </div>

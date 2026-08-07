@@ -3,3 +3,9 @@ Ran: Tier A (Opus 5 equivalent inline judgment)
 Wrote: docs/design.md, docs/design.html, implementation_plan.md, walkthrough.md
 Corrected: テキスト貼り付け時の上書き消失事故、画面分割指定とキャンバス選択の重複混乱、画面サイズ狭小
 Wrong: なし
+
+## 2026-08-07 · superforge → superforge-ui → superforge-dev → superforge-verify · キャンバスからの再整列と拡大／復元設定
+Ran: Inline single-agent · subagentsなし（変更が同じメッセージ経路と設定状態に集中するため）
+Wrote: docs/superforge.md, docs/superpowers/specs/2026-08-07-spotlight-retile-design.md, docs/plan.md, docs/verification.md
+Corrected: 「Option+Z は拡大前へ」ではなく「途中で手動リサイズしても、最初に立ち上げたタイル位置・サイズへ戻す」
+Wrong: Chrome実機の操作確認はユーザー確認待ち

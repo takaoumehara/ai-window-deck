@@ -26,7 +26,7 @@ const GROUP_COLORS = ["blue", "purple", "green", "orange", "pink", "cyan", "red"
 
 // Percent of the work area each preset occupies. "full" is a real OS maximize,
 // and "height" keeps whatever width the window already has.
-const PRESETS = { tall: [50, 100], half: [50, 50] };
+const PRESETS = { tall: [50, 100], half: [50, 50], threeFourths: [75, 75], full: [100, 100] };
 
 const UNDO_LIMIT = 10;
 
@@ -221,13 +221,19 @@ async function layOut(windows, displays, columns, gap, cells) {
   await Promise.all(windows.map((window, index) => place(window.id, window.state, frames[index])));
 }
 
-async function tileWindows() {
-  const config = await settings();
+async function tileWindows(options = {}) {
+  const config = { ...(await settings()), ...(options || {}) };
   const displays = await targetDisplays(config);
   const windows = await normalWindows(config, displays);
   if (!windows.length) return { ok: false, reason: "empty" };
   await pushUndo(windows);
-  const shape = activeArrangement(config);
+  const shape = options?.preset
+    ? {
+        columns: options.preset.columns ?? config.columns,
+        rows: options.preset.rows ?? config.rows,
+        cells: options.preset.cells ?? null,
+      }
+    : activeArrangement(config);
   await layOut(windows, displays, shape.columns, config.gap, shape.cells);
   return { ok: true, arranged: windows.length, screens: displays.length };
 }
@@ -721,7 +727,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   const action = ACTIONS[message.type];
   if (action) {
-    action().then((result) => sendResponse(result ?? { ok: true }), () => sendResponse({ ok: false }));
+    // `tile` receives a transient canvas layout and display selection from the
+    // React panel. Other actions deliberately ignore this extra argument.
+    action(message).then((result) => sendResponse(result ?? { ok: true }), () => sendResponse({ ok: false }));
     return true;
   }
   if (message.type === "shortcuts") {

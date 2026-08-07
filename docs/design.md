@@ -29,3 +29,10 @@
 3. **Library Tray**: Window card repository with multi-select drag & drop support.
 4. **Append-mode Bulk Ingest**: Safe text ingestion that appends cards without overwriting existing data.
 5. **Active Windows Manager**: Real-time list of opened browser windows with single and bulk close CTAs.
+6. **Spotlight Configuration**: A compact operational settings surface with six target sizes, two placement strategies, conditional width/height controls, and a direct link to Chrome's shortcut editor. It uses the existing Cobalt selection state, preserves keyboard focus visibility, and keeps the irreversible restore action visually secondary.
+
+## Spotlight interaction contract
+
+- `Option+X` alternates between the configured size and the immediately previous size.
+- `Option+Z` restores the first tile position and size recorded before the window was enlarged, even after manual resizing while enlarged.
+- The canvas action immediately left of Launch applies the visible 12×12 cell positions to already-open windows.
