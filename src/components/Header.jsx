@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, LayoutList, Globe } from "lucide-react";
-import { getTranslation } from "@/lib/i18n";
+import { getTranslation, LANGUAGES } from "@/lib/i18n";
 
 export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
   const t = (key) => getTranslation(lang, key);
@@ -23,15 +23,16 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
       <div className="flex items-center gap-2">
         {/* Language Selector Dropdown */}
         <div className="flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5">
-          <Globe className="w-3.5 h-3.5 text-zinc-400" />
+          <Globe className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
           <select
             value={lang}
             onChange={(e) => onLanguageChange(e.target.value)}
-            aria-label="Language"
-            className="cursor-pointer bg-transparent text-xs font-medium text-zinc-200 focus:outline-none"
+            aria-label={t("languageLabel")}
+            className="cursor-pointer rounded bg-transparent text-xs font-medium text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
           >
-            <option value="ja" className="bg-zinc-900 text-zinc-200">日本語</option>
-            <option value="en" className="bg-zinc-900 text-zinc-200">English</option>
+            {LANGUAGES.map(({ code, label }) => (
+              <option key={code} value={code} lang={code} className="bg-zinc-900 text-zinc-200">{label}</option>
+            ))}
           </select>
         </div>
 

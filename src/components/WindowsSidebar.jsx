@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getTranslation } from "@/lib/i18n";
 
 export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal, onEditWindow, onDeleteWindow, showGuide = false }) {
-  const t = (key) => getTranslation(lang, key);
+  const t = (key, values) => getTranslation(lang, key, values);
 
   const handleDragStart = (e, item) => {
     e.dataTransfer.setData("application/json", JSON.stringify([item]));
@@ -16,7 +16,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold text-zinc-100">{t("windowsHeader")}</h3>
-          <span className="font-mono text-[11px] text-zinc-500">({windows.length})</span>
+          <span className="font-mono text-[11px] text-zinc-400">({windows.length})</span>
         </div>
         <Button
           variant="outline"
@@ -30,12 +30,12 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
         </Button>
       </div>
 
-      <p className="-mt-1 px-1 text-[11px] leading-4 text-zinc-500">{t("windowsHint")}</p>
+      <p className="-mt-1 px-1 text-[11px] leading-4 text-zinc-400">{t("windowsHint")}</p>
       {showGuide && <p className="-mt-1 rounded-md border border-blue-400/60 bg-blue-500/15 px-2 py-1.5 text-[11px] font-semibold leading-4 text-blue-100"><span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">3</span>{t("guideStep3Description")}</p>}
 
       <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
         {windows.length === 0 ? (
-          <p className="text-xs text-zinc-500 text-center py-6 px-2">
+          <p className="text-xs text-zinc-400 text-center py-6 px-2">
             {t("noWindows")}
           </p>
         ) : (
@@ -54,7 +54,20 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                 draggable
                 onDragStart={(e) => handleDragStart(e, item)}
                 onDoubleClick={() => onEditWindow(item)}
-                className={`group relative flex cursor-grab flex-col gap-2 rounded-lg border p-3 transition-[background-color,border-color,box-shadow] active:cursor-grabbing ${
+                tabIndex={0}
+                role="button"
+                aria-label={t("editItem", { name: item.name || t("untitledWindow") })}
+                onKeyDown={(e) => {
+                  if (e.target !== e.currentTarget) return;
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onEditWindow(item);
+                  } else if (e.key === "Delete") {
+                    e.preventDefault();
+                    onDeleteWindow(item.id);
+                  }
+                }}
+                className={`group relative flex cursor-grab flex-col gap-2 rounded-lg border p-3 transition-[background-color,border-color,box-shadow] active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
                   isPlaced
                     ? "border-blue-500/60 bg-blue-950/20 hover:border-blue-400"
                     : "border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-850"
@@ -66,7 +79,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                     )}
                     <span className="text-xs font-bold text-zinc-200 truncate">
-                      {item.name || "Untitled"}
+                      {item.name || t("untitledWindow")}
                     </span>
                   </div>
 
@@ -76,8 +89,8 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                         {t("inCanvasTag")}
                       </span>
                     )}
-                    <span className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
-                      {urlLines.length} urls
+                    <span className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
+                      {urlLines.length} {t(urlLines.length === 1 ? "urlSingular" : "urlsCount")}
                     </span>
                     <button
                       type="button"
@@ -85,10 +98,11 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                         e.stopPropagation();
                         onDeleteWindow(item.id);
                       }}
-                      aria-label={`${item.name || "Untitled"} を削除`}
-                      className="p-1 text-zinc-500 opacity-0 transition-opacity hover:text-red-400 focus:opacity-100"
+                      aria-label={t("deleteItem", { name: item.name || t("untitledWindow") })}
+                      title={t("deleteItem", { name: item.name || t("untitledWindow") })}
+                      className="rounded p-1 text-zinc-400 opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-3 h-3" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -96,7 +110,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                 <div className="flex flex-col gap-1">
                   {urlLines.slice(0, 2).map((url, i) => (
                     <div key={i} className="truncate rounded bg-zinc-950/60 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
-                      tab {i + 1}: {url.replace(/^https?:\/\//i, "")}
+                      {t("tabLabel", { n: i + 1 })}: {url.replace(/^https?:\/\//i, "")}
                     </div>
                   ))}
                 </div>

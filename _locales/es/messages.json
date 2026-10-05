@@ -4,5 +4,50 @@
   },
   "extDescription": {
     "message": "Organiza tus ventanas de IA en cuadrícula, amplía una con un atajo y cambia rápidamente entre ventanas."
+  },
+  "cmdSpotlight": {
+    "message": "Ampliar / restaurar"
+  },
+  "cmdHome": {
+    "message": "Volver a la casilla de origen"
+  },
+  "cmdTile": {
+    "message": "Reorganizar"
+  },
+  "cmdFullscreen": {
+    "message": "Pantalla completa / restaurar"
+  },
+  "cmdUndo": {
+    "message": "Deshacer"
+  },
+  "cmdNext": {
+    "message": "Siguiente ventana"
+  },
+  "cmdPrev": {
+    "message": "Ventana anterior"
+  },
+  "cmdFocusTile1": {
+    "message": "Enfocar ventana 1"
+  },
+  "cmdFocusTile2": {
+    "message": "Enfocar ventana 2"
+  },
+  "cmdFocusTile3": {
+    "message": "Enfocar ventana 3"
+  },
+  "cmdFocusTile4": {
+    "message": "Enfocar ventana 4"
+  },
+  "cmdFocusTile5": {
+    "message": "Enfocar ventana 5"
+  },
+  "cmdFocusTile6": {
+    "message": "Enfocar ventana 6"
+  },
+  "cmdFocusTile7": {
+    "message": "Enfocar ventana 7"
+  },
+  "cmdFocusTile8": {
+    "message": "Enfocar ventana 8"
   }
 }

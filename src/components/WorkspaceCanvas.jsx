@@ -32,7 +32,7 @@ export function WorkspaceCanvas({
   onLayoutFamilyChange,
   showGuide = false,
 }) {
-  const t = (key) => getTranslation(lang, key);
+  const t = (key, values) => getTranslation(lang, key, values);
   const canvasRef = useRef(null);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -281,7 +281,7 @@ export function WorkspaceCanvas({
             <button
               type="button"
               onClick={() => handleCountChange(count - 1)}
-              aria-label="ブラウザの数を減らす"
+              aria-label={t("decreaseCount")}
               className="flex h-8 w-8 items-center justify-center text-zinc-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
             >
               <Minus className="w-3.5 h-3.5" />
@@ -291,6 +291,7 @@ export function WorkspaceCanvas({
               min="0"
               max="16"
               value={count}
+              aria-label={t("howManyBrowsers")}
               onChange={(e) => {
                 const nextCount = Number(e.target.value);
                 handleCountChange(Number.isFinite(nextCount) ? nextCount : 0);
@@ -300,7 +301,7 @@ export function WorkspaceCanvas({
             <button
               type="button"
               onClick={() => handleCountChange(count + 1)}
-              aria-label="ブラウザの数を増やす"
+              aria-label={t("increaseCount")}
               className="flex h-8 w-8 items-center justify-center text-zinc-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -336,7 +337,15 @@ export function WorkspaceCanvas({
 
         {/* Layout Preset Dropdown + Equalize + Clear + Retile + Launch */}
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div
+            className="relative"
+            onKeyDown={(e) => {
+              if (e.key === "Escape" && dropdownOpen && editingPresetIdx === null) {
+                e.stopPropagation();
+                setDropdownOpen(false);
+              }
+            }}
+          >
             <Button
               variant="outline"
               size="sm"
@@ -403,8 +412,9 @@ export function WorkspaceCanvas({
                               setEditingPresetIdx(idx);
                               setEditingName(preset.name || "");
                             }}
-                            aria-label={`${preset.name || String.fromCharCode(65 + idx)} を編集`}
-                            className="p-1 text-zinc-400 hover:text-white"
+                            aria-label={t("editItem", { name: preset.name || String.fromCharCode(65 + idx) })}
+                            title={t("editItem", { name: preset.name || String.fromCharCode(65 + idx) })}
+                            className="rounded p-1 text-zinc-400 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
                           >
                             <Edit2 className="w-3 h-3" />
                           </button>
@@ -415,8 +425,9 @@ export function WorkspaceCanvas({
                                 e.stopPropagation();
                                 onDeletePreset(idx);
                               }}
-                            aria-label={`${preset.name || String.fromCharCode(65 + idx)} を削除`}
-                            className="p-1 text-zinc-400 hover:text-red-400"
+                            aria-label={t("deleteItem", { name: preset.name || String.fromCharCode(65 + idx) })}
+                            title={t("deleteItem", { name: preset.name || String.fromCharCode(65 + idx) })}
+                            className="rounded p-1 text-zinc-400 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -465,7 +476,7 @@ export function WorkspaceCanvas({
             variant="outline"
             size="sm"
             onClick={onRetile}
-            title="起動済みウィンドウをキャンバスの最新配置に並べ直す"
+            title={t("retileTitle")}
             className="h-9 gap-1.5 border-blue-500/40 bg-blue-950/30 text-xs font-semibold text-blue-300 hover:border-blue-400 hover:bg-blue-900/50"
           >
             <Grid className="w-3.5 h-3.5 text-blue-400" />
@@ -491,7 +502,7 @@ export function WorkspaceCanvas({
         onDragEnd={() => setDropTargetIdx(null)}
         onDrop={(e) => handleDropOnCanvas(e)}
         style={{ aspectRatio: targetAspectRatio || "16/9" }}
-        aria-label="ウィンドウ配置キャンバス"
+        aria-label={t("canvasLabel")}
         className="relative min-h-[380px] w-full max-h-[620px] overflow-hidden rounded-xl border-2 border-zinc-700 bg-zinc-950 shadow-inner transition-all"
       >
         {showGuide && <p className="absolute left-3 top-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md border border-blue-300 bg-blue-600 px-3 py-2 text-xs font-semibold leading-5 text-white shadow-lg">{t("guideCanvasHint")}</p>}
@@ -584,7 +595,7 @@ export function WorkspaceCanvas({
                     <div className="flex items-center gap-1 text-zinc-300">
                       <Move className="w-3 h-3" />
                       <span className="max-w-[100px] truncate text-[11px] font-semibold">
-                        {slot.name || "Window"}
+                        {slot.name || t("untitledWindow")}
                       </span>
                     </div>
                     <button
@@ -593,8 +604,9 @@ export function WorkspaceCanvas({
                         e.stopPropagation();
                         handleRemoveSlot(i);
                       }}
-                      aria-label={`${slot.name || "Window"} をキャンバスから削除`}
-                      className="cursor-pointer p-1 text-[11px] font-semibold text-zinc-500 hover:text-red-400"
+                      aria-label={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
+                      title={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
+                      className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 p-1 text-[11px] font-semibold text-zinc-400 hover:text-red-400"
                     >
                       ✕
                     </button>
@@ -603,11 +615,11 @@ export function WorkspaceCanvas({
                   {/* Window Content */}
                   <div className="p-2 flex flex-col gap-1 bg-zinc-900/90 flex-1 overflow-hidden">
                     <span className="truncate text-xs font-semibold text-white">
-                      {slot.name || "Window"}
+                      {slot.name || t("untitledWindow")}
                     </span>
                     {canAcceptDrop ? (
                       <span className={`flex flex-1 items-center justify-center rounded border border-dashed px-2 text-center text-[11px] font-semibold transition-colors ${
-                        isDropTarget ? "border-blue-400 bg-blue-500/10 text-blue-200" : "border-zinc-700 text-zinc-500"
+                        isDropTarget ? "border-blue-400 bg-blue-500/10 text-blue-200" : "border-zinc-700 text-zinc-400"
                       }`}>
                         {isDropTarget ? t("dropHere") : t("dropEmptySlot")}
                       </span>
@@ -615,7 +627,7 @@ export function WorkspaceCanvas({
                       <div className="flex flex-col gap-1 overflow-y-auto pr-0.5 no-scrollbar">
                         {slotUrls(slot).map((url, urlIndex) => (
                           <span key={`${url}-${urlIndex}`} title={url} className="truncate rounded border border-zinc-800 bg-zinc-950/70 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
-                            tab {urlIndex + 1}: {url}
+                            {t("tabLabel", { n: urlIndex + 1 })}: {url}
                           </span>
                         ))}
                       </div>

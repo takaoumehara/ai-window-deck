@@ -1,283 +1,358 @@
-# AI Window Deck — localized product details
+# AI Window Deck — localized product details (v1.7.0)
 
-Paste the section for the selected Chrome Web Store listing language into **Product details**. The product name remains `AI Window Deck` in every locale for consistent recognition.
+Paste the section for each Chrome Web Store listing language into **Product details → Description**. The product name stays `AI Window Deck` in every locale. The short description comes from `_locales/<lang>/messages.json` (`extDescription`) inside the package. It is shown here for reference, with its character count (store limit 132).
 
----
-
-## English (United States) — `en`
-
-**Name**
-
-AI Window Deck
-
-**Category**
-
-Productivity
-
-**Short description**
-
-Tile AI workspaces, spotlight one with a shortcut, and switch between windows quickly.
-
-**Detailed description**
-
-AI Window Deck turns a busy Chrome desktop into an intentional AI workspace. Save the sites you use together, open them in their own Chrome windows, and arrange them in one action. Your existing Chrome profile, sign-ins, password manager, and extensions stay exactly where they are.
-
-Build a window set for research, drafting, review, or any workflow that benefits from having several conversations and references visible at once. Choose an even grid or a layout with a larger central window, give each window a name, and open multiple URLs as tabs in that window. AI Window Deck can color and name the resulting tab groups so the workspace stays easy to scan.
-
-When you need to concentrate, enlarge the current window with a shortcut and press it again to return to the tile. You can also re-tile windows already open, move through them with shortcuts, restore a previous arrangement, and send the current window to full screen.
-
-Key features:
-
-- Open and tile saved sets of Chrome windows.
-- Use even grids or visual layouts with a larger focus window.
-- Open several URLs as tabs in each window and group them by name and color.
-- Focus, enlarge, re-tile, undo, and restore windows with configurable shortcuts.
-- Keep a compact window list nearby to jump to the work that needs attention.
-- Store preferences and saved sets in Chrome storage; no developer-operated server or account is required.
-
-AI Window Deck is designed for desktop Chrome and works with the windows and pages you already use.
+Category: **Productivity → Workflow & Planning**.
 
 ---
 
-## 日本語 — `ja`
+### English (United States) — `en`
 
-**名前**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**カテゴリ**
+**Summary / short description** (83/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+Tile AI workspaces, spotlight one with a shortcut, and switch between them quickly.
+```
 
-**短い説明**
+**Detailed description** (2244 characters)
 
-AI の作業ウィンドウを並べ、ショートカットで 1 つを大きくし、すばやく切り替えます。
+```text
+AI Window Deck turns a crowded Chrome desktop into an arranged AI workspace. Save the sites you use together, lay them out on a canvas, and open them all at once as tiled Chrome windows. Your Chrome profile, sign-ins, password manager and other extensions stay exactly as they are.
 
-**詳細説明**
+Build a deck for research, drafting, review, or any work where several AI chats and references need to be visible at the same time. When one window needs your full attention, enlarge it with a shortcut. Press it again and the window goes back to its tile.
 
-AI Window Deck は、AI を使うときの散らかった Chrome デスクトップを、目的のある作業空間へ整える拡張機能です。いつも一緒に使うサイトを保存し、それぞれを独立した Chrome ウィンドウで開き、1 回の操作で並べられます。普段の Chrome プロファイル、ログイン、パスワードマネージャー、拡張機能はそのままです。
+Key features
 
-調査、下書き、レビューなど、複数の会話と資料を同時に見たい作業のために構成を作れます。均等なグリッドだけでなく、中央を大きくしたレイアウトも選択できます。各ウィンドウに名前を付け、複数の URL をタブとして開けます。作成したタブグループには名前と色が付くため、どの作業かをすぐ見分けられます。
+• Window library: give each window a name and one or more URLs, which open as tabs. Add windows one at a time, paste a list as text, or import and export a .txt file.
+• Layout canvas: drag windows onto the canvas and resize them from any edge. Choose Auto, Vertical, Horizontal, Grid, Focus (one large window) or Freeform. Undo, redo, and keep several layout presets.
+• One-click launch: open every window in the layout, tiled on the display you choose, with its tabs grouped by name. Retile moves launched windows back into place.
+• Spotlight: Alt+X enlarges the active window to half, three quarters, full height, full screen or a custom size, growing from where it is or from the screen centre. Alt+Z puts it back.
+• Move between windows: previous and next window, focus window 1–8, undo the last arrangement, toggle full screen. Every shortcut can be changed in Chrome.
+• Multiple displays: choose which monitor or monitors the deck opens on.
+• Floating controller: keep a compact controller open, or open the settings in a large window.
+• Backup: back up or restore all windows, layouts and settings as a JSON file.
+• 8 languages: English, Japanese, German, Spanish, French, Korean, Brazilian Portuguese and Simplified Chinese.
 
-集中したいときは、ショートカットでいまのウィンドウを大きくし、もう一度押すと元のタイルへ戻せます。すでに開いているウィンドウの並べ直し、ショートカットでの移動、直前の配置への復帰、全画面表示にも対応しています。
+Privacy
 
-主な機能:
+There is no account, server, analytics or remote code. AI Window Deck never reads page content. It reads only window positions and the titles and URLs of open tabs, to list and arrange your windows. Settings are saved in Chrome's extension storage, and Chrome can sync them between your own devices if Chrome Sync is on. Nothing is sent to the developer or to third parties.
 
-- 保存した Chrome ウィンドウ構成を一括で開き、並べる。
-- 均等なグリッドと、主役のウィンドウを大きくしたレイアウトを選ぶ。
-- 各ウィンドウで複数の URL をタブとして開き、名前と色でグループ化する。
-- ショートカットで、フォーカス、拡大、並べ直し、やり直し、元の配置への復帰を行う。
-- コンパクトなウィンドウ一覧から、確認したい作業へすぐ移動する。
-- 設定と保存した構成は Chrome ストレージに保存。開発者が運用するサーバーやアカウントは不要。
+Support and source code: https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck はデスクトップ版 Chrome 向けの拡張機能です。すでに使っているウィンドウとページを、そのまま活かせます。
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
 
 ---
 
-## 简体中文 — `zh-CN`
+### 日本語 — Japanese — `ja`
 
-**名称**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**类别**
+**Summary / short description** (43/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+AIの作業ウィンドウを整列し、ショートカットで一つを大きくして、すばやく切り替えます。
+```
 
-**简短说明**
+**Detailed description** (1371 characters)
 
-平铺 AI 工作窗口，用快捷键突出一个窗口，并快速切换窗口。
+```text
+AI Window Deck は、ウィンドウがひしめく Chrome のデスクトップを、整理された AI ワークスペースに変えます。一緒に使うサイトを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。
 
-**详细说明**
+リサーチ、下書き、レビューなど、複数の AI チャットや資料を同時に表示しておきたい作業のためのデッキを作れます。1 つのウィンドウに集中したいときは、ショートカットで拡大できます。もう一度押せば、ウィンドウは元のタイルに戻ります。
 
-AI Window Deck 可将繁忙的 Chrome 桌面整理成清晰的 AI 工作空间。保存经常一起使用的网站，在各自独立的 Chrome 窗口中打开，然后一键排列。您现有的 Chrome 个人资料、登录状态、密码管理器和扩展程序都会保持不变。
+主な機能
 
-为研究、写作、审阅或任何需要同时查看多个对话和参考资料的工作创建窗口组合。您可以选择均匀网格，或选择中央窗口更大的布局；为每个窗口命名，并在其中以标签页形式打开多个 URL。AI Window Deck 还能为生成的标签页组添加名称和颜色，让工作区一目了然。
+• ウィンドウライブラリ：各ウィンドウに名前と 1 つ以上の URL を設定でき、URL はタブとして開きます。ウィンドウは 1 つずつ追加するほか、一覧をテキストで貼り付けたり、.txt ファイルでインポート・エクスポートしたりできます。
+• レイアウトキャンバス：キャンバスにウィンドウをドラッグし、どの辺からでもサイズを変更できます。レイアウトは自動、縦割り、横割り、グリッド、主役（1 つを大きく表示）、自由から選べます。取り消し・やり直しに対応し、複数のレイアウトプリセットを保持できます。
+• ワンクリック起動：レイアウト内のすべてのウィンドウを開き、選んだディスプレイにタイル状に並べます。タブは名前ごとにグループにまとめられます。「並べ直す」で、起動済みのウィンドウを元の位置に戻せます。
+• Spotlight：Alt+X でアクティブなウィンドウを半分、3/4、縦いっぱい、全画面、または任意のサイズに拡大します。現在の位置から広げるか、画面中央から広げるかを選べます。Alt+Z で元に戻ります。
+• ウィンドウ間の移動：前後のウィンドウへの移動、ウィンドウ 1〜8 へのフォーカス、直前の配置の取り消し、全画面の切り替えができます。すべてのショートカットは Chrome で変更できます。
+• マルチディスプレイ：デッキを開くモニターを 1 台または複数台から選べます。
+• 小窓コントローラー：コンパクトなコントローラーを開いたままにしたり、設定を大きいウィンドウで開いたりできます。
+• バックアップ：すべてのウィンドウ、レイアウト、設定を JSON ファイルでバックアップ・復元できます。
+• 8 言語対応：英語、日本語、ドイツ語、スペイン語、フランス語、韓国語、ポルトガル語（ブラジル）、簡体字中国語に対応しています。
 
-需要专注时，可通过快捷键放大当前窗口；再次按下即可回到平铺布局。您还可以重新排列已打开的窗口、使用快捷键在窗口间移动、恢复上一次布局，或将当前窗口全屏显示。
+プライバシー
 
-主要功能:
+アカウント、サーバー、アナリティクス、リモートコードは一切ありません。AI Window Deck がページの内容を読み取ることはありません。読み取るのは、ウィンドウの一覧表示と配置に必要なウィンドウの位置と、開いているタブのタイトルと URL だけです。設定は Chrome の拡張機能ストレージに保存され、Chrome 同期をオンにしている場合は、Chrome がご自身のデバイス間で同期できます。開発者や第三者に送信されるデータは一切ありません。
 
-- 一键打开并平铺已保存的 Chrome 窗口组合。
-- 使用均匀网格或带有更大焦点窗口的可视布局。
-- 在每个窗口中以标签页打开多个 URL，并按名称和颜色分组。
-- 用可配置的快捷键聚焦、放大、重新平铺、撤销和恢复窗口。
-- 通过紧凑的窗口列表快速跳转到需要处理的工作。
-- 偏好设置和已保存组合存储在 Chrome 存储空间中；不需要开发者运营的服务器或账户。
+サポートとソースコード：https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck 专为桌面版 Chrome 设计，可直接配合您已经使用的窗口和网页。
+**Screenshots:** `localized/ja/screenshots/01-arrange.png … 05-popup.png`
 
 ---
 
-## 한국어 — `ko`
+### Deutsch — German — `de`
 
-**이름**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**카테고리**
+**Summary / short description** (96/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+Ordnet KI-Fenster in Kacheln an, vergrößert eins per Kürzel und wechselt schnell zwischen ihnen.
+```
 
-**짧은 설명**
+**Detailed description** (2960 characters)
 
-AI 작업 창을 타일로 정리하고, 단축키로 하나에 집중하며, 빠르게 전환합니다.
+```text
+AI Window Deck verwandelt einen überfüllten Chrome-Desktop in einen aufgeräumten KI-Arbeitsbereich. Speichern Sie die Websites, die Sie gemeinsam nutzen, ordnen Sie sie auf einer Arbeitsfläche an und öffnen Sie alle auf einmal als gekachelte Chrome-Fenster. Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweiterungen bleiben genau so, wie sie sind.
 
-**상세 설명**
+Stellen Sie ein Deck für Recherche, Entwürfe, Überarbeitung oder jede andere Arbeit zusammen, bei der mehrere KI-Chats und Referenzen gleichzeitig sichtbar sein müssen. Wenn ein Fenster Ihre volle Aufmerksamkeit braucht, vergrößern Sie es per Tastenkombination. Drücken Sie sie erneut, und das Fenster kehrt in seine Kachel zurück.
 
-AI Window Deck은 복잡한 Chrome 데스크톱을 의도적인 AI 작업 공간으로 정리해 주는 확장 프로그램입니다. 함께 사용하는 사이트를 저장하고 각각 별도의 Chrome 창으로 연 다음, 한 번의 동작으로 배치하세요. 기존 Chrome 프로필, 로그인, 비밀번호 관리자, 확장 프로그램은 그대로 유지됩니다.
+Wichtigste Funktionen
 
-조사, 초안 작성, 검토처럼 여러 대화와 참고 자료를 동시에 볼 필요가 있는 작업을 위해 창 세트를 만들 수 있습니다. 균등한 그리드 또는 가운데 창이 더 큰 레이아웃을 선택하고, 각 창에 이름을 붙인 뒤 여러 URL을 탭으로 열 수 있습니다. 생성된 탭 그룹에는 이름과 색상을 적용할 수 있어 작업 공간을 빠르게 훑어볼 수 있습니다.
+• Fensterbibliothek: Geben Sie jedem Fenster einen Namen und eine oder mehrere URLs, die als Tabs geöffnet werden. Fügen Sie Fenster einzeln hinzu, fügen Sie eine Liste als Text ein oder importieren und exportieren Sie eine .txt-Datei.
+• Layout-Arbeitsfläche: Ziehen Sie Fenster auf die Arbeitsfläche und ändern Sie ihre Größe an jeder Kante. Wählen Sie Automatisch, Vertikal, Horizontal, Raster, Fokus (ein großes Fenster) oder Frei. Machen Sie Schritte rückgängig, wiederholen Sie sie und speichern Sie mehrere Layout-Vorlagen.
+• Öffnen mit einem Klick: Öffnen Sie alle Fenster des Layouts, gekachelt auf dem gewünschten Bildschirm und mit nach Namen gruppierten Tabs. „Neu anordnen“ bringt geöffnete Fenster wieder an ihren Platz.
+• Spotlight: Alt+X vergrößert das aktive Fenster auf die Hälfte, drei Viertel, volle Höhe, Vollbild oder eine benutzerdefinierte Größe – wahlweise von seiner aktuellen Position oder von der Bildschirmmitte aus. Alt+Z setzt es zurück.
+• Zwischen Fenstern wechseln: vorheriges und nächstes Fenster, Fenster 1–8 in den Vordergrund holen, letzte Anordnung rückgängig machen, Vollbild ein/aus. Jede Tastenkombination lässt sich in Chrome ändern.
+• Mehrere Bildschirme: Wählen Sie, auf welchem Monitor oder welchen Monitoren das Deck geöffnet wird.
+• Schwebende Steuerung: Lassen Sie eine kompakte Steuerung geöffnet oder öffnen Sie die Einstellungen in einem großen Fenster.
+• Sicherung: Sichern Sie alle Fenster, Layouts und Einstellungen als JSON-Datei oder stellen Sie sie daraus wieder her.
+• 8 Sprachen: Englisch, Japanisch, Deutsch, Spanisch, Französisch, Koreanisch, brasilianisches Portugiesisch und vereinfachtes Chinesisch.
 
-집중해야 할 때는 단축키로 현재 창을 키우고, 다시 누르면 타일 레이아웃으로 돌아갑니다. 이미 열려 있는 창을 다시 정렬하고, 단축키로 창 사이를 이동하고, 이전 배치를 복원하거나 현재 창을 전체 화면으로 표시할 수도 있습니다.
+Datenschutz
 
-주요 기능:
+Es gibt kein Konto, keinen Server, keine Analysen und keinen Remote-Code. AI Window Deck liest niemals Seiteninhalte. Die Erweiterung liest nur Fensterpositionen sowie Titel und URLs geöffneter Tabs, um Ihre Fenster aufzulisten und anzuordnen. Einstellungen werden im Erweiterungsspeicher von Chrome gespeichert, und Chrome kann sie zwischen Ihren eigenen Geräten synchronisieren, wenn Chrome Sync aktiviert ist. Es werden keine Daten an den Entwickler oder an Dritte gesendet.
 
-- 저장한 Chrome 창 세트를 한 번에 열고 타일로 배치합니다.
-- 균등 그리드 또는 집중 창을 크게 표시하는 시각적 레이아웃을 사용합니다.
-- 각 창에서 여러 URL을 탭으로 열고 이름과 색상으로 그룹화합니다.
-- 설정 가능한 단축키로 창에 초점을 맞추고, 확대하고, 재정렬하고, 실행 취소하고, 복원합니다.
-- 간결한 창 목록에서 확인할 작업으로 바로 이동합니다.
-- 환경설정과 저장한 세트는 Chrome 저장소에 보관됩니다. 개발자가 운영하는 서버나 계정은 필요하지 않습니다.
+Support und Quellcode: https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck은 데스크톱 Chrome용으로 설계되었으며, 이미 사용 중인 창과 페이지를 그대로 활용합니다.
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
 
 ---
 
-## Español — `es`
+### Español — Spanish — `es`
 
-**Nombre**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**Categoría**
+**Summary / short description** (103/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+Organiza tus ventanas de IA en cuadrícula, amplía una con un atajo y cambia rápidamente entre ventanas.
+```
 
-**Descripción breve**
+**Detailed description** (2664 characters)
 
-Organiza espacios de trabajo con IA en mosaico, destaca una ventana con un atajo y cambia rápidamente entre ventanas.
+```text
+AI Window Deck convierte un escritorio de Chrome saturado en un espacio de trabajo de IA ordenado. Guarda los sitios que usas juntos, colócalos en un lienzo y ábrelos todos de una vez como ventanas de Chrome en mosaico. Tu perfil de Chrome, tus sesiones iniciadas, tu gestor de contraseñas y tus demás extensiones siguen exactamente como están.
 
-**Descripción detallada**
+Crea un deck para investigar, redactar, revisar o cualquier tarea en la que necesites ver varios chats de IA y referencias al mismo tiempo. Cuando una ventana requiera toda tu atención, amplíala con un atajo. Púlsalo otra vez y la ventana vuelve a su posición en el mosaico.
 
-AI Window Deck transforma un escritorio de Chrome lleno de ventanas en un espacio de trabajo de IA ordenado. Guarda los sitios que utilizas juntos, ábrelos en ventanas de Chrome independientes y organízalos con una sola acción. Tu perfil de Chrome, sesiones iniciadas, gestor de contraseñas y extensiones permanecen intactos.
+Funciones principales
 
-Crea conjuntos de ventanas para investigar, redactar, revisar o cualquier flujo de trabajo en el que necesites ver varias conversaciones y referencias a la vez. Elige una cuadrícula uniforme o una distribución con una ventana central más grande, nombra cada ventana y abre varias URL como pestañas dentro de ella. AI Window Deck puede asignar nombre y color a los grupos de pestañas resultantes para que el espacio de trabajo sea fácil de recorrer.
+• Biblioteca de ventanas: asigna a cada ventana un nombre y una o varias URL, que se abren como pestañas. Añade ventanas de una en una, pega una lista como texto o importa y exporta un archivo .txt.
+• Lienzo de diseño: arrastra ventanas al lienzo y cambia su tamaño desde cualquier borde. Elige Auto, Vertical, Horizontal, Cuadrícula, Enfoque (una ventana grande) o Libre. Deshaz, rehaz y guarda varios diseños predefinidos.
+• Apertura con un clic: abre todas las ventanas del diseño en mosaico en la pantalla que elijas, con sus pestañas agrupadas por nombre. Reorganizar cuadrícula devuelve a su sitio las ventanas ya abiertas.
+• Spotlight: Alt+X amplía la ventana activa a la mitad, tres cuartos, alto completo, pantalla completa o un tamaño personalizado, desde su posición actual o desde el centro de la pantalla. Alt+Z la devuelve a su sitio.
+• Moverse entre ventanas: ventana anterior y siguiente, enfocar las ventanas 1–8, deshacer la última organización y activar o desactivar la pantalla completa. Todos los atajos se pueden cambiar en Chrome.
+• Varias pantallas: elige en qué monitor o monitores se abre el deck.
+• Controlador flotante: mantén abierto un controlador compacto o abre la configuración en una ventana grande.
+• Copia de seguridad: haz una copia de seguridad de todas las ventanas, diseños y ajustes en un archivo JSON, o restáuralos.
+• 8 idiomas: inglés, japonés, alemán, español, francés, coreano, portugués de Brasil y chino simplificado.
 
-Cuando necesites concentrarte, amplía la ventana actual con un atajo y vuelve al mosaico al pulsarlo de nuevo. También puedes reorganizar ventanas ya abiertas, moverte entre ellas con atajos, restaurar la distribución anterior y poner la ventana actual a pantalla completa.
+Privacidad
 
-Funciones principales:
+No hay cuentas, servidores, analíticas ni código remoto. AI Window Deck nunca lee el contenido de las páginas. Solo lee la posición de las ventanas y los títulos y las URL de las pestañas abiertas, para mostrar y organizar tus ventanas. La configuración se guarda en el almacenamiento de extensiones de Chrome, y Chrome puede sincronizarla entre tus propios dispositivos si tienes activada la sincronización de Chrome. No se envía nada al desarrollador ni a terceros.
 
-- Abre y organiza en mosaico conjuntos guardados de ventanas de Chrome.
-- Usa cuadrículas uniformes o distribuciones visuales con una ventana de enfoque más grande.
-- Abre varias URL como pestañas en cada ventana y agrúpalas por nombre y color.
-- Enfoca, amplía, reorganiza, deshaz y restaura ventanas con atajos configurables.
-- Mantén cerca una lista compacta de ventanas para ir directamente al trabajo que necesita atención.
-- Guarda preferencias y conjuntos en el almacenamiento de Chrome; no requiere servidores ni cuentas gestionadas por el desarrollador.
+Soporte y código fuente: https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck está diseñado para Chrome de escritorio y funciona con las ventanas y páginas que ya utilizas.
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
 
 ---
 
-## Français — `fr`
+### Français — French — `fr`
 
-**Nom**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**Catégorie**
+**Summary / short description** (113/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+Organise vos fenêtres IA en grille, agrandit l'une via un raccourci et permet de basculer rapidement entre elles.
+```
 
-**Description courte**
+**Detailed description** (2884 characters)
 
-Organisez vos espaces de travail IA en mosaïque, mettez une fenêtre en avant avec un raccourci et passez rapidement d’une fenêtre à l’autre.
+```text
+AI Window Deck transforme un bureau Chrome encombré en un espace de travail IA bien organisé. Enregistrez les sites que vous utilisez ensemble, disposez-les sur un canevas et ouvrez-les tous d'un coup sous forme de fenêtres Chrome en mosaïque. Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos autres extensions restent exactement tels quels.
 
-**Description détaillée**
+Créez un deck pour la recherche, la rédaction, la relecture ou tout travail qui exige d'avoir plusieurs conversations IA et références visibles en même temps. Lorsqu'une fenêtre requiert toute votre attention, agrandissez-la avec un raccourci. Appuyez de nouveau et la fenêtre reprend sa place dans sa vignette.
 
-AI Window Deck transforme un bureau Chrome encombré en espace de travail IA organisé. Enregistrez les sites que vous utilisez ensemble, ouvrez-les dans leurs propres fenêtres Chrome et disposez-les en une seule action. Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos extensions restent tels quels.
+Fonctionnalités principales
 
-Créez un ensemble de fenêtres pour la recherche, la rédaction, la révision ou tout flux de travail qui gagne à afficher plusieurs conversations et références simultanément. Choisissez une grille régulière ou une disposition avec une fenêtre centrale plus grande, donnez un nom à chaque fenêtre et ouvrez plusieurs URL sous forme d’onglets dans cette fenêtre. AI Window Deck peut nommer et colorer les groupes d’onglets obtenus pour faciliter la lecture de l’espace de travail.
+• Bibliothèque de fenêtres : donnez à chaque fenêtre un nom et une ou plusieurs URL, qui s'ouvrent sous forme d'onglets. Ajoutez les fenêtres une par une, collez une liste sous forme de texte, ou importez et exportez un fichier .txt.
+• Canevas de disposition : faites glisser des fenêtres sur le canevas et redimensionnez-les depuis n'importe quel bord. Choisissez Auto, Vertical, Horizontal, Grille, Focus (une grande fenêtre) ou Libre. Annulez, rétablissez et conservez plusieurs préréglages de disposition.
+• Ouverture en un clic : ouvrez toutes les fenêtres de la disposition, en mosaïque sur l'écran de votre choix, avec leurs onglets regroupés par nom. « Réorganiser » remet à leur place les fenêtres ouvertes.
+• Spotlight : Alt+X agrandit la fenêtre active à la moitié, aux trois quarts, en pleine hauteur, en plein écran ou à une taille personnalisée, depuis sa position actuelle ou depuis le centre de l'écran. Alt+Z la remet en place.
+• Navigation entre les fenêtres : fenêtre précédente et suivante, affichage de la fenêtre 1 à 8, annulation de la dernière organisation, plein écran on/off. Chaque raccourci peut être modifié dans Chrome.
+• Plusieurs écrans : choisissez le ou les moniteurs sur lesquels le deck s'ouvre.
+• Contrôleur flottant : gardez un contrôleur compact ouvert, ou ouvrez les paramètres dans une grande fenêtre.
+• Sauvegarde : sauvegardez ou restaurez toutes les fenêtres, dispositions et réglages sous forme de fichier JSON.
+• 8 langues : anglais, japonais, allemand, espagnol, français, coréen, portugais du Brésil et chinois simplifié.
 
-Lorsque vous devez vous concentrer, agrandissez la fenêtre active avec un raccourci, puis appuyez à nouveau pour revenir à la mosaïque. Vous pouvez aussi redisposer les fenêtres déjà ouvertes, naviguer entre elles avec des raccourcis, restaurer la disposition précédente et passer la fenêtre active en plein écran.
+Confidentialité
 
-Fonctionnalités principales:
+Aucun compte, aucun serveur, aucun outil d'analyse ni aucun code distant. AI Window Deck ne lit jamais le contenu des pages. L'extension lit uniquement la position des fenêtres ainsi que les titres et URL des onglets ouverts, afin de lister et d'organiser vos fenêtres. Les paramètres sont enregistrés dans l'espace de stockage des extensions de Chrome, et Chrome peut les synchroniser entre vos propres appareils si la synchronisation Chrome est activée. Rien n'est envoyé au développeur ni à des tiers.
 
-- Ouvrez et disposez en mosaïque des ensembles enregistrés de fenêtres Chrome.
-- Utilisez des grilles régulières ou des dispositions visuelles avec une fenêtre de concentration plus grande.
-- Ouvrez plusieurs URL en onglets dans chaque fenêtre et regroupez-les par nom et par couleur.
-- Donnez le focus, agrandissez, redisposez, annulez et restaurez les fenêtres avec des raccourcis configurables.
-- Gardez une liste compacte des fenêtres à portée de main pour rejoindre le travail qui demande votre attention.
-- Les préférences et ensembles enregistrés sont stockés dans Chrome; aucun serveur ni compte géré par le développeur n’est requis.
+Assistance et code source : https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck est conçu pour Chrome sur ordinateur et fonctionne avec les fenêtres et pages que vous utilisez déjà.
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
 
 ---
 
-## Deutsch — `de`
+### 한국어 — Korean — `ko`
 
-**Name**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**Kategorie**
+**Summary / short description** (40/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+AI 작업 창을 정리하고, 단축키로 하나를 확대하며, 빠르게 전환합니다.
+```
 
-**Kurzbeschreibung**
+**Detailed description** (1419 characters)
 
-Ordne KI-Arbeitsbereiche als Kacheln an, hebe ein Fenster per Tastenkürzel hervor und wechsle schnell zwischen Fenstern.
+```text
+AI Window Deck은 창으로 북적이는 Chrome 데스크톱을 깔끔하게 정리된 AI 작업 공간으로 바꿔 줍니다. 함께 사용하는 사이트를 저장하고, 캔버스에 배치하고, 타일 형태로 정렬된 Chrome 창으로 한 번에 열 수 있습니다. Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로그램은 그대로 유지됩니다.
 
-**Detaillierte Beschreibung**
+리서치, 초안 작성, 검토 등 여러 AI 채팅과 참고 자료를 동시에 띄워 두어야 하는 모든 작업에 맞춰 덱을 구성할 수 있습니다. 한 창에 집중해야 할 때는 단축키로 확대하세요. 다시 누르면 창이 원래 타일로 돌아갑니다.
 
-AI Window Deck macht aus einem unübersichtlichen Chrome-Desktop einen klaren KI-Arbeitsbereich. Speichere Websites, die du zusammen verwendest, öffne sie in eigenen Chrome-Fenstern und ordne sie mit einer Aktion an. Dein bestehendes Chrome-Profil, deine Anmeldungen, dein Passwortmanager und deine Erweiterungen bleiben unverändert.
+주요 기능
 
-Erstelle Fenstersets für Recherche, Entwürfe, Überprüfung oder jeden Ablauf, bei dem mehrere Gespräche und Quellen gleichzeitig sichtbar sein sollen. Wähle ein gleichmäßiges Raster oder ein Layout mit einem größeren mittleren Fenster, benenne jedes Fenster und öffne mehrere URLs als Tabs darin. AI Window Deck kann die entstehenden Tabgruppen benennen und einfärben, damit der Arbeitsbereich übersichtlich bleibt.
+• 창 라이브러리: 각 창에 이름과 하나 이상의 URL을 지정하면 URL이 탭으로 열립니다. 창을 하나씩 추가하거나, 목록을 텍스트로 붙여 넣거나, .txt 파일로 가져오고 내보낼 수 있습니다.
+• 레이아웃 캔버스: 창을 캔버스로 드래그하고 어느 가장자리에서든 크기를 조절할 수 있습니다. 자동, 세로, 가로, 그리드, 포커스(큰 창 하나), 자유형 중에서 선택합니다. 실행취소와 다시 실행을 지원하며, 여러 레이아웃 프리셋을 보관할 수 있습니다.
+• 원클릭 실행: 레이아웃의 모든 창을 열어 선택한 디스플레이에 타일 형태로 정렬하고, 탭은 이름별로 그룹화합니다. 그리드 다시 정렬을 사용하면 실행한 창을 제자리로 되돌립니다.
+• Spotlight: Alt+X를 누르면 활성 창이 절반, 4분의 3, 높이 전체, 전체 화면 또는 사용자 지정 크기로 확대되며, 현재 위치나 화면 중앙에서 확대할 수 있습니다. Alt+Z를 누르면 원래대로 돌아갑니다.
+• 창 간 이동: 이전 창과 다음 창으로 이동하고, 창 1–8에 포커스를 맞추고, 마지막 정렬을 실행취소하고, 전체 화면을 전환할 수 있습니다. 모든 단축키는 Chrome에서 변경할 수 있습니다.
+• 다중 디스플레이: 덱을 열 모니터를 하나 또는 여러 개 선택할 수 있습니다.
+• 플로팅 컨트롤러: 작은 컨트롤러를 열어 둔 채로 사용하거나, 설정을 큰 창에서 열 수 있습니다.
+• 백업: 모든 창, 레이아웃, 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
+• 8개 언어: 영어, 일본어, 독일어, 스페인어, 프랑스어, 한국어, 브라질 포르투갈어, 중국어 간체를 지원합니다.
 
-Wenn du dich konzentrieren möchtest, vergrößere das aktuelle Fenster mit einem Tastenkürzel und drücke es erneut, um zur Kachelanordnung zurückzukehren. Du kannst bereits geöffnete Fenster auch neu anordnen, mit Tastenkürzeln zwischen ihnen wechseln, die vorherige Anordnung wiederherstellen und das aktuelle Fenster im Vollbild anzeigen.
+개인정보 보호
 
-Wichtige Funktionen:
+계정, 서버, 분석 도구, 원격 코드가 없습니다. AI Window Deck은 페이지 콘텐츠를 절대 읽지 않습니다. 창 목록을 표시하고 정렬하기 위해 창 위치와 열려 있는 탭의 제목 및 URL만 읽습니다. 설정은 Chrome의 확장 프로그램 저장소에 저장되며, Chrome 동기화를 켜 두었다면 Chrome이 사용자 본인의 기기 간에 설정을 동기화할 수 있습니다. 개발자나 제3자에게 전송되는 정보는 없습니다.
 
-- Öffne und ordne gespeicherte Gruppen von Chrome-Fenstern als Kacheln an.
-- Nutze gleichmäßige Raster oder visuelle Layouts mit einem größeren Fokusfenster.
-- Öffne mehrere URLs als Tabs in jedem Fenster und gruppiere sie nach Name und Farbe.
-- Fokussiere, vergrößere, ordne neu an, mache rückgängig und stelle Fenster mit konfigurierbaren Tastenkürzeln wieder her.
-- Halte eine kompakte Fensterliste bereit und springe direkt zu Arbeit, die Aufmerksamkeit braucht.
-- Einstellungen und gespeicherte Sets liegen im Chrome-Speicher; ein vom Entwickler betriebener Server oder ein Konto ist nicht nötig.
+지원 및 소스 코드: https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck ist für Chrome auf dem Desktop entwickelt und arbeitet mit den Fenstern und Seiten, die du bereits verwendest.
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
 
 ---
 
-## Português (Brasil) — `pt-BR`
+### Português (Brasil) — Portuguese (Brazil) — `pt_BR`
 
-**Nome**
+**Item name**
 
+```text
 AI Window Deck
+```
 
-**Categoria**
+**Summary / short description** (91/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
-Productivity
+```text
+Organiza janelas de IA em grade, amplia uma com um atalho e alterna rapidamente entre elas.
+```
 
-**Descrição curta**
+**Detailed description** (2520 characters)
 
-Organize espaços de trabalho com IA em mosaico, destaque uma janela com um atalho e alterne rapidamente entre janelas.
+```text
+O AI Window Deck transforma uma área de trabalho do Chrome lotada em um espaço de trabalho de IA organizado. Salve os sites que você usa juntos, organize-os em um quadro e abra todos de uma vez como janelas do Chrome lado a lado. Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continuam exatamente como estão.
 
-**Descrição detalhada**
+Monte um deck para pesquisa, redação, revisão ou qualquer trabalho em que vários chats de IA e referências precisem ficar visíveis ao mesmo tempo. Quando uma janela precisar de toda a sua atenção, amplie-a com um atalho. Pressione de novo e a janela volta ao seu espaço.
 
-AI Window Deck transforma uma área de trabalho movimentada do Chrome em um espaço de trabalho de IA organizado. Salve os sites que você usa juntos, abra-os em janelas independentes do Chrome e organize tudo com uma ação. Seu perfil atual do Chrome, logins, gerenciador de senhas e extensões permanecem como estão.
+Principais recursos
 
-Crie conjuntos de janelas para pesquisa, rascunhos, revisão ou qualquer fluxo de trabalho em que seja útil ver várias conversas e referências ao mesmo tempo. Escolha uma grade uniforme ou um layout com uma janela central maior, dê nome a cada janela e abra várias URLs como guias nessa janela. O AI Window Deck pode nomear e colorir os grupos de guias resultantes para facilitar a leitura do espaço de trabalho.
+• Biblioteca de janelas: dê a cada janela um nome e uma ou mais URLs, que abrem como abas. Adicione janelas uma por vez, cole uma lista como texto ou importe e exporte um arquivo .txt.
+• Quadro de layout: arraste janelas para o quadro e redimensione-as por qualquer borda. Escolha Auto, Vertical, Horizontal, Grade, Foco (uma janela grande) ou Livre. Desfaça, refaça e mantenha vários layouts predefinidos.
+• Abertura com um clique: abra todas as janelas do layout lado a lado na tela que você escolher, com as abas agrupadas por nome. Reorganizar grade coloca de volta no lugar as janelas já abertas.
+• Spotlight: Alt+X amplia a janela ativa para metade, três quartos, altura total, tela cheia ou um tamanho personalizado, a partir de onde ela está ou do centro da tela. Alt+Z a coloca de volta.
+• Navegar entre janelas: janela anterior e próxima, focar as janelas 1–8, desfazer a última organização e alternar a tela cheia. Todos os atalhos podem ser alterados no Chrome.
+• Várias telas: escolha em qual monitor ou monitores o deck será aberto.
+• Controle flutuante: mantenha um controle compacto aberto ou abra as configurações em uma janela grande.
+• Backup: faça backup ou restaure todas as janelas, layouts e configurações em um arquivo JSON.
+• 8 idiomas: inglês, japonês, alemão, espanhol, francês, coreano, português do Brasil e chinês simplificado.
 
-Quando precisar se concentrar, amplie a janela atual com um atalho e pressione-o novamente para voltar ao mosaico. Você também pode reorganizar janelas já abertas, alternar entre elas com atalhos, restaurar o layout anterior e colocar a janela atual em tela cheia.
+Privacidade
 
-Principais recursos:
+Não há conta, servidor, análises de uso nem código remoto. O AI Window Deck nunca lê o conteúdo das páginas. Ele lê apenas a posição das janelas e os títulos e URLs das abas abertas, para listar e organizar suas janelas. As configurações são salvas no armazenamento de extensões do Chrome, e o Chrome pode sincronizá-las entre seus próprios dispositivos se a sincronização do Chrome estiver ativada. Nada é enviado ao desenvolvedor nem a terceiros.
 
-- Abra e organize em mosaico conjuntos salvos de janelas do Chrome.
-- Use grades uniformes ou layouts visuais com uma janela de foco maior.
-- Abra várias URLs como guias em cada janela e agrupe-as por nome e cor.
-- Foque, amplie, reorganize, desfaça e restaure janelas com atalhos configuráveis.
-- Mantenha uma lista compacta de janelas por perto para ir diretamente ao trabalho que precisa de atenção.
-- Preferências e conjuntos salvos ficam no armazenamento do Chrome; não é necessário servidor ou conta operada pelo desenvolvedor.
+Suporte e código-fonte: https://github.com/takaoumehara/ai-window-deck
+```
 
-AI Window Deck foi criado para o Chrome no computador e funciona com as janelas e páginas que você já utiliza.
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
+
+---
+
+### 简体中文 — Chinese (China) — `zh_CN`
+
+**Item name**
+
+```text
+AI Window Deck
+```
+
+**Summary / short description** (33/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
+
+```text
+整理并平铺 AI 工作窗口，用快捷键放大其中一个，并快速切换窗口。
+```
+
+**Detailed description** (952 characters)
+
+```text
+AI Window Deck 能把杂乱的 Chrome 桌面变成井然有序的 AI 工作区。保存经常一起使用的网站，在画布上排好布局，再一次性以平铺的 Chrome 窗口全部打开。你的 Chrome 个人资料、登录状态、密码管理器和其他扩展程序都完全保持原样。
+
+无论是调研、撰写、审阅，还是任何需要同时查看多个 AI 对话和参考资料的工作，都可以为其创建一个窗口组。当某个窗口需要你全神贯注时，用快捷键将它放大；再按一次，窗口就会回到原来的平铺位置。
+
+主要功能
+
+• 窗口库：为每个窗口设置名称和一个或多个 URL，这些 URL 会以标签页形式打开。可以逐个添加窗口、以文本形式粘贴列表，或导入、导出 .txt 文件。
+• 布局画布：将窗口拖到画布上，并可从任意边缘调整大小。可选择自动、纵向、横向、网格、焦点（一个大窗口）或自由布局。支持撤消、重做，并可保存多个布局预设。
+• 一键启动：打开布局中的所有窗口，平铺到你选择的显示器上，并按名称为标签页分组。“重新平铺”可将已启动的窗口移回原位。
+• Spotlight：Alt+X 可将当前窗口放大到一半、四分之三、全高、全屏或自定义大小，可从当前位置或屏幕中央放大。Alt+Z 可将其放回原位。
+• 在窗口间切换：上一个和下一个窗口、聚焦窗口 1–8、撤消上一次排列、切换全屏。所有快捷键都可以在 Chrome 中更改。
+• 多显示器：选择在哪一台或哪几台显示器上打开窗口组。
+• 浮动控制器：可以保持一个紧凑的控制器常开，也可以在大窗口中打开设置。
+• 备份：以 JSON 文件备份或恢复所有窗口、布局和设置。
+• 8 种语言：英语、日语、德语、西班牙语、法语、韩语、巴西葡萄牙语和简体中文。
+
+隐私
+
+无需账号，没有服务器、数据分析或远程代码。AI Window Deck 从不读取网页内容。它只读取窗口位置以及已打开标签页的标题和 URL，用于列出和排列你的窗口。设置保存在 Chrome 的扩展程序存储空间中；如果你开启了 Chrome 同步，Chrome 可以在你自己的设备之间同步这些设置。任何数据都不会发送给开发者或第三方。
+
+支持与源代码：https://github.com/takaoumehara/ai-window-deck
+```
+
+**Screenshots:** `screenshots/01-arrange.png … 05-popup.png (English set)`
+

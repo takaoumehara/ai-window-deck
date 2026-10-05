@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Release archives (regenerate with ./tools/package.sh; attached to GitHub Releases)
+/AI-Window-Deck-v*.zip
+/*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/

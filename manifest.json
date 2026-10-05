@@ -1,13 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "AI Window Deck",
-  "version": "1.6.2",
+  "name": "__MSG_extName__",
+  "version": "1.7.0",
   "default_locale": "en",
   "description": "__MSG_extDescription__",
   "permissions": [
     "tabs",
     "tabGroups",
-    "windows",
     "storage",
     "system.display"
   ],
@@ -26,7 +25,7 @@
   },
   "action": {
     "default_popup": "dist/index.html",
-    "default_title": "AI Window Deck",
+    "default_title": "__MSG_extName__",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -39,58 +38,58 @@
       "suggested_key": {
         "default": "Alt+X"
       },
-      "description": "Switch between the tile and the size you chose"
+      "description": "__MSG_cmdSpotlight__"
     },
     "restore-home": {
       "suggested_key": {
         "default": "Alt+Z"
       },
-      "description": "Put this window back where it started"
+      "description": "__MSG_cmdHome__"
     },
     "tile-windows": {
       "suggested_key": {
         "default": "Alt+A"
       },
-      "description": "Arrange the windows into a grid"
+      "description": "__MSG_cmdTile__"
     },
     "toggle-fullscreen": {
       "suggested_key": {
         "default": "Alt+Q"
       },
-      "description": "Full screen, or back to the size it was"
+      "description": "__MSG_cmdFullscreen__"
     },
     "undo-layout": {
-      "description": "Undo the last arrangement"
+      "description": "__MSG_cmdUndo__"
     },
     "focus-next": {
-      "description": "Focus the next window"
+      "description": "__MSG_cmdNext__"
     },
     "focus-previous": {
-      "description": "Focus the previous window"
+      "description": "__MSG_cmdPrev__"
     },
     "focus-tile-1": {
-      "description": "Focus window 1"
+      "description": "__MSG_cmdFocusTile1__"
     },
     "focus-tile-2": {
-      "description": "Focus window 2"
+      "description": "__MSG_cmdFocusTile2__"
     },
     "focus-tile-3": {
-      "description": "Focus window 3"
+      "description": "__MSG_cmdFocusTile3__"
     },
     "focus-tile-4": {
-      "description": "Focus window 4"
+      "description": "__MSG_cmdFocusTile4__"
     },
     "focus-tile-5": {
-      "description": "Focus window 5"
+      "description": "__MSG_cmdFocusTile5__"
     },
     "focus-tile-6": {
-      "description": "Focus window 6"
+      "description": "__MSG_cmdFocusTile6__"
     },
     "focus-tile-7": {
-      "description": "Focus window 7"
+      "description": "__MSG_cmdFocusTile7__"
     },
     "focus-tile-8": {
-      "description": "Focus window 8"
+      "description": "__MSG_cmdFocusTile8__"
     }
   }
 }

@@ -15,7 +15,7 @@ export function ConfigProfileManager({
   onExportBackup,
   onImportBackup,
 }) {
-  const t = (key) => getTranslation(lang, key);
+  const t = (key, values) => getTranslation(lang, key, values);
   const [newProfileName, setNewProfileName] = useState("");
 
   const handleCreate = () => {
@@ -40,7 +40,8 @@ export function ConfigProfileManager({
           <div className="flex items-center gap-2">
             <Input
               type="text"
-              placeholder="例: Trading Profile, Work Setup..."
+              placeholder={t("profileNamePlaceholder")}
+              aria-label={t("profileNameLabel")}
               value={newProfileName}
               onChange={(e) => setNewProfileName(e.target.value)}
               className="bg-zinc-900 border-zinc-700 text-xs text-zinc-100"
@@ -98,9 +99,11 @@ export function ConfigProfileManager({
                         variant="ghost"
                         size="icon"
                         onClick={() => onDeleteProfile(prof.id)}
+                        aria-label={t("deleteProfile", { name: prof.name || t("profileNameDefault") })}
+                        title={t("deleteProfile", { name: prof.name || t("profileNameDefault") })}
                         className="h-7 w-7 text-zinc-400 hover:text-red-400"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                       </Button>
                     )}
                   </div>

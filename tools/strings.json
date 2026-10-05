@@ -55,7 +55,7 @@
     "nothing_to_launch": "URLが入力されたウィンドウがありません",
     "act_prev": "前の画面",
     "cmd_prev": "前の画面",
-    "cmd_undo": "やり直す",
+    "cmd_undo": "取り消す",
     "size_height": "縦だけいっぱい",
     "size_height_hint": "横幅はそのままで、高さだけ画面いっぱいにします",
     "undo": "やり直す",
@@ -173,7 +173,8 @@
     "reorder_drag": "つかんで並べ替える",
     "move_prev": "前のマスと入れ替える",
     "move_next": "次のマスと入れ替える",
-    "swapped": "入れ替えました"
+    "swapped": "入れ替えました",
+    "cmd_focus_tile": "ウィンドウ {n} を表示"
   },
   "en": {
     "tagline": "Switch quietly, switch fast",
@@ -349,7 +350,8 @@
     "reorder_drag": "Drag to reorder",
     "move_prev": "Swap with the previous square",
     "move_next": "Swap with the next square",
-    "swapped": "Swapped"
+    "swapped": "Swapped",
+    "cmd_focus_tile": "Focus window {n}"
   },
   "zh-CN": {
     "tagline": "安静切换，快速流畅",
@@ -525,7 +527,8 @@
     "act_home": "回到原位",
     "cmd_home": "回到最初的格子",
     "cmd_tile_n": "窗口",
-    "help_rotate": "一个按键在格子和你设定的大小之间来回切换。每次按下不是放大就是还原，中途不会经过全屏。全屏另有专用按键——想稍微放大的时候更多，不该每一圈都绕经全屏。想从任何状态一步回到格子，请用「回到原位」。"
+    "help_rotate": "一个按键在格子和你设定的大小之间来回切换。每次按下不是放大就是还原，中途不会经过全屏。全屏另有专用按键——想稍微放大的时候更多，不该每一圈都绕经全屏。想从任何状态一步回到格子，请用「回到原位」。",
+    "cmd_focus_tile": "聚焦窗口 {n}"
   },
   "ko": {
     "tagline": "조용하고 빠르게 전환",
@@ -701,7 +704,8 @@
     "act_home": "원래 자리로",
     "cmd_home": "처음 있던 칸으로 되돌리기",
     "cmd_tile_n": "창",
-    "help_rotate": "키 하나로 타일과 지정한 크기 사이를 오갑니다. 누를 때마다 커지거나 되돌아갈 뿐, 도중에 전체 화면을 거치지 않습니다. 전체 화면은 별도의 키로 나눠 두었습니다 — 조금 더 넓게 보고 싶을 때가 더 많은데, 그때마다 전체 화면을 거치게 하는 것은 한 번의 낭비이기 때문입니다. 어디에서든 한 번에 타일로 돌아가려면 「원래 자리로」를 사용하세요."
+    "help_rotate": "키 하나로 타일과 지정한 크기 사이를 오갑니다. 누를 때마다 커지거나 되돌아갈 뿐, 도중에 전체 화면을 거치지 않습니다. 전체 화면은 별도의 키로 나눠 두었습니다 — 조금 더 넓게 보고 싶을 때가 더 많은데, 그때마다 전체 화면을 거치게 하는 것은 한 번의 낭비이기 때문입니다. 어디에서든 한 번에 타일로 돌아가려면 「원래 자리로」를 사용하세요.",
+    "cmd_focus_tile": "창 {n}에 포커스"
   },
   "es": {
     "tagline": "Cambia rápido, sin ruido",
@@ -877,7 +881,8 @@
     "act_home": "Volver a la casilla",
     "cmd_home": "Volver a la casilla de origen",
     "cmd_tile_n": "Ventana",
-    "help_rotate": "Una sola tecla alterna entre la casilla y el tamaño que elegiste. Cada pulsación amplía la ventana o la devuelve; nunca pasa por pantalla completa de camino. Pantalla completa tiene su propia tecla, porque lo habitual es querer un poco más de sitio y eso no debería costar un rodeo en cada vuelta. Para aterrizar en la casilla desde donde sea, usa Volver a la casilla."
+    "help_rotate": "Una sola tecla alterna entre la casilla y el tamaño que elegiste. Cada pulsación amplía la ventana o la devuelve; nunca pasa por pantalla completa de camino. Pantalla completa tiene su propia tecla, porque lo habitual es querer un poco más de sitio y eso no debería costar un rodeo en cada vuelta. Para aterrizar en la casilla desde donde sea, usa Volver a la casilla.",
+    "cmd_focus_tile": "Enfocar ventana {n}"
   },
   "fr": {
     "tagline": "Basculez vite, en douceur",
@@ -1053,7 +1058,8 @@
     "act_home": "Revenir à la case",
     "cmd_home": "Revenir à la case d'origine",
     "cmd_tile_n": "Fenêtre",
-    "help_rotate": "Une seule touche fait l'aller-retour entre la case et la taille que vous avez choisie. Chaque appui agrandit la fenêtre ou la remet en place ; elle ne passe jamais par le plein écran en chemin. Le plein écran a sa propre touche, car vouloir un peu plus de place est le cas courant et cela ne devrait pas coûter un détour à chaque tour. Pour retomber sur la case depuis n'importe où, utilisez Revenir à la case."
+    "help_rotate": "Une seule touche fait l'aller-retour entre la case et la taille que vous avez choisie. Chaque appui agrandit la fenêtre ou la remet en place ; elle ne passe jamais par le plein écran en chemin. Le plein écran a sa propre touche, car vouloir un peu plus de place est le cas courant et cela ne devrait pas coûter un détour à chaque tour. Pour retomber sur la case depuis n'importe où, utilisez Revenir à la case.",
+    "cmd_focus_tile": "Activer la fenêtre {n}"
   },
   "de": {
     "tagline": "Leise und schnell wechseln",
@@ -1229,7 +1235,8 @@
     "act_home": "Zurück zum Feld",
     "cmd_home": "Zurück zum ursprünglichen Feld",
     "cmd_tile_n": "Fenster",
-    "help_rotate": "Eine Taste wechselt zwischen dem Feld und der gewählten Größe hin und her. Jeder Druck vergrößert das Fenster oder stellt es zurück; unterwegs kommt kein Vollbild mehr vor. Vollbild hat eine eigene Taste, denn der Normalfall ist, ein wenig mehr Platz zu wollen, und der sollte nicht bei jeder Runde einen Umweg kosten. Um von überall wieder auf dem Feld zu landen, nehmen Sie Zurück zum Feld."
+    "help_rotate": "Eine Taste wechselt zwischen dem Feld und der gewählten Größe hin und her. Jeder Druck vergrößert das Fenster oder stellt es zurück; unterwegs kommt kein Vollbild mehr vor. Vollbild hat eine eigene Taste, denn der Normalfall ist, ein wenig mehr Platz zu wollen, und der sollte nicht bei jeder Runde einen Umweg kosten. Um von überall wieder auf dem Feld zu landen, nehmen Sie Zurück zum Feld.",
+    "cmd_focus_tile": "Fenster {n} fokussieren"
   },
   "pt-BR": {
     "tagline": "Troque rápido, sem barulho",
@@ -1405,6 +1412,7 @@
     "act_home": "Voltar ao quadro",
     "cmd_home": "Voltar ao quadro de origem",
     "cmd_tile_n": "Janela",
-    "help_rotate": "Uma única tecla vai e volta entre o quadro e o tamanho que você escolheu. Cada toque amplia a janela ou a devolve; no caminho ela nunca passa pela tela cheia. A tela cheia tem uma tecla só dela, porque querer um pouco mais de espaço é o caso comum e isso não deveria custar um desvio a cada volta. Para cair de novo no quadro a partir de qualquer lugar, use Voltar ao quadro."
+    "help_rotate": "Uma única tecla vai e volta entre o quadro e o tamanho que você escolheu. Cada toque amplia a janela ou a devolve; no caminho ela nunca passa pela tela cheia. A tela cheia tem uma tecla só dela, porque querer um pouco mais de espaço é o caso comum e isso não deveria custar um desvio a cada volta. Para cair de novo no quadro a partir de qualquer lugar, use Voltar ao quadro.",
+    "cmd_focus_tile": "Focar janela {n}"
   }
 }

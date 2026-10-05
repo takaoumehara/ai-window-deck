@@ -1,29 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ExternalLink, Keyboard, LocateFixed, Maximize2, Sparkles } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
 import { SpotlightPreview } from "@/components/SpotlightPreview";
-
-const DEFAULT_SHORTCUTS = {
-  "toggle-spotlight": "⌥ X",
-  "restore-home": "⌥ Z",
-};
+import { useShortcuts } from "@/hooks/useShortcuts";
 
 export function SpotlightConfig({ lang, state, updateState, onAction, targetAspectRatio, canvasSlots }) {
   const t = (key) => getTranslation(lang, key);
   const currentSize = state.spotlightSize || "full";
   const currentAnchor = state.spotlightAnchor || "keep";
-  const [shortcuts, setShortcuts] = useState(DEFAULT_SHORTCUTS);
-
-  useEffect(() => {
-    if (typeof chrome === "undefined" || !chrome.commands?.getAll) return;
-    chrome.commands.getAll((commands) => {
-      const next = { ...DEFAULT_SHORTCUTS };
-      commands.forEach((command) => {
-        if (command.name in next && command.shortcut) next[command.name] = command.shortcut;
-      });
-      setShortcuts(next);
-    });
-  }, []);
+  const shortcuts = useShortcuts();
 
   const sizeOptions = [
     { id: "half", glyph: "½", label: t("spotlightHalf"), desc: t("spotlightHalfDesc") },
@@ -139,9 +124,9 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
           onClick={() => onAction?.("shortcuts")}
           className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-blue-300 transition-colors hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
-          {t("shortcutChange")}<ExternalLink className="h-3 w-3" />
+          {t("shortcutChange")}<ExternalLink className="h-3 w-3" aria-hidden="true" />
         </button>
-        <span className="w-full text-[11px] text-zinc-500 sm:w-auto">{t("shortcutChangeHint")}</span>
+        <span className="w-full text-[11px] text-zinc-400 sm:w-auto">{t("shortcutChangeHint")}</span>
       </div>
     </section>
   );
