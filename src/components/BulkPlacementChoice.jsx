@@ -13,12 +13,12 @@ export function BulkPlacementChoice({ lang, count, open, onAutoPlace, onLibraryO
         <p className="text-xs leading-5 text-zinc-400">{t("bulkPlacementDescription").replace("{count}", String(count))}</p>
       </DialogHeader>
       <div className="grid gap-2 sm:grid-cols-2">
-        <button type="button" onClick={onAutoPlace} className="rounded-lg border border-blue-500/50 bg-blue-500/10 p-4 text-left transition-colors hover:bg-blue-500/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">
-          <LayoutGrid className="mb-3 h-5 w-5 text-blue-300" />
+        <button type="button" onClick={onAutoPlace} className="rounded-lg border border-primary bg-primary/10 p-4 text-left transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2">
+          <LayoutGrid className="mb-3 h-5 w-5 text-primary" />
           <span className="block text-sm font-semibold text-white">{t("bulkPlaceAuto")}</span>
           <span className="mt-1 block text-xs leading-5 text-zinc-400">{t("bulkPlaceAutoDesc")}</span>
         </button>
-        <button type="button" onClick={onLibraryOnly} className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-left transition-colors hover:border-zinc-700 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">
+        <button type="button" onClick={onLibraryOnly} className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-left transition-colors hover:border-zinc-700 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2">
           <Library className="mb-3 h-5 w-5 text-zinc-300" />
           <span className="block text-sm font-semibold text-white">{t("bulkPlaceManual")}</span>
           <span className="mt-1 block text-xs leading-5 text-zinc-400">{t("bulkPlaceManualDesc")}</span>

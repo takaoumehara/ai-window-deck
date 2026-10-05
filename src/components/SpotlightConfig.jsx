@@ -39,7 +39,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
         <Sparkles style={{ width: '20px', height: '20px', color: 'var(--cie-ink-mute)' }} />
         <div>
           <h2 id="spotlight-config-title" className="text-base font-semibold tracking-tight" style={{ 
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             fontFamily: 'var(--cie-sans)',
             letterSpacing: '-0.02em'
           }}>
@@ -54,7 +54,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <div className="flex flex-col gap-3">
           <span className="text-sm font-semibold" style={{ 
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             fontFamily: 'var(--cie-sans)'
           }}>
             {t("spotlightSizeLabel")}
@@ -96,7 +96,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
               borderRadius: 'var(--cie-r)'
             }}>
               {[{ key: "spotlightWidth", label: t("spotlightWidth"), value: state.spotlightWidth ?? 70 }, { key: "spotlightHeight", label: t("spotlightHeightValue"), value: state.spotlightHeight ?? 90 }].map(({ key, label, value }) => (
-                <label key={key} className="flex flex-col gap-2 text-xs font-semibold" style={{ color: 'var(--cie-ink)' }}>
+                <label key={key} className="flex flex-col gap-2 text-xs font-semibold" style={{ color: 'var(--foreground)' }}>
                   <span style={{ fontFamily: 'var(--cie-mono)', fontSize: 'var(--cie-text-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>{label}</span>
                   <div className="flex items-center gap-2">
                     <input
@@ -109,7 +109,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                       style={{ accentColor: 'var(--cie-ink)' }}
                     />
                     <output className="w-10 text-right tabular-nums" style={{ 
-                      color: 'var(--cie-ink)',
+                      color: 'var(--foreground)',
                       fontFamily: 'var(--cie-mono)',
                       fontSize: 'var(--cie-text-mono)'
                     }}>
@@ -124,7 +124,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
 
         <div className="flex flex-col gap-3">
           <span className="text-sm font-semibold" style={{ 
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             fontFamily: 'var(--cie-sans)'
           }}>
             {t("spotlightAnchorLabel")}

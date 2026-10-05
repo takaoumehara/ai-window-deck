@@ -91,7 +91,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
                     onClick={() => handleRemoveRow(idx)}
                     aria-label={t("removeUrlRow", { n: idx + 1 })}
                     title={t("removeUrlRow", { n: idx + 1 })}
-                    className="w-9 h-9 flex items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-400 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                    className="w-9 h-9 flex items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-400 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </button>
@@ -140,7 +140,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
               <button
                 type="button"
                 onClick={() => setMode("bulk")}
-                className="rounded text-xs text-blue-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                className="rounded text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2"
               >
                 {t("toBulkMode")}
               </button>
@@ -166,13 +166,13 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
             placeholder={`Research\nhttps://example.com/docs\n\nChat AI\nhttps://claude.ai`}
-            className="w-full rounded-md border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+            className="w-full rounded-md border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2"
           />
           <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={() => setMode("single")}
-              className="rounded text-xs text-zinc-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="rounded text-xs text-zinc-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2"
             >
               {t("toSingleMode")}
             </button>

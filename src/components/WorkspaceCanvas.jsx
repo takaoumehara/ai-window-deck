@@ -280,7 +280,7 @@ export function WorkspaceCanvas({
       }}>
         {/* Browser Count */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold" style={{ color: 'var(--cie-ink)', fontFamily: 'var(--cie-sans)' }}>{t("howManyBrowsers")}</span>
+          <span className="text-xs font-semibold" style={{ color: 'var(--foreground)', fontFamily: 'var(--cie-sans)' }}>{t("howManyBrowsers")}</span>
           <div className="flex items-center rounded-md" style={{
             border: '1px solid var(--cie-stroke)',
             background: 'var(--card)'
@@ -291,7 +291,7 @@ export function WorkspaceCanvas({
               aria-label={t("decreaseCount")}
               className="flex h-8 w-8 items-center justify-center focus-visible:outline-none"
               style={{
-                color: 'var(--cie-ink)',
+                color: 'var(--foreground)',
                 cursor: 'pointer',
                 transition: `color var(--cie-t-snap) var(--cie-ease-expo)`
               }}
@@ -316,7 +316,7 @@ export function WorkspaceCanvas({
               aria-label={t("increaseCount")}
               className="flex h-8 w-8 items-center justify-center focus-visible:outline-none"
               style={{
-                color: 'var(--cie-ink)',
+                color: 'var(--foreground)',
                 cursor: 'pointer',
                 transition: `color var(--cie-t-snap) var(--cie-ease-expo)`
               }}
@@ -327,12 +327,12 @@ export function WorkspaceCanvas({
           {showGuide && <span className="hidden items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold sm:inline-flex" style={{
             border: '1px solid var(--cie-stroke)',
             background: 'var(--cie-btn-hover)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             fontFamily: 'var(--cie-sans)',
             borderRadius: 'calc(var(--cie-r) / 2)'
           }}><span className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
-            background: 'var(--cie-ink)',
-            color: 'var(--cie-paper)'
+            background: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           }}>2</span>{t("guideStep2Description")}</span>}
         </div>
 
@@ -379,14 +379,14 @@ export function WorkspaceCanvas({
           <button type="button" onClick={handleUndo} disabled={!history.past.length} aria-label={t("undo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md disabled:opacity-35" style={{
             border: '1px solid var(--cie-stroke)',
             background: 'var(--cie-btn)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             borderRadius: 'calc(var(--cie-r) / 2)',
             cursor: !history.past.length ? 'not-allowed' : 'pointer'
           }}><Undo2 style={{ width: '14px', height: '14px' }} /></button>
           <button type="button" onClick={handleRedo} disabled={!history.future.length} aria-label={t("redo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md disabled:opacity-35" style={{
             border: '1px solid var(--cie-stroke)',
             background: 'var(--cie-btn)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             borderRadius: 'calc(var(--cie-r) / 2)',
             cursor: !history.future.length ? 'not-allowed' : 'pointer'
           }}><Redo2 style={{ width: '14px', height: '14px' }} /></button>
@@ -413,7 +413,7 @@ export function WorkspaceCanvas({
               style={{
                 border: '1px solid var(--cie-stroke)',
                 background: 'var(--cie-btn)',
-                color: 'var(--cie-ink)',
+                color: 'var(--foreground)',
                 fontFamily: 'var(--cie-sans)',
                 borderRadius: 'calc(var(--cie-r) / 2)'
               }}
@@ -465,7 +465,7 @@ export function WorkspaceCanvas({
                             style={{
                               background: 'var(--cie-btn)',
                               border: '1px solid var(--cie-stroke)',
-                              color: 'var(--cie-ink)',
+                              color: 'var(--foreground)',
                               borderRadius: 'calc(var(--cie-r) / 3)'
                             }}
                           />
@@ -527,7 +527,7 @@ export function WorkspaceCanvas({
                   className="w-full mt-1 py-1.5 text-center text-xs font-semibold rounded-lg transition-colors"
                   style={{
                     border: '1px dashed var(--cie-stroke)',
-                    color: 'var(--cie-ink)',
+                    color: 'var(--foreground)',
                     fontFamily: 'var(--cie-sans)',
                     borderRadius: 'calc(var(--cie-r) / 2)',
                     cursor: 'pointer'
@@ -567,8 +567,8 @@ export function WorkspaceCanvas({
             className="h-9 gap-1.5 text-xs font-semibold"
             style={{
               border: '2px solid var(--cie-ink)',
-              background: 'var(--cie-ink)',
-              color: 'var(--cie-paper)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
               fontFamily: 'var(--cie-sans)',
               cursor: 'pointer',
               borderRadius: 'calc(var(--cie-r) / 2)'
@@ -585,8 +585,8 @@ export function WorkspaceCanvas({
             className="h-9 gap-1.5 text-xs font-semibold"
             style={{
               border: '2px solid var(--cie-ink)',
-              background: 'var(--cie-ink)',
-              color: 'var(--cie-paper)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
               fontFamily: 'var(--cie-sans)',
               cursor: 'pointer',
               borderRadius: 'calc(var(--cie-r) / 2)'
@@ -615,8 +615,8 @@ export function WorkspaceCanvas({
       >
         {showGuide && <p className="absolute left-3 top-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md px-3 py-2 text-xs font-semibold leading-5 shadow-lg" style={{
           border: '1px solid var(--cie-stroke)',
-          background: 'var(--cie-ink)',
-          color: 'var(--cie-paper)',
+          background: 'var(--primary)',
+          color: 'var(--primary-foreground)',
           fontFamily: 'var(--cie-sans)',
           borderRadius: 'calc(var(--cie-r) / 2)'
         }}>{t("guideCanvasHint")}</p>}
@@ -704,9 +704,9 @@ export function WorkspaceCanvas({
                     }}
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--cie-ink)', opacity: 0.3 }} />
-                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--cie-ink)', opacity: 0.3 }} />
-                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--cie-ink)', opacity: 0.3 }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
                     </div>
                     <div className="flex items-center gap-1" style={{ color: 'var(--cie-ink-mute)' }}>
                       <Move style={{ width: '12px', height: '12px' }} />
@@ -722,7 +722,7 @@ export function WorkspaceCanvas({
                       }}
                       aria-label={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
                       title={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
-                      className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 p-1 text-[11px] font-semibold text-zinc-400 hover:text-red-400"
+                      className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2 p-1 text-[11px] font-semibold text-zinc-400 hover:text-red-400"
                     >
                       ✕
                     </button>

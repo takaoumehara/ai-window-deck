@@ -74,23 +74,15 @@ export function App() {
 
   // Dynamically set document body class for container scaling
   useEffect(() => {
-    const bgColor = theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)';
-    const textColor = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
-    
     if (isPageMode) {
       document.body.className = "mode-page font-sans antialiased";
-      document.body.style.backgroundColor = bgColor;
-      document.body.style.color = textColor;
     } else if (isDockMode) {
       document.body.className = "mode-dock font-sans antialiased";
-      document.body.style.backgroundColor = bgColor;
-      document.body.style.color = textColor;
     } else {
       document.body.className = "mode-popup font-sans antialiased";
-      document.body.style.backgroundColor = bgColor;
-      document.body.style.color = textColor;
     }
-  }, [isPageMode, isDockMode, theme]);
+    // DO NOT set inline background/color - let CSS cascade handle theme
+  }, [isPageMode, isDockMode]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -477,13 +469,11 @@ export function App() {
   };
 
   if (loading || canvasSlots === null) {
-    return <div className="min-h-screen" style={{ background: 'var(--cie-paper)' }} aria-busy="true" />;
+    return <div className="min-h-screen" aria-busy="true" />;
   }
 
   return (
-    <div className={`min-h-screen p-4 sm:p-5 ${isPageMode ? "w-full" : ""}`} style={{
-      backgroundColor: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
-      color: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
+    <div className="min-h-screen p-4 sm:p-5" style={{
       fontFamily: 'var(--cie-sans)'
     }}>
       <a className="skip-link" href="#workspace-main">{t("skipToMain")}</a>

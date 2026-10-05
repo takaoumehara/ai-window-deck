@@ -45,8 +45,8 @@ export function DisplaySelector({ lang, targetDisplays, onToggleDisplay, showGui
             fontFamily: 'var(--cie-sans)',
             borderRadius: 'calc(var(--cie-r) / 2)'
           }}><span className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
-            background: 'var(--cie-ink)',
-            color: 'var(--cie-paper)'
+            background: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           }}>1</span>{t("guideStep1Description")}</p>}
         </div>
       </div>

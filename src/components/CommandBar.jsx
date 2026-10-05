@@ -15,8 +15,8 @@ export function CommandBar({ lang, onAction }) {
           onClick={() => onAction("spotlight")}
           className="h-[58px] flex justify-start items-center gap-3 px-5 text-[15px] rounded-lg font-semibold transition-all"
           style={{
-            background: 'var(--cie-ink)',
-            color: 'var(--cie-paper)',
+            background: 'var(--primary)',
+            color: 'var(--primary-foreground)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
             fontFamily: 'var(--cie-sans)',
@@ -36,7 +36,7 @@ export function CommandBar({ lang, onAction }) {
           className="h-[58px] flex justify-start items-center gap-3 px-5 text-[15px] rounded-lg font-semibold transition-all"
           style={{
             background: 'var(--cie-btn)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
             fontFamily: 'var(--cie-sans)',
@@ -44,7 +44,7 @@ export function CommandBar({ lang, onAction }) {
             transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
           }}
         >
-          <RotateCcw style={{ width: '20px', height: '20px', color: 'var(--cie-ink)' }} />
+          <RotateCcw style={{ width: '20px', height: '20px', color: 'var(--foreground)' }} />
           <div className="flex items-center gap-2">
             <span>{t("restore")}</span>
             <span className="key-cap">{shortcuts["restore-home"]}</span>
@@ -74,7 +74,7 @@ export function CommandBar({ lang, onAction }) {
               background: 'var(--cie-btn)',
               border: '1px solid var(--cie-stroke)',
               borderRadius: 'calc(var(--cie-r) / 2)',
-              color: 'var(--cie-ink)',
+              color: 'var(--foreground)',
               fontFamily: 'var(--cie-sans)',
               cursor: 'pointer',
               transition: `all var(--cie-t-snap) var(--cie-ease-expo)`

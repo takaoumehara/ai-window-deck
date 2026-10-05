@@ -42,7 +42,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
       borderRadius: 'var(--cie-r)'
     }}>
       <div className="flex items-center justify-between gap-3 text-xs">
-        <span className="font-semibold" style={{ color: 'var(--cie-ink)', fontFamily: 'var(--cie-sans)' }}>{t("spotlightPreviewTitle")}</span>
+        <span className="font-semibold" style={{ color: 'var(--foreground)', fontFamily: 'var(--cie-sans)' }}>{t("spotlightPreviewTitle")}</span>
         <span style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
       </div>
       <div className="mx-auto w-full max-w-[360px] rounded-md p-1.5" style={{ 
@@ -70,12 +70,12 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
             width: `${width}%`, 
             height: `${height}%`,
             border: '2px solid var(--cie-ink)',
-            background: 'var(--cie-ink)',
+            background: 'var(--primary)',
             opacity: 0.15
           }}>
             <span className="absolute left-1 top-1 rounded px-1 py-0.5 text-[10px] font-semibold" style={{
-              background: 'var(--cie-ink)',
-              color: 'var(--cie-paper)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
               fontFamily: 'var(--cie-sans)',
               borderRadius: 'calc(var(--cie-r) / 3)'
             }}>{t("spotlightPreviewActive")}</span>

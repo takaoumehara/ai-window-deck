@@ -18,7 +18,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
     }}>
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-bold" style={{ color: 'var(--cie-ink)', fontFamily: 'var(--cie-sans)' }}>{t("windowsHeader")}</h3>
+          <h3 className="text-sm font-bold" style={{ color: 'var(--foreground)', fontFamily: 'var(--cie-sans)' }}>{t("windowsHeader")}</h3>
           <span className="text-[11px]" style={{ fontFamily: 'var(--cie-mono)', color: 'var(--cie-ink-mute)' }}>({windows.length})</span>
         </div>
         <button
@@ -29,7 +29,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
           style={{
             border: '1px solid var(--cie-stroke)',
             background: 'var(--cie-btn)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             borderRadius: 'var(--cie-r-pill)',
             cursor: 'pointer',
             transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
@@ -43,12 +43,12 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
       {showGuide && <p className="-mt-1 rounded-md px-2 py-1.5 text-[11px] font-semibold leading-4" style={{
         border: '1px solid var(--cie-stroke)',
         background: 'var(--cie-btn-hover)',
-        color: 'var(--cie-ink)',
+        color: 'var(--foreground)',
         fontFamily: 'var(--cie-sans)',
         borderRadius: 'calc(var(--cie-r) / 2)'
       }}><span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
-        background: 'var(--cie-ink)',
-        color: 'var(--cie-paper)'
+        background: 'var(--primary)',
+        color: 'var(--primary-foreground)'
       }}>3</span>{t("guideStep3Description")}</p>}
 
       <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
@@ -109,7 +109,7 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                       <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{
                         border: '1px solid var(--cie-paper)',
                         background: 'transparent',
-                        color: 'var(--cie-paper)',
+                        color: 'var(--primary-foreground)',
                         fontFamily: 'var(--cie-sans)',
                         borderRadius: 'calc(var(--cie-r) / 3)'
                       }}>

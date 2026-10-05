@@ -20,7 +20,7 @@ export function PrimaryActions({ lang, presets, activePreset, onSelectPreset, on
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold" style={{
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             fontFamily: 'var(--cie-sans)',
             letterSpacing: '-0.02em'
           }}>
@@ -38,7 +38,7 @@ export function PrimaryActions({ lang, presets, activePreset, onSelectPreset, on
                   background: 'var(--cie-btn)',
                   border: '1px solid var(--cie-stroke)',
                   borderRadius: 'calc(var(--cie-r) / 2)',
-                  color: 'var(--cie-ink)',
+                  color: 'var(--foreground)',
                   fontFamily: 'var(--cie-sans)',
                   minHeight: '32px',
                   cursor: 'pointer'
@@ -63,7 +63,7 @@ export function PrimaryActions({ lang, presets, activePreset, onSelectPreset, on
           disabled={!hasWindows}
           className="flex items-center justify-center gap-3 rounded-lg font-semibold transition-all"
           style={{
-            background: hasWindows ? 'var(--cie-ink)' : 'var(--cie-btn)',
+            background: hasWindows ? 'var(--primary)' : 'var(--cie-btn)',
             color: hasWindows ? 'var(--cie-paper)' : 'var(--cie-ink-mute)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',

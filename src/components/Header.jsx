@@ -24,7 +24,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
             width: '10px',
             height: '10px',
             borderRadius: '2px',
-            background: 'var(--cie-ink)',
+            background: 'var(--primary)',
             position: 'absolute',
             top: '6px',
             right: '6px'
@@ -36,7 +36,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
             fontSize: '18px',
             fontWeight: 600,
             letterSpacing: '-0.03em',
-            color: 'var(--cie-ink)'
+            color: 'var(--foreground)'
           }}>
             {t("appTitle")}
           </h1>
@@ -68,9 +68,9 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           }}
         >
           {theme === 'dark' ? (
-            <Sun style={{ width: '16px', height: '16px', color: 'var(--cie-paper)' }} />
+            <Sun style={{ width: '16px', height: '16px', color: 'var(--primary-foreground)' }} />
           ) : (
-            <Moon style={{ width: '16px', height: '16px', color: 'var(--cie-ink)' }} />
+            <Moon style={{ width: '16px', height: '16px', color: 'var(--foreground)' }} />
           )}
         </button>
 
@@ -88,7 +88,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
             aria-label={t("languageLabel")}
             className="cursor-pointer rounded bg-transparent text-xs font-medium"
             style={{
-              color: 'var(--cie-ink)',
+              color: 'var(--foreground)',
               fontFamily: 'var(--cie-sans)',
               border: 'none',
               outline: 'none',
@@ -113,7 +113,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
             background: 'var(--cie-btn)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
             cursor: 'pointer',
             minHeight: '36px',
@@ -132,7 +132,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
             background: 'var(--cie-btn)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
-            color: 'var(--cie-ink)',
+            color: 'var(--foreground)',
             transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
             cursor: 'pointer',
             minHeight: '36px',
