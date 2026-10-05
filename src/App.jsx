@@ -537,8 +537,8 @@ export function App() {
             aria-current={activeTab === "arrange" ? "page" : undefined}
             className="px-4 py-2.5 text-sm font-semibold transition-colors"
             style={{
-              borderBottom: activeTab === "arrange" ? '2px solid var(--cie-ink)' : '2px solid transparent',
-              color: activeTab === "arrange" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              borderBottom: activeTab === "arrange" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "arrange" ? 'var(--foreground)' : 'var(--muted-foreground)',
               fontFamily: 'var(--cie-sans)'
             }}
           >
@@ -549,8 +549,8 @@ export function App() {
             aria-current={activeTab === "windows" ? "page" : undefined}
             className="px-4 py-2.5 text-sm font-semibold transition-colors"
             style={{
-              borderBottom: activeTab === "windows" ? '2px solid var(--cie-ink)' : '2px solid transparent',
-              color: activeTab === "windows" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              borderBottom: activeTab === "windows" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "windows" ? 'var(--foreground)' : 'var(--muted-foreground)',
               fontFamily: 'var(--cie-sans)'
             }}
           >
@@ -561,8 +561,8 @@ export function App() {
             aria-current={activeTab === "profiles" ? "page" : undefined}
             className="px-4 py-2.5 text-sm font-semibold transition-colors"
             style={{
-              borderBottom: activeTab === "profiles" ? '2px solid var(--cie-ink)' : '2px solid transparent',
-              color: activeTab === "profiles" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              borderBottom: activeTab === "profiles" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "profiles" ? 'var(--foreground)' : 'var(--muted-foreground)',
               fontFamily: 'var(--cie-sans)'
             }}
           >

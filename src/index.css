@@ -56,7 +56,7 @@
     --secondary-foreground: var(--cie-paper);
     
     --muted: var(--cie-ink-mute);
-    --muted-foreground: var(--cie-paper-mute);
+    --muted-foreground: var(--cie-ink-mute);
     
     --accent: var(--cie-paper);
     --accent-foreground: var(--cie-ink);

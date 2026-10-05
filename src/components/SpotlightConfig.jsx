@@ -70,10 +70,11 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   aria-pressed={active}
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
-                    background: active ? 'var(--cie-ink)' : 'var(--cie-btn)',
-                    border: active ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
+                    background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
                     borderRadius: 'var(--cie-r)',
-                    color: active ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                    color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
+                    opacity: active ? 1 : 0.85,
                     transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
                     cursor: 'pointer',
                     minHeight: '60px'
@@ -141,10 +142,11 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   aria-pressed={active}
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
-                    background: active ? 'var(--cie-ink)' : 'var(--cie-btn)',
-                    border: active ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
+                    background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
                     borderRadius: 'var(--cie-r)',
-                    color: active ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                    color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
+                    opacity: active ? 1 : 0.85,
                     transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
                     cursor: 'pointer',
                     minHeight: '60px'
