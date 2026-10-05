@@ -76,13 +76,13 @@
  --cie-shadow: none;
  --shadow: var(--cie-shadow);
 
- /* Motion — site language */
- --cie-t-snap: 160ms; /* weight tick / instant feedback */
- --cie-t-fast: 240ms; /* arrow nudge, ghost fade */
- --cie-t-cell: 520ms; /* block colour / settle */
- --cie-t-move: 720ms; /* signature: block → page */
- --cie-t-rise: 720ms; /* reveal after open */
- --cie-t-stagger: 38ms; /* per-item delay in a rise wave */
+ /* Motion — cie-ds 0.4.x timings */
+ --cie-t-snap: 140ms; /* instant feedback */
+ --cie-t-fast: 220ms; /* quick transition */
+ --cie-t-cell: 460ms; /* block settle */
+ --cie-t-move: 640ms; /* signature move */
+ --cie-t-rise: 640ms; /* reveal */
+ --cie-t-stagger: 32ms; /* per-item delay */
  --t-cell: var(--cie-t-cell);
  --t-move: var(--cie-t-move);
  --cie-ease-expo: cubic-bezier(0.76, 0, 0.18, 1); /* decisive settle */
@@ -108,6 +108,10 @@
  /* Board grid (optional; site-only) */
  --cols: 8;
  --rows: 6;
+ 
+ /* Focus ring (2px solid with offset for accessibility) */
+ --cie-focus-ring: 2px solid var(--cie-ink);
+ --cie-focus-offset: 2px;
 }
 
 @media (max-width: 760px), (orientation: portrait) {
@@ -127,7 +131,7 @@
  --sans: var(--cie-sans-ja);
 }
 
-/* Dark mode (light mode is default paper/ink) */
+/* Dark mode (inverted ink/paper) */
 [data-theme="dark"] {
   --cie-paper: #0b0b0b;
   --cie-ink: #f3f2ee;
@@ -135,6 +139,7 @@
   --cie-paper-mute: #9c9c98;
   --cie-stroke: rgba(11, 11, 11, 0.42);
   --cie-sb-thumb: var(--cie-paper-mute);
+  --cie-focus-ring: 2px solid var(--cie-ink);
   
   /* Update unprefixed aliases */
   --ink: var(--cie-ink);

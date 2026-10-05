@@ -7,39 +7,7 @@
 
 @layer base {
   :root {
-    /* Use CIE tokens instead of HSL values */
-    --background: var(--cie-ink);
-    --foreground: var(--cie-paper);
-    
-    --card: var(--cie-ink);
-    --card-foreground: var(--cie-paper);
-    
-    --popover: var(--cie-ink);
-    --popover-foreground: var(--cie-paper);
-    
-    --primary: var(--cie-paper);
-    --primary-foreground: var(--cie-ink);
-    
-    --secondary: var(--cie-ink-mute);
-    --secondary-foreground: var(--cie-paper);
-    
-    --muted: var(--cie-ink-mute);
-    --muted-foreground: var(--cie-paper-mute);
-    
-    --accent: var(--cie-paper);
-    --accent-foreground: var(--cie-ink);
-    
-    --destructive: #dc2626;
-    --destructive-foreground: var(--cie-paper);
-    
-    --border: var(--cie-stroke);
-    --input: var(--cie-stroke);
-    --ring: var(--cie-paper);
-    
-    --radius: var(--cie-r);
-  }
-  
-  [data-theme="dark"] {
+    /* Use CIE tokens only - no HSL or custom colors */
     --background: var(--cie-paper);
     --foreground: var(--cie-ink);
     
@@ -61,38 +29,71 @@
     --accent: var(--cie-ink);
     --accent-foreground: var(--cie-paper);
     
-    --destructive: #ef4444;
+    --destructive: var(--cie-ink);
     --destructive-foreground: var(--cie-paper);
     
     --border: var(--cie-stroke);
     --input: var(--cie-stroke);
     --ring: var(--cie-ink);
+    
+    --radius: var(--cie-r);
+  }
+  
+  [data-theme="dark"] {
+    --background: var(--cie-ink);
+    --foreground: var(--cie-paper);
+    
+    --card: var(--cie-ink);
+    --card-foreground: var(--cie-paper);
+    
+    --popover: var(--cie-ink);
+    --popover-foreground: var(--cie-paper);
+    
+    --primary: var(--cie-paper);
+    --primary-foreground: var(--cie-ink);
+    
+    --secondary: var(--cie-ink-mute);
+    --secondary-foreground: var(--cie-paper);
+    
+    --muted: var(--cie-ink-mute);
+    --muted-foreground: var(--cie-paper-mute);
+    
+    --accent: var(--cie-paper);
+    --accent-foreground: var(--cie-ink);
+    
+    --destructive: var(--cie-paper);
+    --destructive-foreground: var(--cie-ink);
+    
+    --border: var(--cie-stroke);
+    --input: var(--cie-stroke);
+    --ring: var(--cie-paper);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--cie-stroke);
   }
+  
   html, body {
     margin: 0;
     padding: 0;
-    background-color: var(--cie-ink);
-    color: var(--cie-paper);
+    background-color: var(--cie-paper);
+    color: var(--cie-ink);
     font-family: var(--cie-sans);
     font-size: var(--cie-text-body);
     line-height: 1.5;
     overflow-x: hidden !important;
-    antialiased: true;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color var(--cie-t-cell) var(--cie-ease-expo), color var(--cie-t-cell) var(--cie-ease-expo);
+    transition: background-color var(--cie-t-cell) var(--cie-ease-expo), 
+                color var(--cie-t-cell) var(--cie-ease-expo);
   }
   
   [data-theme="dark"] html,
   [data-theme="dark"] body {
-    background-color: var(--cie-paper);
-    color: var(--cie-ink);
+    background-color: var(--cie-ink);
+    color: var(--cie-paper);
   }
 
   html {
@@ -102,6 +103,23 @@
   button, input, select, textarea {
     font: inherit;
   }
+  
+  /* Selection invert (monochrome highlight) */
+  ::selection {
+    background-color: var(--cie-ink);
+    color: var(--cie-paper);
+  }
+  
+  [data-theme="dark"] ::selection {
+    background-color: var(--cie-paper);
+    color: var(--cie-ink);
+  }
+  
+  /* Focus ring - 2px solid with offset for accessibility */
+  *:focus-visible {
+    outline: var(--cie-focus-ring);
+    outline-offset: var(--cie-focus-offset);
+  }
 
   .skip-link {
     position: fixed;
@@ -110,18 +128,21 @@
     left: 0.75rem;
     transform: translateY(-200%);
     border-radius: var(--cie-r);
-    background: var(--cie-paper);
-    color: var(--cie-ink);
+    background: var(--cie-ink);
+    color: var(--cie-paper);
     padding: 0.625rem 0.875rem;
     font-size: var(--cie-text-mono);
     font-weight: 600;
     transition: transform var(--cie-t-fast) var(--cie-ease-out);
   }
+  
+  [data-theme="dark"] .skip-link {
+    background: var(--cie-paper);
+    color: var(--cie-ink);
+  }
 
   .skip-link:focus {
     transform: translateY(0);
-    outline: 2px solid var(--cie-paper-mute);
-    outline-offset: 2px;
   }
 }
 
@@ -154,18 +175,19 @@ body.mode-dock, body.mode-dock #root {
   background: var(--cie-btn);
   border: 1px solid var(--cie-stroke);
   padding: 2px 6px;
-  border-radius: calc(var(--cie-r) / 2);
-  color: var(--cie-paper);
+  min-height: 24px;
+  min-width: 24px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
+  border-radius: calc(var(--cie-r) / 2);
+  color: var(--cie-ink);
   transition: background-color var(--cie-t-snap) var(--cie-ease-expo);
 }
 
 [data-theme="dark"] .key-cap {
-  background: var(--cie-btn);
-  color: var(--cie-ink);
-  border-color: var(--cie-stroke);
+  color: var(--cie-paper);
 }
 
 /* Hide scrollbars for clean UI where appropriate */
@@ -214,7 +236,9 @@ body.mode-dock, body.mode-dock #root {
   .spotlight-preview-target,
   html, body,
   .skip-link,
-  .key-cap {
-    transition: none;
+  .key-cap,
+  * {
+    transition: none !important;
+    animation: none !important;
   }
 }

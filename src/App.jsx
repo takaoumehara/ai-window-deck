@@ -13,7 +13,7 @@ import { BulkPlacementChoice } from "@/components/BulkPlacementChoice";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation, browserLanguage } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";

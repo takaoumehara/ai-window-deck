@@ -2,38 +2,46 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, LayoutList, Globe, Sun, Moon } from "lucide-react";
 import { getTranslation, LANGUAGES } from "@/lib/i18n";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
   const t = (key) => getTranslation(lang, key);
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b pb-5" style={{ borderColor: 'var(--cie-stroke)' }}>
+    <header className="mb-6 flex flex-wrap items-center justify-between gap-4 pb-5" style={{ 
+      borderBottom: `1px solid var(--cie-stroke)`
+    }}>
       <div className="flex items-center gap-3">
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg" style={{ 
-          background: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)', 
-          border: `1px solid ${theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)'}`,
+        <div className="relative flex items-center justify-center" style={{ 
+          width: '40px',
+          height: '40px',
+          background: 'var(--cie-btn)', 
+          border: `1px solid var(--cie-stroke)`,
           borderRadius: 'var(--cie-r)'
         }}>
-          <div className="w-2.5 h-2.5 rounded" style={{ 
-            background: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
+          <div style={{ 
+            width: '10px',
+            height: '10px',
+            borderRadius: '2px',
+            background: 'var(--cie-ink)',
             position: 'absolute',
             top: '6px',
             right: '6px'
           }} />
         </div>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight" style={{ 
+          <h1 style={{ 
             fontFamily: 'var(--cie-sans)',
-            letterSpacing: '-0.03em',
+            fontSize: '18px',
             fontWeight: 600,
-            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)'
+            letterSpacing: '-0.03em',
+            color: 'var(--cie-ink)'
           }}>
             {t("appTitle")}
           </h1>
           <p className="text-xs mt-0.5" style={{ 
-            color: theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)',
+            color: 'var(--cie-ink-mute)',
             fontFamily: 'var(--cie-sans)'
           }}>
             {t("appSubtitle")}
@@ -46,42 +54,51 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
         <button
           onClick={toggleTheme}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="flex h-9 w-9 items-center justify-center rounded-full transition-all"
+          className="flex items-center justify-center"
           style={{
+            width: '36px',
+            height: '36px',
+            minWidth: '36px',
+            minHeight: '36px',
             background: 'var(--cie-btn)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r-pill)',
-            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer'
           }}
         >
           {theme === 'dark' ? (
-            <Sun className="w-4 h-4" style={{ color: 'var(--cie-ink)' }} />
+            <Sun style={{ width: '16px', height: '16px', color: 'var(--cie-ink)' }} />
           ) : (
-            <Moon className="w-4 h-4" style={{ color: 'var(--cie-paper)' }} />
+            <Moon style={{ width: '16px', height: '16px', color: 'var(--cie-ink)' }} />
           )}
         </button>
 
         {/* Language Selector */}
-        <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style={{
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5" style={{
           background: 'var(--cie-btn)',
           border: '1px solid var(--cie-stroke)',
-          borderRadius: 'var(--cie-r)'
+          borderRadius: 'var(--cie-r)',
+          minHeight: '36px'
         }}>
-          <Globe className="w-3.5 h-3.5" style={{ color: theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)' }} aria-hidden="true" />
+          <Globe style={{ width: '14px', height: '14px', color: 'var(--cie-ink-mute)' }} aria-hidden="true" />
           <select
             value={lang}
             onChange={(e) => onLanguageChange(e.target.value)}
             aria-label={t("languageLabel")}
-            className="cursor-pointer rounded bg-transparent text-xs font-medium focus:outline-none"
+            className="cursor-pointer rounded bg-transparent text-xs font-medium"
             style={{
-              color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
-              fontFamily: 'var(--cie-sans)'
+              color: 'var(--cie-ink)',
+              fontFamily: 'var(--cie-sans)',
+              border: 'none',
+              outline: 'none',
+              minHeight: '24px'
             }}
           >
             {LANGUAGES.map(({ code, label }) => (
               <option key={code} value={code} lang={code} style={{
-                background: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
-                color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)'
+                background: 'var(--cie-paper)',
+                color: 'var(--cie-ink)'
               }}>
                 {label}
               </option>
@@ -89,39 +106,43 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           </select>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={onOpenDock}
-          className="h-9 gap-1.5 text-xs"
+          className="flex items-center gap-1.5 px-3 text-xs"
           style={{
             background: 'var(--cie-btn)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
-            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
-            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+            color: 'var(--cie-ink)',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer',
+            minHeight: '36px',
+            fontFamily: 'var(--cie-sans)',
+            fontWeight: 500
           }}
         >
-          <LayoutList className="w-3.5 h-3.5" />
+          <LayoutList style={{ width: '14px', height: '14px' }} />
           <span>{t("openDock")}</span>
-        </Button>
+        </button>
 
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={onOpenBig}
-          className="h-9 gap-1.5 text-xs"
+          className="flex items-center gap-1.5 px-3 text-xs"
           style={{
             background: 'var(--cie-btn)',
             border: '1px solid var(--cie-stroke)',
             borderRadius: 'var(--cie-r)',
-            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
-            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+            color: 'var(--cie-ink)',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer',
+            minHeight: '36px',
+            fontFamily: 'var(--cie-sans)',
+            fontWeight: 500
           }}
         >
-          <ExternalLink className="w-3.5 h-3.5" />
+          <ExternalLink style={{ width: '14px', height: '14px' }} />
           <span>{t("openBig")}</span>
-        </Button>
+        </button>
       </div>
     </header>
   );
