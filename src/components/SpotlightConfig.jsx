@@ -70,10 +70,10 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   aria-pressed={active}
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
-                    background: active ? 'var(--cie-btn-hover)' : 'var(--cie-btn)',
-                    border: `1px solid ${active ? 'var(--cie-ink)' : 'var(--cie-stroke)'}`,
+                    background: active ? 'var(--cie-ink)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
                     borderRadius: 'var(--cie-r)',
-                    color: 'var(--cie-ink)',
+                    color: active ? 'var(--cie-paper)' : 'var(--cie-ink)',
                     transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
                     cursor: 'pointer',
                     minHeight: '60px'
@@ -82,7 +82,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   <span className="text-lg font-medium" style={{ fontFamily: 'var(--cie-sans)' }}>
                     {opt.glyph}
                   </span>
-                  <span className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
+                  <span className="text-xs mt-1" style={{ color: 'inherit' }}>
                     {opt.label}
                   </span>
                 </button>
@@ -141,17 +141,17 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   aria-pressed={active}
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
-                    background: active ? 'var(--cie-btn-hover)' : 'var(--cie-btn)',
-                    border: `1px solid ${active ? 'var(--cie-ink)' : 'var(--cie-stroke)'}`,
+                    background: active ? 'var(--cie-ink)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
                     borderRadius: 'var(--cie-r)',
-                    color: 'var(--cie-ink)',
+                    color: active ? 'var(--cie-paper)' : 'var(--cie-ink)',
                     transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
                     cursor: 'pointer',
                     minHeight: '60px'
                   }}
                 >
                   <Icon style={{ width: '20px', height: '20px' }} />
-                  <span className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
+                  <span className="text-xs mt-1" style={{ color: 'inherit' }}>
                     {opt.label}
                   </span>
                 </button>

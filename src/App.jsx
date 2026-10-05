@@ -74,8 +74,8 @@ export function App() {
 
   // Dynamically set document body class for container scaling
   useEffect(() => {
-    const bgColor = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
-    const textColor = theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)';
+    const bgColor = theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)';
+    const textColor = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
     
     if (isPageMode) {
       document.body.className = "mode-page font-sans antialiased";
@@ -482,8 +482,8 @@ export function App() {
 
   return (
     <div className={`min-h-screen p-4 sm:p-5 ${isPageMode ? "w-full" : ""}`} style={{
-      backgroundColor: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
-      color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+      backgroundColor: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+      color: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
       fontFamily: 'var(--cie-sans)'
     }}>
       <a className="skip-link" href="#workspace-main">{t("skipToMain")}</a>
