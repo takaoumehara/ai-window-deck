@@ -74,12 +74,14 @@ export function App() {
 
   // Dynamically set document body class for container scaling
   useEffect(() => {
+    // Use classList to preserve theme classes (dark/light)
+    document.body.classList.remove('mode-page', 'mode-dock', 'mode-popup');
     if (isPageMode) {
-      document.body.className = "mode-page font-sans antialiased";
+      document.body.classList.add('mode-page', 'font-sans', 'antialiased');
     } else if (isDockMode) {
-      document.body.className = "mode-dock font-sans antialiased";
+      document.body.classList.add('mode-dock', 'font-sans', 'antialiased');
     } else {
-      document.body.className = "mode-popup font-sans antialiased";
+      document.body.classList.add('mode-popup', 'font-sans', 'antialiased');
     }
     // DO NOT set inline background/color - let CSS cascade handle theme
   }, [isPageMode, isDockMode]);

@@ -131,15 +131,17 @@
  --sans: var(--cie-sans-ja);
 }
 
-/* Dark mode (inverted ink/paper) */
+/* Dark mode - semantic remapping happens in index.css, NOT here */
 [data-theme="dark"] {
-  --cie-paper: #0b0b0b;
-  --cie-ink: #f3f2ee;
-  --cie-ink-mute: #66665f;
-  --cie-paper-mute: #9c9c98;
-  --cie-stroke: rgba(11, 11, 11, 0.42);
-  --cie-sb-thumb: var(--cie-paper-mute);
-  --cie-focus-ring: 2px solid var(--cie-ink);
+  /* Ink and paper NEVER swap their hex values */
+  --cie-ink: #0b0b0b;
+  --cie-paper: #f3f2ee;
+  /* Mutes swap for contrast on inverted surfaces */
+  --cie-ink-mute: #9c9c98;
+  --cie-paper-mute: #66665f;
+  --cie-stroke: rgba(243, 242, 238, 0.42);
+  --cie-sb-thumb: var(--cie-ink-mute);
+  --cie-focus-ring: 2px solid var(--cie-paper);
   
   /* Update unprefixed aliases */
   --ink: var(--cie-ink);
