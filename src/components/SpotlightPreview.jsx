@@ -48,7 +48,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
       <div className="mx-auto w-full max-w-[360px] rounded-md p-1.5" style={{ 
         aspectRatio: targetAspectRatio,
         border: '1px solid var(--cie-stroke)',
-        background: 'var(--cie-paper)'
+        background: 'var(--card)'
       }}>
         <div className="relative h-full w-full overflow-hidden rounded-sm" style={{
           background: 'var(--cie-btn)'
@@ -60,7 +60,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
               width: `${slot.width}%`, 
               height: `${slot.height}%`,
               border: '1px solid var(--cie-stroke)',
-              background: 'var(--cie-paper)',
+              background: 'var(--card)',
               opacity: 0.7
             }} />
           ))}

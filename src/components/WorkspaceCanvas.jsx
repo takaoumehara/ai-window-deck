@@ -283,7 +283,7 @@ export function WorkspaceCanvas({
           <span className="text-xs font-semibold" style={{ color: 'var(--cie-ink)', fontFamily: 'var(--cie-sans)' }}>{t("howManyBrowsers")}</span>
           <div className="flex items-center rounded-md" style={{
             border: '1px solid var(--cie-stroke)',
-            background: 'var(--cie-paper)'
+            background: 'var(--card)'
           }}>
             <button
               type="button"
@@ -425,7 +425,7 @@ export function WorkspaceCanvas({
             {dropdownOpen && (
               <div role="menu" className="absolute left-0 top-full z-50 mt-1 flex w-64 flex-col gap-1 rounded-xl p-2 shadow-2xl" style={{
                 border: '1px solid var(--cie-stroke)',
-                background: 'var(--cie-paper)',
+                background: 'var(--card)',
                 borderRadius: 'var(--cie-r)'
               }}>
                 <div className="max-h-48 overflow-y-auto flex flex-col gap-1 no-scrollbar">
@@ -609,7 +609,7 @@ export function WorkspaceCanvas({
         style={{
           aspectRatio: targetAspectRatio || "16/9",
           border: '2px solid var(--cie-stroke)',
-          background: 'var(--cie-paper)',
+          background: 'var(--card)',
           borderRadius: 'var(--cie-r)'
         }}
       >
@@ -729,20 +729,29 @@ export function WorkspaceCanvas({
                   </div>
 
                   {/* Window Content */}
-                  <div className="p-2 flex flex-col gap-1 bg-zinc-900/90 flex-1 overflow-hidden">
-                    <span className="truncate text-xs font-semibold text-white">
+                  <div className="p-2 flex flex-col gap-1 flex-1 overflow-hidden" style={{ background: 'var(--card)' }}>
+                    <span className="truncate text-xs font-semibold" style={{ color: 'var(--card-foreground)', fontFamily: 'var(--cie-sans)' }}>
                       {slot.name || t("untitledWindow")}
                     </span>
                     {canAcceptDrop ? (
-                      <span className={`flex flex-1 items-center justify-center rounded border border-dashed px-2 text-center text-[11px] font-semibold transition-colors ${
-                        isDropTarget ? "border-blue-400 bg-blue-500/10 text-blue-200" : "border-zinc-700 text-zinc-400"
-                      }`}>
+                      <span className="flex flex-1 items-center justify-center rounded px-2 text-center text-[11px] font-semibold transition-colors" style={{
+                        border: isDropTarget ? '2px solid var(--cie-ink)' : '1px dashed var(--cie-stroke)',
+                        background: isDropTarget ? 'var(--cie-btn-hover)' : 'transparent',
+                        color: 'var(--card-foreground)',
+                        fontFamily: 'var(--cie-sans)'
+                      }}>
                         {isDropTarget ? t("dropHere") : t("dropEmptySlot")}
                       </span>
                     ) : (
                       <div className="flex flex-col gap-1 overflow-y-auto pr-0.5 no-scrollbar">
                         {slotUrls(slot).map((url, urlIndex) => (
-                          <span key={`${url}-${urlIndex}`} title={url} className="truncate rounded border border-zinc-800 bg-zinc-950/70 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
+                          <span key={`${url}-${urlIndex}`} title={url} className="truncate rounded px-1.5 py-1 text-[11px] leading-4" style={{
+                            border: '1px solid var(--cie-stroke)',
+                            background: 'var(--cie-btn)',
+                            color: 'var(--cie-ink-mute)',
+                            fontFamily: 'var(--cie-mono)',
+                            borderRadius: 'calc(var(--cie-r) / 3)'
+                          }}>
                             {t("tabLabel", { n: urlIndex + 1 })}: {url}
                           </span>
                         ))}

@@ -11,7 +11,7 @@ export function PrimaryActions({ lang, presets, activePreset, onSelectPreset, on
 
   return (
     <section className="mb-5 flex flex-col gap-4" style={{
-      background: 'var(--cie-paper)',
+      background: 'var(--card)',
       border: '1px solid var(--cie-stroke)',
       borderRadius: 'var(--cie-r)',
       padding: 'var(--cie-s-20)'
@@ -46,8 +46,8 @@ export function PrimaryActions({ lang, presets, activePreset, onSelectPreset, on
               >
                 {presets.map((preset, idx) => (
                   <option key={idx} value={idx} style={{
-                    background: 'var(--cie-paper)',
-                    color: 'var(--cie-ink)'
+                    background: 'var(--card)',
+                    color: 'var(--card-foreground)'
                   }}>
                     {preset.name || `Set ${idx + 1}`}
                   </option>

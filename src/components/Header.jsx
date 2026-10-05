@@ -97,8 +97,8 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           >
             {LANGUAGES.map(({ code, label }) => (
               <option key={code} value={code} lang={code} style={{
-                background: 'var(--cie-paper)',
-                color: 'var(--cie-ink)'
+                background: 'var(--card)',
+                color: 'var(--card-foreground)'
               }}>
                 {label}
               </option>

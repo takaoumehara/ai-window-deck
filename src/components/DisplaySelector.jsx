@@ -22,21 +22,44 @@ export function DisplaySelector({ lang, targetDisplays, onToggleDisplay, showGui
   }, []);
 
   return (
-    <section className="mb-5 flex flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-950/80 p-4" aria-labelledby="display-selector-title">
+    <section className="mb-5 flex flex-col gap-3 rounded-xl p-4" style={{
+      border: '1px solid var(--cie-stroke)',
+      background: 'var(--card)',
+      borderRadius: 'var(--cie-r)'
+    }} aria-labelledby="display-selector-title">
       <div className="flex items-center justify-between">
         <div>
-          <h2 id="display-selector-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-100">
-            <Monitor className="w-4 h-4 text-blue-400" />
+          <h2 id="display-selector-title" className="flex items-center gap-2 text-sm font-semibold tracking-tight" style={{
+            color: 'var(--card-foreground)',
+            fontFamily: 'var(--cie-sans)',
+            letterSpacing: '-0.02em'
+          }}>
+            <Monitor style={{ width: '16px', height: '16px', color: 'var(--cie-ink-mute)' }} />
             <span>{t("displaySelectTitle")}</span>
           </h2>
-          <p className="mt-1 text-xs leading-5 text-zinc-400">{t("displaySelectSubtitle")}</p>
-          {showGuide && <p className="mt-2 inline-flex items-center gap-2 rounded-md border border-blue-400/60 bg-blue-500/15 px-2.5 py-1.5 text-xs font-semibold text-blue-100"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">1</span>{t("guideStep1Description")}</p>}
+          <p className="mt-1 text-xs leading-5" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>{t("displaySelectSubtitle")}</p>
+          {showGuide && <p className="mt-2 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn-hover)',
+            color: 'var(--card-foreground)',
+            fontFamily: 'var(--cie-sans)',
+            borderRadius: 'calc(var(--cie-r) / 2)'
+          }}><span className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
+            background: 'var(--cie-ink)',
+            color: 'var(--cie-paper)'
+          }}>1</span>{t("guideStep1Description")}</p>}
         </div>
       </div>
 
       <div className="mt-1 grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
         {displays.length === 0 ? (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3 text-xs text-zinc-400">
+          <div className="rounded-lg p-3 text-xs" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--cie-ink-mute)',
+            fontFamily: 'var(--cie-sans)',
+            borderRadius: 'var(--cie-r)'
+          }}>
             {t("screenNum")} 1 ({t("currentDisplay")})
           </div>
         ) : (
@@ -54,32 +77,68 @@ export function DisplaySelector({ lang, targetDisplays, onToggleDisplay, showGui
                 onClick={() => onToggleDisplay(disp.id)}
                 aria-pressed={isSelected}
                 aria-label={`${name} (${width}×${height})`}
-                className={`relative flex min-h-[142px] flex-col justify-between rounded-xl border p-3 text-left transition-[background-color,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ${
-                  isSelected
-                    ? "border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/10"
-                    : "border-zinc-800 bg-zinc-900/80 hover:border-zinc-700 hover:bg-zinc-850"
-                }`}
+                className="relative flex min-h-[142px] flex-col justify-between rounded-xl p-3 text-left transition-all focus-visible:outline-none"
+                style={{
+                  border: isSelected ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
+                  background: isSelected ? 'var(--cie-ink)' : 'var(--card)',
+                  color: isSelected ? 'var(--cie-paper)' : 'var(--card-foreground)',
+                  borderRadius: 'var(--cie-r)',
+                  cursor: 'pointer',
+                  transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
+                }}
               >
                 {/* Header row */}
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-1.5 truncate">
-                    <span className="text-xs font-bold text-zinc-100 truncate">{name}</span>
+                    <span className="text-xs font-bold truncate" style={{ fontFamily: 'var(--cie-sans)' }}>{name}</span>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     {disp.isFocused && (
-                      <span className="rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{
+                        background: isSelected ? 'rgba(255,255,255,0.2)' : 'var(--cie-ink)',
+                        color: isSelected ? 'inherit' : 'var(--cie-paper)',
+                        fontFamily: 'var(--cie-sans)',
+                        borderRadius: 'calc(var(--cie-r) / 3)'
+                      }}>
                         {t("currentDisplay")}
                       </span>
                     )}
-                    {isSelected && <Check className="w-3.5 h-3.5 text-blue-400 ml-1" />}
+                    {isSelected && <Check style={{ width: '14px', height: '14px', marginLeft: '4px' }} />}
                   </div>
                 </div>
 
                 {/* Aspect Ratio Screen Visual Frame */}
-                <div className="w-full flex items-center justify-center py-2 bg-zinc-950/80 rounded-lg border border-zinc-800/80 my-1">
-                  <div style={{ width: `${Math.max(44, (width / largestEdge) * 160)}px`, height: `${Math.max(30, (height / largestEdge) * 160)}px` }} className="rounded border border-blue-500/30 bg-blue-500/5 flex flex-col items-center justify-center p-1">
-                    <div className="w-full h-full border border-dashed border-blue-400/40 rounded flex items-center justify-center">
-                      <span className="font-mono text-[10px] text-zinc-400">
+                <div className="w-full flex items-center justify-center py-2 rounded-lg my-1" style={{
+                  background: isSelected ? 'rgba(0,0,0,0.15)' : 'var(--cie-btn)',
+                  border: '1px solid var(--cie-stroke)',
+                  borderRadius: 'calc(var(--cie-r) / 2)'
+                }}>
+                  <div style={{ 
+                    width: `${Math.max(44, (width / largestEdge) * 160)}px`, 
+                    height: `${Math.max(30, (height / largestEdge) * 160)}px`,
+                    border: '1px solid var(--cie-stroke)',
+                    background: 'transparent',
+                    borderRadius: 'calc(var(--cie-r) / 3)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '4px'
+                  }}>
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      border: '1px dashed var(--cie-stroke)',
+                      borderRadius: 'calc(var(--cie-r) / 4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{
+                        fontFamily: 'var(--cie-mono)',
+                        fontSize: '10px',
+                        color: 'var(--cie-ink-mute)'
+                      }}>
                         {width}×{height}
                       </span>
                     </div>

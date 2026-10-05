@@ -30,7 +30,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
 
   return (
     <section className="mb-6 flex flex-col gap-4 rounded-xl p-5" style={{
-      background: 'var(--cie-paper)',
+      background: 'var(--card)',
       border: '1px solid var(--cie-stroke)',
       borderRadius: 'var(--cie-r)',
       transition: `all var(--cie-t-cell) var(--cie-ease-expo)`
