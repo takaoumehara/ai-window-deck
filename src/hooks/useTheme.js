@@ -17,11 +17,15 @@ export function useTheme() {
     }
   }, []);
 
-  const setTheme = (newTheme) => {
+  const setTheme = async (newTheme) => {
     setThemeState(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
     if (typeof chrome !== "undefined" && chrome.storage?.sync) {
-      chrome.storage.sync.set({ theme: newTheme });
+      try {
+        await chrome.storage.sync.set({ theme: newTheme });
+      } catch (error) {
+        console.error('[AI Window Deck] Failed to save theme:', error);
+      }
     }
   };
 

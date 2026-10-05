@@ -61,12 +61,17 @@ export function useExtensionState() {
     }
   }, []);
 
-  const updateState = (updates) => {
+  const updateState = async (updates) => {
     const nextState = { ...state, ...updates };
     setState(nextState);
     if (typeof chrome !== "undefined" && chrome.storage?.sync) {
       console.log('[AI Window Deck] Saving settings:', updates);
-      chrome.storage.sync.set(updates);
+      try {
+        await chrome.storage.sync.set(updates);
+        console.log('[AI Window Deck] Settings saved successfully');
+      } catch (error) {
+        console.error('[AI Window Deck] Failed to save settings:', error);
+      }
     }
   };
 

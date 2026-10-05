@@ -26,8 +26,8 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
     { id: "center", icon: Maximize2, label: t("spotlightCenter") },
   ];
 
-  const updateCustomSize = (key, value) => {
-    updateState({ [key]: Math.max(20, Math.min(100, Number(value))) });
+  const updateCustomSize = async (key, value) => {
+    await updateState({ [key]: Math.max(20, Math.min(100, Number(value))) });
   };
 
   const cardBg = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
