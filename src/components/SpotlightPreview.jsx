@@ -59,9 +59,9 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
               top: `${slot.top}%`, 
               width: `${slot.width}%`, 
               height: `${slot.height}%`,
-              border: '1px solid var(--cie-stroke)',
+              border: '1.5px solid var(--foreground)',
               background: 'var(--card)',
-              opacity: 0.7
+              opacity: 0.5
             }} />
           ))}
           <div className="spotlight-preview-target absolute" style={{ 
@@ -69,7 +69,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
             top: `${top}%`, 
             width: `${width}%`, 
             height: `${height}%`,
-            border: '2px solid var(--cie-ink)',
+            border: '2px solid var(--primary)',
             background: 'var(--primary)',
             opacity: 0.15
           }}>

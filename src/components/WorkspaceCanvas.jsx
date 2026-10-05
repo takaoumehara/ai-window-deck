@@ -632,7 +632,7 @@ export function WorkspaceCanvas({
           borderRadius: 'var(--cie-r)'
         }}
       >
-        {showGuide && <p className="absolute left-3 top-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md px-3 py-2 text-xs font-semibold leading-5 shadow-lg" style={{
+        {showGuide && <p className="absolute left-3 bottom-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md px-3 py-2 text-xs font-semibold leading-5 shadow-lg" style={{
           border: '1px solid var(--cie-stroke)',
           background: 'var(--primary)',
           color: 'var(--primary-foreground)',
