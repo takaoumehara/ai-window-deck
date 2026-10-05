@@ -36,18 +36,49 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
   const top = centered ? (100 - height) / 2 : clamp(base.top + base.height / 2 - height / 2, 0, 100 - height);
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
+    <div className="flex flex-col gap-2.5 rounded-lg p-3" style={{
+      border: '1px solid var(--cie-stroke)',
+      background: 'var(--cie-btn)',
+      borderRadius: 'var(--cie-r)'
+    }}>
       <div className="flex items-center justify-between gap-3 text-xs">
-        <span className="font-semibold text-zinc-200">{t("spotlightPreviewTitle")}</span>
-        <span className="text-zinc-400">{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
+        <span className="font-semibold" style={{ color: 'var(--cie-ink)', fontFamily: 'var(--cie-sans)' }}>{t("spotlightPreviewTitle")}</span>
+        <span style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
       </div>
-      <div className="mx-auto w-full max-w-[360px] rounded-md border border-zinc-700 bg-zinc-950 p-1.5" style={{ aspectRatio: targetAspectRatio }}>
-        <div className="relative h-full w-full overflow-hidden rounded-sm bg-zinc-900">
+      <div className="mx-auto w-full max-w-[360px] rounded-md p-1.5" style={{ 
+        aspectRatio: targetAspectRatio,
+        border: '1px solid var(--cie-stroke)',
+        background: 'var(--cie-paper)'
+      }}>
+        <div className="relative h-full w-full overflow-hidden rounded-sm" style={{
+          background: 'var(--cie-btn)'
+        }}>
           {slots.map((slot, index) => (
-            <div key={index} className="absolute border border-zinc-700 bg-zinc-800/80" style={{ left: `${slot.left}%`, top: `${slot.top}%`, width: `${slot.width}%`, height: `${slot.height}%` }} />
+            <div key={index} className="absolute" style={{ 
+              left: `${slot.left}%`, 
+              top: `${slot.top}%`, 
+              width: `${slot.width}%`, 
+              height: `${slot.height}%`,
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-paper)',
+              opacity: 0.7
+            }} />
           ))}
-          <div className="spotlight-preview-target absolute border-2 border-blue-300 bg-blue-500/30 shadow-[0_0_0_1px_rgba(96,165,250,0.35)]" style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%` }}>
-            <span className="absolute left-1 top-1 rounded bg-blue-500 px-1 py-0.5 text-[10px] font-semibold text-white">{t("spotlightPreviewActive")}</span>
+          <div className="spotlight-preview-target absolute" style={{ 
+            left: `${left}%`, 
+            top: `${top}%`, 
+            width: `${width}%`, 
+            height: `${height}%`,
+            border: '2px solid var(--cie-ink)',
+            background: 'var(--cie-ink)',
+            opacity: 0.15
+          }}>
+            <span className="absolute left-1 top-1 rounded px-1 py-0.5 text-[10px] font-semibold" style={{
+              background: 'var(--cie-ink)',
+              color: 'var(--cie-paper)',
+              fontFamily: 'var(--cie-sans)',
+              borderRadius: 'calc(var(--cie-r) / 3)'
+            }}>{t("spotlightPreviewActive")}</span>
           </div>
         </div>
       </div>

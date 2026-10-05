@@ -477,7 +477,7 @@ export function App() {
   };
 
   if (loading || canvasSlots === null) {
-    return <div className="min-h-screen bg-zinc-950" aria-busy="true" />;
+    return <div className="min-h-screen" style={{ background: 'var(--cie-paper)' }} aria-busy="true" />;
   }
 
   return (
@@ -528,44 +528,51 @@ export function App() {
         {/* Notification Banner */}
         <div aria-live="polite" aria-atomic="true">
         {notification && (
-          <div className="mb-4 rounded-xl border border-blue-500/50 bg-blue-600/20 p-3 text-center text-xs font-semibold text-blue-100 shadow-lg animate-in fade-in">
+          <div className="mb-4 rounded-xl p-3 text-center text-xs font-semibold shadow-lg animate-in fade-in" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--cie-ink)'
+          }}>
             {notification}
           </div>
         )}
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="mb-5 flex border-b border-zinc-800" aria-label={t("sectionsNavLabel")}>
+        <nav className="mb-5 flex" style={{ borderBottom: '1px solid var(--cie-stroke)' }} aria-label={t("sectionsNavLabel")}>
           <button
             onClick={() => setActiveTab("arrange")}
             aria-current={activeTab === "arrange" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "arrange"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "arrange" ? '2px solid var(--cie-ink)' : '2px solid transparent',
+              color: activeTab === "arrange" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("arrangeTab")}
           </button>
           <button
             onClick={() => setActiveTab("windows")}
             aria-current={activeTab === "windows" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "windows"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "windows" ? '2px solid var(--cie-ink)' : '2px solid transparent',
+              color: activeTab === "windows" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("windowsTab")}
           </button>
           <button
             onClick={() => setActiveTab("profiles")}
             aria-current={activeTab === "profiles" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "profiles"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "profiles" ? '2px solid var(--cie-ink)' : '2px solid transparent',
+              color: activeTab === "profiles" ? 'var(--cie-ink)' : 'var(--cie-ink-mute)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("profilesTab")}
           </button>

@@ -193,6 +193,56 @@ async function undoLayout() {
   return { ok: true, restored: frame.length };
 }
 
+// ---- window close tracking ------------------------------------------------
+
+// Track windows opened by the extension so we can offer to close only those.
+// Uses session storage (cleared when browser closes) so we don't need sessions permission.
+async function trackExtensionWindow(windowId) {
+  const tracked = await session("extensionOpenedWindows", []);
+  if (!tracked.includes(windowId)) {
+    tracked.push(windowId);
+    await chrome.storage.session.set({ extensionOpenedWindows: tracked });
+    console.log('[AI Window Deck] Tracking window:', windowId);
+  }
+}
+
+async function untrackExtensionWindow(windowId) {
+  const tracked = await session("extensionOpenedWindows", []);
+  const filtered = tracked.filter(id => id !== windowId);
+  await chrome.storage.session.set({ extensionOpenedWindows: filtered });
+  console.log('[AI Window Deck] Untracked window:', windowId);
+}
+
+async function getTrackedWindows() {
+  const tracked = await session("extensionOpenedWindows", []);
+  // Filter out windows that no longer exist
+  const allWindows = await chrome.windows.getAll();
+  const existingIds = new Set(allWindows.map(w => w.id));
+  const validTracked = tracked.filter(id => existingIds.has(id));
+  
+  // Update session if any windows were removed
+  if (validTracked.length !== tracked.length) {
+    await chrome.storage.session.set({ extensionOpenedWindows: validTracked });
+  }
+  
+  return validTracked;
+}
+
+async function closeExtensionWindows(windowIds) {
+  const results = { closed: [], failed: [] };
+  for (const windowId of windowIds) {
+    try {
+      await chrome.windows.remove(windowId);
+      await untrackExtensionWindow(windowId);
+      results.closed.push(windowId);
+    } catch (error) {
+      console.error('[AI Window Deck] Failed to close window:', windowId, error);
+      results.failed.push(windowId);
+    }
+  }
+  return results;
+}
+
 // ---- layout -----------------------------------------------------------
 
 // A layout is a list of cells on a cols x rows board: {x, y, w, h} in board

@@ -15,17 +15,37 @@ export function ThemeProvider({ children }) {
       chrome.storage.sync.get({ theme: "light" }, (items) => {
         const savedTheme = items.theme || "light";
         setThemeState(savedTheme);
-        document.documentElement.setAttribute("data-theme", savedTheme);
+        applyTheme(savedTheme);
         setLoading(false);
       });
     } else {
+      applyTheme("light");
       setLoading(false);
     }
   }, []);
 
+  const applyTheme = (newTheme) => {
+    // Remove old classes and attributes
+    document.documentElement.classList.remove("light", "dark");
+    document.body.classList.remove("light", "dark");
+    
+    // Apply new theme with both class and data-theme
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+      document.body.classList.add("dark");
+      document.body.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+      document.body.setAttribute("data-theme", "light");
+    }
+    
+    console.log('[AI Window Deck] Theme applied:', newTheme);
+  };
+
   const setTheme = async (newTheme) => {
     setThemeState(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
+    applyTheme(newTheme);
     if (typeof chrome !== "undefined" && chrome.storage?.sync) {
       try {
         await chrome.storage.sync.set({ theme: newTheme });

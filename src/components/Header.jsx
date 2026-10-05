@@ -68,7 +68,7 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           }}
         >
           {theme === 'dark' ? (
-            <Sun style={{ width: '16px', height: '16px', color: 'var(--cie-ink)' }} />
+            <Sun style={{ width: '16px', height: '16px', color: 'var(--cie-paper)' }} />
           ) : (
             <Moon style={{ width: '16px', height: '16px', color: 'var(--cie-ink)' }} />
           )}
