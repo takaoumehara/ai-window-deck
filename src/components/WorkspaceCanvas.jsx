@@ -308,7 +308,10 @@ export function WorkspaceCanvas({
                 const nextCount = Number(e.target.value);
                 handleCountChange(Number.isFinite(nextCount) ? nextCount : 0);
               }}
-              className="w-9 h-7 text-center text-xs font-bold text-white bg-transparent border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-9 h-7 text-center text-xs font-bold bg-transparent border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              style={{
+                color: 'var(--foreground)'
+              }}
             />
             <button
               type="button"
@@ -353,9 +356,9 @@ export function WorkspaceCanvas({
                 }}
                 className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-[11px] font-semibold transition-all focus-visible:outline-none"
                 style={{
-                  border: active ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
-                  background: active ? 'var(--cie-ink)' : 'var(--cie-btn)',
-                  color: active ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                  border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+                  background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                  color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
                   fontFamily: 'var(--cie-sans)',
                   borderRadius: 'calc(var(--cie-r) / 2)',
                   cursor: 'pointer',
@@ -367,9 +370,9 @@ export function WorkspaceCanvas({
             );
           })}
           <button type="button" aria-pressed={layoutFamily === "custom"} onClick={() => onLayoutFamilyChange?.("custom")} className="inline-flex h-8 items-center rounded-md px-2 text-[11px] font-semibold focus-visible:outline-none" style={{
-            border: layoutFamily === "custom" ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
-            background: layoutFamily === "custom" ? 'var(--cie-ink)' : 'var(--cie-btn)',
-            color: layoutFamily === "custom" ? 'var(--cie-paper)' : 'var(--cie-ink)',
+            border: layoutFamily === "custom" ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+            background: layoutFamily === "custom" ? 'var(--primary)' : 'var(--cie-btn)',
+            color: layoutFamily === "custom" ? 'var(--primary-foreground)' : 'var(--foreground)',
             fontFamily: 'var(--cie-sans)',
             borderRadius: 'calc(var(--cie-r) / 2)',
             cursor: 'pointer',
@@ -543,7 +546,15 @@ export function WorkspaceCanvas({
             variant="outline"
             size="sm"
             onClick={handleEqualize}
-            className="h-9 gap-1.5 border-zinc-700 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+            className="h-9 gap-1.5 text-xs font-semibold"
+            style={{
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
             <RotateCcw className="w-3 h-3" />
             {t("equalizeBtn")}
@@ -553,7 +564,15 @@ export function WorkspaceCanvas({
             variant="outline"
             size="sm"
             onClick={() => commitSlots([])}
-            className="h-9 border-zinc-700 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+            className="h-9 text-xs font-semibold"
+            style={{
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
             {t("clearCanvas")}
           </Button>
@@ -566,9 +585,9 @@ export function WorkspaceCanvas({
             title={t("retileTitle")}
             className="h-9 gap-1.5 text-xs font-semibold"
             style={{
-              border: '2px solid var(--cie-ink)',
-              background: 'var(--primary)',
-              color: 'var(--primary-foreground)',
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
               fontFamily: 'var(--cie-sans)',
               cursor: 'pointer',
               borderRadius: 'calc(var(--cie-r) / 2)'
