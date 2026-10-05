@@ -11,8 +11,8 @@ window.AWD_I18N = {
   },
 
   ja: {
-    'meta.title': 'AI Window Deck：AIウィンドウを並べ、いま見る1枚を Spotlight',
-    'meta.description': 'AI Window Deck は、一緒に使う AI ツールや資料を保存してキャンバスに配置し、タイル状の Chrome ウィンドウとして一度に開き、ショートカット 1 つで 1 枚を拡大できる Chrome 拡張機能です。アカウント・サーバー・トラッキングはありません。',
+    'meta.title': 'AI Window Deck：クラウドの Claude Code と Codex 向けウィンドウマネージャ',
+    'meta.description': 'クラウドの Claude Code と Codex 向けウィンドウマネージャ。複数プロジェクトを同時に走らせても迷わないよう、作業ウィンドウをタイル配置し、ショートカットで Spotlight。アカウント・サーバー・トラッキングはありません。',
     'ui.skip': '本文へスキップ',
     'ui.copy': 'コピー',
     'ui.copied': 'コピー済み',
@@ -29,8 +29,8 @@ window.AWD_I18N = {
     'nav.privacy': 'プライバシー',
 
     'hero.eyebrow': 'Chrome 拡張機能 · MIT',
-    'hero.tagline': 'AIウィンドウを並べ、いま見る1枚を Spotlight。',
-    'hero.lead': '一緒に使う AI ツールや資料を保存しておき、キャンバスに配置して、タイル状の Chrome ウィンドウとしてまとめて開きます。見たい 1 枚はショートカット 1 つで拡大。Chrome のプロファイル、ログイン状態、ほかの拡張機能はそのままです。',
+    'hero.tagline': 'クラウドの Claude Code と Codex 向けウィンドウマネージャ — 複数プロジェクトを同時に、迷わず。',
+    'hero.lead': 'クラウドの Claude Code と Codex 向け。プロジェクトごとに使うサイトを保存し、キャンバスに配置してタイル状の Chrome ウィンドウとして開きます。見たい 1 枚はショートカットで拡大。Project A / B / C を同時に走らせても迷いません。プロファイルとログイン状態はそのままです。',
     'hero.metaLabel': '主な機能',
     'hero.m1': 'キャンバスレイアウト',
     'hero.m2': 'マルチディスプレイ',
@@ -42,7 +42,7 @@ window.AWD_I18N = {
 
     'what.eyebrow': 'AI Window Deck とは',
     'what.title': '普通の Chrome ウィンドウを、1 つのデッキに',
-    'what.lead': '複数の AI ツールや資料を並べて作業する人のためのツールです。サイトを埋め込んだり中継したりはしません。通常の Chrome ウィンドウを開き、置きたい場所に置くだけです。',
+    'what.lead': 'クラウドの Claude Code、Codex、その他の AI ツールを複数プロジェクトで使う人のためのツールです。サイトを埋め込んだり中継したりはしません。通常の Chrome ウィンドウを開き、置きたい場所に置くだけです。',
     'what.libTitle': 'ウィンドウライブラリ',
     'what.libBody': '保存した各ウィンドウには名前と 1 つ以上の URL があり、URL はタブとして開きます。1 つずつ追加するほか、テキストでまとめて貼り付けたり、<code>.txt</code> ファイルを読み込んだりできます。',
     'what.canvasTitle': 'レイアウトキャンバス',
@@ -95,11 +95,11 @@ window.AWD_I18N = {
 
     'inst.eyebrow': 'インストール',
     'inst.title': '3 つのインストール方法',
-    'inst.lead': 'Chrome ウェブストアの掲載は現在審査中です。公開までは、リリース ZIP から読み込んでください。1 分ほどで終わります。',
-    'inst.pending': '審査中',
+    'inst.lead': 'Chrome ウェブストアからワンクリックでインストールするか、リリース ZIP を読み込みます。どちらも約 1 分です。',
+    'inst.pending': '公開中',
     'inst.ready': '利用可能',
     'inst.storeTitle': 'Chrome ウェブストア',
-    'inst.storeBody': '近日公開予定です。承認後は、ワンクリックでインストールでき、自動で更新されます。',
+    'inst.storeBody': 'Chrome ウェブストアで公開中。ワンクリックでインストールでき、自動で更新されます。',
     'inst.zipTitle': 'リリース ZIP から',
     'inst.zip1': '<a href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a> から <code>AI-Window-Deck-vX.Y.Z.zip</code> をダウンロードして解凍します。',
     'inst.zip2': '<code>chrome://extensions</code> を開き、<b>デベロッパー モード</b>をオンにします。',
@@ -153,8 +153,8 @@ window.AWD_I18N = {
     'faq.a5': 'はい。起動する前に、配置対象のディスプレイを 1 台以上選んでください。デッキはディスプレイのサイズと位置を読み取り、各ウィンドウを正しいモニターに並べます。',
     'faq.q6': '設定を別のパソコンに移せますか？',
     'faq.a6': 'はい。<i>バックアップ</i> ですべてを JSON ファイルに保存し、別のマシンで復元します。Chrome 同期がオンなら、設定が自動で引き継がれることもあります。',
-    'faq.q7': 'Chrome ウェブストアにはいつ公開されますか？',
-    'faq.a7': '現在、掲載の審査中です。承認されるまでは、<a href="https://github.com/takaoumehara/ai-window-deck/releases">リリース ZIP</a> からインストールしてください。',
+    'faq.q7': 'どこからインストールできますか？',
+    'faq.a7': '<a href="https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc">Chrome ウェブストア</a>、または <a href="https://github.com/takaoumehara/ai-window-deck/releases">リリース ZIP</a> からインストールできます。',
 
     'footer.license': 'MIT ライセンス',
     'footer.releases': 'リリース',

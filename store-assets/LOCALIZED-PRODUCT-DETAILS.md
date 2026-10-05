@@ -14,18 +14,18 @@ Category: **Productivity → Workflow & Planning**.
 AI Window Deck
 ```
 
-**Summary / short description** (83/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
+**Summary / short description** (111/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
 ```text
-Tile AI workspaces, spotlight one with a shortcut, and switch between them quickly.
+Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
 ```
 
-**Detailed description** (2244 characters)
+**Detailed description** (2344 characters)
 
 ```text
-AI Window Deck turns a crowded Chrome desktop into an arranged AI workspace. Save the sites you use together, lay them out on a canvas, and open them all at once as tiled Chrome windows. Your Chrome profile, sign-ins, password manager and other extensions stay exactly as they are.
+AI Window Deck is the window manager for Claude Code in the cloud and Codex. Run multiple projects at once without getting confused — save the sites you use together, lay them out on a canvas, and open them all at once as tiled Chrome windows. Your Chrome profile, sign-ins, password manager and other extensions stay exactly as they are.
 
-Build a deck for research, drafting, review, or any work where several AI chats and references need to be visible at the same time. When one window needs your full attention, enlarge it with a shortcut. Press it again and the window goes back to its tile.
+Build a deck for Project A, Project B, and Project C — research, drafting, review, or any work where Claude Code, Codex, and references need to stay visible at the same time. When one window needs your full attention, enlarge it with a shortcut. Press it again and the window goes back to its tile.
 
 Key features
 
@@ -58,18 +58,18 @@ Support and source code: https://github.com/takaoumehara/ai-window-deck
 AI Window Deck
 ```
 
-**Summary / short description** (43/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
+**Summary / short description** (54/132 characters; this is the manifest `extDescription` and Chrome fills it from the package automatically)
 
 ```text
-AIの作業ウィンドウを整列し、ショートカットで一つを大きくして、すばやく切り替えます。
+クラウドのClaude CodeとCodex向けウィンドウマネージャ。複数プロジェクトを同時に、迷わず運用。
 ```
 
-**Detailed description** (1371 characters)
+**Detailed description** (1418 characters)
 
 ```text
-AI Window Deck は、ウィンドウがひしめく Chrome のデスクトップを、整理された AI ワークスペースに変えます。一緒に使うサイトを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。
+AI Window Deck は、クラウドの Claude Code と Codex 向けのウィンドウマネージャです。複数のプロジェクトを同時に走らせても迷わないよう、一緒に使うサイトを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。
 
-リサーチ、下書き、レビューなど、複数の AI チャットや資料を同時に表示しておきたい作業のためのデッキを作れます。1 つのウィンドウに集中したいときは、ショートカットで拡大できます。もう一度押せば、ウィンドウは元のタイルに戻ります。
+Project A / B / C のように、リサーチ、下書き、レビューなど、Claude Code・Codex・資料を同時に表示しておきたい作業のためのデッキを作れます。1 つのウィンドウに集中したいときは、ショートカットで拡大できます。もう一度押せば、ウィンドウは元のタイルに戻ります。
 
 主な機能
 
@@ -91,6 +91,7 @@ AI Window Deck は、ウィンドウがひしめく Chrome のデスクトップ
 ```
 
 **Screenshots:** `localized/ja/screenshots/01-arrange.png … 05-popup.png`
+
 
 ---
 

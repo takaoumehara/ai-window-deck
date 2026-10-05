@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
+
 A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.
 
 Your Chrome profile, sign-ins, password manager and other extensions stay as they are. AI Window Deck only arranges ordinary Chrome windows.
@@ -28,7 +30,7 @@ Your Chrome profile, sign-ins, password manager and other extensions stay as the
 
 ### Chrome Web Store
 
-Coming soon. The listing is under review.
+Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### From a release ZIP
 
