@@ -3,11 +3,9 @@ import { Keyboard, LocateFixed, Maximize2, Sparkles } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
 import { SpotlightPreview } from "@/components/SpotlightPreview";
 import { useShortcuts } from "@/hooks/useShortcuts";
-import { useTheme } from "@/hooks/useTheme";
 
 export function SpotlightConfig({ lang, state, updateState, onAction, targetAspectRatio, canvasSlots }) {
   const t = (key) => getTranslation(lang, key);
-  const { theme } = useTheme();
   const currentSize = state.spotlightSize || "full";
   const currentAnchor = state.spotlightAnchor || "keep";
   const shortcuts = useShortcuts();
@@ -30,28 +28,24 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
     await updateState({ [key]: Math.max(20, Math.min(100, Number(value))) });
   };
 
-  const cardBg = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
-  const cardText = theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)';
-  const mutedText = theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)';
-
   return (
     <section className="mb-6 flex flex-col gap-4 rounded-xl p-5" style={{
-      background: cardBg,
+      background: 'var(--cie-paper)',
       border: '1px solid var(--cie-stroke)',
       borderRadius: 'var(--cie-r)',
-      transition: 'all var(--cie-t-cell) var(--cie-ease-expo)'
+      transition: `all var(--cie-t-cell) var(--cie-ease-expo)`
     }} aria-labelledby="spotlight-config-title">
       <div className="flex items-center gap-3 pb-4" style={{ borderBottom: '1px solid var(--cie-stroke)' }}>
-        <Sparkles className="w-5 h-5" style={{ color: mutedText }} />
+        <Sparkles style={{ width: '20px', height: '20px', color: 'var(--cie-ink-mute)' }} />
         <div>
           <h2 id="spotlight-config-title" className="text-base font-semibold tracking-tight" style={{ 
-            color: cardText,
+            color: 'var(--cie-ink)',
             fontFamily: 'var(--cie-sans)',
             letterSpacing: '-0.02em'
           }}>
             {t("spotlightConfigTitle")}
           </h2>
-          <p className="text-xs mt-1" style={{ color: mutedText }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
             {t("spotlightConfigSubtitle")}
           </p>
         </div>
@@ -60,7 +54,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <div className="flex flex-col gap-3">
           <span className="text-sm font-semibold" style={{ 
-            color: cardText,
+            color: 'var(--cie-ink)',
             fontFamily: 'var(--cie-sans)'
           }}>
             {t("spotlightSizeLabel")}
@@ -77,17 +71,18 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
                     background: active ? 'var(--cie-btn-hover)' : 'var(--cie-btn)',
-                    border: `1px solid ${active ? cardText : 'var(--cie-stroke)'}`,
+                    border: `1px solid ${active ? 'var(--cie-ink)' : 'var(--cie-stroke)'}`,
                     borderRadius: 'var(--cie-r)',
-                    color: cardText,
-                    transition: 'all var(--cie-t-snap) var(--cie-ease-expo)',
-                    cursor: 'pointer'
+                    color: 'var(--cie-ink)',
+                    transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+                    cursor: 'pointer',
+                    minHeight: '60px'
                   }}
                 >
                   <span className="text-lg font-medium" style={{ fontFamily: 'var(--cie-sans)' }}>
                     {opt.glyph}
                   </span>
-                  <span className="text-xs mt-1" style={{ color: mutedText }}>
+                  <span className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
                     {opt.label}
                   </span>
                 </button>
@@ -101,7 +96,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
               borderRadius: 'var(--cie-r)'
             }}>
               {[{ key: "spotlightWidth", label: t("spotlightWidth"), value: state.spotlightWidth ?? 70 }, { key: "spotlightHeight", label: t("spotlightHeightValue"), value: state.spotlightHeight ?? 90 }].map(({ key, label, value }) => (
-                <label key={key} className="flex flex-col gap-2 text-xs font-semibold" style={{ color: cardText }}>
+                <label key={key} className="flex flex-col gap-2 text-xs font-semibold" style={{ color: 'var(--cie-ink)' }}>
                   <span style={{ fontFamily: 'var(--cie-mono)', fontSize: 'var(--cie-text-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>{label}</span>
                   <div className="flex items-center gap-2">
                     <input
@@ -111,10 +106,10 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                       value={value}
                       onChange={(event) => updateCustomSize(key, event.target.value)}
                       className="flex-1"
-                      style={{ accentColor: cardText }}
+                      style={{ accentColor: 'var(--cie-ink)' }}
                     />
                     <output className="w-10 text-right tabular-nums" style={{ 
-                      color: cardText,
+                      color: 'var(--cie-ink)',
                       fontFamily: 'var(--cie-mono)',
                       fontSize: 'var(--cie-text-mono)'
                     }}>
@@ -129,7 +124,7 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
 
         <div className="flex flex-col gap-3">
           <span className="text-sm font-semibold" style={{ 
-            color: cardText,
+            color: 'var(--cie-ink)',
             fontFamily: 'var(--cie-sans)'
           }}>
             {t("spotlightAnchorLabel")}
@@ -147,15 +142,16 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
                   style={{
                     background: active ? 'var(--cie-btn-hover)' : 'var(--cie-btn)',
-                    border: `1px solid ${active ? cardText : 'var(--cie-stroke)'}`,
+                    border: `1px solid ${active ? 'var(--cie-ink)' : 'var(--cie-stroke)'}`,
                     borderRadius: 'var(--cie-r)',
-                    color: cardText,
-                    transition: 'all var(--cie-t-snap) var(--cie-ease-expo)',
-                    cursor: 'pointer'
+                    color: 'var(--cie-ink)',
+                    transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+                    cursor: 'pointer',
+                    minHeight: '60px'
                   }}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-xs mt-1" style={{ color: mutedText }}>
+                  <Icon style={{ width: '20px', height: '20px' }} />
+                  <span className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
                     {opt.label}
                   </span>
                 </button>
@@ -168,11 +164,11 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
       <SpotlightPreview lang={lang} state={state} canvasSlots={canvasSlots} targetAspectRatio={targetAspectRatio} />
 
       <div className="flex flex-wrap items-center gap-3 pt-4" style={{ borderTop: '1px solid var(--cie-stroke)' }}>
-        <Keyboard className="w-4 h-4" style={{ color: mutedText }} />
-        <span className="text-xs" style={{ color: mutedText, fontFamily: 'var(--cie-sans)' }}>
+        <Keyboard style={{ width: '16px', height: '16px', color: 'var(--cie-ink-mute)' }} />
+        <span className="text-xs" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>
           <span className="key-cap">{shortcuts["toggle-spotlight"]}</span> {t("shortcutToggleDesc")}
         </span>
-        <span className="text-xs" style={{ color: mutedText, fontFamily: 'var(--cie-sans)' }}>
+        <span className="text-xs" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>
           <span className="key-cap">{shortcuts["restore-home"]}</span> {t("shortcutHomeDesc")}
         </span>
       </div>
