@@ -39,7 +39,7 @@ export function SpotlightPreview({ lang, state, canvasSlots, targetAspectRatio }
     <div className="flex flex-col gap-2.5 rounded-lg border border-zinc-800 bg-zinc-950/70 p-3">
       <div className="flex items-center justify-between gap-3 text-xs">
         <span className="font-semibold text-zinc-200">{t("spotlightPreviewTitle")}</span>
-        <span className="text-zinc-500">{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
+        <span className="text-zinc-400">{t("spotlightPreviewCount").replace("{count}", String(canvasSlots.length))}</span>
       </div>
       <div className="mx-auto w-full max-w-[360px] rounded-md border border-zinc-700 bg-zinc-950 p-1.5" style={{ aspectRatio: targetAspectRatio }}>
         <div className="relative h-full w-full overflow-hidden rounded-sm bg-zinc-900">

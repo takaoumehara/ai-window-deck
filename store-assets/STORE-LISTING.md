@@ -1,45 +1,55 @@
-# AI Window Deck — Chrome Web Store listing (English)
+# AI Window Deck — Chrome Web Store listing (English, v1.7.0)
 
 ## Store listing fields
 
 | Dashboard field | Ready-to-use value |
 | --- | --- |
 | Name | `AI Window Deck` |
-| Category | `Productivity` |
+| Category | `Productivity → Workflow & Planning` |
 | Language | English (United States) |
 | Mature content | No |
 | Store icon | `../icons/icon-128.png` (128 × 128 PNG) |
 | Small promo tile | `promo-small.png` (440 × 280 PNG) |
 | Marquee promo tile | `promo-marquee.png` (1400 × 560 PNG; optional) |
-| Screenshots | `screenshots/01-arrange.png`, `screenshots/02-spotlight.png`, `screenshots/03-window-list.png` (each 1280 × 800 PNG) |
-| Detailed description | Copy the text below |
-| Privacy policy | Host `privacy-policy.html` at a stable public HTTPS URL, then enter that URL in the dashboard. |
+| Screenshots | `screenshots/01-arrange.png`, `02-spotlight.png`, `03-window-library.png`, `04-register.png`, `05-popup.png` (each 1280 × 800, opaque RGB) |
+| Homepage URL | `https://github.com/takaoumehara/ai-window-deck` |
+| Support URL | `https://github.com/takaoumehara/ai-window-deck/issues` |
+| Privacy policy | `https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md` (or host `privacy-policy.html`) |
 
-## Manifest description
+## Manifest description (short description, 83/132)
 
-Tile AI workspaces, spotlight one with a shortcut, and switch between windows quickly.
+Tile AI workspaces, spotlight one with a shortcut, and switch between them quickly.
 
 ## Detailed description
 
-AI Window Deck turns a busy Chrome desktop into an intentional AI workspace. Save the sites you use together, open them in their own Chrome windows, and arrange them in one action. Your existing Chrome profile, sign-ins, password manager, and extensions stay exactly where they are.
+AI Window Deck turns a crowded Chrome desktop into an arranged AI workspace. Save the sites you use together, lay them out on a canvas, and open them all at once as tiled Chrome windows. Your Chrome profile, sign-ins, password manager and other extensions stay exactly as they are.
 
-Build a window set for research, drafting, review, or any workflow that benefits from having several conversations and references visible at once. Choose an even grid or a layout with a larger central window, give each window a name, and open multiple URLs as tabs in that window. AI Window Deck can color and name the resulting tab groups so the workspace stays easy to scan.
+Build a deck for research, drafting, review, or any work where several AI chats and references need to be visible at the same time. When one window needs your full attention, enlarge it with a shortcut. Press it again and the window goes back to its tile.
 
-When you need to concentrate, enlarge the current window with a shortcut and press it again to return to the tile. You can also re-tile windows already open, move through them with shortcuts, restore a previous arrangement, and send the current window to full screen.
+Key features
 
-Key features:
+• Window library: give each window a name and one or more URLs, which open as tabs. Add windows one at a time, paste a list as text, or import and export a .txt file.
+• Layout canvas: drag windows onto the canvas and resize them from any edge. Choose Auto, Vertical, Horizontal, Grid, Focus (one large window) or Freeform. Undo, redo, and keep several layout presets.
+• One-click launch: open every window in the layout, tiled on the display you choose, with its tabs grouped by name. Retile moves launched windows back into place.
+• Spotlight: Alt+X enlarges the active window to half, three quarters, full height, full screen or a custom size, growing from where it is or from the screen centre. Alt+Z puts it back.
+• Move between windows: previous and next window, focus window 1–8, undo the last arrangement, toggle full screen. Every shortcut can be changed in Chrome.
+• Multiple displays: choose which monitor or monitors the deck opens on.
+• Floating controller: keep a compact controller open, or open the settings in a large window.
+• Backup: back up or restore all windows, layouts and settings as a JSON file.
+• 8 languages: English, Japanese, German, Spanish, French, Korean, Brazilian Portuguese and Simplified Chinese.
 
-- Open and tile saved sets of Chrome windows.
-- Use even grids or visual layouts with a larger focus window.
-- Open several URLs as tabs in each window and group them by name and color.
-- Focus, enlarge, re-tile, undo, and restore windows with configurable shortcuts.
-- Keep a compact window list nearby to jump to the work that needs attention.
-- Store preferences and saved sets in Chrome storage; no developer-operated server or account is required.
+Privacy
 
-AI Window Deck is designed for desktop Chrome and works with the windows and pages you already use.
+There is no account, server, analytics or remote code. AI Window Deck never reads page content. It reads only window positions and the titles and URLs of open tabs, to list and arrange your windows. Settings are saved in Chrome's extension storage, and Chrome can sync them between your own devices if Chrome Sync is on. Nothing is sent to the developer or to third parties.
 
-## Screenshot captions
+Support and source code: https://github.com/takaoumehara/ai-window-deck
 
-1. Build a saved workspace: choose a display, select a visual layout, name your windows, and open the deck.
-2. Give the active window more room, then return to the tile with the same shortcut.
-3. Keep open windows visible in one compact list and jump directly to the work you need.
+## Screenshot captions (rendered into the images)
+
+1. Lay out your AI windows on a canvas: drag saved windows onto the canvas, then launch them all at once, tiled.
+2. Spotlight one window, then snap back: Alt+X enlarges the active window. Alt+Z puts it back in its tile.
+3. A library of windows and URL sets: each window opens one or more tabs. Edit, reuse, and jump to what's open now.
+4. Register one at a time, or in bulk: paste names and URLs as text, or import and export a .txt file.
+5. One click from the toolbar: 8 languages. No account, no servers, no tracking. Your settings stay in Chrome.
+
+Regenerate the images with `capture-store-assets.mjs`.

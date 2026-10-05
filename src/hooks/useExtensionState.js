@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 
 const DEFAULTS = {
-  language: "ja",
+  // "" = follow the browser UI language until the user picks one. It must stay
+  // a key here (storage.get only returns listed keys) and must not be null
+  // (storage.get rejects null defaults).
+  language: "",
   activePreset: 0,
   presets: [
     {

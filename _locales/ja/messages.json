@@ -4,5 +4,50 @@
   },
   "extDescription": {
     "message": "AIの作業ウィンドウを整列し、ショートカットで一つを大きくして、すばやく切り替えます。"
+  },
+  "cmdSpotlight": {
+    "message": "大きく／タイルに戻す"
+  },
+  "cmdHome": {
+    "message": "元のタイルに戻す"
+  },
+  "cmdTile": {
+    "message": "並べ直す"
+  },
+  "cmdFullscreen": {
+    "message": "全画面／元の大きさ"
+  },
+  "cmdUndo": {
+    "message": "取り消す"
+  },
+  "cmdNext": {
+    "message": "次の画面"
+  },
+  "cmdPrev": {
+    "message": "前の画面"
+  },
+  "cmdFocusTile1": {
+    "message": "ウィンドウ 1 を表示"
+  },
+  "cmdFocusTile2": {
+    "message": "ウィンドウ 2 を表示"
+  },
+  "cmdFocusTile3": {
+    "message": "ウィンドウ 3 を表示"
+  },
+  "cmdFocusTile4": {
+    "message": "ウィンドウ 4 を表示"
+  },
+  "cmdFocusTile5": {
+    "message": "ウィンドウ 5 を表示"
+  },
+  "cmdFocusTile6": {
+    "message": "ウィンドウ 6 を表示"
+  },
+  "cmdFocusTile7": {
+    "message": "ウィンドウ 7 を表示"
+  },
+  "cmdFocusTile8": {
+    "message": "ウィンドウ 8 を表示"
   }
 }

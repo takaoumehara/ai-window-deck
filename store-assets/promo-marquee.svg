@@ -8,7 +8,7 @@
     <text x="111" y="215" fill="#98A3B8" font-size="29">Arrange your AI workspace.</text>
     <text x="111" y="288" fill="#8AA4FF" font-size="21" font-weight="700">Tile. Focus. Keep moving.</text>
     <g transform="translate(111 338)">
-      <rect width="164" height="53" rx="14" fill="#2F5BFF"/>
+      <rect width="206" height="53" rx="14" fill="#2F5BFF"/>
       <text x="26" y="34" fill="#fff" font-size="19" font-weight="700">OPEN THE DECK</text>
     </g>
   </g>

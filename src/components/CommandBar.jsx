@@ -2,12 +2,14 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Maximize, RotateCcw, ArrowLeft, ArrowRight, Grid, Play, Undo, Expand } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
+import { useShortcuts } from "@/hooks/useShortcuts";
 
 export function CommandBar({ lang, onAction }) {
   const t = (key) => getTranslation(lang, key);
+  const shortcuts = useShortcuts();
 
   return (
-    <section className="mb-5 flex flex-col gap-2.5" aria-label="Window commands">
+    <section className="mb-5 flex flex-col gap-2.5" aria-label={t("commandsLabel")}>
       {/* Primary Hero Row (2x Height Prominent Cards) */}
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         <Button
@@ -19,7 +21,7 @@ export function CommandBar({ lang, onAction }) {
           <Maximize className="w-5 h-5 text-white" />
           <div className="flex items-center gap-2">
             <span>{t("spotlight")}</span>
-            <span className="key-cap">⌥ X</span>
+            <span className="key-cap">{shortcuts["toggle-spotlight"]}</span>
           </div>
         </Button>
 
@@ -32,7 +34,7 @@ export function CommandBar({ lang, onAction }) {
           <RotateCcw className="w-5 h-5 text-zinc-300" />
           <div className="flex items-center gap-2">
             <span>{t("restore")}</span>
-            <span className="key-cap">⌥ Z</span>
+            <span className="key-cap">{shortcuts["restore-home"]}</span>
           </div>
         </Button>
       </div>
@@ -92,7 +94,7 @@ export function CommandBar({ lang, onAction }) {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onAction("fullscreenWindow")}
+          onClick={() => onAction("fullscreen")}
           className="h-9 gap-2 border-zinc-800 bg-zinc-900 px-3 text-xs text-zinc-200 hover:bg-zinc-800"
         >
           <Expand className="w-3.5 h-3.5 text-zinc-400" />

@@ -1,277 +1,144 @@
+**English** | [日本語](README.ja.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [한국어](README.ko.md) | [Português (BR)](README.pt_BR.md) | [简体中文](README.zh_CN.md)
+
 # AI Window Deck
 
-複数の Chrome ウィンドウでクラウド AI を使うための、軽量な Manifest V3 拡張です。新しいブラウザや巨大な iframe ダッシュボードを作らず、いつもの Chrome プロファイル（ログイン、パスワードマネージャー、拡張）をそのまま使います。
+A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.
 
-## できること
+Your Chrome profile, sign-ins, password manager and other extensions stay as they are. AI Window Deck only arranges ordinary Chrome windows.
 
-- レイアウト（4×2 など）と各ウィンドウで開くURLを決めておき、**ワンクリックで全ウィンドウを起動して並べる**
-- 開いている通常ウィンドウを、いまの並び順を保ったままグリッドへ整列
-- 現在のウィンドウをショートカットで大きくし、もう一度押して元の位置・大きさへ復帰
-- 大きくするときの寸法を4通りから選択（下記）
-- 次／前の作業ウィンドウへキーボードで移動
-- 直前の並べ替え・拡大を**やり直す（Undo）**
-- 複数モニターのうち、**どの画面を使うかを指定**
-- 表示言語を8言語から選択（既定はブラウザに追従）
+![Arrange windows on a canvas](store-assets/screenshots/01-arrange.png)
 
-## 画面の構成
+## Features
 
-ツールバーのアイコンを押すと開く**パネルの中だけで全部完結します**。上段が作業中に押す6つのボタン、その下が2つのタブに分かれた設定です。
+- **Window library.** Each saved window has a name and one or more URLs, which open as tabs. You can add windows one at a time, paste them in bulk as text, or import and export a `.txt` file.
+- **Layout canvas.** Drag windows onto a 12 × 12 canvas and resize them from any edge. Layouts include Auto, Vertical, Horizontal, Grid, Focus (one large window) and Freeform. The canvas has undo and redo, and you can keep several layout presets (A, B, …).
+- **Launch and re-tile.** One click opens every window in the layout and tiles it on the display(s) you chose, with its tabs grouped. *Retile* moves windows you already launched back into place.
+- **Spotlight.** `Alt+X` enlarges the active window: half, tall, three quarters, full height, full screen or a custom size. You choose whether it grows from where it is or from the screen centre. Press `Alt+X` again, or `Alt+Z`, to put it back in its tile.
+- **Move between windows.** Go to the previous or next window, focus window 1–8, undo the last arrangement, and toggle full screen.
+- **Multiple displays.** Choose which monitor or monitors the deck opens on.
+- **Floating controller and large window.** Keep a compact controller open, or open the settings in a window of their own.
+- **Backup.** Back up or restore all windows, layouts and settings as a JSON file.
+- **8 languages.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) and 简体中文. The panel follows the browser language until you pick one.
 
-上段は設定ではなく**コマンド**——作業中にそのまま押す6つです。その下がタブに分かれた設定です。
+| Spotlight | Window library | Register windows |
+| --- | --- | --- |
+| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Window library](store-assets/screenshots/03-window-library.png) | ![Register](store-assets/screenshots/04-register.png) |
 
-| タブ | 中身 |
-|---|---|
-| **並べる** | ①どの画面 → ②いくつに分ける → ③それぞれに何を開く → ④開く、の順路。保存した構成は上部 |
-| **大きくする** | 大きくするときの寸法、大きくしたあとの位置 |
-| **ウィンドウ一覧** | 開いているウィンドウの一覧と状態。別ウィンドウとして切り離せます |
+## Install
 
-### 構成の選び方
+### Chrome Web Store
 
-構成は**プルダウン**で選びます。タブにしなかったのは、画面の上部に既に「並べる／大きくする／ウィンドウ一覧」のタブがあり、同じ見た目のものが2階層になると、いまどちらを指しているのか分からなくなるからです。タブは「何をする画面か」、プルダウンは「どのデータを編集しているか」で役割が違います。
+Coming soon. The listing is under review.
 
-**「新しく作る」ボタン**を明示的に置きました。以前は保存でしか構成が増えず、新規作成の入口がどこにもありませんでした。名前の変更もその場で編集できます（ブラウザのポップアップは出ません）。
+### From a release ZIP
 
-### 順路になっている理由
+1. Download `AI-Window-Deck-vX.Y.Z.zip` from [Releases](https://github.com/takaoumehara/ai-window-deck/releases) and unzip it.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the unzipped folder.
 
-初めての人が迷わないよう、**複数モニターがある人の考える順番**に番号を振ってあります。モニターが1台のときは①は1行に畳まれます。慣れた人は上段のコマンドか、保存した構成から直接入るので番号は邪魔になりません。
+### From source
 
-### 作ってから保存する
-
-**何も保存していなくても最初から使えます。** 8分割にして、いくつかURLを入れて、残りは空のまま開く——それで構いません。しばらく使って気に入ったら、④の「いまの状態を保存」を押すと、そのときの状態がまるごと構成として残ります。保存は入口ではなく出口にあります。
-
-「いまのウィンドウを記憶」は、手で並べ直したあとの状態にも使えます。
-
-### 別のパソコンとの共有
-
-設定は `chrome.storage.sync` に入れているので、**同じアカウントでChromeにログインしていれば別のパソコンにも自動で同期されます。** 保存した構成も表示言語も含みます。画面の指定だけはそのパソコンのモニター構成によるため、環境が違えば「いま使っている画面」に戻ります。
-
-### 常駐ウィンドウ
-
-「ウィンドウ一覧」タブの「一覧を別ウィンドウで開く」で、**縦長の小さなウィンドウ**として切り離せます。デスクトップの端に置いておけば、何か終わったときにそこを見て押すだけで移動できます。大きさと位置は次回も引き継ぎます。
-
-**常に手前に固定することはできません。** Chrome拡張に always-on-top のAPIがないためです。他のウィンドウを暗くする機能も、拡張から他のウィンドウの見た目を変える手段がないため入れていません（各サイトに要素を差し込めば見た目上は可能ですが、ページを壊すので採りません）。
-
-ショートカット一覧と変更ボタンは、どちらのタブからも見えるよう下部に常設しています。
-
-同じ画面は `chrome://extensions` の「拡張機能のオプション」からタブとしても開けます。パネルは Chrome の上限である 800×600 に収まるよう組んであり、上のボタンとタブは固定されたまま設定側だけがスクロールします。
-
-もっと広く使いたいときは、右上の**「大きい画面で開く」**を押してください。画面の8割の大きさの別ウィンドウとして開きます。**大きさや位置を変えると次からその状態で開きます。** その状態から**「全画面」**でフルスクリーンにもできます。
-
-すべての設定項目には **i ボタン**が付いています。押すと、その設定が何をするものかを日本語の文章で表示します。
-
-## ウィンドウ構成（名前を付けて保存）
-
-**構成とは、「レイアウト」と「各ウィンドウで開くURL」をひとまとめにして名前を付けたものです。** 画面を8分割にして、それぞれの枠にアドレスを入れた——その状態まるごとが保存されます。名前を押すと、その内容に切り替わります。名前の横の数字は、その構成が何枚のウィンドウを持っているかです。
-
-**「いまのウィンドウを記憶」**を押すと、いま開いているウィンドウ（名前・URL・タブグループの色）をそのまま新しい構成として保存します。手で並べて整えたあと、それを覚えさせる使い方ができます。
-
-「並べる」タブの上部で、構成に名前を付けて何組でも保存できます。名前をクリックすれば切り替わり、一括起動はそのとき選んでいる構成を開きます。「AI比較」「仕事」「調べもの」のように用途ごとに用意しておくと、押すだけで切り替わります。
-
-各ウィンドウには名前と色を付けられます。名前は**そのウィンドウのタブグループの名前**になり、色はタブストリップ上のグループの色になるので、どのウィンドウが何なのかがブラウザ側の表示だけで分かります。色を「自動」にしておくと重複しないよう順番に割り当てます。この動作は「タブをグループにまとめる」で切れます。
-
-## ウィンドウの一括起動
-
-### 分け方は図で選ぶ
-
-均等な分割（2〜9枚）だけでなく、**不均等な形**も選べます。
-
-| 形 | 内容 |
-|---|---|
-| 中央を大きく（5枚） | 真ん中に縦2段ぶんの大きなウィンドウ、その両脇に上下2枚ずつ |
-| 左を大きく（3枚） | 左に大きく1枚、右に上下2枚 |
-| 上を大きく（4枚） | 上に横いっぱい1枚、下に3枚 |
-| 中央2枚を大きく（6枚） | 中央に横長2枚、両脇に上下2枚ずつ |
-
-レイアウトは内部的に**セルの矩形リスト**として持っているので、均等も不均等も同じ仕組みで動きます。図はその同じデータから描いているため、絵と実際の配置がずれません。
-
-### 変わった形とカスタムの使い分け
-
-**「左を大きく（3枚）」などの形を押すと、図の形のまま開きます。** 選択中の表示だけが変わるのではなく、開くときに使う配置データも同時に切り替わります。URLをまとめて貼り付けても、選んだ変わった形が均等分割に戻ることはありません。
-
-「カスタムの均等分割」は、横と縦の数を自分で決めるためのものです。たとえば横3・縦2にすると6つの**同じ大きさの枠**になります。列数または行数を変えた時点で、選んでいた変わった形は解除されます。
-
-任意の枠を結合・分割して独自の不均等な形を作る機能は、まだありません。これは専用のレイアウトエディタとして今後追加できる別機能です。
-
-「並べる」タブで分け方を選ぶと、その数だけURL入力欄が並びます。1行に1つURLを書くと、そのウィンドウのタブになります。
-
-**空欄の枠も既定では開きます。** 8分割を選んだら空欄を含めて8枚出るほうが自然だからです。URLのある枠だけ開きたいときは「空欄のウィンドウも開く」を切ってください。
-
-### どのURLがどのマスに出るか
-
-各カードの左上に、**選んでいるレイアウトの縮図**が付いていて、そのカードのマスだけが光ります。「中央を大きく（5枚）」なら、3枚目のカードが真ん中の大きな枠だと**開く前に**分かります。図はウィンドウを実際に置くのと同じセル定義から描いているので、絵と結果はずれません。
-
-置き場所は入れ替えられます。
-
-- **マウス**: カードの左上の帯をつかんで、別のカードの上に落とす。**2枚が入れ替わります。**
-- **キーボード**: 各カードの `◂` `▸` で隣のマスと入れ替える。押すと焦点は移動先のカードへ付いていくので、`▸` を押し続けるだけで端まで運べます。
-
-**挿入ではなく交換**です。挿入だと1枚動かしただけで残り全部の行き先がずれてしまうため、変わるのは動かした2枚だけにしています。
-
-### まとめて貼り付け
-
-一枠ずつ入力する代わりに、こういう文章を貼り付けるだけで全部作れます。
-
-```
-takaoumehara.com
-https://claude.ai/code/session_01TY...
-
-skillforge
-https://claude.ai/code/session_01Vq...
-
-rakugaki jam
-https://claude.ai/code/session_01MQ...
-https://vercel.com/.../deployments
+```sh
+git clone https://github.com/takaoumehara/ai-window-deck.git
+cd ai-window-deck
+npm install
+npm run build
 ```
 
-規則は3つだけです。
+Then load the repository folder (the one that contains `manifest.json`) with **Load unpacked**. `dist/` is committed, so loading a fresh clone also works without building.
 
-1. **`http://` か `https://` で始まる行 = 開くアドレス**
-2. **それ以外の行 = ウィンドウの名前**（そのままタブグループの名前になります）
-3. **空行 = ここから次のウィンドウ**
+## Usage
 
-**名前は必ず名前として扱われます。** `takaoumehara.com` のようにアドレスに見えても、`http` が付いていなければ開きません。これは意図的な設計で、タブグループにドメイン風の名前を付けても誤解釈されないようにするためです。逆に言うと、**アドレスとして開きたい行には必ず `http://` か `https://` を付けてください。**
+1. Click the toolbar icon. On first run, a short guide marks the three steps.
+2. **Choose a display** under *Select Target Display(s)*.
+3. **Register windows** with **+** in the *Windows* sidebar: a name, plus one or more URLs.
+4. **Drag windows onto the canvas.** Set how many windows you want, pick a layout, and resize tiles from their edges.
+5. Click **Launch**. Each window opens in its own Chrome window, tiled to match the canvas.
+6. Use the spotlight and navigation shortcuts while you work.
 
-貼り付け欄には**薄い文字で例が出ています**。打ち込むと消えますが、「例を入れる」ボタンでいつでも実物として呼び出せます。入力すると**その下に結果のプレビュー**が出るので、名前とアドレスがどう解釈されたかを押す前に確認できます。
+Tips:
 
-レイアウトは貼り付けた数に合わせて自動で決まります。**空行は必ず次のウィンドウの区切り**なので、同じウィンドウのタブにしたいときは空行を入れずに続けてください。
+- In the sidebar, double-click a window card or press `Enter` on it to edit it. `Delete` removes it.
+- Dialogs close with `Escape`, and keyboard focus returns to the button that opened them.
+- *Open in Large Window* opens the same panel at a roomier size than the toolbar popup.
 
-「ウィンドウを一括起動」を押すと、入力のあるウィンドウだけを開いてグリッドへ配置します。**このとき並べ直すのは新しく開いたウィンドウだけ**で、それ以前から開いていたウィンドウ（設定ページ自身を含む）はそのままです。全部まとめたいときは「いま開いているウィンドウを並べ直す」を押してください。
+### Keyboard shortcuts
 
-## 使う画面（複数モニター）
+| Command | Default |
+| --- | --- |
+| Spotlight: enlarge the active window / back to its tile | `Alt+X` |
+| Put the window back in the tile it started from | `Alt+Z` |
+| Arrange (re-tile) the deck windows | `Alt+A` |
+| Full screen / back | `Alt+Q` |
+| Undo the last arrangement | not set |
+| Next window / previous window | not set |
+| Focus window 1–8 | not set |
 
-「使う画面」は、つないでいるモニターを**実際の並びのまま図で表示**します。位置も大きさも比率どおりなので、どれが左でどれが右かが見たままで分かります。各画面には番号・解像度に加えて「メイン」「ノートPCの画面」「ミラーリング」「いまここ」の札が付きます。
+Chrome lets an extension suggest only four default shortcuts. You can assign or change any of them at `chrome://extensions/shortcuts`; the panel's *Change shortcuts* link opens that page. On macOS, Chrome shows `Alt` as `⌥`.
 
-- **どれがディスプレイ2か分からないとき** — 画面カード右上の ◉ を押すと、そのモニターに大きな番号が数秒だけ表示されます。macOSの「ディスプレイ > 配置」で画面が光るのと同じ考え方です。
-- **複数選択できます** — 画面を複数押すと、ウィンドウがその全部に振り分けられます。3枚でも4枚でも構いません。
-- **既定は「いま使っている画面」** — フォーカス中のウィンドウがある画面を指し、括弧の中にそれが何番かを表示します。設定を別のモニターで開いていると起動先もそちらになるため、行き先を固定したいときは画面を直接選んでください。
+## Permissions and privacy
 
-「その画面にあるウィンドウだけ並べる」（既定オン）を入れておくと、選んでいない画面に置いたウィンドウには触れません。
+| Permission | Why it is needed |
+| --- | --- |
+| `tabs` | Open saved URLs as tabs, and read the titles and URLs of open windows to list them and arrange them. |
+| `tabGroups` | Name and colour the tab group of each window the deck opens. |
+| `storage` | Save your windows, layouts and preferences. |
+| `system.display` | Read display sizes and positions so windows are tiled on the right monitor. |
 
-## ウィンドウ一覧（コントロールパネル）
+AI Window Deck has no host permissions or content scripts, and does not read page content. It makes no network requests and loads no remote code. There are no analytics and no accounts. Settings are stored with `chrome.storage.sync`, so Chrome can sync them between your own devices if you have Chrome Sync on. Temporary undo state is kept in `chrome.storage.session`. Nothing is sent to the developer or to third parties.
 
-「ウィンドウ一覧」タブに、開いているウィンドウが画面上の並び順で出ます。押すとそのウィンドウが前に出ます。行にはタブグループの色、タブ数、どの画面にあるか、そして状態が出ます。
+The full policy is in [PRIVACY.md](PRIVACY.md).
 
-| 状態 | 意味 |
-|---|---|
-| 表示中 | いま見ているウィンドウ |
-| 待機中 | それ以外 |
+## Development
 
-この一覧は、パネル右上の「大きい画面で開く」で別ウィンドウにしておくと、作業中ずっと横に置いておけます。
+Requires Node.js 20+ and Python 3.
 
-## やり直す（Undo）
+```sh
+npm install           # dependencies
+npm run build         # build the React panel into dist/
+npm test              # unit tests (node --test)
+npm run dev           # Vite dev server for the panel (no chrome.* APIs)
+./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+```
 
-並べ直し・一括起動・拡大の直前の配置を覚えており、「やり直す」で元の位置と大きさに戻します。直近10回まで遡れます。Chrome のショートカット枠は4つまでという上限があるため既定のキーは割り当てていません。必要なら `chrome://extensions/shortcuts` で好きなキーを設定できます。
+Repository layout:
 
-## ぐちゃぐちゃに並んだウィンドウの整理
+| Path | Contents |
+| --- | --- |
+| `manifest.json`, `background.js` | Extension manifest and service worker (window placement, shortcuts) |
+| `src/` | React + Tailwind panel used by the popup and the options page |
+| `dist/` | Built panel. It is committed so the repository loads unpacked as-is |
+| `identify.html`, `identify.js` | The number briefly shown on a display when you identify it |
+| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | Translations (see below) |
+| `tools/` | i18n build, packaging, package validation |
+| `store-assets/` | Chrome Web Store listing copy, screenshots, promo tiles and capture script |
+| `test/` | Unit tests |
 
-「いま開いているウィンドウを並べ直す」がその機能です。並べ方は2つ調整できます。
+`deck.html`, `deck.js`, `dock.html` and `dock.js` are the pre-1.7 panel. They are kept for reference and are not packaged.
 
-- **いまの位置の順番を保つ** — 左上から右下へ、いまの見た目の並び順のまま詰め直します。オフにするとウィンドウの内部ID順になり、見慣れた並びが入れ替わります。既定はオン。
-- **最小化したウィンドウは並べない** — しまってあるウィンドウを勝手に呼び戻しません。既定はオン。
+### Translations
 
-整列先はフォーカス中のウィンドウがあるディスプレイです。
+The panel strings live in `tools/ui-strings.json`. Chrome's own strings (extension description and shortcut names) live in `tools/strings.json`. After editing either file, run:
 
-## 大きくするときの大きさ
+```sh
+python3 tools/build-i18n.py
+```
 
-画面いっぱいだと大きすぎる場面があるため、寸法と着地点を分けて設定できます。
+This regenerates `src/lib/ui-strings.js` and `_locales/*/messages.json`. The build fails if a panel locale is missing a key. `npm test` also checks that placeholders match in every language.
 
-大きさは**図で選びます**。選ぶと枠がその形へ動くので、「縦いっぱい・横半分」と「縦横とも半分」の違いが読まずに分かります。
+## Release process
 
-| 設定 | 効果 |
-|---|---|
-| 画面いっぱい | OSの最大化。位置の指定は不要になるので自動的に隠れます |
-| **縦だけいっぱい** | **横幅はいまのまま、高さだけ画面いっぱい。**チャットの履歴を長く見たいとき向き |
-| 縦いっぱい・横半分 | 高さ100%、幅50%。8分割から一段だけ広げたいとき向き |
-| 縦横とも半分 | 高さ50%、幅50% |
-| カスタム | 幅・高さをそれぞれ20〜100%で指定 |
+1. Bump `version` in `manifest.json` and `package.json`, and update `CHANGELOG.md`.
+2. Run `npm test` and `./tools/package.sh`. The script validates the ZIP: referenced files, `__MSG_` keys in every locale, and description length.
+3. Upload the ZIP to the Chrome Web Store dashboard.
+4. After the store approves the version, tag `vX.Y.Z` on `main` and attach the ZIP to a GitHub Release.
 
-拡大は**そのウィンドウがいる画面**で行います。「使う画面」の指定に関わらず、大きくした拍子に別のモニターへ飛ぶことはありません。
+See [docs/RELEASING.md](docs/RELEASING.md) for details.
 
-着地点は「いまの場所」（そのウィンドウの中心を保ったまま広がり、画面外へはみ出す分だけ引き戻す）と「画面の中央」（フォーカスしたいものが必ず中央に来る）から選べます。設定は全ウィンドウ共通です。
+## Support
 
-## ショートカット
+Report bugs and suggestions on [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
 
-パネルと設定ページに、いま実際に割り当てられているキーが言葉で表示されます（例: `Control + Shift + Space`）。macOS では併せて `⌃⇧Space` の記号も出ます。表示は Windows・Linux・ChromeOS・macOS それぞれの表記を自動で判別します。
+## License
 
-変更は「ショートカットを変更」から `chrome://extensions/shortcuts` を開いて行います。Chrome の仕様上、拡張がキーを直接書き換えることはできないため、これが唯一の方法です。**開いた画面では、キーの欄をクリックしてから、割り当てたいキーの組み合わせを実際に押します。** 文字を入力するのではありません。
-
-既定キーは **Mac も Windows も同じ**です。Alt キーは macOS では Option になるため、1組で両方に効きます。
-
-| コマンド | キー | 左手 |
-|---|---|---|
-| 大きく／タイルに戻す | `Option/Alt + X` | 薬指 |
-| 元のタイルに戻す | `Option/Alt + Z` | 小指 |
-| 並べ直す | `Option/Alt + A` | 小指 |
-| 全画面／元の大きさ | `Option/Alt + Q` | 小指 |
-
-**4つとも左手だけで押せます。** Option を親指で押さえたまま、小指が届く縦一列（`Q` `A` `Z`）に3つ、薬指の `X` に1つ。右手はマウスに置いたままで足ります。
-
-Ctrl 系をやめたのは、macOS で `⌃C` が `⌘C` の押し間違いとして起きやすく、入力中に暴発するためです。Option 系なら間違って押すことがまずありません。Windows Chrome で予約済みの `Alt+F` `Alt+E`（メニュー）、`Alt+D`（アドレスバー）、`Alt+Space`（ウィンドウメニュー）、`Alt+Home`、`Alt+←/→` は避けてあります。`Option+Q` はどちらの OS でも空席です。
-
-**Chrome が既定キーを持てるのは4つまで**です。以下はキー無しで登録してあるので、必要なものだけ `chrome://extensions/shortcuts` で割り当ててください。
-
-- やり直す / 次の画面 / 前の画面
-- **ウィンドウ 1〜8**（並んでいる順に直接移動。`Option+1`〜`Option+8` が使えます）
-
-使えない組み合わせも実測で確認しました。**`Control+Option` は拡張が起動しません**（Chrome が受け付けない）。**`Option+~` も不可**で、チルダはそもそも割り当て可能なキーの一覧に入っていません。
-
-`⌘F` / `Ctrl+F` はページ内検索なので、そこに割り当てるとすべてのページから検索が奪われます。`⌃⇧F` のような組み合わせをおすすめします。
-
-## 全画面と、元の大きさ
-
-**大きさのキーは2段です。**
-
-| `Option+X` を押すたびに | 結果 |
-|---|---|
-| 1回目 | 設定した大きさに広がる |
-| 2回目 | **タイルの1枠に戻る** |
-| 3回目 | また設定した大きさ |
-
-**全画面はこのローテーションに含まれません。** v1.5.0 までは「タイル→設定した大きさ→全画面→タイル」の3段でしたが、実際には少し広げたいだけのことのほうが多く、そのたびに全画面を1回通らされていました。1周につき1回分の無駄です。
-
-全画面は `Option+Q` の専用キーに分けてあります。もう一度押せば広げる前の大きさに戻り、そこから `Option+X` を押せばタイルへ直行します。どこからでも一発でタイルに帰りたいときは `Option+Z`（元のタイルに戻す）です。
-
-覚えているのは1ウィンドウにつき8段までです。手でウィンドウを動かすと、その段は使えなくなったものとして扱い、次に押したときは新しく広げます。
-
-## 表示言語
-
-日本語・English・简体中文・한국어・Español・Français・Deutsch・Português (Brasil) に対応しています。
-
-`chrome.i18n` はブラウザのUI言語に従う仕組みで、拡張の中から切り替えることができません。そのためポップアップの文言は `strings.js` の辞書で持ち、切り替えを自前で実装しています。Chrome 自身が描画する拡張名と説明文だけは `_locales/` を使います。どちらも `tools/strings.json` を単一のソースとして `python3 tools/build-i18n.py` で生成します。
-
-## インストール
-
-1. Chrome で `chrome://extensions` を開き、「デベロッパー モード」をオンにします。
-2. 「パッケージ化されていない拡張機能を読み込む」で、このフォルダーを選びます。
-3. 必要なら `chrome://extensions/shortcuts` でキーを変更します。
-
-配布用のZIPは `./tools/package.sh` で、`manifest.json` のバージョンを名前に持つ `AI-Window-Deck-v<version>.zip` として生成します。アイコンは `python3 tools/make-icons.py` で再生成できます。
-
-## 見た目
-
-配色と形は、リポジトリの [docs/brand.md](../brand.md) にある v2 "LAUNCH" に従っています。**Ink `#0B0E14` の地に、Cobalt `#2F5BFF` をひとつだけ強く置き、Slate で支える**構成です。ブランド文書が明示的に禁じているグラデーションとガラス風の表現は使っていません（以前のパステルの紫〜緑のグラデーションはこれに反していました）。書体は Inter / SF Pro。
-
-暗い地の上でも読めるよう、Slate と Cobalt は文字用に明度を上げた値を使っています（生の Cobalt は暗地の文字では 3.3:1 で不足するため、面として使い白文字を乗せる用途に限定）。全78箇所を実測して AA を満たしています。
-
-アイコンも同じ規則で、4×2 のグリッドの左上ひとつだけを Cobalt にし、わずかに大きく描いて「起動の瞬間」を示しています。
-
-## 設計上の選択
-
-大きなブラウザ内に8分割すると、Claude/Codexなどが iframe 埋め込みを禁止している場合や、パスワード・既存拡張との互換性で困ります。この試作は各サイトを本物の Chrome ウィンドウのまま保ち、配置だけを拡張が担当します。
-
-通知判定はサイト固有DOMに依存せず、非表示ページの変更が落ち着いた時点を「応答が終わった可能性」として扱います。動画や自動更新ページでは誤検知し得るため、ポップアップでオフにできます。
-
-Manifest V3 の Service Worker は短時間で停止するため、「元の大きさ」と通知件数は `chrome.storage.session` に保存しています。停止をまたいでも復帰先と件数が失われません。
-
-## 制約
-
-- 整列先は現在フォーカスしているウィンドウがあるディスプレイです。複数ディスプレイへまたがる一括配置は行いません。
-- 一括起動で開いたウィンドウは、それ以前から開いていたウィンドウとは重なります。まとめて整えるには「並べ直す」を押してください。
-- Chrome のグローバルなコマンド枠には上限があり、既定キーが他アプリと競合する場合があります。
-- 大きさの設定はセット共通です。ウィンドウごとに別々の寸法を割り当てる機能はありません。
-- タブグループの名前と色が付くのは、一括起動で開いたウィンドウだけです。手で開いたウィンドウには付きません。
-- やり直せるのは、この拡張が動かした分だけです。手で動かしたウィンドウは記録していません。
-
-## 検証
-
-実測した動作確認の記録は [verification.md](verification.md) にあります。
+[MIT](LICENSE) © 2026 Takao Umehara

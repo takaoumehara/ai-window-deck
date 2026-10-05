@@ -56,7 +56,7 @@ const STRINGS = {
     "nothing_to_launch": "URLが入力されたウィンドウがありません",
     "act_prev": "前の画面",
     "cmd_prev": "前の画面",
-    "cmd_undo": "やり直す",
+    "cmd_undo": "取り消す",
     "size_height": "縦だけいっぱい",
     "size_height_hint": "横幅はそのままで、高さだけ画面いっぱいにします",
     "undo": "やり直す",
@@ -133,35 +133,6 @@ const STRINGS = {
     "step_go": "開く",
     "step_open_hint": "空欄のままでも構いません。あとから足せます。",
     "saved_decks": "保存した構成",
-    "library_title": "Windows",
-    "canvas_title": "Workspace Canvas",
-    "mode_auto": "自動分割",
-    "mode_fixed": "固定分割",
-    "odd_blank": "均等 ＋ ブランク",
-    "odd_hero": "メイン1個拡大",
-    "btn_add_all": "＋ 全追加",
-    "btn_clear_canvas": "🗑 全解除",
-    "btn_undo_canvas": "↺ Undo",
-    "btn_launch_selected": "⚡ 選択したウィンドウを起動",
-    "canvas_empty_hint": "左のWindowsからカードをドラッグ＆ドロップしてください",
-    "btn_append_bulk": "＋ 既存に追記してカード化",
-    "btn_equalize": "⚖️ 均等に戻す",
-    "slot_count": "how many browsers",
-    "close_window_single": "閉じる",
-    "close_window_all": "🚫 開いている全ウィンドウを閉じる",
-    "slot_removed_hint": "スロットを1つ取り除きました",
-    "sec_danger_zone": "危険な操作 (Factory Reset)",
-    "danger_reset_hint": "すべての登録ウィンドウ、設定、レイアウトを完全初期化します。",
-    "btn_factory_reset": "⚠️ すべての設定を初期化する",
-    "screen_this": "this screen",
-    "how_many_browsers": "how many browsers",
-    "register_window_title": "Register a window",
-    "bulk_create_title": "Bulk Create with text",
-    "window_name_placeholder": "Window name",
-    "btn_register_window": "Register this window",
-    "btn_bulk_create": "Bulk create with text",
-    "btn_clear": "Clear",
-    "or_word": "Or",
     "no_saved": "まだ保存していません。下で好きに組んで、気に入ったら「いまの状態を保存」を押してください。",
     "save_current": "いまの状態を保存",
     "open_dock": "一覧を別ウィンドウで開く",
@@ -203,7 +174,8 @@ const STRINGS = {
     "reorder_drag": "つかんで並べ替える",
     "move_prev": "前のマスと入れ替える",
     "move_next": "次のマスと入れ替える",
-    "swapped": "入れ替えました"
+    "swapped": "入れ替えました",
+    "cmd_focus_tile": "ウィンドウ {n} を表示"
   },
   "en": {
     "tagline": "Switch quietly, switch fast",
@@ -338,32 +310,6 @@ const STRINGS = {
     "step_go": "Open them",
     "step_open_hint": "Leaving them blank is fine. You can fill them in later.",
     "saved_decks": "Saved arrangements",
-    "library_title": "Windows",
-    "canvas_title": "Workspace Canvas",
-    "mode_auto": "Auto Grid",
-    "mode_fixed": "Fixed Grid",
-    "odd_blank": "Even + Blank",
-    "odd_hero": "Hero Focus",
-    "btn_add_all": "＋ Add All",
-    "btn_clear_canvas": "🗑 Clear All",
-    "btn_undo_canvas": "↺ Undo",
-    "btn_launch_selected": "⚡ Launch Selected",
-    "canvas_empty_hint": "Drag & drop window cards from the left panel",
-    "btn_append_bulk": "＋ Append with text",
-    "btn_equalize": "⚖️ Equalize",
-    "slot_count": "how many browsers",
-    "close_window_single": "Close",
-    "close_window_all": "🚫 Close all opened windows",
-    "slot_removed_hint": "Removed 1 slot",
-    "screen_this": "this screen",
-    "how_many_browsers": "how many browsers",
-    "register_window_title": "Register a window",
-    "bulk_create_title": "Bulk Create with text",
-    "window_name_placeholder": "Window name",
-    "btn_register_window": "Register this window",
-    "btn_bulk_create": "Bulk create with text",
-    "btn_clear": "Clear",
-    "or_word": "Or",
     "no_saved": "Nothing saved yet. Build whatever you like below, and press Save this as it is once you are happy.",
     "save_current": "Save this as it is",
     "open_dock": "Open the list in its own window",
@@ -405,7 +351,8 @@ const STRINGS = {
     "reorder_drag": "Drag to reorder",
     "move_prev": "Swap with the previous square",
     "move_next": "Swap with the next square",
-    "swapped": "Swapped"
+    "swapped": "Swapped",
+    "cmd_focus_tile": "Focus window {n}"
   },
   "zh-CN": {
     "tagline": "安静切换，快速流畅",
@@ -581,7 +528,8 @@ const STRINGS = {
     "act_home": "回到原位",
     "cmd_home": "回到最初的格子",
     "cmd_tile_n": "窗口",
-    "help_rotate": "一个按键在格子和你设定的大小之间来回切换。每次按下不是放大就是还原，中途不会经过全屏。全屏另有专用按键——想稍微放大的时候更多，不该每一圈都绕经全屏。想从任何状态一步回到格子，请用「回到原位」。"
+    "help_rotate": "一个按键在格子和你设定的大小之间来回切换。每次按下不是放大就是还原，中途不会经过全屏。全屏另有专用按键——想稍微放大的时候更多，不该每一圈都绕经全屏。想从任何状态一步回到格子，请用「回到原位」。",
+    "cmd_focus_tile": "聚焦窗口 {n}"
   },
   "ko": {
     "tagline": "조용하고 빠르게 전환",
@@ -757,7 +705,8 @@ const STRINGS = {
     "act_home": "원래 자리로",
     "cmd_home": "처음 있던 칸으로 되돌리기",
     "cmd_tile_n": "창",
-    "help_rotate": "키 하나로 타일과 지정한 크기 사이를 오갑니다. 누를 때마다 커지거나 되돌아갈 뿐, 도중에 전체 화면을 거치지 않습니다. 전체 화면은 별도의 키로 나눠 두었습니다 — 조금 더 넓게 보고 싶을 때가 더 많은데, 그때마다 전체 화면을 거치게 하는 것은 한 번의 낭비이기 때문입니다. 어디에서든 한 번에 타일로 돌아가려면 「원래 자리로」를 사용하세요."
+    "help_rotate": "키 하나로 타일과 지정한 크기 사이를 오갑니다. 누를 때마다 커지거나 되돌아갈 뿐, 도중에 전체 화면을 거치지 않습니다. 전체 화면은 별도의 키로 나눠 두었습니다 — 조금 더 넓게 보고 싶을 때가 더 많은데, 그때마다 전체 화면을 거치게 하는 것은 한 번의 낭비이기 때문입니다. 어디에서든 한 번에 타일로 돌아가려면 「원래 자리로」를 사용하세요.",
+    "cmd_focus_tile": "창 {n}에 포커스"
   },
   "es": {
     "tagline": "Cambia rápido, sin ruido",
@@ -933,7 +882,8 @@ const STRINGS = {
     "act_home": "Volver a la casilla",
     "cmd_home": "Volver a la casilla de origen",
     "cmd_tile_n": "Ventana",
-    "help_rotate": "Una sola tecla alterna entre la casilla y el tamaño que elegiste. Cada pulsación amplía la ventana o la devuelve; nunca pasa por pantalla completa de camino. Pantalla completa tiene su propia tecla, porque lo habitual es querer un poco más de sitio y eso no debería costar un rodeo en cada vuelta. Para aterrizar en la casilla desde donde sea, usa Volver a la casilla."
+    "help_rotate": "Una sola tecla alterna entre la casilla y el tamaño que elegiste. Cada pulsación amplía la ventana o la devuelve; nunca pasa por pantalla completa de camino. Pantalla completa tiene su propia tecla, porque lo habitual es querer un poco más de sitio y eso no debería costar un rodeo en cada vuelta. Para aterrizar en la casilla desde donde sea, usa Volver a la casilla.",
+    "cmd_focus_tile": "Enfocar ventana {n}"
   },
   "fr": {
     "tagline": "Basculez vite, en douceur",
@@ -1109,7 +1059,8 @@ const STRINGS = {
     "act_home": "Revenir à la case",
     "cmd_home": "Revenir à la case d'origine",
     "cmd_tile_n": "Fenêtre",
-    "help_rotate": "Une seule touche fait l'aller-retour entre la case et la taille que vous avez choisie. Chaque appui agrandit la fenêtre ou la remet en place ; elle ne passe jamais par le plein écran en chemin. Le plein écran a sa propre touche, car vouloir un peu plus de place est le cas courant et cela ne devrait pas coûter un détour à chaque tour. Pour retomber sur la case depuis n'importe où, utilisez Revenir à la case."
+    "help_rotate": "Une seule touche fait l'aller-retour entre la case et la taille que vous avez choisie. Chaque appui agrandit la fenêtre ou la remet en place ; elle ne passe jamais par le plein écran en chemin. Le plein écran a sa propre touche, car vouloir un peu plus de place est le cas courant et cela ne devrait pas coûter un détour à chaque tour. Pour retomber sur la case depuis n'importe où, utilisez Revenir à la case.",
+    "cmd_focus_tile": "Activer la fenêtre {n}"
   },
   "de": {
     "tagline": "Leise und schnell wechseln",
@@ -1285,7 +1236,8 @@ const STRINGS = {
     "act_home": "Zurück zum Feld",
     "cmd_home": "Zurück zum ursprünglichen Feld",
     "cmd_tile_n": "Fenster",
-    "help_rotate": "Eine Taste wechselt zwischen dem Feld und der gewählten Größe hin und her. Jeder Druck vergrößert das Fenster oder stellt es zurück; unterwegs kommt kein Vollbild mehr vor. Vollbild hat eine eigene Taste, denn der Normalfall ist, ein wenig mehr Platz zu wollen, und der sollte nicht bei jeder Runde einen Umweg kosten. Um von überall wieder auf dem Feld zu landen, nehmen Sie Zurück zum Feld."
+    "help_rotate": "Eine Taste wechselt zwischen dem Feld und der gewählten Größe hin und her. Jeder Druck vergrößert das Fenster oder stellt es zurück; unterwegs kommt kein Vollbild mehr vor. Vollbild hat eine eigene Taste, denn der Normalfall ist, ein wenig mehr Platz zu wollen, und der sollte nicht bei jeder Runde einen Umweg kosten. Um von überall wieder auf dem Feld zu landen, nehmen Sie Zurück zum Feld.",
+    "cmd_focus_tile": "Fenster {n} fokussieren"
   },
   "pt-BR": {
     "tagline": "Troque rápido, sem barulho",
@@ -1461,6 +1413,7 @@ const STRINGS = {
     "act_home": "Voltar ao quadro",
     "cmd_home": "Voltar ao quadro de origem",
     "cmd_tile_n": "Janela",
-    "help_rotate": "Uma única tecla vai e volta entre o quadro e o tamanho que você escolheu. Cada toque amplia a janela ou a devolve; no caminho ela nunca passa pela tela cheia. A tela cheia tem uma tecla só dela, porque querer um pouco mais de espaço é o caso comum e isso não deveria custar um desvio a cada volta. Para cair de novo no quadro a partir de qualquer lugar, use Voltar ao quadro."
+    "help_rotate": "Uma única tecla vai e volta entre o quadro e o tamanho que você escolheu. Cada toque amplia a janela ou a devolve; no caminho ela nunca passa pela tela cheia. A tela cheia tem uma tecla só dela, porque querer um pouco mais de espaço é o caso comum e isso não deveria custar um desvio a cada volta. Para cair de novo no quadro a partir de qualquer lugar, use Voltar ao quadro.",
+    "cmd_focus_tile": "Focar janela {n}"
   }
 };

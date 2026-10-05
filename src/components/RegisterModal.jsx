@@ -6,7 +6,8 @@ import { Plus, Trash2, Download, Upload } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
 
 export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, onBulkSave, onImportFile, onExportFile }) {
-  const t = (key) => getTranslation(lang, key);
+  const t = (key, values) => getTranslation(lang, key, values);
+  const fieldId = React.useId();
 
   const [name, setName] = useState("");
   const [urlRows, setUrlRows] = useState(["", ""]);
@@ -47,7 +48,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
   const handleSingleSubmit = () => {
     const urls = urlRows.map((r) => r.trim()).filter(Boolean).join("\n");
     if (!name && !urls) return;
-    onSaveWindow({ id: editingItem?.id, name: name || "Window", urls });
+    onSaveWindow({ id: editingItem?.id, name: name || t("untitledWindow"), urls });
     onClose();
   };
 
@@ -57,14 +58,15 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
         <DialogTitle className="text-base font-bold text-zinc-100">
           {editingItem ? t("regTitleEdit") : mode === "bulk" ? t("regTitleBulk") : t("regTitleAdd")}
         </DialogTitle>
-        <DialogClose onClick={onClose} />
+        <DialogClose onClick={onClose} label={t("closeDialog")} />
       </DialogHeader>
 
       {mode === "single" ? (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-zinc-400">{t("winNameLabel")}</label>
+            <label htmlFor={`${fieldId}-name`} className="text-xs font-semibold text-zinc-400">{t("winNameLabel")}</label>
             <Input
+              id={`${fieldId}-name`}
               type="text"
               placeholder={t("winNamePlaceholder")}
               value={name}
@@ -73,22 +75,25 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-zinc-400">{t("urlsLabel")}</label>
-            <div className="flex flex-col gap-2 max-h-48 overflow-y-auto no-scrollbar">
+            <span id={`${fieldId}-urls`} className="text-xs font-semibold text-zinc-400">{t("urlsLabel")}</span>
+            <div role="group" aria-labelledby={`${fieldId}-urls`} className="flex flex-col gap-2 max-h-48 overflow-y-auto no-scrollbar">
               {urlRows.map((url, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <Input
                     type="url"
                     placeholder="https://example.com"
+                    aria-label={t("urlFieldLabel", { n: idx + 1 })}
                     value={url}
                     onChange={(e) => handleRowChange(idx, e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveRow(idx)}
-                    className="w-9 h-9 flex items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-400 shrink-0"
+                    aria-label={t("removeUrlRow", { n: idx + 1 })}
+                    title={t("removeUrlRow", { n: idx + 1 })}
+                    className="w-9 h-9 flex items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-red-400 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ))}
@@ -135,7 +140,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
               <button
                 type="button"
                 onClick={() => setMode("bulk")}
-                className="text-xs text-blue-400 hover:underline"
+                className="rounded text-xs text-blue-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               >
                 {t("toBulkMode")}
               </button>
@@ -152,21 +157,22 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <p className="text-xs text-zinc-400">
+          <p id={`${fieldId}-bulk`} className="text-xs text-zinc-400">
             {t("bulkHint")}
           </p>
           <textarea
             rows={8}
+            aria-labelledby={`${fieldId}-bulk`}
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
             placeholder={`Research\nhttps://example.com/docs\n\nChat AI\nhttps://claude.ai`}
-            className="w-full rounded-md border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
           />
           <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={() => setMode("single")}
-              className="text-xs text-zinc-400 hover:underline"
+              className="rounded text-xs text-zinc-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
             >
               {t("toSingleMode")}
             </button>

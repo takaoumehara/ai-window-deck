@@ -1,128 +1,84 @@
-# Chrome Web Store: Privacy practices submission copy
+# Chrome Web Store: Privacy practices submission copy (v1.7.0)
 
-This file is the source of truth for completing the Chrome Web Store **Privacy
-practices** form for AI Window Deck v1.6.2. It was checked against
-`manifest.json`, `background.js`, `deck.js`, and the privacy
-policy in this directory on 2026-08-02.
+The source of truth for the **Privacy practices** tab. It was checked against `manifest.json`, `background.js` and `src/` on 2026-10-04. Update it whenever permissions or data handling change.
 
-Do not claim that the extension uses remote code. Every executable script is
-packaged with the extension, and the source contains no network request,
-external script, `eval`, or dynamically downloaded code.
 
-## 1. Data usage
-
-Select **Web history** only.
-
-Reason: the extension reads the URLs and titles of open Chrome tabs and can
-save user-selected URLs in a window layout. They are used only to show the
-window list, save/reopen a layout, and arrange the user's Chrome windows.
-
-Leave all other data types unchecked:
-
-- Personally identifiable information
-- Health information
-- Financial and payment information
-- Authentication information
-- Personal communications
-- Location
-- User activity
-- Website content
-
-Important clarifications:
-
-- Saved layouts and preferences use `chrome.storage.sync`, so they can be
-  synchronized by Chrome for the same signed-in Chrome profile. Temporary
-  undo state uses `chrome.storage.session`.
-- The extension has no developer-operated server and does not send user data
-  to the publisher or to third parties.
-
-## 2. Required certifications
-
-Check all three certifications, provided the packaged extension remains
-unchanged from the reviewed version:
-
-- **I do not sell or transfer user data to third parties, outside of the
-  approved use cases.**
-- **I do not use or transfer user data for purposes that are unrelated to my
-  item's single purpose.**
-- **I do not use or transfer user data to determine creditworthiness or for
-  lending purposes.**
-
-## 3. Privacy policy URL
-
-Publish `store-assets/privacy-policy.html` at a public HTTPS URL, then paste
-that exact URL into **Privacy policy URL**. A repository path or a `file://`
-URL is not acceptable.
-
-Before publishing, replace the generic contact sentence in the policy with a
-working support email address or support-page URL. The same contact should be
-set and verified in Chrome Web Store **Account / Settings**.
-
-Suggested field value after hosting (replace this example with the actual
-deployed URL):
+### Single purpose description
 
 ```text
-https://YOUR-DOMAIN.example/privacy-policy
+AI Window Deck helps users save sets of Chrome windows, lay them out, open them tiled across one or more displays, and enlarge or restore a window with keyboard shortcuts. It also groups the tabs it opens.
 ```
 
-## 4. Single purpose description
+### Permission justifications
 
-Paste this in the **Single purpose description** field:
+**tabs**
 
 ```text
-AI Window Deck helps users create, save, reopen, and arrange Chrome window layouts across one or more displays. It also lets users group the tabs it opens.
+Used to open the URLs the user saved as tabs in new windows, and to read the title and URL of the active tab in each open window so the extension can list the user's windows, arrange them, and focus or close the one the user picks. This data is used only on the device for these features and is never sent to the developer or third parties.
 ```
 
-## 5. Permission justifications
-
-Paste each paragraph into the matching Web Store field.
-
-### tabs justification
+**tabGroups**
 
 ```text
-AI Window Deck uses the tabs permission to read the URL and title of tabs in the user's Chrome windows, list those windows in the extension UI, save a user-requested window layout, open the URLs the user configured, and focus the appropriate tab or window. This is required for the extension's core workspace-layout feature. Tab data is not sent to the developer or to third parties.
+Used only when the extension opens a saved window set: the tabs opened in each new window are put in a tab group named after that window, so each workspace window is easy to identify. Tab-group data is not stored or transmitted.
 ```
 
-### tabGroups justification
+**storage**
 
 ```text
-AI Window Deck uses the tabGroups permission only when it opens a user-configured window set. It creates a tab group for the tabs opened in each new window and applies the group name and color selected by the user, making each workspace window identifiable in Chrome. Tab groups are not used for advertising, profiling, or data transfer.
+Used to save the user's window library (names and URLs they enter), canvas layouts, spotlight/display/language preferences, and the position of the extension's own settings windows in chrome.storage.sync; temporary undo state uses chrome.storage.session. Chrome may sync this between the user's own browsers if Chrome Sync is on. Nothing is sent to the developer or third parties.
 ```
 
-### storage justification
+**system.display**
 
 ```text
-AI Window Deck uses Chrome storage to save user-configured window layouts, the URLs and names in those layouts, display and language preferences, and the size and position of its settings and window-list panels. It uses session storage for temporary undo history. Sync storage lets these user settings synchronize between Chrome browsers signed in to the same Chrome profile. The extension does not transmit this data to the developer or to third parties.
+Used to read the connected displays' sizes and work areas so the user can choose which monitor(s) to use and the extension can calculate where to place and how large to make each window. Display geometry is used locally only.
 ```
 
-### system.display justification
+(There is **no** `windows` permission any more: chrome.windows needs none. No host permissions and no content scripts are requested, so no host-permission justification is needed.)
+
+### Are you using remote code?
+
+Select **No, I am not using remote code**.
 
 ```text
-AI Window Deck uses system.display to obtain the connected displays and their work areas. This lets the user choose one or more displays and lets the extension calculate window positions and sizes when arranging a workspace. Display information is used locally only for this layout feature and is not sent to the developer or to third parties.
+All JavaScript (background.js, identify.js and the built React panel in dist/assets/) is included in the uploaded package. The extension makes no network requests, loads no external scripts, fonts or stylesheets, and does not use eval or new Function.
 ```
 
-## 6. Remote code
+### Data usage: what user data do you plan to collect?
 
-Select:
+Answers checked against `background.js` and `src/`. No data leaves the device except Chrome's own sync of `chrome.storage.sync`.
+
+| Category | Check? | Why |
+| --- | --- | --- |
+| Personally identifiable information | ☐ No | No names, emails, addresses or IDs are collected. |
+| Health information | ☐ No | Not handled. |
+| Financial and payment information | ☐ No | Not handled. |
+| Authentication information | ☐ No | No passwords, cookies or tokens are read. |
+| Personal communications | ☐ No | Page content is never read, so chats, emails and messages are never accessed. |
+| Location | ☐ No | `system.display` gives monitor geometry, not geographic location. |
+| Web history | ☑ **Yes** | The extension reads the title and URL of the active tab in each open window, to list and arrange windows. It also stores the URLs the user saves in their window library. This is used only locally for the single purpose. It is not logged as history and not transmitted. |
+| User activity | ☐ No | There is no click, mouse, scroll or keystroke monitoring. Keyboard shortcuts go through `chrome.commands` and are not logged. |
+| Website content | ☐ No | There are no content scripts and no host permissions, so page text, images and media are never read. |
+
+### Certifications (check all three)
+
+- ☑ I do not sell or transfer user data to third parties, outside of the approved use cases.
+- ☑ I do not use or transfer user data for purposes that are unrelated to my item's single purpose.
+- ☑ I do not use or transfer user data to determine creditworthiness or for lending purposes.
+
+### Privacy policy URL
+
+Primary (works once this branch is merged to `main`):
 
 ```text
-No, I am not using remote code
+https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md
 ```
 
-Do **not** enter a remote-code justification. The extension runs only
-JavaScript files contained in its uploaded package. In particular,
-all JavaScript is included in the uploaded package; it is not remote code.
+Alternative: enable GitHub Pages for the repository and publish `store-assets/privacy-policy.html`. That is the same text, generated from `PRIVACY.md`. The URL would be:
 
-## Pre-submit check
+```text
+https://takaoumehara.github.io/ai-window-deck/privacy-policy.html
+```
 
-Before saving the draft, confirm all of the following:
-
-1. The **Yes, I am using remote code** selection in the screenshot has been
-   changed to **No, I am not using remote code**.
-2. **Web history** is the only selected data type.
-3. All three certification checkboxes are selected.
-4. The privacy policy link is public, HTTPS, current, and contains a real
-   support contact.
-5. The publisher contact email is saved and verified in the developer account.
-6. The Store listing describes the window-layout feature, matching the
-   single-purpose description and privacy policy.
+The Pages URL needs Pages configured to serve that file, for example from a `docs/` folder or a `gh-pages` branch containing `privacy-policy.html`. Paste only a URL that loads without signing in. The full text is also in `privacy-policy.md` next to this file.

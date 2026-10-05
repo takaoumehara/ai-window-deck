@@ -14,24 +14,27 @@ import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
 import { computeDynamicLayout } from "@/lib/layout-model";
-import { getTranslation } from "@/lib/i18n";
+import { getTranslation, browserLanguage } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
 import { appendSlot } from "@/lib/canvas-layout";
 
+// Shown on a fresh install so the canvas is not blank.
+const SAMPLE_SLOTS = [
+  { id: "slot-1", name: "Research", urls: "https://example.com/docs" },
+  { id: "slot-2", name: "Chat AI", urls: "https://claude.ai" },
+];
+
 export function App() {
-  const { state, updateState, defaultState } = useExtensionState();
+  const { state, updateState, loading, defaultState } = useExtensionState();
   const { windows, addWindow, updateWindow, deleteWindow, setWindows } = useRegisteredWindows();
 
   const [activeTab, setActiveTab] = useState("arrange"); // "arrange" | "windows" | "profiles"
 
-  // Load canvasSlots from the active preset's saved slots
+  // canvasSlots stays null until saved settings have loaded; see the loading
+  // effect below. Rendering earlier let the canvas persist the sample slots
+  // over the user's saved layouts.
   const activePresetObj = state.presets?.[state.activePreset || 0];
-  const [canvasSlots, setCanvasSlotsRaw] = useState(
-    activePresetObj?.slots?.length ? activePresetObj.slots : [
-      { id: "slot-1", name: "Research", urls: "https://example.com/docs" },
-      { id: "slot-2", name: "Chat AI", urls: "https://claude.ai" },
-    ]
-  );
+  const [canvasSlots, setCanvasSlotsRaw] = useState(null);
 
   // Auto-save canvasSlots to the active preset whenever they change
   const setCanvasSlots = (newSlots) => {
@@ -54,10 +57,17 @@ export function App() {
   const [bulkItems, setBulkItems] = useState([]);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
 
-  const lang = state.language || "ja";
-  const t = (key) => getTranslation(lang, key);
+  // Until the user picks a language, follow the browser UI language.
+  const lang = state.language || browserLanguage();
+  const t = (key, values) => getTranslation(lang, key, values);
 
-  const isPageMode = typeof window !== "undefined" && window.location.search.includes("mode=page");
+  // The options page opens dist/index.html in a full tab: give it the page
+  // layout instead of the fixed 780px popup width.
+  const isOptionsTab = typeof chrome !== "undefined"
+    && typeof chrome.extension?.getViews === "function"
+    && !chrome.extension.getViews({ type: "popup" }).includes(window);
+  const isPageMode = typeof window !== "undefined" && (window.location.search.includes("mode=page")
+    || (isOptionsTab && !window.location.search.includes("mode=dock")));
   const isDockMode = typeof window !== "undefined" && window.location.search.includes("mode=dock");
 
   // Dynamically set document body class for container scaling
@@ -73,12 +83,17 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === "ja" ? "AI Window Deck — ウィンドウ配置" : "AI Window Deck — Window arrangement";
+    document.title = t("docTitle");
   }, [lang]);
 
+  // Saved settings arrive asynchronously. Only once they are in do we know
+  // whether this is a first run, and which canvas the active layout holds.
   useEffect(() => {
-    if (!state.onboardingSeen) setOnboardingOpen(true);
-  }, [state.onboardingSeen]);
+    if (loading) return;
+    setOnboardingOpen(!state.onboardingSeen);
+    const saved = state.presets?.[state.activePreset || 0]?.slots;
+    setCanvasSlotsRaw(Array.isArray(saved) && saved.length ? saved : SAMPLE_SLOTS);
+  }, [loading]);
 
   // Fetch displays for physical monitor aspect ratio
   useEffect(() => {
@@ -97,6 +112,13 @@ export function App() {
   const showNote = (msg) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3500);
+  };
+
+  // Report a failed background action instead of failing silently.
+  const failed = (res) => !res?.ok || Boolean(chrome.runtime.lastError);
+  const outcomeNote = (res, okKey) => {
+    if (!failed(res)) return t(okKey);
+    return res?.reason ? t("nothingToDoMsg") : t("actionFailedMsg");
   };
 
   const handleCommandAction = async (actionType) => {
@@ -127,7 +149,7 @@ export function App() {
             openEmpty: true,
           },
           (res) => {
-            if (res?.ok) showNote(t("launchedMsg"));
+            showNote(outcomeNote(res, "launchedMsg"));
           }
         );
       } else if (actionType === "retile") {
@@ -155,12 +177,13 @@ export function App() {
             deckOnly: true,
           },
           (res) => {
-            showNote(res?.ok ? t("actionExecutedMsg") : t("deckWindowsMissing"));
+            const error = chrome.runtime.lastError;
+            showNote(res?.ok ? t("actionExecutedMsg") : error ? t("actionFailedMsg") : t("deckWindowsMissing"));
           }
         );
       } else {
         chrome.runtime.sendMessage({ type: actionType }, (res) => {
-          if (res?.ok) showNote(t("actionExecutedMsg"));
+          showNote(outcomeNote(res, "actionExecutedMsg"));
         });
       }
     }
@@ -282,7 +305,7 @@ export function App() {
           if (Array.isArray(parsed.canvasSlots)) setCanvasSlots(parsed.canvasSlots);
           showNote(t("restoreSuccessMsg"));
         } catch {
-          showNote("JSONファイルの読み込みに失敗しました");
+          showNote(t("importFailedMsg"));
         }
       };
       reader.readAsText(file);
@@ -442,9 +465,13 @@ export function App() {
     showNote(t("resetDoneMsg"));
   };
 
+  if (loading || canvasSlots === null) {
+    return <div className="min-h-screen bg-zinc-950" aria-busy="true" />;
+  }
+
   return (
     <div className={`min-h-screen bg-zinc-950 p-4 text-zinc-100 selection:bg-blue-600/30 sm:p-5 ${isPageMode ? "w-full" : ""}`}>
-      <a className="skip-link" href="#workspace-main">メインコンテンツへ移動</a>
+      <a className="skip-link" href="#workspace-main">{t("skipToMain")}</a>
       <div className={`${isPageMode ? "max-w-[1600px] w-full" : "max-w-6xl"} mx-auto flex flex-col min-h-full`}>
         {/* Header */}
         <Header
@@ -493,7 +520,7 @@ export function App() {
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="mb-5 flex border-b border-zinc-800" aria-label="Settings sections">
+        <nav className="mb-5 flex border-b border-zinc-800" aria-label={t("sectionsNavLabel")}>
           <button
             onClick={() => setActiveTab("arrange")}
             aria-current={activeTab === "arrange" ? "page" : undefined}
@@ -573,6 +600,7 @@ export function App() {
               onOpenAddModal={handleOpenAddModal}
               onEditWindow={(item) => handleOpenEditModal(item, "library")}
               onDeleteWindow={deleteWindow}
+              onNotice={showNote}
             />
             <DangerZone lang={lang} onFactoryReset={handleFactoryReset} />
           </div>

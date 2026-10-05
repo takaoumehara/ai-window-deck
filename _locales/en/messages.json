@@ -4,5 +4,50 @@
   },
   "extDescription": {
     "message": "Tile AI workspaces, spotlight one with a shortcut, and switch between them quickly."
+  },
+  "cmdSpotlight": {
+    "message": "Enlarge / back to the tile"
+  },
+  "cmdHome": {
+    "message": "Back to the tile it started from"
+  },
+  "cmdTile": {
+    "message": "Re-tile"
+  },
+  "cmdFullscreen": {
+    "message": "Full screen / back"
+  },
+  "cmdUndo": {
+    "message": "Undo"
+  },
+  "cmdNext": {
+    "message": "Next window"
+  },
+  "cmdPrev": {
+    "message": "Previous window"
+  },
+  "cmdFocusTile1": {
+    "message": "Focus window 1"
+  },
+  "cmdFocusTile2": {
+    "message": "Focus window 2"
+  },
+  "cmdFocusTile3": {
+    "message": "Focus window 3"
+  },
+  "cmdFocusTile4": {
+    "message": "Focus window 4"
+  },
+  "cmdFocusTile5": {
+    "message": "Focus window 5"
+  },
+  "cmdFocusTile6": {
+    "message": "Focus window 6"
+  },
+  "cmdFocusTile7": {
+    "message": "Focus window 7"
+  },
+  "cmdFocusTile8": {
+    "message": "Focus window 8"
   }
 }

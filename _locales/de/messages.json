@@ -4,5 +4,50 @@
   },
   "extDescription": {
     "message": "Ordnet KI-Fenster in Kacheln an, vergrößert eins per Kürzel und wechselt schnell zwischen ihnen."
+  },
+  "cmdSpotlight": {
+    "message": "Vergrößern / Zurück"
+  },
+  "cmdHome": {
+    "message": "Zurück zum ursprünglichen Feld"
+  },
+  "cmdTile": {
+    "message": "Neu anordnen"
+  },
+  "cmdFullscreen": {
+    "message": "Vollbild / Zurück"
+  },
+  "cmdUndo": {
+    "message": "Rückgängig"
+  },
+  "cmdNext": {
+    "message": "Nächstes Fenster"
+  },
+  "cmdPrev": {
+    "message": "Vorheriges Fenster"
+  },
+  "cmdFocusTile1": {
+    "message": "Fenster 1 fokussieren"
+  },
+  "cmdFocusTile2": {
+    "message": "Fenster 2 fokussieren"
+  },
+  "cmdFocusTile3": {
+    "message": "Fenster 3 fokussieren"
+  },
+  "cmdFocusTile4": {
+    "message": "Fenster 4 fokussieren"
+  },
+  "cmdFocusTile5": {
+    "message": "Fenster 5 fokussieren"
+  },
+  "cmdFocusTile6": {
+    "message": "Fenster 6 fokussieren"
+  },
+  "cmdFocusTile7": {
+    "message": "Fenster 7 fokussieren"
+  },
+  "cmdFocusTile8": {
+    "message": "Fenster 8 fokussieren"
   }
 }

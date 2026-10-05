@@ -4,5 +4,50 @@
   },
   "extDescription": {
     "message": "整理并平铺 AI 工作窗口，用快捷键放大其中一个，并快速切换窗口。"
+  },
+  "cmdSpotlight": {
+    "message": "放大/还原"
+  },
+  "cmdHome": {
+    "message": "回到最初的格子"
+  },
+  "cmdTile": {
+    "message": "重新平铺"
+  },
+  "cmdFullscreen": {
+    "message": "全屏/还原"
+  },
+  "cmdUndo": {
+    "message": "撤销"
+  },
+  "cmdNext": {
+    "message": "下一个窗口"
+  },
+  "cmdPrev": {
+    "message": "上一个窗口"
+  },
+  "cmdFocusTile1": {
+    "message": "聚焦窗口 1"
+  },
+  "cmdFocusTile2": {
+    "message": "聚焦窗口 2"
+  },
+  "cmdFocusTile3": {
+    "message": "聚焦窗口 3"
+  },
+  "cmdFocusTile4": {
+    "message": "聚焦窗口 4"
+  },
+  "cmdFocusTile5": {
+    "message": "聚焦窗口 5"
+  },
+  "cmdFocusTile6": {
+    "message": "聚焦窗口 6"
+  },
+  "cmdFocusTile7": {
+    "message": "聚焦窗口 7"
+  },
+  "cmdFocusTile8": {
+    "message": "聚焦窗口 8"
   }
 }
