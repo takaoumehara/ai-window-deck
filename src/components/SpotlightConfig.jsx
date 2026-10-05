@@ -1,5 +1,5 @@
 import React from "react";
-import { ExternalLink, Keyboard, LocateFixed, Maximize2, Sparkles } from "lucide-react";
+import { Keyboard, LocateFixed, Maximize2, Sparkles } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
 import { SpotlightPreview } from "@/components/SpotlightPreview";
 import { useShortcuts } from "@/hooks/useShortcuts";
@@ -11,40 +11,54 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
   const shortcuts = useShortcuts();
 
   const sizeOptions = [
-    { id: "half", glyph: "½", label: t("spotlightHalf"), desc: t("spotlightHalfDesc") },
-    { id: "tall", glyph: "↕", label: t("spotlightTall"), desc: t("spotlightTallDesc") },
-    { id: "threeFourths", glyph: "¾", label: t("spotlightThreeFourths"), desc: t("spotlightThreeFourthsDesc") },
-    { id: "full", glyph: "□", label: t("spotlightFull"), desc: t("spotlightFullDesc") },
-    { id: "height", glyph: "↟", label: t("spotlightHeight"), desc: t("spotlightHeightDesc") },
-    { id: "custom", glyph: "×", label: t("spotlightCustom"), desc: t("spotlightCustomDesc") },
+    { id: "half", glyph: "½", label: t("spotlightHalf") },
+    { id: "tall", glyph: "↕", label: t("spotlightTall") },
+    { id: "threeFourths", glyph: "¾", label: t("spotlightThreeFourths") },
+    { id: "full", glyph: "□", label: t("spotlightFull") },
+    { id: "height", glyph: "↟", label: t("spotlightHeight") },
+    { id: "custom", glyph: "×", label: t("spotlightCustom") },
   ];
 
   const anchorOptions = [
-    { id: "keep", icon: LocateFixed, label: t("spotlightKeep"), desc: t("spotlightKeepDesc") },
-    { id: "center", icon: Maximize2, label: t("spotlightCenter"), desc: t("spotlightCenterDesc") },
+    { id: "keep", icon: LocateFixed, label: t("spotlightKeep") },
+    { id: "center", icon: Maximize2, label: t("spotlightCenter") },
   ];
 
-  const updateCustomSize = (key, value) => {
-    updateState({ [key]: Math.max(20, Math.min(100, Number(value))) });
+  const updateCustomSize = async (key, value) => {
+    await updateState({ [key]: Math.max(20, Math.min(100, Number(value))) });
   };
 
   return (
-    <section className="mb-5 flex flex-col gap-4 rounded-xl border border-zinc-800 bg-zinc-950/80 p-4 sm:p-5" aria-labelledby="spotlight-config-title">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-800/80 pb-3.5">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-400" />
-          <div>
-            <h2 id="spotlight-config-title" className="text-sm font-semibold tracking-tight text-white">
-              {t("spotlightConfigTitle")}
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-zinc-400">{t("spotlightConfigSubtitle")}</p>
-          </div>
+    <section className="mb-6 flex flex-col gap-4 rounded-xl p-5" style={{
+      background: 'var(--card)',
+      border: '1px solid var(--cie-stroke)',
+      borderRadius: 'var(--cie-r)',
+      transition: `all var(--cie-t-cell) var(--cie-ease-expo)`
+    }} aria-labelledby="spotlight-config-title">
+      <div className="flex items-center gap-3 pb-4" style={{ borderBottom: '1px solid var(--cie-stroke)' }}>
+        <Sparkles style={{ width: '20px', height: '20px', color: 'var(--cie-ink-mute)' }} />
+        <div>
+          <h2 id="spotlight-config-title" className="text-base font-semibold tracking-tight" style={{ 
+            color: 'var(--foreground)',
+            fontFamily: 'var(--cie-sans)',
+            letterSpacing: '-0.02em'
+          }}>
+            {t("spotlightConfigTitle")}
+          </h2>
+          <p className="text-xs mt-1" style={{ color: 'var(--cie-ink-mute)' }}>
+            {t("spotlightConfigSubtitle")}
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <div className="flex flex-col gap-2.5">
-          <span className="text-xs font-semibold text-zinc-200">{t("spotlightSizeLabel")}</span>
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold" style={{ 
+            color: 'var(--foreground)',
+            fontFamily: 'var(--cie-sans)'
+          }}>
+            {t("spotlightSizeLabel")}
+          </span>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {sizeOptions.map((opt) => {
               const active = currentSize === opt.id;
@@ -54,40 +68,68 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   type="button"
                   onClick={() => updateState({ spotlightSize: opt.id })}
                   aria-pressed={active}
-                  className={`flex min-h-[68px] flex-col items-start rounded-lg border p-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ${
-                    active
-                      ? "border-blue-500 bg-blue-600/20 text-white"
-                      : "border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700"
-                  }`}
+                  className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
+                  style={{
+                    background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+                    borderRadius: 'var(--cie-r)',
+                    color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
+                    opacity: active ? 1 : 0.85,
+                    transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+                    cursor: 'pointer',
+                    minHeight: '60px'
+                  }}
                 >
-                  <span className="flex items-center gap-1.5 text-xs font-semibold"><span className="text-blue-300">{opt.glyph}</span>{opt.label}</span>
-                  <span className="mt-1 text-[11px] leading-4 text-zinc-400">{opt.desc}</span>
+                  <span className="text-lg font-medium" style={{ fontFamily: 'var(--cie-sans)' }}>
+                    {opt.glyph}
+                  </span>
+                  <span className="text-xs mt-1" style={{ color: 'inherit' }}>
+                    {opt.label}
+                  </span>
                 </button>
               );
             })}
           </div>
           {currentSize === "custom" && (
-            <div className="grid grid-cols-1 gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 rounded-lg p-3 sm:grid-cols-2" style={{
+              background: 'var(--cie-btn)',
+              border: '1px solid var(--cie-stroke)',
+              borderRadius: 'var(--cie-r)'
+            }}>
               {[{ key: "spotlightWidth", label: t("spotlightWidth"), value: state.spotlightWidth ?? 70 }, { key: "spotlightHeight", label: t("spotlightHeightValue"), value: state.spotlightHeight ?? 90 }].map(({ key, label, value }) => (
-                <label key={key} className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
-                  <span className="w-8">{label}</span>
-                  <input
-                    type="range"
-                    min="20"
-                    max="100"
-                    value={value}
-                    onChange={(event) => updateCustomSize(key, event.target.value)}
-                    className="h-1.5 flex-1 accent-blue-500"
-                  />
-                  <output className="w-8 text-right tabular-nums text-blue-300">{value}%</output>
+                <label key={key} className="flex flex-col gap-2 text-xs font-semibold" style={{ color: 'var(--foreground)' }}>
+                  <span style={{ fontFamily: 'var(--cie-mono)', fontSize: 'var(--cie-text-mono)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>{label}</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="20"
+                      max="100"
+                      value={value}
+                      onChange={(event) => updateCustomSize(key, event.target.value)}
+                      className="flex-1"
+                      style={{ accentColor: 'var(--cie-ink)' }}
+                    />
+                    <output className="w-10 text-right tabular-nums" style={{ 
+                      color: 'var(--foreground)',
+                      fontFamily: 'var(--cie-mono)',
+                      fontSize: 'var(--cie-text-mono)'
+                    }}>
+                      {value}%
+                    </output>
+                  </div>
                 </label>
               ))}
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-2.5">
-          <span className="text-xs font-semibold text-zinc-200">{t("spotlightAnchorLabel")}</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-semibold" style={{ 
+            color: 'var(--foreground)',
+            fontFamily: 'var(--cie-sans)'
+          }}>
+            {t("spotlightAnchorLabel")}
+          </span>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {anchorOptions.map((opt) => {
               const active = currentAnchor === opt.id;
@@ -98,14 +140,22 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
                   type="button"
                   onClick={() => updateState({ spotlightAnchor: opt.id })}
                   aria-pressed={active}
-                  className={`flex min-h-[68px] flex-col items-start rounded-lg border p-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ${
-                    active
-                      ? "border-blue-500 bg-blue-600/20 text-white"
-                      : "border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700"
-                  }`}
+                  className="flex min-h-[60px] flex-col items-center justify-center rounded-lg p-2.5 text-center transition-all"
+                  style={{
+                    background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                    border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+                    borderRadius: 'var(--cie-r)',
+                    color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
+                    opacity: active ? 1 : 0.85,
+                    transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+                    cursor: 'pointer',
+                    minHeight: '60px'
+                  }}
                 >
-                  <span className="flex items-center gap-1.5 text-xs font-semibold"><Icon className="h-3.5 w-3.5 text-blue-300" />{opt.label}</span>
-                  <span className="mt-1 text-[11px] leading-4 text-zinc-400">{opt.desc}</span>
+                  <Icon style={{ width: '20px', height: '20px' }} />
+                  <span className="text-xs mt-1" style={{ color: 'inherit' }}>
+                    {opt.label}
+                  </span>
                 </button>
               );
             })}
@@ -115,18 +165,14 @@ export function SpotlightConfig({ lang, state, updateState, onAction, targetAspe
 
       <SpotlightPreview lang={lang} state={state} canvasSlots={canvasSlots} targetAspectRatio={targetAspectRatio} />
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 border-t border-zinc-800/80 pt-3.5">
-        <span className="flex items-center gap-1.5 text-xs font-semibold text-zinc-200"><Keyboard className="h-3.5 w-3.5 text-blue-400" />{t("spotlightShortcutLabel")}</span>
-        <span className="flex items-center gap-1.5 text-xs text-zinc-400"><span className="key-cap">{shortcuts["toggle-spotlight"]}</span>{t("shortcutToggleDesc")}</span>
-        <span className="flex items-center gap-1.5 text-xs text-zinc-400"><span className="key-cap">{shortcuts["restore-home"]}</span>{t("shortcutHomeDesc")}</span>
-        <button
-          type="button"
-          onClick={() => onAction?.("shortcuts")}
-          className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-blue-300 transition-colors hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-        >
-          {t("shortcutChange")}<ExternalLink className="h-3 w-3" aria-hidden="true" />
-        </button>
-        <span className="w-full text-[11px] text-zinc-400 sm:w-auto">{t("shortcutChangeHint")}</span>
+      <div className="flex flex-wrap items-center gap-3 pt-4" style={{ borderTop: '1px solid var(--cie-stroke)' }}>
+        <Keyboard style={{ width: '16px', height: '16px', color: 'var(--cie-ink-mute)' }} />
+        <span className="text-xs" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>
+          <span className="key-cap">{shortcuts["toggle-spotlight"]}</span> {t("shortcutToggleDesc")}
+        </span>
+        <span className="text-xs" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>
+          <span className="key-cap">{shortcuts["restore-home"]}</span> {t("shortcutHomeDesc")}
+        </span>
       </div>
     </section>
   );

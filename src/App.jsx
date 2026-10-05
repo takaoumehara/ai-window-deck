@@ -13,6 +13,7 @@ import { BulkPlacementChoice } from "@/components/BulkPlacementChoice";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
+import { useTheme } from "@/contexts/ThemeContext";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation, browserLanguage } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
@@ -27,6 +28,7 @@ const SAMPLE_SLOTS = [
 export function App() {
   const { state, updateState, loading, defaultState } = useExtensionState();
   const { windows, addWindow, updateWindow, deleteWindow, setWindows } = useRegisteredWindows();
+  const { theme } = useTheme();
 
   const [activeTab, setActiveTab] = useState("arrange"); // "arrange" | "windows" | "profiles"
 
@@ -72,13 +74,16 @@ export function App() {
 
   // Dynamically set document body class for container scaling
   useEffect(() => {
+    // Use classList to preserve theme classes (dark/light)
+    document.body.classList.remove('mode-page', 'mode-dock', 'mode-popup');
     if (isPageMode) {
-      document.body.className = "mode-page bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.classList.add('mode-page', 'font-sans', 'antialiased');
     } else if (isDockMode) {
-      document.body.className = "mode-dock bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.classList.add('mode-dock', 'font-sans', 'antialiased');
     } else {
-      document.body.className = "mode-popup bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.classList.add('mode-popup', 'font-sans', 'antialiased');
     }
+    // DO NOT set inline background/color - let CSS cascade handle theme
   }, [isPageMode, isDockMode]);
 
   useEffect(() => {
@@ -466,11 +471,13 @@ export function App() {
   };
 
   if (loading || canvasSlots === null) {
-    return <div className="min-h-screen bg-zinc-950" aria-busy="true" />;
+    return <div className="min-h-screen" aria-busy="true" />;
   }
 
   return (
-    <div className={`min-h-screen bg-zinc-950 p-4 text-zinc-100 selection:bg-blue-600/30 sm:p-5 ${isPageMode ? "w-full" : ""}`}>
+    <div className="min-h-screen p-4 sm:p-5" style={{
+      fontFamily: 'var(--cie-sans)'
+    }}>
       <a className="skip-link" href="#workspace-main">{t("skipToMain")}</a>
       <div className={`${isPageMode ? "max-w-[1600px] w-full" : "max-w-6xl"} mx-auto flex flex-col min-h-full`}>
         {/* Header */}
@@ -513,44 +520,51 @@ export function App() {
         {/* Notification Banner */}
         <div aria-live="polite" aria-atomic="true">
         {notification && (
-          <div className="mb-4 rounded-xl border border-blue-500/50 bg-blue-600/20 p-3 text-center text-xs font-semibold text-blue-100 shadow-lg animate-in fade-in">
+          <div className="mb-4 rounded-xl p-3 text-center text-xs font-semibold shadow-lg animate-in fade-in" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--cie-ink)'
+          }}>
             {notification}
           </div>
         )}
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="mb-5 flex border-b border-zinc-800" aria-label={t("sectionsNavLabel")}>
+        <nav className="mb-5 flex" style={{ borderBottom: '1px solid var(--cie-stroke)' }} aria-label={t("sectionsNavLabel")}>
           <button
             onClick={() => setActiveTab("arrange")}
             aria-current={activeTab === "arrange" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "arrange"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "arrange" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "arrange" ? 'var(--foreground)' : 'var(--muted-foreground)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("arrangeTab")}
           </button>
           <button
             onClick={() => setActiveTab("windows")}
             aria-current={activeTab === "windows" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "windows"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "windows" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "windows" ? 'var(--foreground)' : 'var(--muted-foreground)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("windowsTab")}
           </button>
           <button
             onClick={() => setActiveTab("profiles")}
             aria-current={activeTab === "profiles" ? "page" : undefined}
-            className={`border-b-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              activeTab === "profiles"
-                ? "border-blue-500 text-white"
-                : "border-transparent text-zinc-400 hover:text-zinc-200"
-            }`}
+            className="px-4 py-2.5 text-sm font-semibold transition-colors"
+            style={{
+              borderBottom: activeTab === "profiles" ? '2px solid var(--primary)' : '2px solid transparent',
+              color: activeTab === "profiles" ? 'var(--foreground)' : 'var(--muted-foreground)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {t("profilesTab")}
           </button>

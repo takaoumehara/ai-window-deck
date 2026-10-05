@@ -1,60 +1,148 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, LayoutList, Globe } from "lucide-react";
+import { ExternalLink, LayoutList, Globe, Sun, Moon } from "lucide-react";
 import { getTranslation, LANGUAGES } from "@/lib/i18n";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
   const t = (key) => getTranslation(lang, key);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800/80 pb-4">
-      <div className="flex items-center gap-3.5">
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-blue-400/30 bg-blue-600 shadow-[0_6px_16px_rgba(37,99,235,0.2)]">
-          <div className="w-2.5 h-2.5 rounded bg-zinc-900 absolute top-1.5 right-1.5" />
+    <header className="mb-6 flex flex-wrap items-center justify-between gap-4 pb-5" style={{ 
+      borderBottom: `1px solid var(--cie-stroke)`
+    }}>
+      <div className="flex items-center gap-3">
+        <div className="relative flex items-center justify-center" style={{ 
+          width: '40px',
+          height: '40px',
+          background: 'var(--cie-btn)', 
+          border: `1px solid var(--cie-stroke)`,
+          borderRadius: 'var(--cie-r)'
+        }}>
+          <div style={{ 
+            width: '10px',
+            height: '10px',
+            borderRadius: '2px',
+            background: 'var(--primary)',
+            position: 'absolute',
+            top: '6px',
+            right: '6px'
+          }} />
         </div>
         <div>
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold tracking-[-0.01em] text-white">
+          <h1 style={{ 
+            fontFamily: 'var(--cie-sans)',
+            fontSize: '18px',
+            fontWeight: 600,
+            letterSpacing: '-0.03em',
+            color: 'var(--foreground)'
+          }}>
             {t("appTitle")}
           </h1>
-          <p className="mt-0.5 text-xs leading-5 text-zinc-400">{t("appSubtitle")}</p>
+          <p className="text-xs mt-0.5" style={{ 
+            color: 'var(--cie-ink-mute)',
+            fontFamily: 'var(--cie-sans)'
+          }}>
+            {t("appSubtitle")}
+          </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Language Selector Dropdown */}
-        <div className="flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5">
-          <Globe className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="flex items-center justify-center"
+          style={{
+            width: '36px',
+            height: '36px',
+            minWidth: '36px',
+            minHeight: '36px',
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r-pill)',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer'
+          }}
+        >
+          {theme === 'dark' ? (
+            <Sun style={{ width: '16px', height: '16px', color: 'var(--primary-foreground)' }} />
+          ) : (
+            <Moon style={{ width: '16px', height: '16px', color: 'var(--foreground)' }} />
+          )}
+        </button>
+
+        {/* Language Selector */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5" style={{
+          background: 'var(--cie-btn)',
+          border: '1px solid var(--cie-stroke)',
+          borderRadius: 'var(--cie-r)',
+          minHeight: '36px'
+        }}>
+          <Globe style={{ width: '14px', height: '14px', color: 'var(--cie-ink-mute)' }} aria-hidden="true" />
           <select
             value={lang}
             onChange={(e) => onLanguageChange(e.target.value)}
             aria-label={t("languageLabel")}
-            className="cursor-pointer rounded bg-transparent text-xs font-medium text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+            className="cursor-pointer rounded bg-transparent text-xs font-medium"
+            style={{
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              border: 'none',
+              outline: 'none',
+              minHeight: '24px'
+            }}
           >
             {LANGUAGES.map(({ code, label }) => (
-              <option key={code} value={code} lang={code} className="bg-zinc-900 text-zinc-200">{label}</option>
+              <option key={code} value={code} lang={code} style={{
+                background: 'var(--card)',
+                color: 'var(--card-foreground)'
+              }}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={onOpenDock}
-          className="h-9 gap-1.5 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+          className="flex items-center gap-1.5 px-3 text-xs"
+          style={{
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r)',
+            color: 'var(--foreground)',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer',
+            minHeight: '36px',
+            fontFamily: 'var(--cie-sans)',
+            fontWeight: 500
+          }}
         >
-          <LayoutList className="w-3.5 h-3.5" />
+          <LayoutList style={{ width: '14px', height: '14px' }} />
           <span>{t("openDock")}</span>
-        </Button>
+        </button>
 
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={onOpenBig}
-          className="h-9 gap-1.5 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+          className="flex items-center gap-1.5 px-3 text-xs"
+          style={{
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r)',
+            color: 'var(--foreground)',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`,
+            cursor: 'pointer',
+            minHeight: '36px',
+            fontFamily: 'var(--cie-sans)',
+            fontWeight: 500
+          }}
         >
-          <ExternalLink className="w-3.5 h-3.5" />
+          <ExternalLink style={{ width: '14px', height: '14px' }} />
           <span>{t("openBig")}</span>
-        </Button>
+        </button>
       </div>
     </header>
   );

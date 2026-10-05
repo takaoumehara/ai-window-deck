@@ -29,7 +29,7 @@ export function ConfigProfileManager({
       <Card className="border-zinc-800 bg-zinc-950/80">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-blue-400" />
+            <Sliders className="w-4 h-4 text-primary" />
             <span>{t("profilesTitle")}</span>
           </CardTitle>
           <p className="text-xs text-zinc-400">{t("profilesSubtitle")}</p>
@@ -67,7 +67,7 @@ export function ConfigProfileManager({
                   key={prof.id}
                   className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
                     isActive
-                      ? "border-blue-500 bg-blue-500/10 shadow-md"
+                      ? "border-primary bg-primary/10 shadow-md"
                       : "border-zinc-800 bg-zinc-900/80 hover:border-zinc-700"
                   }`}
                 >
@@ -76,7 +76,7 @@ export function ConfigProfileManager({
                       {prof.name || t("profileNameDefault")}
                     </span>
                     {isActive && (
-                      <span className="text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full flex items-center gap-1">
                         <Check className="w-3 h-3" />
                         {t("activeProfileTag")}
                       </span>
@@ -120,7 +120,7 @@ export function ConfigProfileManager({
               onClick={onExportBackup}
               className="h-9 text-xs gap-2 border-zinc-700 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 font-bold"
             >
-              <Download className="w-3.5 h-3.5 text-blue-400" />
+              <Download className="w-3.5 h-3.5 text-primary" />
               <span>{t("downloadBackupBtn")}</span>
             </Button>
 

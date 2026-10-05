@@ -21,10 +21,14 @@ export function useRegisteredWindows() {
     }
   }, []);
 
-  const saveWindows = (newWindows) => {
+  const saveWindows = async (newWindows) => {
     setWindows(newWindows);
     if (typeof chrome !== "undefined" && chrome.storage?.sync) {
-      chrome.storage.sync.set({ registeredWindows: newWindows });
+      try {
+        await chrome.storage.sync.set({ registeredWindows: newWindows });
+      } catch (error) {
+        console.error('[AI Window Deck] Failed to save windows:', error);
+      }
     }
   };
 

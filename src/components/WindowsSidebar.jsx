@@ -1,6 +1,5 @@
 import React from "react";
 import { Plus, Trash2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { getTranslation } from "@/lib/i18n";
 
 export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal, onEditWindow, onDeleteWindow, showGuide = false }) {
@@ -12,30 +11,49 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
   };
 
   return (
-    <aside className="flex max-h-[660px] w-72 flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-950/80 p-3.5">
+    <aside className="flex max-h-[660px] w-72 flex-col gap-3 rounded-xl p-3.5" style={{
+      border: '1px solid var(--cie-stroke)',
+      background: 'var(--cie-btn)',
+      borderRadius: 'var(--cie-r)'
+    }}>
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-bold text-zinc-100">{t("windowsHeader")}</h3>
-          <span className="font-mono text-[11px] text-zinc-400">({windows.length})</span>
+          <h3 className="text-sm font-bold" style={{ color: 'var(--foreground)', fontFamily: 'var(--cie-sans)' }}>{t("windowsHeader")}</h3>
+          <span className="text-[11px]" style={{ fontFamily: 'var(--cie-mono)', color: 'var(--cie-ink-mute)' }}>({windows.length})</span>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
+        <button
           onClick={onOpenAddModal}
           aria-label={t("regTitleAdd")}
           title={t("regTitleAdd")}
-          className="h-8 w-8 min-h-[32px] min-w-[32px] max-h-[32px] max-w-[32px] shrink-0 rounded-full border-zinc-700 bg-zinc-900 p-0 hover:border-blue-500 hover:bg-blue-600 hover:text-white"
+          className="h-8 w-8 min-h-[32px] min-w-[32px] max-h-[32px] max-w-[32px] shrink-0 rounded-full p-0 flex items-center justify-center"
+          style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--foreground)',
+            borderRadius: 'var(--cie-r-pill)',
+            cursor: 'pointer',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
+          }}
         >
-          <Plus className="w-3.5 h-3.5" />
-        </Button>
+          <Plus style={{ width: '14px', height: '14px' }} />
+        </button>
       </div>
 
-      <p className="-mt-1 px-1 text-[11px] leading-4 text-zinc-400">{t("windowsHint")}</p>
-      {showGuide && <p className="-mt-1 rounded-md border border-blue-400/60 bg-blue-500/15 px-2 py-1.5 text-[11px] font-semibold leading-4 text-blue-100"><span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">3</span>{t("guideStep3Description")}</p>}
+      <p className="-mt-1 px-1 text-[11px] leading-4" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>{t("windowsHint")}</p>
+      {showGuide && <p className="-mt-1 rounded-md px-2 py-1.5 text-[11px] font-semibold leading-4" style={{
+        border: '1px solid var(--cie-stroke)',
+        background: 'var(--cie-btn-hover)',
+        color: 'var(--foreground)',
+        fontFamily: 'var(--cie-sans)',
+        borderRadius: 'calc(var(--cie-r) / 2)'
+      }}><span className="mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
+        background: 'var(--primary)',
+        color: 'var(--primary-foreground)'
+      }}>3</span>{t("guideStep3Description")}</p>}
 
       <div className="flex flex-col gap-2 overflow-y-auto pr-1 no-scrollbar flex-1">
         {windows.length === 0 ? (
-          <p className="text-xs text-zinc-400 text-center py-6 px-2">
+          <p className="text-xs text-center py-6 px-2" style={{ color: 'var(--cie-ink-mute)', fontFamily: 'var(--cie-sans)' }}>
             {t("noWindows")}
           </p>
         ) : (
@@ -67,29 +85,44 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                     onDeleteWindow(item.id);
                   }
                 }}
-                className={`group relative flex cursor-grab flex-col gap-2 rounded-lg border p-3 transition-[background-color,border-color,box-shadow] active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-                  isPlaced
-                    ? "border-blue-500/60 bg-blue-950/20 hover:border-blue-400"
-                    : "border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-850"
-                }`}
+                className="group relative flex cursor-grab flex-col gap-2 rounded-lg p-3 transition-all active:cursor-grabbing focus-visible:outline-none"
+                style={{
+                  border: isPlaced ? '2px solid var(--cie-ink)' : '1px solid var(--cie-stroke)',
+                  background: isPlaced ? 'var(--cie-ink)' : 'var(--cie-paper)',
+                  color: isPlaced ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                  borderRadius: 'var(--cie-r)',
+                  transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0">
                     {isPlaced && (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      <CheckCircle2 style={{ width: '14px', height: '14px', flexShrink: 0, color: 'inherit' }} />
                     )}
-                    <span className="text-xs font-bold text-zinc-200 truncate">
+                    <span className="text-xs font-bold truncate" style={{ fontFamily: 'var(--cie-sans)' }}>
                       {item.name || t("untitledWindow")}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
                     {isPlaced && (
-                      <span className="rounded border border-blue-500/40 bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300">
+                      <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{
+                        border: '1px solid var(--cie-paper)',
+                        background: 'transparent',
+                        color: 'var(--primary-foreground)',
+                        fontFamily: 'var(--cie-sans)',
+                        borderRadius: 'calc(var(--cie-r) / 3)'
+                      }}>
                         {t("inCanvasTag")}
                       </span>
                     )}
-                    <span className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
+                    <span className="rounded px-1.5 py-0.5 text-[10px]" style={{
+                      border: '1px solid var(--cie-stroke)',
+                      background: isPlaced ? 'rgba(0,0,0,0.15)' : 'var(--cie-btn)',
+                      fontFamily: 'var(--cie-mono)',
+                      color: isPlaced ? 'var(--cie-paper)' : 'var(--cie-ink-mute)',
+                      borderRadius: 'calc(var(--cie-r) / 3)'
+                    }}>
                       {urlLines.length} {t(urlLines.length === 1 ? "urlSingular" : "urlsCount")}
                     </span>
                     <button
@@ -100,16 +133,25 @@ export function WindowsSidebar({ lang, windows, canvasSlots = [], onOpenAddModal
                       }}
                       aria-label={t("deleteItem", { name: item.name || t("untitledWindow") })}
                       title={t("deleteItem", { name: item.name || t("untitledWindow") })}
-                      className="rounded p-1 text-zinc-400 opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                      className="rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 focus-visible:outline-none"
+                      style={{
+                        color: isPlaced ? 'var(--cie-paper)' : 'var(--cie-ink-mute)',
+                        cursor: 'pointer'
+                      }}
                     >
-                      <Trash2 className="w-3 h-3" aria-hidden="true" />
+                      <Trash2 style={{ width: '12px', height: '12px' }} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
                   {urlLines.slice(0, 2).map((url, i) => (
-                    <div key={i} className="truncate rounded bg-zinc-950/60 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
+                    <div key={i} className="truncate rounded px-1.5 py-1 text-[11px] leading-4" style={{
+                      background: isPlaced ? 'rgba(0,0,0,0.15)' : 'var(--cie-btn)',
+                      fontFamily: 'var(--cie-mono)',
+                      color: isPlaced ? 'var(--cie-paper-mute)' : 'var(--cie-ink-mute)',
+                      borderRadius: 'calc(var(--cie-r) / 3)'
+                    }}>
                       {t("tabLabel", { n: i + 1 })}: {url.replace(/^https?:\/\//i, "")}
                     </div>
                   ))}

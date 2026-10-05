@@ -273,18 +273,30 @@ export function WorkspaceCanvas({
   return (
     <div className="flex flex-col gap-3 flex-1 w-full max-w-full overflow-hidden">
       {/* Workspace Toolbar */}
-      <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/80 p-3">
+      <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl p-3" style={{
+        border: '1px solid var(--cie-stroke)',
+        background: 'var(--cie-btn)',
+        borderRadius: 'var(--cie-r)'
+      }}>
         {/* Browser Count */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-zinc-200">{t("howManyBrowsers")}</span>
-          <div className="flex items-center border border-zinc-700 rounded-md bg-zinc-900">
+          <span className="text-xs font-semibold" style={{ color: 'var(--foreground)', fontFamily: 'var(--cie-sans)' }}>{t("howManyBrowsers")}</span>
+          <div className="flex items-center rounded-md" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--card)'
+          }}>
             <button
               type="button"
               onClick={() => handleCountChange(count - 1)}
               aria-label={t("decreaseCount")}
-              className="flex h-8 w-8 items-center justify-center text-zinc-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="flex h-8 w-8 items-center justify-center focus-visible:outline-none"
+              style={{
+                color: 'var(--foreground)',
+                cursor: 'pointer',
+                transition: `color var(--cie-t-snap) var(--cie-ease-expo)`
+              }}
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus style={{ width: '14px', height: '14px' }} />
             </button>
             <input
               type="number"
@@ -296,21 +308,40 @@ export function WorkspaceCanvas({
                 const nextCount = Number(e.target.value);
                 handleCountChange(Number.isFinite(nextCount) ? nextCount : 0);
               }}
-              className="w-9 h-7 text-center text-xs font-bold text-white bg-transparent border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-9 h-7 text-center text-xs font-bold bg-transparent border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              style={{
+                color: 'var(--foreground)'
+              }}
             />
             <button
               type="button"
               onClick={() => handleCountChange(count + 1)}
               aria-label={t("increaseCount")}
-              className="flex h-8 w-8 items-center justify-center text-zinc-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="flex h-8 w-8 items-center justify-center focus-visible:outline-none"
+              style={{
+                color: 'var(--foreground)',
+                cursor: 'pointer',
+                transition: `color var(--cie-t-snap) var(--cie-ease-expo)`
+              }}
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus style={{ width: '14px', height: '14px' }} />
             </button>
           </div>
-          {showGuide && <span className="hidden items-center gap-1 rounded-md border border-blue-400/60 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold text-blue-100 sm:inline-flex"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">2</span>{t("guideStep2Description")}</span>}
+          {showGuide && <span className="hidden items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold sm:inline-flex" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn-hover)',
+            color: 'var(--foreground)',
+            fontFamily: 'var(--cie-sans)',
+            borderRadius: 'calc(var(--cie-r) / 2)'
+          }}><span className="flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{
+            background: 'var(--primary)',
+            color: 'var(--primary-foreground)'
+          }}>2</span>{t("guideStep2Description")}</span>}
         </div>
 
-        <div className="order-3 flex w-full flex-wrap items-center gap-1.5 border-t border-zinc-800 pt-2 lg:order-2 lg:w-auto lg:border-0 lg:pt-0">
+        <div className="order-3 flex w-full flex-wrap items-center gap-1.5 pt-2 lg:order-2 lg:w-auto lg:pt-0" style={{
+          borderTop: '1px solid var(--cie-stroke)'
+        }}>
           {LAYOUT_FAMILIES.filter(({ id }) => id !== "custom").map(({ id }) => {
             const active = layoutFamily === id;
             const Icon = id === "stack" ? Rows2 : id === "row" ? Columns2 : Grid;
@@ -323,16 +354,45 @@ export function WorkspaceCanvas({
                   onLayoutFamilyChange?.(id);
                   commitSlots(applyLayoutFamily(canvasSlots, id));
                 }}
-                className={`inline-flex h-8 items-center gap-1 rounded-md border px-2 text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${active ? "border-blue-500 bg-blue-500/15 text-blue-200" : "border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"}`}
+                className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-[11px] font-semibold transition-all focus-visible:outline-none"
+                style={{
+                  border: active ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+                  background: active ? 'var(--primary)' : 'var(--cie-btn)',
+                  color: active ? 'var(--primary-foreground)' : 'var(--foreground)',
+                  fontFamily: 'var(--cie-sans)',
+                  borderRadius: 'calc(var(--cie-r) / 2)',
+                  cursor: 'pointer',
+                  transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
+                }}
               >
-                <Icon className="h-3 w-3" />{id === "auto" ? t("layoutAuto") : id === "stack" ? t("layoutStack") : id === "row" ? t("layoutRow") : id === "grid" ? t("layoutGrid") : t("layoutFocus")}
+                <Icon style={{ width: '12px', height: '12px' }} />{id === "auto" ? t("layoutAuto") : id === "stack" ? t("layoutStack") : id === "row" ? t("layoutRow") : id === "grid" ? t("layoutGrid") : t("layoutFocus")}
               </button>
             );
           })}
-          <button type="button" aria-pressed={layoutFamily === "custom"} onClick={() => onLayoutFamilyChange?.("custom")} className={`inline-flex h-8 items-center rounded-md border px-2 text-[11px] font-semibold ${layoutFamily === "custom" ? "border-blue-500 bg-blue-500/15 text-blue-200" : "border-zinc-800 bg-zinc-900 text-zinc-400"}`}>{t("layoutFreeform")}</button>
-          <span className="mx-1 h-5 border-l border-zinc-800" />
-          <button type="button" onClick={handleUndo} disabled={!history.past.length} aria-label={t("undo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 disabled:opacity-35"><Undo2 className="h-3.5 w-3.5" /></button>
-          <button type="button" onClick={handleRedo} disabled={!history.future.length} aria-label={t("redo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 disabled:opacity-35"><Redo2 className="h-3.5 w-3.5" /></button>
+          <button type="button" aria-pressed={layoutFamily === "custom"} onClick={() => onLayoutFamilyChange?.("custom")} className="inline-flex h-8 items-center rounded-md px-2 text-[11px] font-semibold focus-visible:outline-none" style={{
+            border: layoutFamily === "custom" ? '2px solid var(--primary)' : '1px solid var(--cie-stroke)',
+            background: layoutFamily === "custom" ? 'var(--primary)' : 'var(--cie-btn)',
+            color: layoutFamily === "custom" ? 'var(--primary-foreground)' : 'var(--foreground)',
+            fontFamily: 'var(--cie-sans)',
+            borderRadius: 'calc(var(--cie-r) / 2)',
+            cursor: 'pointer',
+            transition: `all var(--cie-t-snap) var(--cie-ease-expo)`
+          }}>{t("layoutFreeform")}</button>
+          <span className="mx-1 h-5" style={{ borderLeft: '1px solid var(--cie-stroke)' }} />
+          <button type="button" onClick={handleUndo} disabled={!history.past.length} aria-label={t("undo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md disabled:opacity-35" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--foreground)',
+            borderRadius: 'calc(var(--cie-r) / 2)',
+            cursor: !history.past.length ? 'not-allowed' : 'pointer'
+          }}><Undo2 style={{ width: '14px', height: '14px' }} /></button>
+          <button type="button" onClick={handleRedo} disabled={!history.future.length} aria-label={t("redo")} className="inline-flex h-8 w-8 items-center justify-center rounded-md disabled:opacity-35" style={{
+            border: '1px solid var(--cie-stroke)',
+            background: 'var(--cie-btn)',
+            color: 'var(--foreground)',
+            borderRadius: 'calc(var(--cie-r) / 2)',
+            cursor: !history.future.length ? 'not-allowed' : 'pointer'
+          }}><Redo2 style={{ width: '14px', height: '14px' }} /></button>
         </div>
 
         {/* Layout Preset Dropdown + Equalize + Clear + Retile + Launch */}
@@ -352,14 +412,25 @@ export function WorkspaceCanvas({
               onClick={() => setDropdownOpen(!dropdownOpen)}
               aria-expanded={dropdownOpen}
               aria-haspopup="menu"
-              className="h-9 gap-2 border-zinc-700 bg-zinc-900 text-xs font-semibold text-zinc-100 hover:bg-zinc-800"
+              className="h-9 gap-2 text-xs font-semibold"
+              style={{
+                border: '1px solid var(--cie-stroke)',
+                background: 'var(--cie-btn)',
+                color: 'var(--foreground)',
+                fontFamily: 'var(--cie-sans)',
+                borderRadius: 'calc(var(--cie-r) / 2)'
+              }}
             >
               <span>📁 {t("standardLayout")} <b>{currentPresetName}</b></span>
-              <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+              <ChevronDown style={{ width: '14px', height: '14px', color: 'var(--cie-ink-mute)' }} />
             </Button>
 
             {dropdownOpen && (
-              <div role="menu" className="absolute left-0 top-full z-50 mt-1 flex w-64 flex-col gap-1 rounded-xl border border-zinc-700 bg-zinc-950 p-2 shadow-2xl">
+              <div role="menu" className="absolute left-0 top-full z-50 mt-1 flex w-64 flex-col gap-1 rounded-xl p-2 shadow-2xl" style={{
+                border: '1px solid var(--cie-stroke)',
+                background: 'var(--card)',
+                borderRadius: 'var(--cie-r)'
+              }}>
                 <div className="max-h-48 overflow-y-auto flex flex-col gap-1 no-scrollbar">
                   {presets.map((preset, idx) => {
                     const isActive = idx === activePreset;
@@ -367,11 +438,15 @@ export function WorkspaceCanvas({
                     return (
                       <div
                         key={idx}
-                        className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs transition-colors ${
-                          isActive
-                            ? "bg-blue-600/20 border border-blue-500/50 text-blue-300 font-bold"
-                            : "hover:bg-zinc-900 text-zinc-200"
-                        }`}
+                        className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs transition-colors"
+                        style={{
+                          background: isActive ? 'var(--cie-ink)' : 'transparent',
+                          border: isActive ? '1px solid var(--cie-ink)' : '1px solid transparent',
+                          color: isActive ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          fontFamily: 'var(--cie-sans)',
+                          borderRadius: 'calc(var(--cie-r) / 2)'
+                        }}
                       >
                         {isEditing ? (
                           <input
@@ -389,7 +464,13 @@ export function WorkspaceCanvas({
                               setEditingPresetIdx(null);
                             }}
                             autoFocus
-                            className="bg-zinc-900 border border-blue-500 px-1.5 py-0.5 rounded text-white text-xs w-28 focus:outline-none"
+                            className="px-1.5 py-0.5 rounded text-xs w-28"
+                            style={{
+                              background: 'var(--cie-btn)',
+                              border: '1px solid var(--cie-stroke)',
+                              color: 'var(--foreground)',
+                              borderRadius: 'calc(var(--cie-r) / 3)'
+                            }}
                           />
                         ) : (
                           <button
@@ -399,7 +480,7 @@ export function WorkspaceCanvas({
                               onSelectPreset(idx);
                               setDropdownOpen(false);
                             }}
-                            className="max-w-[150px] truncate text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                            className="max-w-[150px] truncate text-left focus-visible:outline-none"
                           >
                             📁 {t("standardLayout")} {preset.name || String.fromCharCode(65 + idx)}
                           </button>
@@ -414,9 +495,10 @@ export function WorkspaceCanvas({
                             }}
                             aria-label={t("editItem", { name: preset.name || String.fromCharCode(65 + idx) })}
                             title={t("editItem", { name: preset.name || String.fromCharCode(65 + idx) })}
-                            className="rounded p-1 text-zinc-400 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                            className="rounded p-1 focus-visible:outline-none"
+                            style={{ color: isActive ? 'var(--cie-paper)' : 'var(--cie-ink-mute)' }}
                           >
-                            <Edit2 className="w-3 h-3" />
+                            <Edit2 style={{ width: '12px', height: '12px' }} />
                           </button>
                           {presets.length > 1 && (
                             <button
@@ -427,12 +509,13 @@ export function WorkspaceCanvas({
                               }}
                             aria-label={t("deleteItem", { name: preset.name || String.fromCharCode(65 + idx) })}
                             title={t("deleteItem", { name: preset.name || String.fromCharCode(65 + idx) })}
-                            className="rounded p-1 text-zinc-400 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                            className="rounded p-1 focus-visible:outline-none"
+                            style={{ color: isActive ? 'var(--cie-paper)' : 'var(--cie-ink-mute)' }}
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 style={{ width: '12px', height: '12px' }} />
                             </button>
                           )}
-                          {isActive && <Check className="w-3.5 h-3.5 text-blue-400 ml-1" />}
+                          {isActive && <Check style={{ width: '14px', height: '14px', marginLeft: '4px' }} />}
                         </div>
                       </div>
                     );
@@ -444,7 +527,14 @@ export function WorkspaceCanvas({
                     onCreatePreset();
                     setDropdownOpen(false);
                   }}
-                  className="w-full mt-1 py-1.5 text-center text-xs font-semibold text-blue-400 border border-dashed border-blue-500/40 rounded-lg hover:bg-blue-500/10 transition-colors"
+                  className="w-full mt-1 py-1.5 text-center text-xs font-semibold rounded-lg transition-colors"
+                  style={{
+                    border: '1px dashed var(--cie-stroke)',
+                    color: 'var(--foreground)',
+                    fontFamily: 'var(--cie-sans)',
+                    borderRadius: 'calc(var(--cie-r) / 2)',
+                    cursor: 'pointer'
+                  }}
                 >
                   {t("newLayoutBtn")}
                 </button>
@@ -456,7 +546,15 @@ export function WorkspaceCanvas({
             variant="outline"
             size="sm"
             onClick={handleEqualize}
-            className="h-9 gap-1.5 border-zinc-700 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+            className="h-9 gap-1.5 text-xs font-semibold"
+            style={{
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
             <RotateCcw className="w-3 h-3" />
             {t("equalizeBtn")}
@@ -466,7 +564,15 @@ export function WorkspaceCanvas({
             variant="outline"
             size="sm"
             onClick={() => commitSlots([])}
-            className="h-9 border-zinc-700 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+            className="h-9 text-xs font-semibold"
+            style={{
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
             {t("clearCanvas")}
           </Button>
@@ -477,9 +583,17 @@ export function WorkspaceCanvas({
             size="sm"
             onClick={onRetile}
             title={t("retileTitle")}
-            className="h-9 gap-1.5 border-blue-500/40 bg-blue-950/30 text-xs font-semibold text-blue-300 hover:border-blue-400 hover:bg-blue-900/50"
+            className="h-9 gap-1.5 text-xs font-semibold"
+            style={{
+              border: '1px solid var(--cie-stroke)',
+              background: 'var(--cie-btn)',
+              color: 'var(--foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
-            <Grid className="w-3.5 h-3.5 text-blue-400" />
+            <Grid style={{ width: '14px', height: '14px' }} />
             <span>{t("retile")}</span>
           </Button>
 
@@ -488,6 +602,14 @@ export function WorkspaceCanvas({
             size="sm"
             onClick={onLaunch}
             className="h-9 gap-1.5 text-xs font-semibold"
+            style={{
+              border: '2px solid var(--cie-ink)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
+              fontFamily: 'var(--cie-sans)',
+              cursor: 'pointer',
+              borderRadius: 'calc(var(--cie-r) / 2)'
+            }}
           >
             <Play className="w-3.5 h-3.5" />
             <span>{t("launchBtn")}</span>
@@ -501,11 +623,22 @@ export function WorkspaceCanvas({
         onDragOver={(e) => e.preventDefault()}
         onDragEnd={() => setDropTargetIdx(null)}
         onDrop={(e) => handleDropOnCanvas(e)}
-        style={{ aspectRatio: targetAspectRatio || "16/9" }}
         aria-label={t("canvasLabel")}
-        className="relative min-h-[380px] w-full max-h-[620px] overflow-hidden rounded-xl border-2 border-zinc-700 bg-zinc-950 shadow-inner transition-all"
+        className="relative min-h-[380px] w-full max-h-[620px] overflow-hidden rounded-xl shadow-inner transition-all"
+        style={{
+          aspectRatio: targetAspectRatio || "16/9",
+          border: '2px solid var(--cie-stroke)',
+          background: 'var(--card)',
+          borderRadius: 'var(--cie-r)'
+        }}
       >
-        {showGuide && <p className="absolute left-3 top-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md border border-blue-300 bg-blue-600 px-3 py-2 text-xs font-semibold leading-5 text-white shadow-lg">{t("guideCanvasHint")}</p>}
+        {showGuide && <p className="absolute left-3 bottom-3 z-20 max-w-[min(420px,calc(100%-1.5rem))] rounded-md px-3 py-2 text-xs font-semibold leading-5 shadow-lg" style={{
+          border: '1px solid var(--cie-stroke)',
+          background: 'var(--primary)',
+          color: 'var(--primary-foreground)',
+          fontFamily: 'var(--cie-sans)',
+          borderRadius: 'calc(var(--cie-r) / 2)'
+        }}>{t("guideCanvasHint")}</p>}
         {/* Grid lines (subtle visual guide) */}
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.08 }}>
           {Array.from({ length: GRID_COLS - 1 }).map((_, i) => (
@@ -572,29 +705,31 @@ export function WorkspaceCanvas({
                 }}
               >
                 <div
-                  className={`relative w-full h-full flex flex-col rounded-xl border-2 transition-shadow shadow-md overflow-hidden bg-zinc-900 ${
-                    isDragging
-                      ? "border-blue-400 ring-2 ring-blue-500/40 shadow-xl"
-                      : isResizing
-                      ? "border-yellow-400 ring-2 ring-yellow-500/30"
-                      : isDropTarget
-                      ? "border-blue-400 ring-2 ring-blue-500/50 shadow-xl"
-                      : "border-zinc-700 hover:border-zinc-500"
-                  }`}
+                  className="relative w-full h-full flex flex-col rounded-xl border-2 transition-shadow shadow-md overflow-hidden"
+                  style={{
+                    background: 'var(--cie-btn)',
+                    borderColor: (isDragging || isResizing || isDropTarget) ? 'var(--cie-ink)' : 'var(--cie-stroke)',
+                    borderWidth: (isDragging || isResizing || isDropTarget) ? '3px' : '2px',
+                    borderRadius: 'var(--cie-r)'
+                  }}
                 >
                   {/* Window Header — drag handle */}
                   <div
                     onMouseDown={(e) => handleDragStart(e, i)}
-                    className="relative z-30 flex items-center justify-between bg-zinc-800/90 px-2 py-1 border-b border-zinc-700 cursor-grab active:cursor-grabbing select-none shrink-0"
+                    className="relative z-30 flex items-center justify-between px-2 py-1 cursor-grab active:cursor-grabbing select-none shrink-0"
+                    style={{
+                      background: 'var(--cie-btn)',
+                      borderBottom: '1px solid var(--cie-stroke)'
+                    }}
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-red-500" />
-                      <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                      <span className="w-2 h-2 rounded-full bg-green-500" />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--primary)', opacity: 0.3 }} />
                     </div>
-                    <div className="flex items-center gap-1 text-zinc-300">
-                      <Move className="w-3 h-3" />
-                      <span className="max-w-[100px] truncate text-[11px] font-semibold">
+                    <div className="flex items-center gap-1" style={{ color: 'var(--cie-ink-mute)' }}>
+                      <Move style={{ width: '12px', height: '12px' }} />
+                      <span className="max-w-[100px] truncate text-[11px] font-semibold" style={{ fontFamily: 'var(--cie-sans)' }}>
                         {slot.name || t("untitledWindow")}
                       </span>
                     </div>
@@ -606,27 +741,36 @@ export function WorkspaceCanvas({
                       }}
                       aria-label={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
                       title={t("removeFromCanvas", { name: slot.name || t("untitledWindow") })}
-                      className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 p-1 text-[11px] font-semibold text-zinc-400 hover:text-red-400"
+                      className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-2 focus-visible:ring-offset-2 p-1 text-[11px] font-semibold text-zinc-400 hover:text-red-400"
                     >
                       ✕
                     </button>
                   </div>
 
                   {/* Window Content */}
-                  <div className="p-2 flex flex-col gap-1 bg-zinc-900/90 flex-1 overflow-hidden">
-                    <span className="truncate text-xs font-semibold text-white">
+                  <div className="p-2 flex flex-col gap-1 flex-1 overflow-hidden" style={{ background: 'var(--card)' }}>
+                    <span className="truncate text-xs font-semibold" style={{ color: 'var(--card-foreground)', fontFamily: 'var(--cie-sans)' }}>
                       {slot.name || t("untitledWindow")}
                     </span>
                     {canAcceptDrop ? (
-                      <span className={`flex flex-1 items-center justify-center rounded border border-dashed px-2 text-center text-[11px] font-semibold transition-colors ${
-                        isDropTarget ? "border-blue-400 bg-blue-500/10 text-blue-200" : "border-zinc-700 text-zinc-400"
-                      }`}>
+                      <span className="flex flex-1 items-center justify-center rounded px-2 text-center text-[11px] font-semibold transition-colors" style={{
+                        border: isDropTarget ? '2px solid var(--cie-ink)' : '1px dashed var(--cie-stroke)',
+                        background: isDropTarget ? 'var(--cie-btn-hover)' : 'transparent',
+                        color: 'var(--card-foreground)',
+                        fontFamily: 'var(--cie-sans)'
+                      }}>
                         {isDropTarget ? t("dropHere") : t("dropEmptySlot")}
                       </span>
                     ) : (
                       <div className="flex flex-col gap-1 overflow-y-auto pr-0.5 no-scrollbar">
                         {slotUrls(slot).map((url, urlIndex) => (
-                          <span key={`${url}-${urlIndex}`} title={url} className="truncate rounded border border-zinc-800 bg-zinc-950/70 px-1.5 py-1 font-mono text-[11px] leading-4 text-zinc-400">
+                          <span key={`${url}-${urlIndex}`} title={url} className="truncate rounded px-1.5 py-1 text-[11px] leading-4" style={{
+                            border: '1px solid var(--cie-stroke)',
+                            background: 'var(--cie-btn)',
+                            color: 'var(--cie-ink-mute)',
+                            fontFamily: 'var(--cie-mono)',
+                            borderRadius: 'calc(var(--cie-r) / 3)'
+                          }}>
                             {t("tabLabel", { n: urlIndex + 1 })}: {url}
                           </span>
                         ))}
@@ -638,22 +782,26 @@ export function WorkspaceCanvas({
                   {/* Right */}
                   <div
                     onMouseDown={(e) => handleResizeStart(e, i, "right")}
-                    className="absolute top-1 right-0 bottom-1 w-2 cursor-col-resize hover:bg-blue-500/40 transition-colors z-40 rounded-r"
+                    className="absolute top-1 right-0 bottom-1 w-2 cursor-col-resize transition-opacity z-40 rounded-r"
+                    style={{ background: 'var(--cie-stroke)', opacity: 0.3 }}
                   />
                   {/* Left */}
                   <div
                     onMouseDown={(e) => handleResizeStart(e, i, "left")}
-                    className="absolute top-1 left-0 bottom-1 w-2 cursor-col-resize hover:bg-blue-500/40 transition-colors z-40 rounded-l"
+                    className="absolute top-1 left-0 bottom-1 w-2 cursor-col-resize transition-opacity z-40 rounded-l"
+                    style={{ background: 'var(--cie-stroke)', opacity: 0.3 }}
                   />
                   {/* Bottom */}
                   <div
                     onMouseDown={(e) => handleResizeStart(e, i, "bottom")}
-                    className="absolute bottom-0 left-1 right-1 h-2 cursor-row-resize hover:bg-blue-500/40 transition-colors z-40 rounded-b"
+                    className="absolute bottom-0 left-1 right-1 h-2 cursor-row-resize transition-opacity z-40 rounded-b"
+                    style={{ background: 'var(--cie-stroke)', opacity: 0.3 }}
                   />
                   {/* Top */}
                   <div
                     onMouseDown={(e) => handleResizeStart(e, i, "top")}
-                    className="absolute top-0 left-1 right-1 h-2 cursor-row-resize hover:bg-blue-500/40 transition-colors z-40 rounded-t"
+                    className="absolute top-0 left-1 right-1 h-2 cursor-row-resize transition-opacity z-40 rounded-t"
+                    style={{ background: 'var(--cie-stroke)', opacity: 0.3 }}
                   />
                 </div>
               </div>

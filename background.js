@@ -38,7 +38,40 @@ async function session(key, fallback) {
 }
 
 async function settings() {
-  return { ...DEFAULTS, ...(await chrome.storage.sync.get(DEFAULTS)) };
+  try {
+    const stored = await chrome.storage.sync.get(null); // Get ALL stored values
+    const merged = { ...DEFAULTS, ...stored };
+    
+    console.log('[AI Window Deck] Settings loaded:', {
+      spotlightSize: merged.spotlightSize,
+      spotlightWidth: merged.spotlightWidth,
+      spotlightHeight: merged.spotlightHeight,
+      spotlightAnchor: merged.spotlightAnchor,
+      targetDisplays: merged.targetDisplays,
+      fromStorage: {
+        spotlightSize: stored.spotlightSize,
+        spotlightWidth: stored.spotlightWidth,
+        spotlightHeight: stored.spotlightHeight,
+        spotlightAnchor: stored.spotlightAnchor,
+      }
+    });
+    
+    // Validate spotlight settings
+    if (merged.spotlightSize && !['full', 'height', 'tall', 'half', 'threeFourths', 'custom'].includes(merged.spotlightSize)) {
+      console.warn('[AI Window Deck] Invalid spotlightSize:', merged.spotlightSize, '- resetting to "full"');
+      merged.spotlightSize = 'full';
+    }
+    
+    if (merged.spotlightAnchor && !['keep', 'center'].includes(merged.spotlightAnchor)) {
+      console.warn('[AI Window Deck] Invalid spotlightAnchor:', merged.spotlightAnchor, '- resetting to "keep"');
+      merged.spotlightAnchor = 'keep';
+    }
+    
+    return merged;
+  } catch (error) {
+    console.error('[AI Window Deck] Error reading settings:', error);
+    return { ...DEFAULTS };
+  }
 }
 
 // The arrangement in use, whichever storage generation it was written by. A
@@ -158,6 +191,56 @@ async function undoLayout() {
     });
   }
   return { ok: true, restored: frame.length };
+}
+
+// ---- window close tracking ------------------------------------------------
+
+// Track windows opened by the extension so we can offer to close only those.
+// Uses session storage (cleared when browser closes) so we don't need sessions permission.
+async function trackExtensionWindow(windowId) {
+  const tracked = await session("extensionOpenedWindows", []);
+  if (!tracked.includes(windowId)) {
+    tracked.push(windowId);
+    await chrome.storage.session.set({ extensionOpenedWindows: tracked });
+    console.log('[AI Window Deck] Tracking window:', windowId);
+  }
+}
+
+async function untrackExtensionWindow(windowId) {
+  const tracked = await session("extensionOpenedWindows", []);
+  const filtered = tracked.filter(id => id !== windowId);
+  await chrome.storage.session.set({ extensionOpenedWindows: filtered });
+  console.log('[AI Window Deck] Untracked window:', windowId);
+}
+
+async function getTrackedWindows() {
+  const tracked = await session("extensionOpenedWindows", []);
+  // Filter out windows that no longer exist
+  const allWindows = await chrome.windows.getAll();
+  const existingIds = new Set(allWindows.map(w => w.id));
+  const validTracked = tracked.filter(id => existingIds.has(id));
+  
+  // Update session if any windows were removed
+  if (validTracked.length !== tracked.length) {
+    await chrome.storage.session.set({ extensionOpenedWindows: validTracked });
+  }
+  
+  return validTracked;
+}
+
+async function closeExtensionWindows(windowIds) {
+  const results = { closed: [], failed: [] };
+  for (const windowId of windowIds) {
+    try {
+      await chrome.windows.remove(windowId);
+      await untrackExtensionWindow(windowId);
+      results.closed.push(windowId);
+    } catch (error) {
+      console.error('[AI Window Deck] Failed to close window:', windowId, error);
+      results.failed.push(windowId);
+    }
+  }
+  return results;
 }
 
 // ---- layout -----------------------------------------------------------
@@ -335,35 +418,63 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 // Grows the window around its own centre so it stays where the eye expects it,
 // then pulls it back inside the work area.
 function spotlightBounds(workArea, window, config) {
+  console.log('[AI Window Deck] spotlightBounds called with:', {
+    workArea,
+    windowState: { left: window.left, top: window.top, width: window.width, height: window.height },
+    config: {
+      spotlightSize: config.spotlightSize,
+      spotlightWidth: config.spotlightWidth,
+      spotlightHeight: config.spotlightHeight,
+      spotlightAnchor: config.spotlightAnchor,
+    }
+  });
+  
   let width;
   let height;
   if (config.spotlightSize === "height") {
     width = window.width ?? workArea.width;   // leave the width exactly as it is
     height = workArea.height;
+    console.log('[AI Window Deck] Using "height" mode: keeping width', width, 'setting height to', height);
   } else {
-    const [percentW, percentH] = PRESETS[config.spotlightSize]
-      ?? [config.spotlightWidth, config.spotlightHeight];
+    const preset = PRESETS[config.spotlightSize];
+    const [percentW, percentH] = preset ?? [config.spotlightWidth, config.spotlightHeight];
+    
+    console.log('[AI Window Deck] Size calculation:', {
+      spotlightSize: config.spotlightSize,
+      foundPreset: !!preset,
+      percentW,
+      percentH,
+      workAreaWidth: workArea.width,
+      workAreaHeight: workArea.height,
+    });
+    
     width = Math.round(workArea.width * clamp(percentW, 20, 100) / 100);
     height = Math.round(workArea.height * clamp(percentH, 20, 100) / 100);
   }
   width = Math.min(width, workArea.width);
   height = Math.min(height, workArea.height);
 
+  console.log('[AI Window Deck] Calculated dimensions:', { width, height });
+
   if (config.spotlightAnchor === "center") {
-    return {
+    const bounds = {
       left: workArea.left + Math.round((workArea.width - width) / 2),
       top: workArea.top + Math.round((workArea.height - height) / 2),
       width,
       height,
     };
+    console.log('[AI Window Deck] Using "center" anchor, final bounds:', bounds);
+    return bounds;
   }
   const { x: centerX, y: centerY } = centreOf(window);
-  return {
+  const bounds = {
     left: clamp(Math.round(centerX - width / 2), workArea.left, workArea.left + workArea.width - width),
     top: clamp(Math.round(centerY - height / 2), workArea.top, workArea.top + workArea.height - height),
     width,
     height,
   };
+  console.log('[AI Window Deck] Using "keep" anchor, centered on window, final bounds:', bounds);
+  return bounds;
 }
 
 const SNAP = 8; // px of slack, so a window nudged by the OS still counts as placed
@@ -442,6 +553,12 @@ async function toggleSpotlight() {
     window = await chrome.windows.get(window.id);
   }
   const spotlight = spotlightBounds((await displayFor(window)).workArea, window, config);
+  console.log('[AI Window Deck] Applying spotlight bounds:', spotlight, 'with config:', {
+    size: config.spotlightSize,
+    width: config.spotlightWidth,
+    height: config.spotlightHeight,
+    anchor: config.spotlightAnchor,
+  });
   await stepInto(window, saved, stack, previous, spotlight, null);
   await chrome.windows.update(window.id, { ...spotlight, focused: true });
   // The OS can nudge a window straight after a resize; one repeat makes it stick.
