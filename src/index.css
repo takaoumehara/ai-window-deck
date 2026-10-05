@@ -1,38 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=DM+Mono:wght@400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap');
+@import './cie-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 6.5%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 6.5%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 224.3 76.3% 48%;
-
-    --radius: 0.5rem;
+    /* Use CIE tokens instead of HSL values */
+    --background: var(--cie-ink);
+    --foreground: var(--cie-paper);
+    
+    --card: var(--cie-ink);
+    --card-foreground: var(--cie-paper);
+    
+    --popover: var(--cie-ink);
+    --popover-foreground: var(--cie-paper);
+    
+    --primary: var(--cie-paper);
+    --primary-foreground: var(--cie-ink);
+    
+    --secondary: var(--cie-ink-mute);
+    --secondary-foreground: var(--cie-paper);
+    
+    --muted: var(--cie-ink-mute);
+    --muted-foreground: var(--cie-paper-mute);
+    
+    --accent: var(--cie-paper);
+    --accent-foreground: var(--cie-ink);
+    
+    --destructive: #dc2626;
+    --destructive-foreground: var(--cie-paper);
+    
+    --border: var(--cie-stroke);
+    --input: var(--cie-stroke);
+    --ring: var(--cie-paper);
+    
+    --radius: var(--cie-r);
+  }
+  
+  [data-theme="dark"] {
+    --background: var(--cie-paper);
+    --foreground: var(--cie-ink);
+    
+    --card: var(--cie-paper);
+    --card-foreground: var(--cie-ink);
+    
+    --popover: var(--cie-paper);
+    --popover-foreground: var(--cie-ink);
+    
+    --primary: var(--cie-ink);
+    --primary-foreground: var(--cie-paper);
+    
+    --secondary: var(--cie-paper-mute);
+    --secondary-foreground: var(--cie-ink);
+    
+    --muted: var(--cie-paper-mute);
+    --muted-foreground: var(--cie-ink-mute);
+    
+    --accent: var(--cie-ink);
+    --accent-foreground: var(--cie-paper);
+    
+    --destructive: #ef4444;
+    --destructive-foreground: var(--cie-paper);
+    
+    --border: var(--cie-stroke);
+    --input: var(--cie-stroke);
+    --ring: var(--cie-ink);
   }
 }
 
@@ -41,12 +75,24 @@
     @apply border-border;
   }
   html, body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-primary;
     margin: 0;
     padding: 0;
-    background-color: #09090b;
-    color: #f4f4f5;
+    background-color: var(--cie-ink);
+    color: var(--cie-paper);
+    font-family: var(--cie-sans);
+    font-size: var(--cie-text-body);
+    line-height: 1.5;
     overflow-x: hidden !important;
+    antialiased: true;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--cie-t-cell) var(--cie-ease-expo), color var(--cie-t-cell) var(--cie-ease-expo);
+  }
+  
+  [data-theme="dark"] html,
+  [data-theme="dark"] body {
+    background-color: var(--cie-paper);
+    color: var(--cie-ink);
   }
 
   html {
@@ -63,18 +109,18 @@
     top: 0.75rem;
     left: 0.75rem;
     transform: translateY(-200%);
-    border-radius: 0.5rem;
-    background: #2563eb;
+    border-radius: var(--cie-r);
+    background: var(--cie-paper);
+    color: var(--cie-ink);
     padding: 0.625rem 0.875rem;
-    color: #fff;
-    font-size: 0.75rem;
+    font-size: var(--cie-text-mono);
     font-weight: 600;
-    transition: transform 150ms ease-out;
+    transition: transform var(--cie-t-fast) var(--cie-ease-out);
   }
 
   .skip-link:focus {
     transform: translateY(0);
-    outline: 2px solid #bfdbfe;
+    outline: 2px solid var(--cie-paper-mute);
     outline-offset: 2px;
   }
 }
@@ -99,21 +145,27 @@ body.mode-dock, body.mode-dock #root {
   overflow-y: auto;
 }
 
-/* Compact keyboard notation used in command labels. */
+/* Compact keyboard notation used in command labels */
 .key-cap {
-  font-family: inherit;
-  font-size: 0.6875rem;
-  font-weight: 700;
+  font-family: var(--cie-mono);
+  font-size: var(--cie-text-mono);
+  font-weight: 400;
   letter-spacing: 0.02em;
-  background: #18181b;
-  border: 1px solid #52525b;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  background: var(--cie-btn);
+  border: 1px solid var(--cie-stroke);
   padding: 2px 6px;
-  border-radius: 5px;
-  color: #e4e4e7;
+  border-radius: calc(var(--cie-r) / 2);
+  color: var(--cie-paper);
   display: inline-flex;
   align-items: center;
   gap: 3px;
+  transition: background-color var(--cie-t-snap) var(--cie-ease-expo);
+}
+
+[data-theme="dark"] .key-cap {
+  background: var(--cie-btn);
+  color: var(--cie-ink);
+  border-color: var(--cie-stroke);
 }
 
 /* Hide scrollbars for clean UI where appropriate */
@@ -125,12 +177,44 @@ body.mode-dock, body.mode-dock #root {
   scrollbar-width: none;
 }
 
+/* Custom scrollbar styling using CIE tokens */
+::-webkit-scrollbar {
+  width: var(--cie-sb-size);
+  height: var(--cie-sb-size);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cie-sb-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cie-sb-thumb);
+  border-radius: var(--cie-r-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cie-sb-thumb) var(--cie-sb-track);
+}
+
 .spotlight-preview-target {
-  transition: left 360ms cubic-bezier(0.2, 0.8, 0.2, 1), top 360ms cubic-bezier(0.2, 0.8, 0.2, 1), width 360ms cubic-bezier(0.2, 0.8, 0.2, 1), height 360ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 160ms linear;
+  transition: 
+    left var(--cie-t-move) var(--cie-ease-expo),
+    top var(--cie-t-move) var(--cie-ease-expo),
+    width var(--cie-t-move) var(--cie-ease-expo),
+    height var(--cie-t-move) var(--cie-ease-expo),
+    opacity var(--cie-t-snap) linear;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spotlight-preview-target {
+  .spotlight-preview-target,
+  html, body,
+  .skip-link,
+  .key-cap {
     transition: none;
   }
 }

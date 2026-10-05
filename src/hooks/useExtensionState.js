@@ -65,6 +65,7 @@ export function useExtensionState() {
     const nextState = { ...state, ...updates };
     setState(nextState);
     if (typeof chrome !== "undefined" && chrome.storage?.sync) {
+      console.log('[AI Window Deck] Saving settings:', updates);
       chrome.storage.sync.set(updates);
     }
   };

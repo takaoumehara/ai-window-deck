@@ -13,6 +13,7 @@ import { BulkPlacementChoice } from "@/components/BulkPlacementChoice";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRegisteredWindows } from "@/hooks/useRegisteredWindows";
+import { useTheme } from "@/hooks/useTheme";
 import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation, browserLanguage } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
@@ -27,6 +28,7 @@ const SAMPLE_SLOTS = [
 export function App() {
   const { state, updateState, loading, defaultState } = useExtensionState();
   const { windows, addWindow, updateWindow, deleteWindow, setWindows } = useRegisteredWindows();
+  const { theme } = useTheme();
 
   const [activeTab, setActiveTab] = useState("arrange"); // "arrange" | "windows" | "profiles"
 
@@ -72,14 +74,23 @@ export function App() {
 
   // Dynamically set document body class for container scaling
   useEffect(() => {
+    const bgColor = theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)';
+    const textColor = theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)';
+    
     if (isPageMode) {
-      document.body.className = "mode-page bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.className = "mode-page font-sans antialiased";
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.color = textColor;
     } else if (isDockMode) {
-      document.body.className = "mode-dock bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.className = "mode-dock font-sans antialiased";
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.color = textColor;
     } else {
-      document.body.className = "mode-popup bg-zinc-950 text-zinc-100 font-sans antialiased";
+      document.body.className = "mode-popup font-sans antialiased";
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.color = textColor;
     }
-  }, [isPageMode, isDockMode]);
+  }, [isPageMode, isDockMode, theme]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -470,7 +481,11 @@ export function App() {
   }
 
   return (
-    <div className={`min-h-screen bg-zinc-950 p-4 text-zinc-100 selection:bg-blue-600/30 sm:p-5 ${isPageMode ? "w-full" : ""}`}>
+    <div className={`min-h-screen p-4 sm:p-5 ${isPageMode ? "w-full" : ""}`} style={{
+      backgroundColor: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
+      color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+      fontFamily: 'var(--cie-sans)'
+    }}>
       <a className="skip-link" href="#workspace-main">{t("skipToMain")}</a>
       <div className={`${isPageMode ? "max-w-[1600px] w-full" : "max-w-6xl"} mx-auto flex flex-col min-h-full`}>
         {/* Header */}

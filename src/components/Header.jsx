@@ -1,37 +1,90 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, LayoutList, Globe } from "lucide-react";
+import { ExternalLink, LayoutList, Globe, Sun, Moon } from "lucide-react";
 import { getTranslation, LANGUAGES } from "@/lib/i18n";
+import { useTheme } from "@/hooks/useTheme";
 
 export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
   const t = (key) => getTranslation(lang, key);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800/80 pb-4">
-      <div className="flex items-center gap-3.5">
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-blue-400/30 bg-blue-600 shadow-[0_6px_16px_rgba(37,99,235,0.2)]">
-          <div className="w-2.5 h-2.5 rounded bg-zinc-900 absolute top-1.5 right-1.5" />
+    <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b pb-5" style={{ borderColor: 'var(--cie-stroke)' }}>
+      <div className="flex items-center gap-3">
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg" style={{ 
+          background: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)', 
+          border: `1px solid ${theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)'}`,
+          borderRadius: 'var(--cie-r)'
+        }}>
+          <div className="w-2.5 h-2.5 rounded" style={{ 
+            background: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
+            position: 'absolute',
+            top: '6px',
+            right: '6px'
+          }} />
         </div>
         <div>
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold tracking-[-0.01em] text-white">
+          <h1 className="text-lg font-semibold tracking-tight" style={{ 
+            fontFamily: 'var(--cie-sans)',
+            letterSpacing: '-0.03em',
+            fontWeight: 600,
+            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)'
+          }}>
             {t("appTitle")}
           </h1>
-          <p className="mt-0.5 text-xs leading-5 text-zinc-400">{t("appSubtitle")}</p>
+          <p className="text-xs mt-0.5" style={{ 
+            color: theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)',
+            fontFamily: 'var(--cie-sans)'
+          }}>
+            {t("appSubtitle")}
+          </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Language Selector Dropdown */}
-        <div className="flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5">
-          <Globe className="w-3.5 h-3.5 text-zinc-400" aria-hidden="true" />
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="flex h-9 w-9 items-center justify-center rounded-full transition-all"
+          style={{
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r-pill)',
+            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+          }}
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4" style={{ color: 'var(--cie-ink)' }} />
+          ) : (
+            <Moon className="w-4 h-4" style={{ color: 'var(--cie-paper)' }} />
+          )}
+        </button>
+
+        {/* Language Selector */}
+        <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5" style={{
+          background: 'var(--cie-btn)',
+          border: '1px solid var(--cie-stroke)',
+          borderRadius: 'var(--cie-r)'
+        }}>
+          <Globe className="w-3.5 h-3.5" style={{ color: theme === 'dark' ? 'var(--cie-ink-mute)' : 'var(--cie-paper-mute)' }} aria-hidden="true" />
           <select
             value={lang}
             onChange={(e) => onLanguageChange(e.target.value)}
             aria-label={t("languageLabel")}
-            className="cursor-pointer rounded bg-transparent text-xs font-medium text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+            className="cursor-pointer rounded bg-transparent text-xs font-medium focus:outline-none"
+            style={{
+              color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+              fontFamily: 'var(--cie-sans)'
+            }}
           >
             {LANGUAGES.map(({ code, label }) => (
-              <option key={code} value={code} lang={code} className="bg-zinc-900 text-zinc-200">{label}</option>
+              <option key={code} value={code} lang={code} style={{
+                background: theme === 'dark' ? 'var(--cie-paper)' : 'var(--cie-ink)',
+                color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)'
+              }}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
@@ -40,7 +93,14 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           variant="outline"
           size="sm"
           onClick={onOpenDock}
-          className="h-9 gap-1.5 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+          className="h-9 gap-1.5 text-xs"
+          style={{
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r)',
+            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+          }}
         >
           <LayoutList className="w-3.5 h-3.5" />
           <span>{t("openDock")}</span>
@@ -50,7 +110,14 @@ export function Header({ lang, onLanguageChange, onOpenBig, onOpenDock }) {
           variant="outline"
           size="sm"
           onClick={onOpenBig}
-          className="h-9 gap-1.5 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+          className="h-9 gap-1.5 text-xs"
+          style={{
+            background: 'var(--cie-btn)',
+            border: '1px solid var(--cie-stroke)',
+            borderRadius: 'var(--cie-r)',
+            color: theme === 'dark' ? 'var(--cie-ink)' : 'var(--cie-paper)',
+            transition: 'all var(--cie-t-snap) var(--cie-ease-expo)'
+          }}
         >
           <ExternalLink className="w-3.5 h-3.5" />
           <span>{t("openBig")}</span>

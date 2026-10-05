@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────────────────────────
+ CIE design tokens — extracted from creativityiseverywhere.com
+ (repo main / assets/tokens.css). Two inks. No third colour.
+ ───────────────────────────────────────────────────────────── */
+:root {
+ /* Colour — paper and ink only */
+ --cie-ink: #0b0b0b;
+ --cie-paper: #f3f2ee;
+ --cie-ink-mute: #9c9c98; /* on ink ≈ 7.1:1 */
+ --cie-paper-mute: #66665f; /* on paper ≈ 5.2:1 */
+ --cie-stroke: rgba(243, 242, 238, 0.42);
+ --cie-btn: rgba(128, 128, 128, 0.32);
+ --cie-btn-hover: rgba(128, 128, 128, 0.50);
+
+ /* Unprefixed aliases (match site :root names) */
+ --ink: var(--cie-ink);
+ --paper: var(--cie-paper);
+ --ink-mute: var(--cie-ink-mute);
+ --paper-mute: var(--cie-paper-mute);
+ --stroke: var(--cie-stroke);
+ --btn: var(--cie-btn);
+ --btn-hover: var(--cie-btn-hover);
+
+ /* Type */
+ --cie-sans: 'Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+ 'Helvetica Neue', Arial, sans-serif;
+ --cie-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+ --cie-sans-ja: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
+ 'Noto Sans JP', 'Yu Gothic', sans-serif;
+ --sans: var(--cie-sans);
+ --mono: var(--cie-mono);
+
+ --cie-text-mark: clamp(40px, min(7.4vw, 13vh), 112px);
+ --cie-text-title: clamp(56px, 11vw, 168px);
+ --cie-text-row: clamp(26px, 3.2vw, 44px);
+ --cie-text-cell: clamp(17px, 2.1vw, 30px);
+ --cie-text-say: clamp(22px, 2.1vw, 28px);
+ --cie-text-body: 16px;
+ --cie-text-mono: 12px;
+ --text-mark: var(--cie-text-mark);
+ --text-title: var(--cie-text-title);
+ --text-rowt: var(--cie-text-row);
+ --text-cell: var(--cie-text-cell);
+ --text-say: var(--cie-text-say);
+ --text-body: var(--cie-text-body);
+ --text-mono: var(--cie-text-mono);
+
+ /* Space — 4px base (site scale) + a few tool-handy steps */
+ --cie-s-4: 4px;
+ --cie-s-8: 8px;
+ --cie-s-12: 12px;
+ --cie-s-16: 16px;
+ --cie-s-20: 20px;
+ --cie-s-24: 24px;
+ --cie-s-28: 28px;
+ --cie-s-40: 40px;
+ --cie-s-64: 64px;
+ --s-4: var(--cie-s-4); --s-8: var(--cie-s-8); --s-12: var(--cie-s-12);
+ --s-16: var(--cie-s-16); --s-20: var(--cie-s-20); --s-24: var(--cie-s-24);
+ --s-28: var(--cie-s-28); --s-40: var(--cie-s-40); --s-64: var(--cie-s-64);
+ --cie-edge: clamp(16px, 2.2vw, 28px);
+ --cie-cell-pad: clamp(10px, 1.1vw, 16px);
+ --cie-measure: 62ch;
+ --edge: var(--cie-edge);
+ --cell-pad: var(--cie-cell-pad);
+ --measure: var(--cie-measure);
+
+ /* Shape — block corners only; no free-floating soft cards */
+ --cie-r: clamp(12px, 1.7vmin, 24px);
+ --cie-r-page: clamp(22px, 3.2vmin, 44px);
+ --cie-r-pill: 9999px;
+ --r: var(--cie-r);
+ --r-page: var(--cie-r-page);
+
+ /* Shadow — site uses none; token reserved as transparent for tooling */
+ --cie-shadow: none;
+ --shadow: var(--cie-shadow);
+
+ /* Motion — site language */
+ --cie-t-snap: 160ms; /* weight tick / instant feedback */
+ --cie-t-fast: 240ms; /* arrow nudge, ghost fade */
+ --cie-t-cell: 520ms; /* block colour / settle */
+ --cie-t-move: 720ms; /* signature: block → page */
+ --cie-t-rise: 720ms; /* reveal after open */
+ --cie-t-stagger: 38ms; /* per-item delay in a rise wave */
+ --t-cell: var(--cie-t-cell);
+ --t-move: var(--cie-t-move);
+ --cie-ease-expo: cubic-bezier(0.76, 0, 0.18, 1); /* decisive settle */
+ --cie-ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* soft land / rise */
+ --cie-ease-linear: linear;
+ --ease-expo: var(--cie-ease-expo);
+ --ease-out: var(--cie-ease-out);
+
+ /* Scroll / parallax / micro-interaction */
+ --cie-reveal-y: 22px;
+ --cie-reveal-x: 14px;
+ --cie-parallax-max: 48px;
+ --cie-press-scale: 0.97;
+ --cie-hover-nudge: 3px;
+ --cie-sb-size: 5px;
+ --cie-sb-thumb: var(--cie-ink-mute);
+ --cie-sb-track: transparent;
+ --reveal-y: var(--cie-reveal-y);
+ --reveal-x: var(--cie-reveal-x);
+ --parallax-max: var(--cie-parallax-max);
+ --sb-size: var(--cie-sb-size);
+
+ /* Board grid (optional; site-only) */
+ --cols: 8;
+ --rows: 6;
+}
+
+@media (max-width: 760px), (orientation: portrait) {
+ :root {
+ --cols: 4;
+ --rows: 9;
+ --cie-text-mark: clamp(38px, min(13.5vw, 7.5vh), 64px);
+ --cie-text-cell: clamp(16px, 4.6vw, 22px);
+ --cie-text-say: 20px;
+ --cie-r: clamp(10px, 3.2vw, 16px);
+ }
+}
+
+/* Japanese type rules — scoped by lang, as on the site */
+:lang(ja) {
+ --cie-sans: var(--cie-sans-ja);
+ --sans: var(--cie-sans-ja);
+}
+
+/* Dark mode (light mode is default paper/ink) */
+[data-theme="dark"] {
+  --cie-paper: #0b0b0b;
+  --cie-ink: #f3f2ee;
+  --cie-ink-mute: #66665f;
+  --cie-paper-mute: #9c9c98;
+  --cie-stroke: rgba(11, 11, 11, 0.42);
+  --cie-sb-thumb: var(--cie-paper-mute);
+  
+  /* Update unprefixed aliases */
+  --ink: var(--cie-ink);
+  --paper: var(--cie-paper);
+  --ink-mute: var(--cie-ink-mute);
+  --paper-mute: var(--cie-paper-mute);
+  --stroke: var(--cie-stroke);
+}

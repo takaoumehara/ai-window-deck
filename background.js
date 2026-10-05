@@ -38,7 +38,15 @@ async function session(key, fallback) {
 }
 
 async function settings() {
-  return { ...DEFAULTS, ...(await chrome.storage.sync.get(DEFAULTS)) };
+  const stored = await chrome.storage.sync.get(DEFAULTS);
+  const merged = { ...DEFAULTS, ...stored };
+  console.log('[AI Window Deck] Settings loaded:', {
+    spotlightSize: merged.spotlightSize,
+    spotlightWidth: merged.spotlightWidth,
+    spotlightHeight: merged.spotlightHeight,
+    spotlightAnchor: merged.spotlightAnchor,
+  });
+  return merged;
 }
 
 // The arrangement in use, whichever storage generation it was written by. A
@@ -442,6 +450,12 @@ async function toggleSpotlight() {
     window = await chrome.windows.get(window.id);
   }
   const spotlight = spotlightBounds((await displayFor(window)).workArea, window, config);
+  console.log('[AI Window Deck] Applying spotlight bounds:', spotlight, 'with config:', {
+    size: config.spotlightSize,
+    width: config.spotlightWidth,
+    height: config.spotlightHeight,
+    anchor: config.spotlightAnchor,
+  });
   await stepInto(window, saved, stack, previous, spotlight, null);
   await chrome.windows.update(window.id, { ...spotlight, focused: true });
   // The OS can nudge a window straight after a resize; one repeat makes it stick.
