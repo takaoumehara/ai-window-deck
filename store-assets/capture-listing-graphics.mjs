@@ -4,8 +4,9 @@
 //   CHROME=/path/to/chrome \
 //     node store-assets/capture-listing-graphics.mjs
 //
-// Inputs: the step screenshots in site/assets/img/ and the focus preview diagram,
-// captured from the site (site/ served at SITE_URL, default http://localhost:8765/).
+// Inputs: the extension screenshots in site/assets/img/ (run capture-app-screens.mjs first)
+// and the focus preview diagram, captured from the site (site/ served at SITE_URL, default
+// http://localhost:8765/).
 // Outputs, all opaque RGB at the store's exact sizes:
 //   store-assets/listing/<locale>/0N-*.png   1280 × 800 screenshots (en, ja)
 //   store-assets/listing/promo-small.png      440 × 280
@@ -25,36 +26,36 @@ const dataUrl = (p) => `data:image/png;base64,${readFileSync(p).toString("base64
 const icon = `data:image/svg+xml;base64,${readFileSync(join(repo, "site/assets/icon-v6.svg")).toString("base64")}`;
 const img = (name) => join(repo, "site/assets/img", name);
 
-// Crop boxes in source pixels: the part of each step that carries the message.
+// Listing screenshots in order. `src` gives the image for a locale; crop boxes are in source
+// pixels and keep the part of each screen that carries the message. `focus` is the diagram.
 const SHOTS = [
-  { file: "01-step1-urls.png", crop: [40, 0, 1240, 600] },
-  { file: "02-step2-layout.png", crop: [40, 110, 1240, 880] },
-  { file: "03-step3-focus.png", crop: [40, 110, 1240, 743] },
-  { file: "04-step4-launch.png", crop: [40, 110, 1240, 790] },
+  { out: "01-register", src: (l) => `register-choose-${l}-light.png`, width: 1280, crop: [32, 112, 1248, 872] },
+  { out: "02-bulk-paste", src: (l) => `register-bulk-${l}-light.png`, width: 1222 },
+  { out: "03-layout", src: (l) => (l === "en" ? "02-step2-layout.png" : `02-step2-layout-${l}.png`), width: 1280, crop: [32, 228, 1248, 944] },
+  { out: "04-focus-view", focus: true },
+  { out: "05-launch", src: (l) => (l === "en" ? "04-step4-launch.png" : `04-step4-launch-${l}.png`), width: 1280, crop: [32, 120, 1248, 880] },
 ];
 
 const COPY = {
   en: {
-    step: (n) => `Step ${n} of 4`,
-    steps: [
-      ["Register URLs", "Save a name and URLs for each window. Each URL opens as a tab."],
-      ["Lay out the canvas", "Place windows on the canvas and resize their grid slots."],
-      ["Choose a Focus view", "Pick how Alt+X enlarges a window: its size, and whether it grows in place or centers."],
-      ["Launch", "Choose your displays and open the saved layout as tiled Chrome windows."],
+    shots: [
+      ["Step 1 of 4", "Register URLs + Window", "Add windows one by one, or paste a list of sites and create them all at once."],
+      ["Bulk paste", "Red lines, with a fix", "Lines that need attention turn red, and Fix adds the missing blank line. https:// is added for you; local files work too."],
+      ["Step 2 of 4", "Lay out the canvas", "Place windows on the canvas and resize their grid slots."],
+      ["Step 3 of 4 · Alt+X", "Alt+X: one window gets big", "Press it again and every window goes back to its tile. Alt+Z restores a window you resized by hand."],
+      ["Step 4 of 4", "Launch", "Choose your displays and open the saved layout as tiled Chrome windows."],
     ],
-    focus: ["Alt+X: one window gets big", "Press it again and every window goes back to its tile. Alt+Z restores a window you resized by hand."],
     tagline: "More cloud sessions. Room to think.",
-    marquee: "Tile Claude Code in the cloud, Codex and your references as ordinary Chrome windows. Alt+X brings one into focus.",
+    marquee: "Paste a list of sites to create your windows, tile Claude Code in the cloud, Codex and your references as ordinary Chrome windows, and bring one into focus with Alt+X.",
   },
   ja: {
-    step: (n) => `ステップ ${n} / 4`,
-    steps: [
-      ["URL を登録", "ウィンドウごとに名前と URL を保存。各 URL はタブとして開きます。"],
-      ["キャンバスに配置", "キャンバスにウィンドウを置き、グリッドの枠を調整します。"],
-      ["フォーカス表示を選ぶ", "Alt+X での拡大サイズと、今の場所から広げるか中央に寄せるかを選びます。"],
-      ["起動", "ディスプレイを選び、保存した配置どおりに Chrome ウィンドウを並べて開きます。"],
+    shots: [
+      ["ステップ 1 / 4", "URL＋ウィンドウを登録", "1件ずつ追加するか、サイトの一覧を貼り付けてまとめて作成できます。"],
+      ["テキストで一括登録", "赤い行と、修正ボタン", "直す必要のある行は赤く表示され、修正ボタンで空行を補えます。https:// は自動で補完、ローカルファイルも使えます。"],
+      ["ステップ 2 / 4", "キャンバスに配置", "キャンバスにウィンドウを置き、グリッドの枠を調整します。"],
+      ["ステップ 3 / 4 · Alt+X", "Alt+X で 1 枚が大きくなる", "もう一度押すと、すべてのウィンドウが元のタイルに戻ります。手動でサイズを変えたウィンドウも Alt+Z で戻せます。"],
+      ["ステップ 4 / 4", "起動", "ディスプレイを選び、保存した配置どおりに Chrome ウィンドウを並べて開きます。"],
     ],
-    focus: ["Alt+X で 1 枚が大きくなる", "もう一度押すと、すべてのウィンドウが元のタイルに戻ります。手動でサイズを変えたウィンドウも Alt+Z で戻せます。"],
   },
 };
 
@@ -63,12 +64,12 @@ const BASE = `*{box-sizing:border-box;margin:0}html,body{width:100%;height:100%}
 
 const STAGE = { w: 1136, h: 576 };
 
-function screenshotHtml({ eyebrow, title, body, src, crop }) {
+function screenshotHtml({ eyebrow, title, body, src, crop, width = 1280 }) {
   let media = `<img class="whole" src="${src}">`;
   if (crop) {
     const [x0, y0, x1, y1] = crop;
     const s = Math.min(STAGE.w / (x1 - x0), STAGE.h / (y1 - y0), 1.25);
-    media = `<div class="crop" style="width:${Math.round((x1 - x0) * s)}px;height:${Math.round((y1 - y0) * s)}px"><img src="${src}" style="width:${1280 * s}px;left:${-x0 * s}px;top:${-y0 * s}px"></div>`;
+    media = `<div class="crop" style="width:${Math.round((x1 - x0) * s)}px;height:${Math.round((y1 - y0) * s)}px"><img src="${src}" style="width:${width * s}px;left:${-x0 * s}px;top:${-y0 * s}px"></div>`;
   }
   return `<!doctype html><html><head>${FONTS}<style>${BASE}
   body{background:${PAPER};color:${INK};padding:40px 72px 0;display:flex;flex-direction:column}
@@ -112,13 +113,11 @@ for (const lang of ["en", "ja"]) {
   const dir = join(out, lang);
   mkdirSync(dir, { recursive: true });
   for (const [i, shot] of SHOTS.entries()) {
-    const [title, body] = c.steps[i];
-    const [x0, y0, x1, y1] = shot.crop;
-    const html = screenshotHtml({ eyebrow: c.step(i + 1), title, body, src: dataUrl(img(shot.file)), crop: [x0, y0, x1, y1], aspect: { w: 1280 } });
-    await render(html, { width: 1280, height: 800 }, join(dir, `0${i + 1}-${shot.file.replace(/^\d+-/, "")}`));
+    const [eyebrow, title, body] = c.shots[i];
+    const src = shot.focus ? await focusDiagram(lang, "light") : dataUrl(img(shot.src(lang)));
+    const html = screenshotHtml({ eyebrow, title, body, src, crop: shot.crop, width: shot.width });
+    await render(html, { width: 1280, height: 800 }, join(dir, `${shot.out}.png`));
   }
-  const [title, body] = c.focus;
-  await render(screenshotHtml({ eyebrow: "Alt+X / ⌥X", title, body, src: await focusDiagram(lang, "light") }), { width: 1280, height: 800 }, join(dir, "05-focus-view.png"));
 }
 
 const en = COPY.en;
