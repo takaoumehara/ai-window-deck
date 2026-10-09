@@ -17,6 +17,7 @@ import { computeDynamicLayout } from "@/lib/layout-model";
 import { getTranslation, browserLanguage } from "@/lib/i18n";
 import { applyCanvasWindowEdit, resolveRegisteredWindowId } from "@/lib/window-sync";
 import { appendSlot } from "@/lib/canvas-layout";
+import { parseBulkText } from "@/lib/bulk-import";
 
 // Shown on a fresh install so the canvas is not blank.
 const SAMPLE_SLOTS = [
@@ -359,41 +360,11 @@ export function App() {
     }
   };
 
-  const parseBulkItems = (text) => {
-    const lines = text.split("\n");
-    let currentName = "";
-    let currentUrls = [];
-    const newItems = [];
-
-    lines.forEach((line) => {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        if (currentName || currentUrls.length) {
-          newItems.push({
-            id: `win-bulk-${Date.now()}-${newItems.length}`,
-            name: currentName || `Window ${newItems.length + 1}`,
-            urls: currentUrls.join("\n"),
-          });
-          currentName = "";
-          currentUrls = [];
-        }
-      } else if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-        currentUrls.push(trimmed);
-      } else {
-        currentName = trimmed;
-      }
-    });
-
-    if (currentName || currentUrls.length) {
-      newItems.push({
-        id: `win-bulk-${Date.now()}-${newItems.length}`,
-        name: currentName || `Window ${newItems.length + 1}`,
-        urls: currentUrls.join("\n"),
-      });
-    }
-
-    return newItems;
-  };
+  const parseBulkItems = (text) => parseBulkText(text).items.map((item, index) => ({
+    id: `win-bulk-${Date.now()}-${index}`,
+    name: item.name || `Window ${index + 1}`,
+    urls: item.urls,
+  }));
 
   const handleBulkSave = (text) => {
     const newItems = parseBulkItems(text);

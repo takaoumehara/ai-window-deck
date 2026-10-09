@@ -3,7 +3,7 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "클라우드 Claude Code와 Codex용 창 관리자. 여러 프로젝트를 동시에, 헷갈림 없이."
+    "message": "AI 작업 창을 정리하고, 단축키로 하나를 확대하며, 빠르게 전환합니다."
   },
   "cmdSpotlight": {
     "message": "확대/복원"

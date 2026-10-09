@@ -3,7 +3,7 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "クラウドのClaude CodeとCodex向けウィンドウマネージャ。複数プロジェクトを同時に、迷わず運用。"
+    "message": "AIの作業ウィンドウを整列し、ショートカットで一つを大きくして、すばやく切り替えます。"
   },
   "cmdSpotlight": {
     "message": "大きく／タイルに戻す"

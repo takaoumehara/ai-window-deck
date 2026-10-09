@@ -3,7 +3,7 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused."
+    "message": "Tile AI workspaces, spotlight one with a shortcut, and switch between them quickly."
   },
   "cmdSpotlight": {
     "message": "Enlarge / back to the tile"
