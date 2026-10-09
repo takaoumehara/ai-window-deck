@@ -6,6 +6,8 @@
 
 **Más sesiones en la nube. Espacio para pensar.**
 
+Gestor de ventanas para Claude Code en la nube y Codex: trabaja en varios proyectos a la vez sin perderte.
+
 Una extensión de Chrome para quienes trabajan con varias herramientas de IA y referencias a la vez. Guarda las ventanas que usas juntas, colócalas en un lienzo, ábrelas todas de una vez como ventanas de Chrome en mosaico y destaca una de ellas con un solo atajo.
 
 Tu perfil de Chrome, tus sesiones iniciadas, tu gestor de contraseñas y tus demás extensiones siguen como están. AI Window Deck solo organiza ventanas normales de Chrome.
