@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>AI Window Deck</title>
+  <rect width="64" height="64" rx="14" fill="#0b0b0b"/>
+  <rect x="10.5" y="10.5" width="20.5" height="20.5" rx="3.75" fill="#f3f2ee"/>
+  <rect x="34.5" y="12" width="17.5" height="17.5" rx="3.25" fill="#74736f"/>
+  <rect x="12" y="34.5" width="17.5" height="17.5" rx="3.25" fill="#74736f"/>
+  <rect x="34.5" y="34.5" width="17.5" height="17.5" rx="3.25" fill="#74736f"/>
+</svg>

@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**Mehr Cloud-Sitzungen. Raum zum Denken.**
+
 Eine Chrome-Erweiterung für alle, die mit mehreren KI-Tools und Referenzen nebeneinander arbeiten. Speichern Sie die Fenster, die Sie gemeinsam nutzen, ordnen Sie sie auf einer Arbeitsfläche an, öffnen Sie alle auf einmal als gekachelte Chrome-Fenster und heben Sie eines davon mit einer einzigen Tastenkombination hervor.
 
 Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweiterungen bleiben unverändert. AI Window Deck ordnet lediglich gewöhnliche Chrome-Fenster an.
 
-![Fenster auf einer Arbeitsfläche anordnen](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="Fünf gekachelte Fenster. Alt+X vergrößert eines; erneutes Drücken setzt es zurück in seine Kachel.">
+  </picture>
+</p>
+
+Website: <https://ai-window-deck.vercel.app/>
+
+## So funktioniert es
+
+| **① URLs registrieren** | **② Layout** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① URLs registrieren" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
+| Speichern Sie für jedes Fenster einen Namen und URLs. Jede URL öffnet sich als Tab. | Platzieren Sie Fenster auf der Arbeitsfläche und passen Sie ihre Rasterfelder an. |
+| **③ Fokusansicht** | **④ Starten** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ Fokusansicht" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Starten" width="400"> |
+| Wählen Sie Vergrößerung und Ausgangspunkt: an Ort und Stelle wachsen oder zentrieren. | Wählen Sie Ihre Bildschirme und öffnen Sie das gespeicherte Layout als Chrome-Fenster. |
 
 ## Funktionen
 
@@ -20,15 +41,14 @@ Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweit
 - **Sicherung.** Sichern Sie alle Fenster, Layouts und Einstellungen als JSON-Datei oder stellen Sie sie daraus wieder her.
 - **8 Sprachen.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) und 简体中文. Das Panel folgt der Browsersprache, bis Sie eine Sprache auswählen.
 
-| Spotlight | Fensterbibliothek | Fenster registrieren |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Fensterbibliothek](store-assets/screenshots/03-window-library.png) | ![Registrieren](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="Fokus-Vergrößerung im Vergleich: links an Ort und Stelle, rechts zentriert"></p>
+<p align="center"><em>An Ort und Stelle wachsen / Zentrieren — den Ausgangspunkt wählen Sie in Schritt ③.</em></p>
 
 ## Installation
 
 ### Chrome Web Store
 
-Demnächst verfügbar. Der Eintrag wird derzeit geprüft.
+Installieren Sie die Erweiterung aus dem [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### Aus einem Release-ZIP
 
@@ -138,6 +158,10 @@ Einzelheiten finden Sie in [docs/RELEASING.md](docs/RELEASING.md).
 ## Support
 
 Melden Sie Fehler und Vorschläge über [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
+
+Wenn Ihnen AI Window Deck im Alltag hilft, können Sie die Entwicklung auf [Ko-fi](https://ko-fi.com/G2G71VP1DF) unterstützen.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## Lizenz
 

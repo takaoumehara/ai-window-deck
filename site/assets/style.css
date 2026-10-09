@@ -6,21 +6,21 @@
   --font-ja: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --bg: #ffffff;
-  --bg-soft: #f5f5f5;
-  --surface: #ffffff;
+  --bg: #f3f2ee;
+  --bg-soft: #e8e7e2;
+  --surface: #f3f2ee;
   --border: #e5e5e5;
   --border-strong: #cfcfcf;
-  --text: #0a0a0a;
+  --text: #0b0b0b;
   --text-2: #3d3d3d;
-  --muted: #666666;
-  --faint: #999999;
-  --accent: #0062cc;
-  --accent-hover: #004fa6;
-  --accent-soft: #e8f0fa;
-  --accent-text: #0062cc;
-  --on-accent: #ffffff;
-  --ok: #1a7f37;
+  --muted: #52514e;
+  --faint: #52514e;
+  --accent: #0b0b0b;
+  --accent-hover: #333330;
+  --accent-soft: #e8e7e2;
+  --accent-text: #0b0b0b;
+  --on-accent: #f3f2ee;
+  --ok: #0b0b0b;
   --code-bg: #0e0e0e;
   --code-text: #e6e6e6;
   --code-dim: #8a8a8a;
@@ -38,7 +38,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0a0a0a;
+    --bg: #0b0b0b;
     --bg-soft: #141414;
     --surface: #111111;
     --border: #262626;
@@ -46,13 +46,13 @@
     --text: #f2f2f2;
     --text-2: #d4d4d4;
     --muted: #a3a3a3;
-    --faint: #6b6b6b;
-    --accent: #3b9cff;
-    --accent-hover: #6cb4ff;
-    --accent-soft: #0f1f33;
-    --accent-text: #6cb4ff;
+    --faint: #a3a3a3;
+    --accent: #f3f2ee;
+    --accent-hover: #f3f2ee;
+    --accent-soft: #262626;
+    --accent-text: #f3f2ee;
     --on-accent: #050505;
-    --ok: #3fb950;
+    --ok: #f3f2ee;
     --code-bg: #141414;
     --code-line: #262626;
     color-scheme: dark;
@@ -60,7 +60,7 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0a0a0a;
+  --bg: #0b0b0b;
   --bg-soft: #141414;
   --surface: #111111;
   --border: #262626;
@@ -68,13 +68,13 @@
   --text: #f2f2f2;
   --text-2: #d4d4d4;
   --muted: #a3a3a3;
-  --faint: #6b6b6b;
-  --accent: #3b9cff;
-  --accent-hover: #6cb4ff;
-  --accent-soft: #0f1f33;
-  --accent-text: #6cb4ff;
+  --faint: #a3a3a3;
+  --accent: #f3f2ee;
+  --accent-hover: #f3f2ee;
+  --accent-soft: #262626;
+  --accent-text: #f3f2ee;
   --on-accent: #050505;
-  --ok: #3fb950;
+  --ok: #f3f2ee;
   --code-bg: #141414;
   --code-line: #262626;
   color-scheme: dark;
@@ -229,12 +229,21 @@ html.js-reveal [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(14p
 .icon-btn.nav-cta:hover { opacity: .85; background: var(--text); }
 .menu-btn { display: inline-flex; }
 .lang-short { display: none; }
-@media (max-width: 519px) {
-  .nav .container { gap: 10px; }
-  .nav-cta, .lang-long { display: none; }
+.nav-sponsor { border-color: #74736f; }
+.nav-sponsor svg { width: 14px; height: 14px; }
+@media (max-width: 719px) {
+  :root { --nav-h: 90px; }
+  .nav .container { flex-wrap: wrap; align-content: center; gap: 8px; }
+  .nav-tools { width: 100%; gap: 4px; margin-left: 0; }
+  .nav-tools .icon-btn { padding: 0 6px; }
+  .nav-tools [data-lang-toggle] { margin-left: auto; }
+  .lang-long { display: none; }
   .lang-short { display: inline; }
 }
-@media (min-width: 1000px) {
+@media (max-width: 359px) {
+  .nav-tools a[title="GitHub"] { display: none; }
+}
+@media (min-width: 1200px) {
   .nav-links { display: flex; }
   .menu-btn { display: none; }
   .nav-tools { margin-left: 0; }
@@ -388,7 +397,7 @@ main > section:last-child { padding-bottom: clamp(72px, 9vw, 128px); }
 }
 .code:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
 .copy-btn:hover { border-color: #555; }
-.copy-btn.copied { background: #e6e6e6; border-color: #e6e6e6; color: #0a0a0a; opacity: 1; }
+.copy-btn.copied { background: #e6e6e6; border-color: #e6e6e6; color: #0b0b0b; opacity: 1; }
 
 /* ---------- Tables ---------- */
 .table-wrap { overflow-x: auto; border-top: 1px solid var(--text); }
@@ -443,7 +452,7 @@ details.faq > div { padding: 0 48px 22px 0; color: var(--muted); max-width: 760p
 
 /* ---------- Screenshots ---------- */
 .shots .shot, .split .shot { margin: 0; }
-.shot img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); background: #0a0a0a; }
+.shot img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); background: #0b0b0b; }
 .shot figcaption {
   display: flex; gap: 14px; margin-top: 12px;
   font-family: var(--mono); font-size: .75rem; letter-spacing: .04em; color: var(--muted);
@@ -501,6 +510,9 @@ footer .foot-word { font-size: clamp(2.2rem, 1.5rem + 3vw, 4rem); font-weight: 5
 footer .foot-row { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
 footer .foot-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 footer a { color: var(--muted); text-decoration: none; }
+footer .foot-credit, footer .foot-legal p { margin: 0; }
+footer .foot-credit a { text-decoration: underline; }
+footer .foot-legal { display: grid; gap: 8px; font-size: .8125rem; }
 footer a:hover { color: var(--text); text-decoration: underline; }
 
 /* ---------- Toast ---------- */
@@ -517,4 +529,24 @@ footer a:hover { color: var(--text); text-decoration: underline; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
   html.is-loading .loader { display: none; }
   html.js-reveal [data-reveal]:not(.is-in) { opacity: 1; transform: none; }
+}
+
+/* v6 marketing layout. */
+[hidden] { display: none !important; }
+.hero { padding-top: 32px; }
+.hero-meta { margin-bottom: 24px; }
+.hero h1 { font-size: clamp(2.8rem, 6vw, 5.6rem); margin-bottom: 24px; }
+.hero .tagline { max-width: 22ch; }
+.lead, .col p, .flow-step p, .install p { color: var(--text); }
+.flow-step { min-width: 0; }
+.flow-step h3 { margin-bottom: 8px; }
+.flow-step p { min-height: 3.3em; }
+.flow-step .shot img { height: auto; }
+.shot a { display: block; }
+.support { padding: 32px 0; }
+.support h2 { font-size: 1.4rem; }
+.support .kofi { margin-top: 16px; min-height: 36px; }
+@media (max-width: 600px) {
+ .hero { padding-top: 24px; }
+ .flow-step p { min-height: 0; }
 }

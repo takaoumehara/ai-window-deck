@@ -1,5 +1,19 @@
 # AI Window Deck — publish checklist (v1.7.0)
 
+## Listing graphics for the v1.11 monochrome design
+
+The store listing graphics are uploaded separately from the package, so a new ZIP does not replace them. Upload these under **Store listing → Graphic assets** in the developer dashboard:
+
+| Dashboard field | File |
+| --- | --- |
+| Store icon (128 × 128) | `listing/store-icon-128.png` |
+| Screenshots (1280 × 800), English | `listing/en/01-…05-*.png` (delete the old blue ones first) |
+| Screenshots, Japanese listing | `listing/ja/01-…05-*.png` (Japanese captions; the panel in the captures is the English UI) |
+| Small promo tile (440 × 280) | `listing/promo-small.png` |
+| Marquee promo tile (1400 × 560) | `listing/promo-marquee.png` |
+
+Regenerate them with `python3 store-assets/make-store-icon.py` and `store-assets/capture-listing-graphics.mjs` (see the header of that script). The icon script also writes the monochrome `icons/icon-*.png` used by the extension package.
+
 ## Ready in the repository
 
 - [x] Upload package: run `./tools/package.sh` → `AI-Window-Deck-v1.7.0.zip` (validated; not committed)

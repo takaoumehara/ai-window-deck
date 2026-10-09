@@ -2,13 +2,34 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**More cloud sessions. Room to think.**
+
 Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
 
 A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.
 
 Your Chrome profile, sign-ins, password manager and other extensions stay as they are. AI Window Deck only arranges ordinary Chrome windows.
 
-![Arrange windows on a canvas](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="Five tiled windows. Alt+X enlarges one; pressing it again puts it back in its tile.">
+  </picture>
+</p>
+
+Website: <https://ai-window-deck.vercel.app/>
+
+## How it works
+
+| **① Register URLs** | **② Layout** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① Register URLs" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
+| Save a name and URLs for each window. Each URL opens as a tab. | Place windows on the canvas and resize their grid slots. |
+| **③ Focus view** | **④ Launch** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ Focus view" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Launch" width="400"> |
+| Choose an enlargement size and origin: grow in place or center. | Choose your displays and open the saved layout as Chrome windows. |
 
 ## Features
 
@@ -22,9 +43,8 @@ Your Chrome profile, sign-ins, password manager and other extensions stay as the
 - **Backup.** Back up or restore all windows, layouts and settings as a JSON file.
 - **8 languages.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) and 简体中文. The panel follows the browser language until you pick one.
 
-| Spotlight | Window library | Register windows |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Window library](store-assets/screenshots/03-window-library.png) | ![Register](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="Focus enlargement compared: grow in place on the left, center on the right"></p>
+<p align="center"><em>Grow in place / Center — choose the origin in step ③.</em></p>
 
 ## Install
 
@@ -140,6 +160,10 @@ See [docs/RELEASING.md](docs/RELEASING.md) for details.
 ## Support
 
 Report bugs and suggestions on [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
+
+If AI Window Deck helps your day, you can support its development on [Ko-fi](https://ko-fi.com/G2G71VP1DF).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## License
 
