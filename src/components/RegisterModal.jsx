@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Download, Upload } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
-import { canFix, fixAll, fixIssue, ISSUE, parseBulkText } from "@/lib/bulk-import";
+import { canFix, fixAll, fixIssue, ISSUE, normalizeLocation, parseBulkText } from "@/lib/bulk-import";
 
 const ISSUE_MESSAGE = {
   [ISSUE.nameWithoutBlank]: "bulkIssueNameWithoutBlank",
-  [ISSUE.missingScheme]: "bulkIssueMissingScheme",
+  [ISSUE.tilde]: "bulkIssueTilde",
   [ISSUE.notUrl]: "bulkIssueNotUrl",
   [ISSUE.badUrl]: "bulkIssueBadUrl",
 };
@@ -27,7 +27,12 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
   const [bulkChecked, setBulkChecked] = useState(false);
   const bulkRef = useRef(null);
   const backdropRef = useRef(null);
-  const bulkIssues = useMemo(() => (bulkChecked ? parseBulkText(bulkText).issues : []), [bulkChecked, bulkText]);
+  const [fileAccessAllowed, setFileAccessAllowed] = useState(true);
+  const bulkParse = useMemo(() => parseBulkText(bulkText), [bulkText]);
+  const bulkIssues = bulkChecked ? bulkParse.issues : [];
+  const wantsFiles = mode === "bulk"
+    ? bulkParse.items.some((item) => item.urls.split("\n").some((url) => url.startsWith("file://")))
+    : urlRows.some((row) => normalizeLocation(row).url?.startsWith("file://"));
   const issueLines = useMemo(() => new Set(bulkIssues.map((issue) => issue.line)), [bulkIssues]);
 
   useEffect(() => {
@@ -43,6 +48,28 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
     }
     setBulkChecked(false);
   }, [editingItem, open]);
+
+  useEffect(() => {
+    if (!open || !wantsFiles || typeof chrome === "undefined" || !chrome.extension?.isAllowedFileSchemeAccess) return undefined;
+    let cancelled = false;
+    chrome.extension.isAllowedFileSchemeAccess((allowed) => {
+      if (!cancelled) setFileAccessAllowed(allowed !== false);
+    });
+    return () => { cancelled = true; };
+  }, [open, wantsFiles]);
+
+  const fileAccessHint = wantsFiles && !fileAccessAllowed ? (
+    <div role="note" className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-xs text-zinc-200">
+      <p>{t("fileAccessHint")}</p>
+      <button
+        type="button"
+        onClick={() => chrome.tabs?.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` })}
+        className="mt-2 rounded border border-zinc-700 px-2 py-1 font-semibold text-zinc-100 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+      >
+        {t("fileAccessOpen")}
+      </button>
+    </div>
+  ) : null;
 
   const jumpToLine = (line) => {
     const textarea = bulkRef.current;
@@ -83,7 +110,11 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
   };
 
   const handleSingleSubmit = () => {
-    const urls = urlRows.map((r) => r.trim()).filter(Boolean).join("\n");
+    const urls = urlRows
+      .map((row) => row.trim())
+      .filter(Boolean)
+      .map((row) => normalizeLocation(row).url ?? row)
+      .join("\n");
     if (!name && !urls) return;
     onSaveWindow({ id: editingItem?.id, name: name || t("untitledWindow"), urls });
     onClose();
@@ -146,6 +177,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
               <Plus className="w-3.5 h-3.5" />
               <span>{t("addRowBtn")}</span>
             </Button>
+            {fileAccessHint}
           </div>
 
           {/* File Tools */}
@@ -256,6 +288,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
               </ul>
             </div>
           )}
+          {fileAccessHint}
           <div className="flex items-center justify-between">
             <button
               type="button"
