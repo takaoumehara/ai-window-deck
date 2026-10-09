@@ -81,12 +81,9 @@
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-然后使用 **加载已解压的扩展程序** 加载仓库文件夹（即包含 `manifest.json` 的文件夹）。由于 `dist/` 已提交到仓库中，刚克隆下来的仓库无需构建也可以直接加载。
+仓库根目录就是 1.11.2 扩展程序包本身，无需安装依赖或构建。使用 **加载已解压的扩展程序** 加载克隆下来的文件夹（包含 `manifest.json` 的文件夹）即可。
 
 ## 使用方法
 
@@ -132,45 +129,35 @@ AI Window Deck 没有主机权限，也没有内容脚本，不会读取网页�
 
 ## 开发
 
-需要 Node.js 20+ 和 Python 3。
+需要 Node.js 20 及以上版本（生成商店图片还需要 Python 3 和 Pillow）。
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+```
+
+本仓库不包含 1.11.x 的源代码。根目录存放的是原样发布的 1.11.2 包，其 `dist/` 构建产物由已发布的 1.11.0 商店包通过经过测试的精确字符串补丁重新生成。指定解压后的 1.11.0 包时，测试还会确认补丁结果与根目录逐字节一致：
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 仓库结构：
 
 | 路径 | 内容 |
 | --- | --- |
-| `manifest.json`, `background.js` | 扩展程序清单和 Service Worker（窗口放置、快捷键） |
-| `src/` | 弹出窗口和选项页面使用的 React + Tailwind 面板 |
-| `dist/` | 构建后的面板。已提交到仓库中，因此仓库可以按原样以“已解压”方式加载 |
-| `identify.html`, `identify.js` | 识别显示器时在该显示器上短暂显示的编号 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 翻译（见下文） |
-| `tools/` | i18n 构建、打包、包校验 |
-| `store-assets/` | Chrome 应用商店的商品详情文案、屏幕截图、宣传图块和截图脚本 |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 扩展程序包，与上传到 Chrome 应用商店的完全相同 |
+| `tools/` | 补丁脚本（`patch-v1.11*.mjs`，文本和代码位于 `v1.11.1/`、`v1.11.2/`）、打包、包校验、上传到 Chrome 应用商店 |
+| `site/` | 网站，由 Vercel 部署（见 `vercel.json`） |
+| `store-assets/` | Chrome 应用商店的商品文案、截图、宣传图和截图脚本 |
 | `test/` | 单元测试 |
-
-`deck.html`、`deck.js`、`dock.html` 和 `dock.js` 是 1.7 之前版本的面板。保留它们仅供参考，不会被打包。
-
-### 翻译
-
-面板文本位于 `tools/ui-strings.json`。Chrome 自身使用的文本（扩展程序说明和快捷键名称）位于 `tools/strings.json`。编辑其中任一文件后，请运行：
-
-```sh
-python3 tools/build-i18n.py
-```
-
-该命令会重新生成 `src/lib/ui-strings.js` 和 `_locales/*/messages.json`。如果某个面板语言缺少键，构建会失败。`npm test` 还会检查所有语言中的占位符是否一致。
+| `legacy/v1.7/` | 1.11 之前的源代码（1.7 的 React 面板和旧页面），仅供参考。请参阅其中的 README |
 
 ## 发布流程
 
-1. 在 `manifest.json` 和 `package.json` 中提升 `version`，并更新 `CHANGELOG.md`。
-2. 运行 `npm test` 和 `./tools/package.sh`。该脚本会校验 ZIP：引用的文件、每个语言中的 `__MSG_` 键以及说明的长度。
+1. 在 `package.json` 和补丁脚本的 manifest 步骤中提升 `version`，并更新 `CHANGELOG.md`。
+2. 运行 `npm test` 和 `npm run package`。校验脚本会检查引用的文件、每个语言的 `__MSG_` 键以及描述长度。
 3. 将 ZIP 上传到 Chrome 应用商店开发者信息中心。
 4. 商店批准该版本后，在 `main` 上打 `vX.Y.Z` 标签，并将 ZIP 附加到 GitHub Release。
 

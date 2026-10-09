@@ -81,12 +81,9 @@ Instálala desde la [Chrome Web Store](https://chromewebstore.google.com/detail/
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-Después, carga la carpeta del repositorio (la que contiene `manifest.json`) con **Cargar descomprimida**. `dist/` está incluido en el repositorio, así que cargar un clon recién descargado también funciona sin compilar.
+La raíz del repositorio es el propio paquete de la extensión 1.11.2, así que no hay nada que instalar ni compilar. Carga la carpeta clonada (la que contiene `manifest.json`) con **Cargar descomprimida**.
 
 ## Uso
 
@@ -132,45 +129,35 @@ La política completa está en [PRIVACY.md](PRIVACY.md).
 
 ## Desarrollo
 
-Requiere Node.js 20+ y Python 3.
+Requiere Node.js 20 o superior (y Python 3 con Pillow para los gráficos de la tienda).
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+```
+
+El código fuente de 1.11.x no está en este repositorio. La raíz contiene el paquete 1.11.2 tal como se publica. Su paquete `dist/` se regenera a partir del paquete 1.11.0 publicado en la tienda mediante sustituciones de texto exactas y probadas. Con el paquete 1.11.0 descomprimido, las pruebas también comprueban que el parche reproduce la raíz byte a byte:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 Estructura del repositorio:
 
 | Ruta | Contenido |
 | --- | --- |
-| `manifest.json`, `background.js` | Manifiesto de la extensión y service worker (colocación de ventanas, atajos) |
-| `src/` | Panel en React + Tailwind que usan la ventana emergente y la página de opciones |
-| `dist/` | Panel compilado. Se incluye en el repositorio para que este pueda cargarse descomprimido tal cual |
-| `identify.html`, `identify.js` | El número que aparece brevemente en una pantalla al identificarla |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | Traducciones (ver más abajo) |
-| `tools/` | Compilación de i18n, empaquetado y validación del paquete |
-| `store-assets/` | Textos de la ficha de Chrome Web Store, capturas de pantalla, mosaicos promocionales y script de captura |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | El paquete de la extensión 1.11.2, exactamente el que se sube a Chrome Web Store |
+| `tools/` | Scripts de parche (`patch-v1.11*.mjs`, con sus textos y código en `v1.11.1/`, `v1.11.2/`), empaquetado, validación del paquete y subida a Chrome Web Store |
+| `site/` | El sitio web, desplegado por Vercel (ver `vercel.json`) |
+| `store-assets/` | Textos, capturas, imágenes promocionales y scripts de captura para Chrome Web Store |
 | `test/` | Pruebas unitarias |
-
-`deck.html`, `deck.js`, `dock.html` y `dock.js` son el panel anterior a la versión 1.7. Se conservan como referencia y no se incluyen en el paquete.
-
-### Traducciones
-
-Los textos del panel están en `tools/ui-strings.json`. Los textos propios de Chrome (la descripción de la extensión y los nombres de los atajos) están en `tools/strings.json`. Después de editar cualquiera de los dos archivos, ejecuta:
-
-```sh
-python3 tools/build-i18n.py
-```
-
-Esto vuelve a generar `src/lib/ui-strings.js` y `_locales/*/messages.json`. La compilación falla si a algún idioma del panel le falta una clave. `npm test` también comprueba que los marcadores de posición coincidan en todos los idiomas.
+| `legacy/v1.7/` | El código fuente anterior a 1.11 (el panel React de 1.7 y páginas antiguas), conservado como referencia. Consulta su README |
 
 ## Proceso de publicación
 
-1. Incrementa `version` en `manifest.json` y `package.json`, y actualiza `CHANGELOG.md`.
-2. Ejecuta `npm test` y `./tools/package.sh`. El script valida el ZIP: los archivos referenciados, las claves `__MSG_` en todos los idiomas y la longitud de la descripción.
+1. Sube `version` en `package.json` y en el paso del manifiesto del script de parche, y actualiza `CHANGELOG.md`.
+2. Ejecuta `npm test` y `npm run package`. El validador comprueba los archivos referenciados, las claves `__MSG_` en cada idioma y la longitud de la descripción.
 3. Sube el ZIP al panel de Chrome Web Store.
 4. Cuando la tienda apruebe la versión, crea la etiqueta `vX.Y.Z` en `main` y adjunta el ZIP a una GitHub Release.
 

@@ -81,12 +81,9 @@ Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-Then load the repository folder (the one that contains `manifest.json`) with **Load unpacked**. `dist/` is committed, so loading a fresh clone also works without building.
+The repository root is the 1.11.2 extension package itself, so there is nothing to install or build. Load the cloned folder (the one that contains `manifest.json`) with **Load unpacked**.
 
 ## Usage
 
@@ -132,45 +129,35 @@ The full policy is in [PRIVACY.md](PRIVACY.md).
 
 ## Development
 
-Requires Node.js 20+ and Python 3.
+Requires Node.js 20+ (and Python 3 with Pillow for the store graphics).
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+```
+
+The source of 1.11.x is not in this repository. The root holds the 1.11.2 package exactly as shipped. Its `dist/` bundle is rebuilt from the published 1.11.0 store package by exact, tested string patches. With the 1.11.0 package unpacked, the tests also check that the patch reproduces the root byte for byte:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 Repository layout:
 
 | Path | Contents |
 | --- | --- |
-| `manifest.json`, `background.js` | Extension manifest and service worker (window placement, shortcuts) |
-| `src/` | React + Tailwind panel used by the popup and the options page |
-| `dist/` | Built panel. It is committed so the repository loads unpacked as-is |
-| `identify.html`, `identify.js` | The number briefly shown on a display when you identify it |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | Translations (see below) |
-| `tools/` | i18n build, packaging, package validation |
-| `store-assets/` | Chrome Web Store listing copy, screenshots, promo tiles and capture script |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | The 1.11.2 extension package, exactly as uploaded to the Chrome Web Store |
+| `tools/` | Patch scripts (`patch-v1.11*.mjs`, with their strings and code in `v1.11.1/`, `v1.11.2/`), packaging, package validation, Chrome Web Store upload |
+| `site/` | The website, deployed by Vercel (see `vercel.json`) |
+| `store-assets/` | Chrome Web Store listing text, screenshots, promo tiles and capture scripts |
 | `test/` | Unit tests |
-
-`deck.html`, `deck.js`, `dock.html` and `dock.js` are the pre-1.7 panel. They are kept for reference and are not packaged.
-
-### Translations
-
-The panel strings live in `tools/ui-strings.json`. Chrome's own strings (extension description and shortcut names) live in `tools/strings.json`. After editing either file, run:
-
-```sh
-python3 tools/build-i18n.py
-```
-
-This regenerates `src/lib/ui-strings.js` and `_locales/*/messages.json`. The build fails if a panel locale is missing a key. `npm test` also checks that placeholders match in every language.
+| `legacy/v1.7/` | The pre-1.11 source (the 1.7 React panel and older pages), kept for reference. See its README |
 
 ## Release process
 
-1. Bump `version` in `manifest.json` and `package.json`, and update `CHANGELOG.md`.
-2. Run `npm test` and `./tools/package.sh`. The script validates the ZIP: referenced files, `__MSG_` keys in every locale, and description length.
+1. Bump `version` in `package.json` and in the patch script's manifest step, and update `CHANGELOG.md`.
+2. Run `npm test` and `npm run package`. The validator checks referenced files, `__MSG_` keys in every locale, and description length.
 3. Upload the ZIP to the Chrome Web Store dashboard.
 4. After the store approves the version, tag `vX.Y.Z` on `main` and attach the ZIP to a GitHub Release.
 

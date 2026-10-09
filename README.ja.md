@@ -81,12 +81,9 @@ Web サイト: <https://ai-window-deck.vercel.app/>
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-その後、リポジトリのフォルダ（`manifest.json` を含むフォルダ）を **パッケージ化されていない拡張機能を読み込む** で読み込みます。`dist/` はコミットされているため、クローンしたばかりのリポジトリをビルドせずに読み込むこともできます。
+リポジトリのルートが 1.11.2 の拡張機能パッケージそのものなので、インストールもビルドも不要です。クローンしたフォルダ（`manifest.json` を含むフォルダ）を **パッケージ化されていない拡張機能を読み込む** で読み込みます。
 
 ## 使い方
 
@@ -132,49 +129,39 @@ AI Window Deck はホスト権限やコンテンツスクリプトを持たず�
 
 ## 開発
 
-Node.js 20 以上と Python 3 が必要です。
+Node.js 20 以上が必要です（ストア用画像の生成には Python 3 と Pillow も使います）。
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate AI-Window-Deck-v<version>.zip
 ```
 
-リポジトリの構成:
+1.11.x のソースはこのリポジトリにありません。ルートには出荷したとおりの 1.11.2 パッケージがあり、`dist/` のバンドルは公開済みの 1.11.0 ストアパッケージから、テスト付きの完全一致の文字列パッチで再生成します。1.11.0 パッケージを展開して指定すると、パッチの結果がルートとバイト単位で一致することもテストで確認します：
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
+```
+
+リポジトリの構成：
 
 | パス | 内容 |
 | --- | --- |
-| `manifest.json`, `background.js` | 拡張機能のマニフェストとサービスワーカー（ウィンドウの配置、ショートカット） |
-| `src/` | ポップアップとオプションページで使用する React + Tailwind のパネル |
-| `dist/` | ビルド済みのパネル。リポジトリをそのまま「パッケージ化されていない拡張機能」として読み込めるよう、コミットされています |
-| `identify.html`, `identify.js` | ディスプレイを識別する際に、そのディスプレイに一時的に表示される番号 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 翻訳（後述） |
-| `tools/` | i18n のビルド、パッケージ化、パッケージの検証 |
-| `store-assets/` | Chrome ウェブストアの掲載文、スクリーンショット、プロモーションタイル、キャプチャスクリプト |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 の拡張機能パッケージ。Chrome ウェブストアにアップロードするものと同一です |
+| `tools/` | パッチスクリプト（`patch-v1.11*.mjs`。文字列とコードは `v1.11.1/`・`v1.11.2/`）、パッケージ作成、パッケージ検証、Chrome ウェブストアへのアップロード |
+| `site/` | Web サイト。Vercel がデプロイします（`vercel.json` を参照） |
+| `store-assets/` | Chrome ウェブストアの掲載文、スクリーンショット、プロモ画像、撮影スクリプト |
 | `test/` | ユニットテスト |
-
-`deck.html`、`deck.js`、`dock.html`、`dock.js` は 1.7 より前のパネルです。参照用に残していますが、パッケージには含まれません。
-
-### 翻訳
-
-パネルの文字列は `tools/ui-strings.json` にあります。Chrome 自体が使う文字列（拡張機能の説明とショートカット名）は `tools/strings.json` にあります。いずれかのファイルを編集したら、次のコマンドを実行してください。
-
-```sh
-python3 tools/build-i18n.py
-```
-
-これにより `src/lib/ui-strings.js` と `_locales/*/messages.json` が再生成されます。パネルのいずれかのロケールでキーが欠けていると、ビルドは失敗します。`npm test` でも、すべての言語でプレースホルダーが一致しているかをチェックします。
+| `legacy/v1.7/` | 1.11 より前のソース（1.7 の React パネルと旧ページ）。参照用に残しています。中の README を参照してください |
 
 ## リリース手順
 
-1. `manifest.json` と `package.json` の `version` を上げ、`CHANGELOG.md` を更新します。
-2. `npm test` と `./tools/package.sh` を実行します。このスクリプトは ZIP を検証します（参照されているファイル、すべてのロケールの `__MSG_` キー、説明文の長さ）。
+1. `package.json` とパッチスクリプトの manifest 更新部分の `version` を上げ、`CHANGELOG.md` を更新します。
+2. `npm test` と `npm run package` を実行します。検証スクリプトが、参照ファイル、全ロケールの `__MSG_` キー、説明文の長さをチェックします。
 3. ZIP を Chrome ウェブストアのダッシュボードにアップロードします。
-4. ストアでそのバージョンが承認されたら、`main` に `vX.Y.Z` タグを付け、GitHub Release に ZIP を添付します。
+4. ストアで承認されたら、`main` に `vX.Y.Z` のタグを付け、GitHub Release に ZIP を添付します。
 
-詳しくは [docs/RELEASING.md](docs/RELEASING.md) をご覧ください。
+詳しくは [docs/RELEASING.md](docs/RELEASING.md) を参照してください。
 
 ## サポート
 

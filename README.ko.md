@@ -81,12 +81,9 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-그런 다음 **압축해제된 확장 프로그램을 로드합니다**로 저장소 폴더(`manifest.json`이 들어 있는 폴더)를 로드합니다. `dist/`가 커밋되어 있으므로, 새로 클론한 저장소를 빌드하지 않고 바로 로드해도 동작합니다.
+저장소 루트가 1.11.2 확장 프로그램 패키지 그 자체이므로 설치하거나 빌드할 것이 없습니다. 클론한 폴더(`manifest.json`이 있는 폴더)를 **압축해제된 확장 프로그램을 로드합니다**로 불러옵니다.
 
 ## 사용 방법
 
@@ -132,49 +129,39 @@ AI Window Deck에는 호스트 권한이나 콘텐츠 스크립트가 없으며,
 
 ## 개발
 
-Node.js 20 이상과 Python 3이 필요합니다.
+Node.js 20 이상이 필요합니다(스토어 이미지 생성에는 Python 3와 Pillow도 사용합니다).
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+```
+
+1.11.x의 소스는 이 저장소에 없습니다. 루트에는 배포된 그대로의 1.11.2 패키지가 있으며, `dist/` 번들은 공개된 1.11.0 스토어 패키지에서 테스트를 거친 정확한 문자열 패치로 다시 만듭니다. 1.11.0 패키지의 압축을 풀어 지정하면, 패치 결과가 루트와 바이트 단위로 같은지도 테스트에서 확인합니다:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 저장소 구성:
 
 | 경로 | 내용 |
 | --- | --- |
-| `manifest.json`, `background.js` | 확장 프로그램 매니페스트와 서비스 워커(창 배치, 단축키) |
-| `src/` | 팝업과 옵션 페이지에서 사용하는 React + Tailwind 패널 |
-| `dist/` | 빌드된 패널. 저장소를 그대로 압축해제된 확장 프로그램으로 로드할 수 있도록 커밋되어 있습니다 |
-| `identify.html`, `identify.js` | 디스플레이를 식별할 때 해당 디스플레이에 잠시 표시되는 번호 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 번역(아래 참조) |
-| `tools/` | i18n 빌드, 패키징, 패키지 검증 |
-| `store-assets/` | Chrome 웹 스토어 등록 문구, 스크린샷, 프로모션 타일, 캡처 스크립트 |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 확장 프로그램 패키지. Chrome 웹 스토어에 업로드하는 것과 동일합니다 |
+| `tools/` | 패치 스크립트(`patch-v1.11*.mjs`, 문자열과 코드는 `v1.11.1/`, `v1.11.2/`), 패키지 생성, 패키지 검증, Chrome 웹 스토어 업로드 |
+| `site/` | 웹사이트. Vercel이 배포합니다(`vercel.json` 참고) |
+| `store-assets/` | Chrome 웹 스토어 등록 문구, 스크린샷, 프로모션 이미지, 캡처 스크립트 |
 | `test/` | 단위 테스트 |
-
-`deck.html`, `deck.js`, `dock.html`, `dock.js`는 1.7 이전 버전의 패널입니다. 참고용으로 남겨 두었으며 패키지에는 포함되지 않습니다.
-
-### 번역
-
-패널 문자열은 `tools/ui-strings.json`에 있습니다. Chrome 자체에서 사용하는 문자열(확장 프로그램 설명과 단축키 이름)은 `tools/strings.json`에 있습니다. 두 파일 중 하나를 수정한 후에는 다음 명령을 실행합니다.
-
-```sh
-python3 tools/build-i18n.py
-```
-
-이 명령은 `src/lib/ui-strings.js`와 `_locales/*/messages.json`을 다시 생성합니다. 패널 로캘 중 하나에 키가 누락되어 있으면 빌드가 실패합니다. `npm test`는 모든 언어에서 자리표시자가 일치하는지도 확인합니다.
+| `legacy/v1.7/` | 1.11 이전 소스(1.7 React 패널과 이전 페이지). 참고용으로 보관합니다. 해당 README를 참고하세요 |
 
 ## 릴리스 절차
 
-1. `manifest.json`과 `package.json`의 `version`을 올리고 `CHANGELOG.md`를 업데이트합니다.
-2. `npm test`와 `./tools/package.sh`를 실행합니다. 이 스크립트는 ZIP을 검증합니다(참조된 파일, 모든 로캘의 `__MSG_` 키, 설명 길이).
+1. `package.json`과 패치 스크립트의 manifest 단계에서 `version`을 올리고 `CHANGELOG.md`를 업데이트합니다.
+2. `npm test`와 `npm run package`를 실행합니다. 검증 스크립트가 참조 파일, 모든 로캘의 `__MSG_` 키, 설명 길이를 확인합니다.
 3. ZIP을 Chrome 웹 스토어 대시보드에 업로드합니다.
-4. 스토어에서 해당 버전이 승인되면 `main`에 `vX.Y.Z` 태그를 지정하고 GitHub Release에 ZIP을 첨부합니다.
+4. 스토어에서 승인되면 `main`에 `vX.Y.Z` 태그를 달고 GitHub Release에 ZIP을 첨부합니다.
 
-자세한 내용은 [docs/RELEASING.md](docs/RELEASING.md)를 참조하세요.
+자세한 내용은 [docs/RELEASING.md](docs/RELEASING.md)를 참고하세요.
 
 ## 지원
 
