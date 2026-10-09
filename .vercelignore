@@ -1,0 +1,6 @@
+legacy/
+store-assets/
+docs/
+node_modules/
+*.zip
+*.mp4
