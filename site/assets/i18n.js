@@ -39,7 +39,8 @@ window.AWD_I18N = {
     'nav.what': '概要',
     'nav.how': '使い方',
     'nav.features': '機能',
-    'nav.sponsor': 'スポンサー',
+    'nav.sponsor': 'Ko-fi',
+    'nav.sponsorLabel': 'Ko-fi で応援する',
     'nav.install': 'インストール',
     'nav.shortcuts': 'ショートカット',
     'nav.privacy': 'プライバシー',
@@ -167,8 +168,7 @@ window.AWD_I18N = {
     "keys.r1": "フォーカス：作業中のウィンドウを拡大",
     "keys.r2": "手動でサイズを変えたウィンドウも、登録済みのグリッド枠に戻す",
     "support.title": "開発を応援する",
-    "support.body": "AI Window Deck が日々の作業に役立ったら、開発を応援できます。",
-    "support.link": "GitHub でスポンサーする ↗",
+    "support.body": "AI Window Deck が日々の作業に役立ったら、Ko-fi で開発を応援できます。",
     "inst.storeLink": "Chrome に追加 ↗",
     "meta.description": "クラウドの Claude Code と Codex のセッションを並べて作業。URL 登録、配置、フォーカス表示、起動の 4 ステップ。⌥X で拡大、⌥Z でグリッド枠に復元。"
   }

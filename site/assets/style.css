@@ -545,6 +545,7 @@ footer a:hover { color: var(--text); text-decoration: underline; }
 .shot a { display: block; }
 .support { padding: 32px 0; }
 .support h2 { font-size: 1.4rem; }
+.support .kofi { margin-top: 16px; min-height: 36px; }
 @media (max-width: 600px) {
  .hero { padding-top: 24px; }
  .flow-step p { min-height: 0; }
