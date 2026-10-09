@@ -1,8 +1,26 @@
-@import "../../src/index.css";
+@import "./styles/fonts.css";
+@import "./styles/cie/tokens.css";
+@import "./styles/cie/base.css";
+@import "./styles/cie/scrollbar.css";
+@import "./styles/cie/motion.css";
+@import "./styles/cie/interactions.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* RGB channels of --cie-ink / --cie-paper, so Tailwind can apply alpha (paper/10). */
+  --cie-ink-rgb: 11 11 11;
+  --cie-paper-rgb: 243 242 238;
+  --background: var(--cie-ink);
+  --foreground: var(--cie-paper);
+  color-scheme: dark;
+}
 
 html, body, #root {
   height: 100%;
-  overflow: hidden !important;
+  overflow: hidden;
 }
 
 .app-drag {
@@ -12,4 +30,85 @@ html, body, #root {
 
 .app-no-drag {
   -webkit-app-region: no-drag;
+}
+
+/* Mono register: indices, URLs, counts (DESIGN.md: 12px uppercase +0.02em). */
+.register {
+  font-family: var(--cie-mono);
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--cie-stroke);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--cie-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: inherit;
+}
+.cie-on-paper .key {
+  border-color: rgb(var(--cie-ink-rgb) / 0.3);
+}
+
+/* Panes follow the block → page expand: --cie-t-move on expo. */
+.deck-pane {
+  transition:
+    left var(--cie-t-move) var(--cie-ease-expo),
+    top var(--cie-t-move) var(--cie-ease-expo),
+    width var(--cie-t-move) var(--cie-ease-expo),
+    height var(--cie-t-move) var(--cie-ease-expo),
+    opacity var(--cie-t-fast) linear,
+    transform var(--cie-t-move) var(--cie-ease-expo);
+}
+
+/* "Away cell": panes pushed out by Fill. */
+.deck-pane.is-away {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+/* Header and card swap inks when focused (DESIGN.md "Invert"). */
+.ink-swap {
+  transition:
+    background-color var(--cie-t-cell) var(--cie-ease-expo),
+    color var(--cie-t-fast) var(--cie-ease-out),
+    border-color var(--cie-t-cell) var(--cie-ease-expo);
+}
+
+/* Weight as hierarchy (DESIGN.md "Weight breath"). */
+.weight {
+  font-variation-settings: "wght" var(--w, 400);
+  font-weight: var(--w, 400);
+  transition:
+    font-variation-settings var(--cie-t-cell) var(--cie-ease-out),
+    font-weight var(--cie-t-cell) var(--cie-ease-out);
+}
+@media (hover: hover) {
+  .weight-hover:hover .weight,
+  .weight-hover:focus-visible .weight {
+    --w: 640;
+  }
+}
+
+.cie-loader--xs {
+  --cie-loader-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-pane,
+  .ink-swap,
+  .weight {
+    transition: none !important;
+  }
+  .deck-pane.is-away {
+    transform: none;
+  }
 }

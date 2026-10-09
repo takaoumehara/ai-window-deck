@@ -24,13 +24,19 @@ and a click or a shortcut enlarges it or puts it back.
 
 The shortcuts work while a web page has keyboard focus, and only while the app is the active window.
 
+## Design
+
+Styled with [cie-ds](https://cie-ds.vercel.app) ([DESIGN.md](https://cie-ds.vercel.app/DESIGN.md)), not the extension's blue panel:
+
+- Two inks only: ink `#0b0b0b` ground and paper `#f3f2ee`, plus alpha of the same inks. The focused pane and card swap to paper.
+- `src/styles/cie/` holds verbatim copies of the cie-ds CSS (tokens, base, scrollbar, motion, interactions). Re-copy them to update.
+- `tailwind.config.js` replaces Tailwind's palette, shadows and radii with cie tokens, so `bg-zinc-900`, `shadow-lg` and similar classes don't exist.
+- Outfit, DM Mono and Zen Kaku Gothic New (used for `:lang(ja)`) are bundled with `@fontsource`, so the app looks the same offline.
+- Motion uses `--cie-t-move` / `--cie-ease-expo` for pane layout changes and cie-ds sheets for dialogs. Everything stops under `prefers-reduced-motion`.
+
 ## Run
 
-The app shares UI components and Tailwind theme with the extension in `../src`,
-so install both packages:
-
 ```sh
-npm install            # in the repo root
 cd desktop
 npm install
 npm start              # build the shell UI and open the app

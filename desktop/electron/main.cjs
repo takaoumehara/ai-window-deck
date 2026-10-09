@@ -6,6 +6,8 @@ const { matchCommand, COMMAND_ACCELERATORS } = require("./commands.cjs");
 const DEV_URL = process.env.DECK_DEV_URL;
 const PARTITION = "persist:deck";
 const isMac = process.platform === "darwin";
+// Native window and view backgrounds can't read CSS variables; this mirrors --cie-ink.
+const CIE_INK = "#0b0b0b";
 
 let shellWindow = null;
 let overlayOpen = false;
@@ -67,7 +69,7 @@ function createTabView(paneId, tabIndex, url) {
       contextIsolation: true,
     },
   });
-  view.setBackgroundColor("#09090b");
+  view.setBackgroundColor(CIE_INK);
   const contents = view.webContents;
   interceptCommands(contents);
 
@@ -113,12 +115,14 @@ function destroyView(view) {
 function applyPane(paneId) {
   const pane = panes.get(paneId);
   if (!pane) return;
-  const { x, y, width, height } = pane.bounds;
+  const { x, y, width, height, radius = 0 } = pane.bounds;
   const showable = pane.visible && !overlayOpen && width > 1 && height > 1;
   for (const [tabIndex, view] of pane.views) {
     const shown = showable && tabIndex === pane.activeTab;
     view.setVisible(shown);
-    if (shown) view.setBounds({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+    if (!shown) continue;
+    view.setBounds({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+    view.setBorderRadius?.(Math.round(radius));
   }
 }
 
@@ -211,7 +215,7 @@ function createShellWindow() {
     height: 900,
     minWidth: 900,
     minHeight: 600,
-    backgroundColor: "#09090b",
+    backgroundColor: CIE_INK,
     title: "AI Window Deck",
     titleBarStyle: isMac ? "hiddenInset" : "default",
     trafficLightPosition: { x: 14, y: 14 },
@@ -220,6 +224,9 @@ function createShellWindow() {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
       sandbox: true,
+      // Page views cover most of the shell, which can otherwise read as occluded and
+      // stall its CSS transitions mid-way.
+      backgroundThrottling: false,
     },
   });
   interceptCommands(shellWindow.webContents);

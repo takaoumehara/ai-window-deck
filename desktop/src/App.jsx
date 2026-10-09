@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Globe, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand } from "lucide-react";
-import { Dialog, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand } from "lucide-react";
+import { Sheet, SHEET_MS } from "@desktop/components/ui/Sheet";
+import { IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
 import { Sidebar } from "@desktop/components/Sidebar";
 import { WindowEditor } from "@desktop/components/WindowEditor";
@@ -9,8 +10,8 @@ import { DEFAULT_WINDOWS, parseExtensionExport, urlList } from "@desktop/lib/dec
 import { computePaneRects, cycleIndex, nextModeForSpotlight } from "@desktop/lib/pane-layout";
 import { LANGUAGES, resolveLanguage, translator } from "@desktop/lib/strings";
 
-// Matches the .spotlight-preview-target transition in the extension's CSS, plus a frame.
-const LAYOUT_ANIMATION_MS = 400;
+// --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
+const LAYOUT_ANIMATION_MS = 420;
 const COMPACT_PANE_PX = 380;
 
 const MODE_OPTIONS = [
@@ -88,7 +89,8 @@ export function App() {
     for (const [id, element] of bodyRefs.current) {
       if (!element) continue;
       const box = element.getBoundingClientRect();
-      list.push({ id, bounds: { x: box.left, y: box.top, width: box.width, height: box.height } });
+      const radius = parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
+      list.push({ id, bounds: { x: box.left, y: box.top, width: box.width, height: box.height, radius } });
     }
     return list;
   }, []);
@@ -107,8 +109,14 @@ export function App() {
   }, [measure]);
 
   const overlayOpen = editor.open || shortcutsOpen;
+  // Pages come back only after the sheet has finished its close animation.
   useEffect(() => {
-    deck.setOverlay(overlayOpen);
+    if (overlayOpen) {
+      deck.setOverlay(true);
+      return undefined;
+    }
+    const timer = window.setTimeout(() => deck.setOverlay(false), SHEET_MS);
+    return () => window.clearTimeout(timer);
   }, [overlayOpen]);
 
   useLayoutEffect(() => {
@@ -225,43 +233,41 @@ export function App() {
     }
   };
 
-  if (!loaded) return <div className="h-full bg-zinc-950" aria-busy="true" />;
+  if (!loaded) return <div className="h-full bg-ink" aria-busy="true" />;
+
+  const shortcutRows = [
+    ["kbSpotlight", [keyLabel("X")]],
+    ["kbHome", [keyLabel("Z")]],
+    ["kbFill", [keyLabel("Q")]],
+    ["kbFocus", [keyLabel("1"), "–", keyLabel("8")]],
+    ["kbCycle", [keyLabel("]"), keyLabel("[")]],
+    ["kbSidebar", [keyLabel("B")]],
+  ];
 
   return (
-    <div className="flex h-full flex-col bg-zinc-950 text-zinc-100 selection:bg-blue-600/30">
-      <header className={`app-drag flex h-12 shrink-0 items-center gap-3 border-b border-zinc-800/80 pr-3 ${isMac ? "pl-20" : "pl-3"}`}>
-        <div className="flex min-w-0 items-center gap-2.5">
-          <div className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-blue-400/30 bg-blue-600 shadow-[0_4px_12px_rgba(37,99,235,0.2)]">
-            <div className="absolute right-1 top-1 h-1.5 w-1.5 rounded-sm bg-zinc-900" />
-          </div>
-          <h1 className="shrink-0 text-sm font-semibold tracking-[-0.01em] text-white">{t("appTitle")}</h1>
-          <span className="hidden truncate text-xs text-zinc-400 lg:inline">{t("appSubtitle")}</span>
+    <div className="flex h-full flex-col bg-background text-foreground">
+      <header className={`app-drag flex h-14 shrink-0 items-center gap-4 pr-3 ${isMac ? "pl-20" : "pl-4"}`}>
+        <div className="flex min-w-0 items-baseline gap-3">
+          <h1 className="shrink-0 text-lg font-light tracking-[-0.03em]">{t("appTitle")}</h1>
+          <span className="hidden truncate text-xs text-ink-mute lg:inline">{t("appSubtitle")}</span>
         </div>
 
         {/* Page views are drawn above the DOM, so messages live in the title bar, not over the deck. */}
         <div aria-live="polite" aria-atomic="true" className="min-w-0">
-          {notice && (
-            <div className="truncate rounded-lg border border-blue-500/50 bg-blue-600/20 px-3 py-1 text-xs font-semibold text-blue-100 animate-in fade-in">
-              {notice}
-            </div>
-          )}
+          {notice && <div className="cie-pop register truncate rounded-pill bg-paper px-3 py-1.5 uppercase text-ink">{notice}</div>}
         </div>
 
         <div className="app-no-drag ml-auto flex items-center gap-2">
-          <button
-            type="button"
+          <IconButton
             onClick={() => setSidebarOpen((open) => !open)}
-            aria-pressed={sidebarOpen}
+            pressed={sidebarOpen}
             aria-label={t("sidebarToggle")}
             title={`${t("sidebarToggle")} (${keyLabel("B")})`}
-            className={`flex h-8 w-8 items-center justify-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-              sidebarOpen ? "border-zinc-700 bg-zinc-800 text-zinc-100" : "border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-100"
-            }`}
           >
-            <PanelLeft className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+            <PanelLeft className="h-4 w-4" aria-hidden="true" />
+          </IconButton>
 
-          <div role="radiogroup" aria-label={t("modeLabel")} className="flex items-center gap-0.5 rounded-lg border border-zinc-800 bg-zinc-900 p-0.5">
+          <div role="radiogroup" aria-label={t("modeLabel")} className="flex items-center gap-1">
             {MODE_OPTIONS.map(({ id, icon: Icon, label }) => (
               <button
                 key={id}
@@ -269,9 +275,7 @@ export function App() {
                 role="radio"
                 aria-checked={mode === id}
                 onClick={() => setMode(id)}
-                className={`flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${
-                  mode === id ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-zinc-100"
-                }`}
+                className={`cie-chip ink-swap ${mode === id ? "bg-paper text-ink hover:bg-paper" : ""}`}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                 {t(label)}
@@ -282,25 +286,24 @@ export function App() {
           <button
             type="button"
             onClick={() => setShortcutsOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+            aria-label={t("shortcuts")}
+            title={t("shortcuts")}
+            className="cie-chip"
           >
             <Keyboard className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="key-cap">{keyLabel("X")}</span>
+            {keyLabel("X")}
           </button>
 
-          <div className="flex h-8 items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5">
-            <Globe className="h-3.5 w-3.5 text-zinc-400" aria-hidden="true" />
-            <select
-              value={lang}
-              onChange={(event) => setLang(event.target.value)}
-              aria-label={t("languageLabel")}
-              className="cursor-pointer rounded bg-transparent text-xs font-medium text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
-            >
-              {LANGUAGES.map(({ code, label }) => (
-                <option key={code} value={code} className="bg-zinc-900 text-zinc-200">{label}</option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={lang}
+            onChange={(event) => setLang(event.target.value)}
+            aria-label={t("languageLabel")}
+            className="cie-chip cursor-pointer appearance-none border-0 text-paper focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+          >
+            {LANGUAGES.map(({ code, label }) => (
+              <option key={code} value={code} className="bg-ink text-paper">{label}</option>
+            ))}
+          </select>
         </div>
       </header>
 
@@ -311,7 +314,6 @@ export function App() {
             windows={windows}
             deckOrder={deckOrder}
             focusedId={effectiveFocusId}
-            keyLabel={keyLabel}
             onAdd={() => setEditor({ open: true, item: null })}
             onEdit={(item) => setEditor({ open: true, item })}
             onDelete={deleteWindow}
@@ -321,12 +323,12 @@ export function App() {
           />
         )}
 
-        <main className="relative min-w-0 flex-1 p-1.5">
+        <main className="relative min-w-0 flex-1 pb-2 pl-1 pr-2">
           <div ref={deckRef} className="relative h-full w-full">
             {deckPanes.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-800 text-center">
-                <p className="text-sm font-semibold text-zinc-200">{t("emptyDeck")}</p>
-                <p className="text-xs text-zinc-400">{t("emptyDeckHint")}</p>
+              <div className="flex h-full flex-col items-center justify-center gap-2 rounded-block border border-dashed border-paper/20 text-center">
+                <p className="text-2xl font-light tracking-[-0.03em]">{t("emptyDeck")}</p>
+                <p className="text-sm text-ink-mute">{t("emptyDeckHint")}</p>
               </div>
             ) : (
               deckPanes.map((item, index) => {
@@ -349,7 +351,6 @@ export function App() {
                     activeTab={activeTabs[item.id] ?? 0}
                     meta={paneMeta[item.id]}
                     error={paneErrors[item.id]}
-                    keyLabel={keyLabel}
                     onHeaderClick={() => spotlightPane(item.id)}
                     onSelectTab={(tabIndex) => {
                       setActiveTabs((tabs) => ({ ...tabs, [item.id]: tabIndex }));
@@ -371,33 +372,22 @@ export function App() {
         t={t}
         open={editor.open}
         item={editor.item}
-        onClose={() => setEditor({ open: false, item: null })}
+        onClose={() => setEditor((current) => ({ ...current, open: false }))}
         onSave={saveWindow}
       />
 
-      <Dialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)}>
-        <DialogHeader>
-          <DialogTitle className="text-base font-bold text-zinc-100">{t("shortcuts")}</DialogTitle>
-        </DialogHeader>
-        <DialogClose onClick={() => setShortcutsOpen(false)} label={t("close")} />
-        <dl className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-2.5 text-sm">
-          {[
-            ["kbSpotlight", [keyLabel("X")]],
-            ["kbHome", [keyLabel("Z")]],
-            ["kbFill", [keyLabel("Q")]],
-            ["kbFocus", [keyLabel("1"), "…", keyLabel("8")]],
-            ["kbCycle", [keyLabel("]"), keyLabel("[")]],
-            ["kbSidebar", [keyLabel("B")]],
-          ].map(([label, keys]) => (
-            <React.Fragment key={label}>
-              <dt className="text-zinc-300">{t(label)}</dt>
-              <dd className="flex items-center justify-end gap-1">
-                {keys.map((key) => (key === "…" ? <span key={key} className="text-zinc-500">–</span> : <span key={key} className="key-cap">{key}</span>))}
+      <Sheet open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} title={t("shortcuts")} closeLabel={t("close")}>
+        <dl className="cie-stagger flex flex-col">
+          {shortcutRows.map(([label, keys]) => (
+            <div key={label} className="cie-rise flex items-center justify-between gap-6 border-t border-ink/10 py-2.5">
+              <dt className="text-sm">{t(label)}</dt>
+              <dd className="flex items-center gap-1">
+                {keys.map((key) => (key === "–" ? <span key={key} className="text-paper-mute">–</span> : <kbd key={key} className="key">{key}</kbd>))}
               </dd>
-            </React.Fragment>
+            </div>
           ))}
         </dl>
-      </Dialog>
+      </Sheet>
     </div>
   );
 }
