@@ -1,0 +1,82 @@
+{
+  "ja": {
+    "bulkIssuesTitle": "{count}件の問題があります。赤い行を直してください。",
+    "bulkLineLabel": "{n}行目",
+    "bulkJumpLabel": "{n}行目へ移動",
+    "bulkIssueNameWithoutBlank": "「{text}」は前のウィンドウのURLとして読まれています。新しいウィンドウ名なら、上に空行を入れてください。",
+    "bulkIssueNotUrl": "「{text}」はURLではありません。名前は1行だけにして、続けてURLを書いてください。",
+    "bulkIssueBadUrl": "「{text}」はURLとして読めません。スペースや入力ミスを確認してください。",
+    "bulkFixBtn": "修正",
+    "bulkFixAllBtn": "直せるものを全部修正"
+  },
+  "en": {
+    "bulkIssuesTitle": "{count} issues found. Fix the lines marked in red.",
+    "bulkLineLabel": "Line {n}",
+    "bulkJumpLabel": "Go to line {n}",
+    "bulkIssueNameWithoutBlank": "\"{text}\" is read as a URL of the previous window. If it's a new window name, add a blank line above it.",
+    "bulkIssueNotUrl": "\"{text}\" is not a URL. Use one line for the name, followed by URLs.",
+    "bulkIssueBadUrl": "\"{text}\" can't be read as a URL. Check for spaces or typos.",
+    "bulkFixBtn": "Fix",
+    "bulkFixAllBtn": "Fix all fixable"
+  },
+  "zh-CN": {
+    "bulkIssuesTitle": "发现 {count} 个问题。请修正标红的行。",
+    "bulkLineLabel": "第 {n} 行",
+    "bulkJumpLabel": "跳到第 {n} 行",
+    "bulkIssueNameWithoutBlank": "“{text}”被识别为上一个窗口的 URL。如果是新窗口名称，请在其上方加一个空行。",
+    "bulkIssueNotUrl": "“{text}”不是 URL。名称只占一行，之后写 URL。",
+    "bulkIssueBadUrl": "无法将“{text}”识别为 URL。请检查空格或拼写。",
+    "bulkFixBtn": "修正",
+    "bulkFixAllBtn": "全部自动修正"
+  },
+  "ko": {
+    "bulkIssuesTitle": "문제가 {count}개 있습니다. 빨간색 줄을 수정하세요.",
+    "bulkLineLabel": "{n}번째 줄",
+    "bulkJumpLabel": "{n}번째 줄로 이동",
+    "bulkIssueNameWithoutBlank": "\"{text}\"이(가) 이전 창의 URL로 읽힙니다. 새 창 이름이라면 위에 빈 줄을 넣으세요.",
+    "bulkIssueNotUrl": "\"{text}\"은(는) URL이 아닙니다. 이름은 한 줄로 쓰고 그 뒤에 URL을 쓰세요.",
+    "bulkIssueBadUrl": "\"{text}\"을(를) URL로 읽을 수 없습니다. 공백이나 오타를 확인하세요.",
+    "bulkFixBtn": "수정",
+    "bulkFixAllBtn": "가능한 항목 모두 수정"
+  },
+  "es": {
+    "bulkIssuesTitle": "Se encontraron {count} problemas. Corrige las líneas marcadas en rojo.",
+    "bulkLineLabel": "Línea {n}",
+    "bulkJumpLabel": "Ir a la línea {n}",
+    "bulkIssueNameWithoutBlank": "\"{text}\" se lee como URL de la ventana anterior. Si es el nombre de una ventana nueva, añade una línea en blanco encima.",
+    "bulkIssueNotUrl": "\"{text}\" no es una URL. Usa una sola línea para el nombre y después las URL.",
+    "bulkIssueBadUrl": "\"{text}\" no se puede leer como URL. Revisa espacios o errores de escritura.",
+    "bulkFixBtn": "Corregir",
+    "bulkFixAllBtn": "Corregir todo lo posible"
+  },
+  "fr": {
+    "bulkIssuesTitle": "{count} problèmes détectés. Corrigez les lignes en rouge.",
+    "bulkLineLabel": "Ligne {n}",
+    "bulkJumpLabel": "Aller à la ligne {n}",
+    "bulkIssueNameWithoutBlank": "« {text} » est lu comme une URL de la fenêtre précédente. S'il s'agit d'un nouveau nom de fenêtre, ajoutez une ligne vide au-dessus.",
+    "bulkIssueNotUrl": "« {text} » n'est pas une URL. Utilisez une seule ligne pour le nom, puis les URL.",
+    "bulkIssueBadUrl": "« {text} » ne peut pas être lu comme une URL. Vérifiez les espaces ou les fautes de frappe.",
+    "bulkFixBtn": "Corriger",
+    "bulkFixAllBtn": "Tout corriger"
+  },
+  "de": {
+    "bulkIssuesTitle": "{count} Probleme gefunden. Korrigiere die rot markierten Zeilen.",
+    "bulkLineLabel": "Zeile {n}",
+    "bulkJumpLabel": "Zu Zeile {n} springen",
+    "bulkIssueNameWithoutBlank": "„{text}“ wird als URL des vorherigen Fensters gelesen. Wenn es ein neuer Fenstername ist, füge darüber eine Leerzeile ein.",
+    "bulkIssueNotUrl": "„{text}“ ist keine URL. Nutze eine Zeile für den Namen und danach die URLs.",
+    "bulkIssueBadUrl": "„{text}“ kann nicht als URL gelesen werden. Prüfe Leerzeichen oder Tippfehler.",
+    "bulkFixBtn": "Korrigieren",
+    "bulkFixAllBtn": "Alles Mögliche korrigieren"
+  },
+  "pt-BR": {
+    "bulkIssuesTitle": "{count} problemas encontrados. Corrija as linhas marcadas em vermelho.",
+    "bulkLineLabel": "Linha {n}",
+    "bulkJumpLabel": "Ir para a linha {n}",
+    "bulkIssueNameWithoutBlank": "\"{text}\" está sendo lido como URL da janela anterior. Se for o nome de uma nova janela, adicione uma linha em branco acima.",
+    "bulkIssueNotUrl": "\"{text}\" não é uma URL. Use uma linha para o nome e depois as URLs.",
+    "bulkIssueBadUrl": "\"{text}\" não pode ser lido como URL. Verifique espaços ou erros de digitação.",
+    "bulkFixBtn": "Corrigir",
+    "bulkFixAllBtn": "Corrigir tudo o que for possível"
+  }
+}
