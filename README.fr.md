@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**Plus de sessions cloud. De la place pour réfléchir.**
+
 Une extension Chrome pour celles et ceux qui travaillent avec plusieurs outils d'IA et références côte à côte. Enregistrez les fenêtres que vous utilisez ensemble, disposez-les sur un canevas, ouvrez-les toutes d'un coup sous forme de fenêtres Chrome en mosaïque et mettez-en une en avant avec un seul raccourci.
 
 Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos autres extensions restent tels quels. AI Window Deck se contente d'organiser des fenêtres Chrome ordinaires.
 
-![Disposer des fenêtres sur un canevas](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="Cinq fenêtres en mosaïque. Alt+X en agrandit une ; un nouvel appui la remet à sa place.">
+  </picture>
+</p>
+
+Site web: <https://ai-window-deck.vercel.app/>
+
+## Comment ça marche
+
+| **① Enregistrer les URL** | **② Disposition** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① Enregistrer les URL" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Disposition" width="400"> |
+| Enregistrez un nom et des URL pour chaque fenêtre. Chaque URL s'ouvre dans un onglet. | Placez les fenêtres sur le canevas et ajustez leurs cases de la grille. |
+| **③ Vue focus** | **④ Lancer** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ Vue focus" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Lancer" width="400"> |
+| Choisissez la taille d'agrandissement et l'origine : sur place ou au centre. | Choisissez vos écrans et ouvrez la disposition enregistrée en fenêtres Chrome. |
 
 ## Fonctionnalités
 
@@ -20,15 +41,14 @@ Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos 
 - **Sauvegarde.** Sauvegardez ou restaurez toutes les fenêtres, dispositions et réglages sous forme de fichier JSON.
 - **8 langues.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) et 简体中文. Le panneau suit la langue du navigateur jusqu'à ce que vous en choisissiez une.
 
-| Spotlight | Bibliothèque de fenêtres | Enregistrer des fenêtres |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Bibliothèque de fenêtres](store-assets/screenshots/03-window-library.png) | ![Enregistrer](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="Agrandissement comparé : sur place à gauche, au centre à droite"></p>
+<p align="center"><em>Sur place / Au centre — choisissez l'origine à l'étape ③.</em></p>
 
 ## Installation
 
 ### Chrome Web Store
 
-Bientôt disponible. La fiche est en cours d'examen.
+Installez-la depuis le [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### À partir d'un ZIP de version
 
@@ -138,6 +158,10 @@ Consultez [docs/RELEASING.md](docs/RELEASING.md) pour plus de détails.
 ## Assistance
 
 Signalez les bugs et suggestions sur [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
+
+Si AI Window Deck vous aide au quotidien, vous pouvez soutenir son développement sur [Ko-fi](https://ko-fi.com/G2G71VP1DF).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## Licence
 

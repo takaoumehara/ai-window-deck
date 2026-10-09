@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**更多云端会话，更多思考空间。**
+
 一款 Chrome 扩展程序，适合需要同时并排使用多个 AI 工具和参考资料的人。保存经常一起使用的窗口，在画布上排好布局，一次性以平铺的 Chrome 窗口全部打开，并用一个快捷键将其中一个窗口放大突出显示。
 
 你的 Chrome 个人资料、登录状态、密码管理器和其他扩展程序都保持原样。AI Window Deck 只负责排列普通的 Chrome 窗口。
 
-![在画布上排列窗口](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="五个平铺的窗口。按 Alt+X 放大其中一个，再按一次即回到原来的位置。">
+  </picture>
+</p>
+
+网站: <https://ai-window-deck.vercel.app/>
+
+## 使用流程
+
+| **① 注册 URL** | **② 布局** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① 注册 URL" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② 布局" width="400"> |
+| 为每个窗口保存名称和 URL，每个 URL 以标签页打开。 | 在画布上放置窗口，并调整其网格区域。 |
+| **③ 聚焦视图** | **④ 启动** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ 聚焦视图" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ 启动" width="400"> |
+| 选择放大尺寸和基准位置：原地放大或居中。 | 选择显示器，按保存的布局打开 Chrome 窗口。 |
 
 ## 功能
 
@@ -20,15 +41,14 @@
 - **备份。** 以 JSON 文件备份或恢复所有窗口、布局和设置。
 - **8 种语言。** English、日本語、Deutsch、Español、Français、한국어、Português (Brasil) 和简体中文。在你手动选择语言之前，面板会跟随浏览器语言。
 
-| Spotlight | 窗口库 | 注册窗口 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![窗口库](store-assets/screenshots/03-window-library.png) | ![注册](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="聚焦放大对比：左为原地放大，右为居中"></p>
+<p align="center"><em>原地放大 / 居中 —— 在第 ③ 步选择基准位置。</em></p>
 
 ## 安装
 
 ### Chrome 应用商店
 
-即将上线，商店页面正在审核中。
+可从 [Chrome 应用商店](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc) 安装。
 
 ### 通过发布版 ZIP 安装
 
@@ -138,6 +158,10 @@ python3 tools/build-i18n.py
 ## 支持
 
 请在 [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues) 上报告问题和提出建议。
+
+如果 AI Window Deck 对你的日常工作有帮助，欢迎在 [Ko-fi](https://ko-fi.com/G2G71VP1DF) 上支持开发。
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## 许可证
 

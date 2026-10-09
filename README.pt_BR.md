@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**Mais sessões na nuvem. Espaço para pensar.**
+
 Uma extensão do Chrome para quem trabalha com várias ferramentas de IA e referências lado a lado. Salve as janelas que você usa juntas, organize-as em um quadro, abra todas de uma vez como janelas do Chrome lado a lado e destaque uma delas com um único atalho.
 
 Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continuam como estão. O AI Window Deck apenas organiza janelas comuns do Chrome.
 
-![Organizar janelas em um quadro](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="Cinco janelas lado a lado. Alt+X amplia uma; pressionar de novo a devolve ao seu lugar.">
+  </picture>
+</p>
+
+Site: <https://ai-window-deck.vercel.app/>
+
+## Como funciona
+
+| **① Registrar URLs** | **② Layout** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① Registrar URLs" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
+| Salve um nome e as URLs de cada janela. Cada URL abre como uma guia. | Posicione as janelas no quadro e ajuste as células da grade. |
+| **③ Visão em foco** | **④ Abrir** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ Visão em foco" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Abrir" width="400"> |
+| Escolha o tamanho da ampliação e a origem: crescer no lugar ou centralizar. | Escolha suas telas e abra o layout salvo como janelas do Chrome. |
 
 ## Recursos
 
@@ -20,15 +41,14 @@ Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continua
 - **Backup.** Faça backup ou restaure todas as janelas, layouts e configurações em um arquivo JSON.
 - **8 idiomas.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) e 简体中文. O painel segue o idioma do navegador até você escolher um.
 
-| Spotlight | Biblioteca de janelas | Registrar janelas |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Biblioteca de janelas](store-assets/screenshots/03-window-library.png) | ![Registrar](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="Ampliação comparada: crescer no lugar à esquerda, centralizar à direita"></p>
+<p align="center"><em>Crescer no lugar / Centralizar — escolha a origem na etapa ③.</em></p>
 
 ## Instalação
 
 ### Chrome Web Store
 
-Em breve. A página da extensão está em análise.
+Instale pela [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### A partir de um ZIP de versão
 
@@ -138,6 +158,10 @@ Consulte [docs/RELEASING.md](docs/RELEASING.md) para mais detalhes.
 ## Suporte
 
 Relate bugs e envie sugestões em [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
+
+Se o AI Window Deck ajuda no seu dia a dia, você pode apoiar o desenvolvimento no [Ko-fi](https://ko-fi.com/G2G71VP1DF).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## Licença
 

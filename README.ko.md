@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**더 많은 클라우드 세션, 생각할 여유.**
+
 여러 AI 도구와 참고 자료를 나란히 띄워 놓고 작업하는 사람을 위한 Chrome 확장 프로그램입니다. 함께 사용하는 창을 저장하고, 캔버스에 배치하고, 타일 형태로 정렬된 Chrome 창으로 한 번에 열 수 있습니다. 단축키 하나로 그중 한 창을 확대(Spotlight)할 수도 있습니다.
 
 Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로그램은 그대로 유지됩니다. AI Window Deck은 일반 Chrome 창을 정렬하기만 합니다.
 
-![캔버스에 창 배치하기](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="타일로 정렬된 창 5개. Alt+X를 누르면 한 창이 커지고, 다시 누르면 원래 타일로 돌아갑니다.">
+  </picture>
+</p>
+
+웹사이트: <https://ai-window-deck.vercel.app/>
+
+## 사용 흐름
+
+| **① URL 등록** | **② 배치** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① URL 등록" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② 배치" width="400"> |
+| 창마다 이름과 URL을 저장합니다. 각 URL은 탭으로 열립니다. | 캔버스에 창을 배치하고 그리드 칸의 크기를 조절합니다. |
+| **③ 포커스 보기** | **④ 실행** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ 포커스 보기" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ 실행" width="400"> |
+| 확대 크기와 기준 위치를 고릅니다. 제자리에서 확대하거나 가운데로 모읍니다. | 디스플레이를 고르고 저장한 배치대로 Chrome 창을 엽니다. |
 
 ## 기능
 
@@ -20,15 +41,14 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 - **백업.** 모든 창, 레이아웃, 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
 - **8개 언어.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil), 简体中文을 지원합니다. 언어를 직접 선택하기 전까지 패널은 브라우저 언어를 따릅니다.
 
-| Spotlight | 창 라이브러리 | 창 등록 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![창 라이브러리](store-assets/screenshots/03-window-library.png) | ![등록](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="포커스 확대 비교: 왼쪽은 제자리에서 확대, 오른쪽은 가운데로"></p>
+<p align="center"><em>제자리에서 확대 / 가운데로 — 기준 위치는 ③ 단계에서 고릅니다.</em></p>
 
 ## 설치
 
 ### Chrome 웹 스토어
 
-곧 제공될 예정입니다. 현재 등록 심사가 진행 중입니다.
+[Chrome 웹 스토어](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc)에서 설치할 수 있습니다.
 
 ### 릴리스 ZIP에서 설치
 
@@ -138,6 +158,10 @@ python3 tools/build-i18n.py
 ## 지원
 
 버그 신고와 제안은 [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues)에 남겨 주세요.
+
+AI Window Deck이 작업에 도움이 된다면 [Ko-fi](https://ko-fi.com/G2G71VP1DF)에서 개발을 응원할 수 있습니다.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## 라이선스
 

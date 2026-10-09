@@ -2,11 +2,32 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**クラウドのセッションを並べて、考える余白を。**
+
 複数の AI ツールや資料を並べて作業する人のための Chrome 拡張機能です。一緒に使うウィンドウを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。さらに、ショートカット 1 つでそのうちの 1 つを拡大（Spotlight）できます。
 
 Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。AI Window Deck は通常の Chrome ウィンドウを並べるだけです。
 
-![キャンバス上でウィンドウを配置する](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-ja-dark.gif">
+    <img src="docs/images/focus-preview-ja-light.gif" width="720" alt="タイル状に並んだ 5 つのウィンドウ。Alt+X で 1 枚が大きくなり、もう一度押すと元のタイルに戻ります。">
+  </picture>
+</p>
+
+Web サイト: <https://ai-window-deck.vercel.app/>
+
+## 使い方の流れ
+
+| **① URL を登録** | **② 配置** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① URL を登録" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② 配置" width="400"> |
+| ウィンドウごとに名前と URL を保存。各 URL はタブとして開きます。 | キャンバスにウィンドウを配置し、グリッドの枠を調整します。 |
+| **③ フォーカス表示** | **④ 起動** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ フォーカス表示" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ 起動" width="400"> |
+| 拡大サイズと基準位置を選択。「今の場所から拡大」または「中央に寄せる」。 | ディスプレイを選び、保存した配置で Chrome ウィンドウを開きます。 |
 
 ## 機能
 
@@ -20,15 +41,14 @@ Chrome のプロファイル、ログイン状態、パスワードマネージ�
 - **バックアップ。** すべてのウィンドウ、レイアウト、設定を JSON ファイルでバックアップ・復元できます。
 - **8 言語対応。** English、日本語、Deutsch、Español、Français、한국어、Português (Brasil)、简体中文に対応しています。言語を選ぶまでは、パネルはブラウザの言語に従います。
 
-| Spotlight | ウィンドウライブラリ | ウィンドウの登録 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![ウィンドウライブラリ](store-assets/screenshots/03-window-library.png) | ![登録](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="フォーカス拡大の比較：左は今の場所から拡大、右は中央に寄せる"></p>
+<p align="center"><em>今の場所から拡大 / 中央に寄せる — ステップ ③ で基準位置を選択。</em></p>
 
 ## インストール
 
 ### Chrome ウェブストア
 
-近日公開予定です。現在、掲載の審査中です。
+[Chrome ウェブストア](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc)からインストールできます。
 
 ### リリース ZIP から
 
@@ -138,6 +158,10 @@ python3 tools/build-i18n.py
 ## サポート
 
 バグの報告やご提案は [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues) までお寄せください。
+
+AI Window Deck が日々の作業に役立ったら、[Ko-fi](https://ko-fi.com/G2G71VP1DF) で開発を応援できます。
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## ライセンス
 
