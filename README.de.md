@@ -26,14 +26,33 @@ Website: <https://ai-window-deck.vercel.app/>
 | **① URLs registrieren** | **② Layout** |
 | --- | --- |
 | <img src="site/assets/img/01-step1-urls.png" alt="① URLs registrieren" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
-| Speichern Sie für jedes Fenster einen Namen und URLs. Jede URL öffnet sich als Tab. | Platzieren Sie Fenster auf der Arbeitsfläche und passen Sie ihre Rasterfelder an. |
+| Speichern Sie für jedes Fenster einen Namen und URLs, oder fügen Sie eine Liste von Websites ein, um mehrere auf einmal anzulegen. Jede URL öffnet sich als Tab. | Platzieren Sie Fenster auf der Arbeitsfläche und passen Sie ihre Rasterfelder an. |
 | **③ Fokusansicht** | **④ Starten** |
 | <img src="site/assets/img/03-step3-focus.png" alt="③ Fokusansicht" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Starten" width="400"> |
 | Wählen Sie Vergrößerung und Ausgangspunkt: an Ort und Stelle wachsen oder zentrieren. | Wählen Sie Ihre Bildschirme und öffnen Sie das gespeicherte Layout als Chrome-Fenster. |
 
+### URLs + Fenster registrieren (neu in 1.11.2)
+
+*URLs + Fenster registrieren* öffnet sich direkt auf der Seite. Fügen Sie Fenster einzeln hinzu oder fügen Sie eine Nachricht mit Ihren Websites ein: Jeder durch eine Leerzeile getrennte Block wird zu einem Fenster. Zeilen, die Aufmerksamkeit brauchen, werden rot markiert, und **Korrigieren** fügt die fehlende Leerzeile ein.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="Die Karte für das gesammelte Einfügen: Eine Chat-Nachricht mit Websites wird kopiert, eingefügt und als drei Fenster gespeichert.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="Gesammelter Import mit zwei rot markierten Zeilen und einer Schaltfläche Korrigieren für jedes Problem.">
+  </picture>
+</p>
+
 ## Funktionen
 
-- **Fensterbibliothek.** Jedes gespeicherte Fenster hat einen Namen und eine oder mehrere URLs, die als Tabs geöffnet werden. Sie können Fenster einzeln hinzufügen, gesammelt als Text einfügen oder eine `.txt`-Datei importieren und exportieren.
+- **URLs + Fenster registrieren.** Jedes gespeicherte Fenster hat einen Namen und eine oder mehrere URLs, die als Tabs geöffnet werden. Fügen Sie Fenster einzeln hinzu oder fügen Sie eine Liste von Websites ein: Jeder durch eine Leerzeile getrennte Block wird zu einem Fenster. Zeilen, die Aufmerksamkeit brauchen, werden rot markiert, mit einem Link zur Zeile und der Schaltfläche **Korrigieren**. Sie können auch eine `.txt`-Datei importieren und exportieren.
+- **Adressen und lokale Dateien.** `github.com` wird als `https://github.com` gespeichert; `localhost` und lokale Adressen erhalten `http://`. Lokale Pfade wie `/Users/me/My Site/index.html` oder `C:\docs\notes.html` öffnen sich als `file://`-Tabs, sobald *Zugriff auf Datei-URLs zulassen* für die Erweiterung aktiviert ist. Mehrere URLs in einer Zeile werden jeweils zu einem Tab.
 - **Layout-Arbeitsfläche.** Ziehen Sie Fenster auf eine 12 × 12 große Arbeitsfläche und ändern Sie ihre Größe an jeder Kante. Zur Auswahl stehen die Layouts Automatisch, Vertikal, Horizontal, Raster, Fokus (ein großes Fenster) und Frei. Die Arbeitsfläche unterstützt Rückgängig und Wiederholen, und Sie können mehrere Layout-Vorlagen (A, B, …) anlegen.
 - **Öffnen und neu anordnen.** Ein Klick öffnet alle Fenster des Layouts und kachelt sie auf dem oder den ausgewählten Bildschirmen, wobei die Tabs jedes Fensters gruppiert werden. *Neu anordnen* bringt bereits geöffnete Fenster wieder an ihren Platz.
 - **Spotlight.** `Alt+X` vergrößert das aktive Fenster: auf die Hälfte, hochkant, drei Viertel, volle Höhe, Vollbild oder eine benutzerdefinierte Größe. Sie legen fest, ob es von seiner aktuellen Position oder von der Bildschirmmitte aus wächst. Drücken Sie erneut `Alt+X` oder `Alt+Z`, um es wieder in seine Kachel zurückzusetzen.
@@ -73,7 +92,7 @@ Laden Sie anschließend den Repository-Ordner (den Ordner, der `manifest.json` e
 
 1. Klicken Sie auf das Symbol in der Symbolleiste. Beim ersten Start markiert eine kurze Anleitung die drei Schritte.
 2. **Wählen Sie einen Bildschirm** unter *Ziel-Bildschirm(e) auswählen*.
-3. **Registrieren Sie Fenster** mit **+** in der Seitenleiste *Fenster*: einen Namen sowie eine oder mehrere URLs.
+3. **Registrieren Sie Fenster** mit **URLs + Fenster registrieren**: Wählen Sie *Einzeln* (ein Name sowie eine oder mehrere URLs) oder *Gesammelt (Text einfügen)*.
 4. **Ziehen Sie Fenster auf die Arbeitsfläche.** Legen Sie die gewünschte Anzahl an Fenstern fest, wählen Sie ein Layout und ändern Sie die Größe der Kacheln an ihren Kanten.
 5. Klicken Sie auf **Öffnen**. Jedes Fenster wird in einem eigenen Chrome-Fenster geöffnet und entsprechend der Arbeitsfläche gekachelt.
 6. Nutzen Sie während der Arbeit die Tastenkombinationen für Spotlight und Navigation.
@@ -81,7 +100,7 @@ Laden Sie anschließend den Repository-Ordner (den Ordner, der `manifest.json` e
 Tipps:
 
 - Doppelklicken Sie in der Seitenleiste auf eine Fensterkarte oder drücken Sie darauf `Enter`, um sie zu bearbeiten. `Delete` entfernt sie.
-- Dialoge werden mit `Escape` geschlossen, und der Tastaturfokus kehrt zu der Schaltfläche zurück, die sie geöffnet hat.
+- `Escape` schließt das Registrierungsfeld (aus einem Formular geht es zuerst zur Auswahl zurück), und der Tastaturfokus kehrt zu der Schaltfläche zurück, die es geöffnet hat.
 - *In großem Fenster öffnen* öffnet dasselbe Panel in einer geräumigeren Größe als das Popup der Symbolleiste.
 
 ### Tastenkombinationen

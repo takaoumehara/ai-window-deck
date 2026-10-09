@@ -26,14 +26,33 @@ Sitio web: <https://ai-window-deck.vercel.app/>
 | **① Registrar URL** | **② Diseño** |
 | --- | --- |
 | <img src="site/assets/img/01-step1-urls.png" alt="① Registrar URL" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Diseño" width="400"> |
-| Guarda un nombre y las URL de cada ventana. Cada URL se abre como pestaña. | Coloca las ventanas en el lienzo y ajusta sus celdas de la cuadrícula. |
+| Guarda un nombre y las URL de cada ventana, o pega una lista de sitios para crear varias a la vez. Cada URL se abre como pestaña. | Coloca las ventanas en el lienzo y ajusta sus celdas de la cuadrícula. |
 | **③ Vista de enfoque** | **④ Abrir** |
 | <img src="site/assets/img/03-step3-focus.png" alt="③ Vista de enfoque" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Abrir" width="400"> |
 | Elige el tamaño de ampliación y el origen: crecer en su sitio o centrar. | Elige tus pantallas y abre el diseño guardado como ventanas de Chrome. |
 
+### Registrar URL + ventana (nuevo en 1.11.2)
+
+*Registrar URL + ventana* se abre dentro de la página. Añade ventanas una a una o pega un mensaje con tus sitios: cada bloque separado por una línea en blanco se convierte en una ventana. Las líneas que necesitan atención se marcan en rojo, y **Corregir** añade la línea en blanco que falta.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="La tarjeta en bloque: se copia un mensaje de chat con sitios, se pega y se guarda como tres ventanas.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="Importación en bloque con dos líneas marcadas en rojo y un botón Corregir para cada problema.">
+  </picture>
+</p>
+
 ## Funciones
 
-- **Biblioteca de ventanas.** Cada ventana guardada tiene un nombre y una o varias URL, que se abren como pestañas. Puedes añadir ventanas de una en una, pegarlas en bloque como texto o importar y exportar un archivo `.txt`.
+- **Registrar URL + ventana.** Cada ventana guardada tiene un nombre y una o varias URL, que se abren como pestañas. Añade ventanas una a una o pega una lista de sitios: cada bloque separado por una línea en blanco se convierte en una ventana. Las líneas que necesitan atención se marcan en rojo, con un enlace a la línea y un botón **Corregir**. También puedes importar y exportar un archivo `.txt`.
+- **Direcciones y archivos locales.** `github.com` se guarda como `https://github.com`; `localhost` y las direcciones locales reciben `http://`. Las rutas locales como `/Users/me/My Site/index.html` o `C:\docs\notes.html` se abren como pestañas `file://` cuando *Permitir el acceso a las URL de archivo* está activado para la extensión. Varias URL en una línea se convierten cada una en una pestaña.
 - **Lienzo de diseño.** Arrastra ventanas a un lienzo de 12 × 12 y cambia su tamaño desde cualquier borde. Los diseños disponibles son Auto, Vertical, Horizontal, Cuadrícula, Enfoque (una ventana grande) y Libre. El lienzo permite deshacer y rehacer, y puedes guardar varios diseños predefinidos (A, B, …).
 - **Abrir y reorganizar.** Con un clic se abren todas las ventanas del diseño y se colocan en mosaico en la(s) pantalla(s) que elegiste, con sus pestañas agrupadas. *Reorganizar cuadrícula* devuelve a su sitio las ventanas que ya abriste.
 - **Spotlight.** `Alt+X` amplía la ventana activa: mitad, alto completo con mitad de ancho, tres cuartos, solo alto completo, pantalla completa o un tamaño personalizado. Tú decides si se amplía desde su posición actual o desde el centro de la pantalla. Pulsa `Alt+X` de nuevo, o `Alt+Z`, para devolverla a su posición en el mosaico.
@@ -73,7 +92,7 @@ Después, carga la carpeta del repositorio (la que contiene `manifest.json`) con
 
 1. Haz clic en el icono de la barra de herramientas. La primera vez, una breve guía señala los tres pasos.
 2. **Elige una pantalla** en *Seleccionar pantalla(s) de destino*.
-3. **Registra ventanas** con **+** en la barra lateral *Ventanas*: un nombre y una o varias URL.
+3. **Registra ventanas** con **Registrar URL + ventana**: elige *Una a una* (un nombre y una o varias URL) o *En bloque (pegar texto)*.
 4. **Arrastra ventanas al lienzo.** Indica cuántas ventanas quieres, elige un diseño y cambia el tamaño de los mosaicos desde sus bordes.
 5. Haz clic en **Abrir**. Cada ventana se abre en su propia ventana de Chrome, en mosaico según el lienzo.
 6. Usa los atajos de Spotlight y de navegación mientras trabajas.
@@ -81,7 +100,7 @@ Después, carga la carpeta del repositorio (la que contiene `manifest.json`) con
 Consejos:
 
 - En la barra lateral, haz doble clic en una tarjeta de ventana o pulsa `Enter` sobre ella para editarla. `Delete` la elimina.
-- Los cuadros de diálogo se cierran con `Escape`, y el foco del teclado vuelve al botón que los abrió.
+- `Escape` cierra el panel de registro (desde un formulario, primero vuelve a la elección), y el foco del teclado vuelve al botón que lo abrió.
 - *Abrir en ventana grande* abre el mismo panel con un tamaño más amplio que la ventana emergente de la barra de herramientas.
 
 ### Atajos de teclado

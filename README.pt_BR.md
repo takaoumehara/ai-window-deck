@@ -26,14 +26,33 @@ Site: <https://ai-window-deck.vercel.app/>
 | **① Registrar URLs** | **② Layout** |
 | --- | --- |
 | <img src="site/assets/img/01-step1-urls.png" alt="① Registrar URLs" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
-| Salve um nome e as URLs de cada janela. Cada URL abre como uma guia. | Posicione as janelas no quadro e ajuste as células da grade. |
+| Salve um nome e as URLs de cada janela, ou cole uma lista de sites para criar várias de uma vez. Cada URL abre como uma guia. | Posicione as janelas no quadro e ajuste as células da grade. |
 | **③ Visão em foco** | **④ Abrir** |
 | <img src="site/assets/img/03-step3-focus.png" alt="③ Visão em foco" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Abrir" width="400"> |
 | Escolha o tamanho da ampliação e a origem: crescer no lugar ou centralizar. | Escolha suas telas e abra o layout salvo como janelas do Chrome. |
 
+### Registrar URLs + janela (novo na 1.11.2)
+
+*Registrar URLs + janela* abre dentro da página. Adicione janelas uma por uma ou cole uma mensagem que liste seus sites: cada bloco separado por uma linha em branco vira uma janela. As linhas que precisam de atenção ficam em vermelho, e **Corrigir** adiciona a linha em branco que falta.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="O cartão em lote: uma mensagem de chat com sites é copiada, colada e salva como três janelas.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="Importação em lote com duas linhas marcadas em vermelho e um botão Corrigir para cada problema.">
+  </picture>
+</p>
+
 ## Recursos
 
-- **Biblioteca de janelas.** Cada janela salva tem um nome e uma ou mais URLs, que abrem como abas. Você pode adicionar janelas uma por vez, colá-las em lote como texto ou importar e exportar um arquivo `.txt`.
+- **Registrar URLs + janela.** Cada janela salva tem um nome e uma ou mais URLs, que abrem como abas. Adicione janelas uma por uma ou cole uma lista de sites: cada bloco separado por uma linha em branco vira uma janela. As linhas que precisam de atenção ficam em vermelho, com um link para a linha e um botão **Corrigir**. Você também pode importar e exportar um arquivo `.txt`.
+- **Endereços e arquivos locais.** `github.com` é salvo como `https://github.com`; `localhost` e endereços locais recebem `http://`. Caminhos locais como `/Users/me/My Site/index.html` ou `C:\docs\notes.html` abrem como abas `file://` quando *Permitir acesso aos URLs de arquivo* está ativado para a extensão. Várias URLs em uma linha viram uma aba cada.
 - **Quadro de layout.** Arraste janelas para um quadro de 12 × 12 e redimensione-as por qualquer borda. Os layouts disponíveis são Auto, Vertical, Horizontal, Grade, Foco (uma janela grande) e Livre. O quadro tem desfazer e refazer, e você pode manter vários layouts predefinidos (A, B, …).
 - **Abrir e reorganizar.** Um clique abre todas as janelas do layout e as distribui lado a lado na(s) tela(s) escolhida(s), com as abas agrupadas. *Reorganizar grade* coloca de volta no lugar as janelas que você já abriu.
 - **Spotlight.** `Alt+X` amplia a janela ativa: metade, altura total com metade da largura, três quartos, só altura total, tela cheia ou um tamanho personalizado. Você escolhe se ela cresce a partir de onde está ou a partir do centro da tela. Pressione `Alt+X` de novo, ou `Alt+Z`, para devolvê-la à sua posição na grade.
@@ -73,7 +92,7 @@ Depois, carregue a pasta do repositório (a que contém `manifest.json`) com **C
 
 1. Clique no ícone na barra de ferramentas. Na primeira execução, um guia rápido destaca as três etapas.
 2. **Escolha uma tela** em *Selecionar tela(s) de destino*.
-3. **Registre janelas** com **+** na barra lateral *Janelas*: um nome e uma ou mais URLs.
+3. **Registre janelas** com **Registrar URLs + janela**: escolha *Uma por uma* (um nome e uma ou mais URLs) ou *Em lote (colar texto)*.
 4. **Arraste janelas para o quadro.** Defina quantas janelas você quer, escolha um layout e redimensione os espaços pelas bordas.
 5. Clique em **Abrir**. Cada janela abre em sua própria janela do Chrome, distribuída conforme o quadro.
 6. Use os atalhos do Spotlight e de navegação enquanto trabalha.
@@ -81,7 +100,7 @@ Depois, carregue a pasta do repositório (a que contém `manifest.json`) com **C
 Dicas:
 
 - Na barra lateral, clique duas vezes em um cartão de janela ou pressione `Enter` sobre ele para editá-lo. `Delete` o remove.
-- As caixas de diálogo fecham com `Escape`, e o foco do teclado volta ao botão que as abriu.
+- `Escape` fecha o painel de registro (em um formulário, primeiro volta à escolha), e o foco do teclado volta ao botão que o abriu.
 - *Abrir em janela grande* abre o mesmo painel em um tamanho mais espaçoso que o pop-up da barra de ferramentas.
 
 ### Atalhos de teclado

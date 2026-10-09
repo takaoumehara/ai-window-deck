@@ -26,14 +26,33 @@ Site web: <https://ai-window-deck.vercel.app/>
 | **① Enregistrer les URL** | **② Disposition** |
 | --- | --- |
 | <img src="site/assets/img/01-step1-urls.png" alt="① Enregistrer les URL" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Disposition" width="400"> |
-| Enregistrez un nom et des URL pour chaque fenêtre. Chaque URL s'ouvre dans un onglet. | Placez les fenêtres sur le canevas et ajustez leurs cases de la grille. |
+| Enregistrez un nom et des URL pour chaque fenêtre, ou collez une liste de sites pour en créer plusieurs à la fois. Chaque URL s'ouvre dans un onglet. | Placez les fenêtres sur le canevas et ajustez leurs cases de la grille. |
 | **③ Vue focus** | **④ Lancer** |
 | <img src="site/assets/img/03-step3-focus.png" alt="③ Vue focus" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Lancer" width="400"> |
 | Choisissez la taille d'agrandissement et l'origine : sur place ou au centre. | Choisissez vos écrans et ouvrez la disposition enregistrée en fenêtres Chrome. |
 
+### Enregistrer URL + fenêtre (nouveau dans 1.11.2)
+
+*Enregistrer URL + fenêtre* s'ouvre directement dans la page. Ajoutez les fenêtres une par une, ou collez un message qui liste vos sites : chaque bloc séparé par une ligne vide devient une fenêtre. Les lignes à revoir sont marquées en rouge, et **Corriger** ajoute la ligne vide manquante.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="La carte en bloc : un message de chat qui liste des sites est copié, collé et enregistré en trois fenêtres.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="Import en bloc avec deux lignes marquées en rouge et un bouton Corriger pour chaque problème.">
+  </picture>
+</p>
+
 ## Fonctionnalités
 
-- **Bibliothèque de fenêtres.** Chaque fenêtre enregistrée possède un nom et une ou plusieurs URL, qui s'ouvrent sous forme d'onglets. Vous pouvez ajouter les fenêtres une par une, les coller en bloc sous forme de texte, ou importer et exporter un fichier `.txt`.
+- **Enregistrer URL + fenêtre.** Chaque fenêtre enregistrée possède un nom et une ou plusieurs URL, qui s'ouvrent sous forme d'onglets. Ajoutez les fenêtres une par une, ou collez une liste de sites : chaque bloc séparé par une ligne vide devient une fenêtre. Les lignes à revoir sont marquées en rouge, avec un lien vers la ligne et un bouton **Corriger**. Vous pouvez aussi importer et exporter un fichier `.txt`.
+- **Adresses et fichiers locaux.** `github.com` est enregistré comme `https://github.com` ; `localhost` et les adresses locales reçoivent `http://`. Les chemins locaux comme `/Users/me/My Site/index.html` ou `C:\docs\notes.html` s'ouvrent en onglets `file://` dès que *Autoriser l'accès aux URL de fichier* est activé pour l'extension. Plusieurs URL sur une ligne deviennent chacune un onglet.
 - **Canevas de disposition.** Faites glisser des fenêtres sur un canevas de 12 × 12 et redimensionnez-les depuis n'importe quel bord. Les dispositions disponibles sont Auto, Vertical, Horizontal, Grille, Focus (une grande fenêtre) et Libre. Le canevas permet d'annuler et de rétablir, et vous pouvez conserver plusieurs préréglages de disposition (A, B, …).
 - **Ouverture et réorganisation.** Un clic ouvre toutes les fenêtres de la disposition et les place en mosaïque sur le ou les écrans choisis, avec leurs onglets regroupés. *Réorganiser* remet à leur place les fenêtres déjà ouvertes.
 - **Spotlight.** `Alt+X` agrandit la fenêtre active : moitié, en hauteur, trois quarts, pleine hauteur, plein écran ou taille personnalisée. Vous choisissez si elle s'agrandit depuis sa position actuelle ou depuis le centre de l'écran. Appuyez de nouveau sur `Alt+X`, ou sur `Alt+Z`, pour la remettre dans sa vignette.
@@ -73,7 +92,7 @@ Chargez ensuite le dossier du dépôt (celui qui contient `manifest.json`) avec 
 
 1. Cliquez sur l'icône de la barre d'outils. Au premier lancement, un court guide indique les trois étapes.
 2. **Choisissez un écran** sous *Choisir le ou les écrans cibles*.
-3. **Enregistrez des fenêtres** avec **+** dans la barre latérale *Fenêtres* : un nom, ainsi qu'une ou plusieurs URL.
+3. **Enregistrez des fenêtres** avec **Enregistrer URL + fenêtre** : choisissez *Une par une* (un nom, ainsi qu'une ou plusieurs URL) ou *En bloc (coller du texte)*.
 4. **Faites glisser les fenêtres sur le canevas.** Indiquez le nombre de fenêtres souhaité, choisissez une disposition et redimensionnez les vignettes depuis leurs bords.
 5. Cliquez sur **Ouvrir**. Chaque fenêtre s'ouvre dans sa propre fenêtre Chrome, disposée en mosaïque conformément au canevas.
 6. Utilisez les raccourcis Spotlight et de navigation pendant votre travail.
@@ -81,7 +100,7 @@ Chargez ensuite le dossier du dépôt (celui qui contient `manifest.json`) avec 
 Astuces :
 
 - Dans la barre latérale, double-cliquez sur une fiche de fenêtre ou appuyez sur `Enter` pour la modifier. `Delete` la supprime.
-- Les boîtes de dialogue se ferment avec `Escape`, et le focus clavier revient au bouton qui les a ouvertes.
+- `Escape` ferme le panneau d'enregistrement (depuis un formulaire, il revient d'abord au choix), et le focus clavier revient au bouton qui l'a ouvert.
 - *Ouvrir en grande fenêtre* ouvre le même panneau dans un format plus spacieux que la fenêtre contextuelle de la barre d'outils.
 
 ### Raccourcis clavier
