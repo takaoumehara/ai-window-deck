@@ -6,6 +6,10 @@
 // saved, so a file import still blocks on those and nothing else. `issues` lists every line
 // the dialog highlights, with a 1-based line number. `items` is a best-effort parse.
 const bulkEdScheme = /^(?:https?:\/\/|file:\/\/|chrome:\/\/|chrome-extension:\/\/|about:)/i;
+// A local path may contain spaces, so a line holding one is never split into pieces.
+const bulkEdPath = /^(?:\/|~|[a-z]:[\\/])/i;
+// "Memo:" or "Research: AI tools" is a name, not a URL with an unknown scheme.
+const bulkEdLabel = /^[^\s:/?#[\\]+:(?:\s|$)/;
 const bulkEdMsg = { nameWithoutBlank: "bulkIssueNameWithoutBlank", notUrl: "bulkIssueNotUrl", badUrl: "bulkIssueBadUrl" };
 function Rd(s, l) {
   const items = [], errors = [], issues = [];
@@ -18,13 +22,18 @@ function Rd(s, l) {
   String(s).split("\n").forEach((raw, index) => {
     const text = raw.trim(), line = index + 1;
     if (!text) return flush();
-    if (pm(text)) {
+    if (pm(text) && !bulkEdLabel.test(text)) {
       const one = Wo(text);
       if (one.ok) return void urls.push(one.url);
-      // Several URLs may share a line, but only when each one carries its scheme: a
+      // Several URLs may share a line when they all carry a scheme or none does. A
       // scheme-less piece next to a URL is more likely a URL with a stray space in it.
       const parts = text.split(/\s+/);
-      if (parts.length > 1 && parts.every((p) => bulkEdScheme.test(p))) {
+      const withScheme = parts.filter((p) => bulkEdScheme.test(p)).length;
+      if (
+        parts.length > 1 &&
+        !parts.some((p) => bulkEdPath.test(p)) &&
+        (withScheme === parts.length || withScheme === 0)
+      ) {
         const many = parts.map((p) => Wo(p));
         if (many.every((m) => m.ok)) return void urls.push(...many.map((m) => m.url));
       }

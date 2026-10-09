@@ -77,10 +77,57 @@ test("a broken URL blocks saving and is reported on its line", () => {
   assert.equal(bulkEdFixAll(text), text);
 });
 
-test("several URLs share a line only when each one has its scheme", () => {
+test("addresses without a scheme are completed silently", () => {
+  const { items, issues, errors } = parse(
+    "Web\ngoogle.com\nwww.example.com/docs?q=1\ngithub.com/takaoumehara/resona\nlocalhost:3000\n192.168.0.10:8080/admin\nmyapp.test",
+  );
+  assert.deepEqual(issues, []);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(items[0].urls.split("\n"), [
+    "https://google.com",
+    "https://www.example.com/docs?q=1",
+    "https://github.com/takaoumehara/resona",
+    "http://localhost:3000",
+    "http://192.168.0.10:8080/admin",
+    "http://myapp.test",
+  ]);
+});
+
+test("local files become file:// URLs and a path with spaces stays one location", () => {
+  const { items, issues } = parse("Files\n/Users/me/My Site/index.html\nC:\\Users\\me\\report.pdf\nfile:///tmp/a.html");
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items[0].urls.split("\n"), [
+    "file:///Users/me/My%20Site/index.html",
+    "file:///C:/Users/me/report.pdf",
+    "file:///tmp/a.html",
+  ]);
+});
+
+test("a ~ path is reported with the tilde reason", () => {
+  assert.deepEqual(parse("Files\n~/notes.html").issues, [{ line: 2, kind: "badUrl", text: "~/notes.html", reason: "tilde" }]);
+});
+
+test("several URLs share a line when all or none of them carry a scheme", () => {
   assert.equal(parse("A\nhttps://a.example http://b.example/x").items[0].urls, "https://a.example\nhttp://b.example/x");
+  assert.equal(parse("A\ngoogle.com github.com/takaoumehara").items[0].urls, "https://google.com\nhttps://github.com/takaoumehara");
   assert.deepEqual(parse("A\nhttps://a.example b.example").issues.map((i) => i.kind), ["badUrl"]);
-  assert.deepEqual(parse("A\ngoogle.com bing.com").issues.map((i) => i.kind), ["badUrl"]);
+  assert.deepEqual(parse("A\nhttps://exa mple.com").issues.map((i) => i.kind), ["badUrl"]);
+  assert.deepEqual(parse("A\nexa mple.com").issues.map((i) => i.kind), ["badUrl"]);
+  assert.deepEqual(parse("A\ngoogle.com C:\\a.pdf").issues.map((i) => i.kind), ["badUrl"]);
+});
+
+test("a name ending with a colon is still a name", () => {
+  const { items, issues } = parse("Memo:\nhttps://a.example\n\nResearch: AI tools\ngoogle.com");
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items.map((i) => i.name), ["Memo:", "Research: AI tools"]);
+  assert.deepEqual(parse("A\nmailto:me@example.com").issues.map((i) => i.kind), ["badUrl"]);
+});
+
+test("a block that starts with a URL or path gets the default name", () => {
+  const { items, issues } = parse("google.com\n/Users/me/a.html\n\nWork\nhttps://b.example");
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items.map((i) => i.name), ["Window 1", "Work"]);
+  assert.equal(items[0].urls, "https://google.com\nfile:///Users/me/a.html");
 });
 
 test("a second text line before any URL is reported and the first name is kept", () => {
