@@ -550,3 +550,13 @@ footer a:hover { color: var(--text); text-decoration: underline; }
  .hero { padding-top: 24px; }
  .flow-step p { min-height: 0; }
 }
+
+/* Register screenshots: one image per theme. */
+.shot .on-dark { display: none; }
+[data-theme="dark"] .shot .on-light { display: none; }
+[data-theme="dark"] .shot .on-dark { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .shot .on-light { display: none; }
+  :root:not([data-theme="light"]) .shot .on-dark { display: block; }
+}
+#register .cols { margin-top: clamp(32px, 4vw, 48px); }
