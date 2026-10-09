@@ -36,11 +36,46 @@ test("fixing inserts the blank line and leaves no issues", () => {
   assert.deepEqual(parseBulkText(fixed).issues, []);
 });
 
-test("a bare domain under a name is missing its scheme and can be fixed", () => {
-  const text = "Google\ngoogle.com\nhttps://mail.google.com";
-  assert.deepEqual(parseBulkText(text).issues, [{ line: 2, kind: ISSUE.missingScheme, text: "google.com" }]);
-  assert.equal(parseBulkText(text).items[0].urls, "https://google.com\nhttps://mail.google.com");
-  assert.equal(fixAll(text), "Google\nhttps://google.com\nhttps://mail.google.com");
+test("addresses without a scheme are accepted and completed", () => {
+  const text = "Dev\ngoogle.com\nwww.example.com/docs?q=1\nlocalhost:3000\n192.168.0.10:8080/admin\nmyapp.test\nhttps://mail.google.com";
+  const { items, issues } = parseBulkText(text);
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items[0].urls.split("\n"), [
+    "https://google.com",
+    "https://www.example.com/docs?q=1",
+    "http://localhost:3000",
+    "http://192.168.0.10:8080/admin",
+    "http://myapp.test",
+    "https://mail.google.com",
+  ]);
+});
+
+test("local files are accepted, including paths with spaces and Windows paths", () => {
+  const text = "Local\n/Users/me/My Site/index.html\nC:\\Users\\me\\report.pdf\nfile:///tmp/a.html\nchrome://extensions";
+  const { items, issues } = parseBulkText(text);
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items[0].urls.split("\n"), [
+    "file:///Users/me/My%20Site/index.html",
+    "file:///C:/Users/me/report.pdf",
+    "file:///tmp/a.html",
+    "chrome://extensions",
+  ]);
+});
+
+test("a block may start with a path or URL and get a default name", () => {
+  const { items, issues } = parseBulkText("/tmp/a.html\n\nhttps://a.example");
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items, [{ name: "", urls: "file:///tmp/a.html" }, { name: "", urls: "https://a.example" }]);
+});
+
+test("a home-relative path is reported because ~ cannot be expanded", () => {
+  assert.deepEqual(parseBulkText("Notes\n~/notes.html").issues, [{ line: 2, kind: ISSUE.tilde, text: "~/notes.html" }]);
+});
+
+test("a name with a colon is still a name", () => {
+  const { items, issues } = parseBulkText("Memo:\nexample.com");
+  assert.deepEqual(issues, []);
+  assert.deepEqual(items, [{ name: "Memo:", urls: "https://example.com" }]);
 });
 
 test("a domain-like first line is the window name", () => {
@@ -61,10 +96,10 @@ test("a second text line before any URL and a broken URL have no automatic fix",
 });
 
 test("fix all works bottom-up so later line numbers stay right", () => {
-  const text = "A\nhttps://a.example\nB\nhttps://b.example\nC\nc.example";
+  const text = "A\nhttps://a.example\nB\nhttps://b.example\nC\nc.example\nD\nd.example";
   const fixed = fixAll(text);
   assert.deepEqual(parseBulkText(fixed).issues, []);
-  assert.deepEqual(parseBulkText(fixed).items.map((item) => item.name), ["A", "B", "C"]);
+  assert.deepEqual(parseBulkText(fixed).items.map((item) => item.name), ["A", "B", "C", "D"]);
 });
 
 test("blank and CRLF input parse cleanly", () => {
