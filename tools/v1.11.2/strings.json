@@ -16,7 +16,9 @@
     "regAnimKeyPaste": "貼り付け → 1行に1つのURL",
     "regAnimKeySave": "一括保存 → まとまりごとにウィンドウ",
     "regAnimLabel": "アニメーション：サイト一覧のメッセージをコピーして貼り付けると、ウィンドウがまとめて作成されます。",
-    "regAnimPauseLabel": "アニメーションを一時停止"
+    "regAnimPauseLabel": "アニメーションを一時停止",
+    "moreSupportText": "AI Window Deck は無料のオープンソースです。",
+    "moreSupportLink": "Ko-fi で開発を応援する"
   },
   "en": {
     "regTitleAdd": "Register URLs + Window",
@@ -35,7 +37,9 @@
     "regAnimKeyPaste": "Paste → one URL per line",
     "regAnimKeySave": "Bulk Save → a window per block",
     "regAnimLabel": "Animation: copy a message that lists sites, paste it, and the windows are created at once.",
-    "regAnimPauseLabel": "Pause the animation"
+    "regAnimPauseLabel": "Pause the animation",
+    "moreSupportText": "AI Window Deck is free and open source.",
+    "moreSupportLink": "Support development on Ko-fi"
   },
   "zh-CN": {
     "regTitleAdd": "注册 URL + 窗口",
@@ -54,7 +58,9 @@
     "regAnimKeyPaste": "粘贴 → 每行一个 URL",
     "regAnimKeySave": "批量保存 → 每组一个窗口",
     "regAnimLabel": "动画：复制列有网站的消息并粘贴，窗口会一次性创建。",
-    "regAnimPauseLabel": "暂停动画"
+    "regAnimPauseLabel": "暂停动画",
+    "moreSupportText": "AI Window Deck 免费且开源。",
+    "moreSupportLink": "在 Ko-fi 上支持开发"
   },
   "ko": {
     "regTitleAdd": "URL + 창 등록",
@@ -73,7 +79,9 @@
     "regAnimKeyPaste": "붙여넣기 → 한 줄에 URL 하나",
     "regAnimKeySave": "일괄 저장 → 묶음마다 창 하나",
     "regAnimLabel": "애니메이션: 사이트 목록 메시지를 복사해 붙여넣으면 창이 한 번에 만들어집니다.",
-    "regAnimPauseLabel": "애니메이션 일시 정지"
+    "regAnimPauseLabel": "애니메이션 일시 정지",
+    "moreSupportText": "AI Window Deck은 무료 오픈 소스입니다.",
+    "moreSupportLink": "Ko-fi에서 개발 후원하기"
   },
   "es": {
     "regTitleAdd": "Registrar URL + ventana",
@@ -92,7 +100,9 @@
     "regAnimKeyPaste": "Pegar → una URL por línea",
     "regAnimKeySave": "Guardar todo → una ventana por bloque",
     "regAnimLabel": "Animación: copia un mensaje que lista sitios, pégalo y las ventanas se crean a la vez.",
-    "regAnimPauseLabel": "Pausar la animación"
+    "regAnimPauseLabel": "Pausar la animación",
+    "moreSupportText": "AI Window Deck es gratuito y de código abierto.",
+    "moreSupportLink": "Apoya el desarrollo en Ko-fi"
   },
   "fr": {
     "regTitleAdd": "Enregistrer URL + fenêtre",
@@ -111,7 +121,9 @@
     "regAnimKeyPaste": "Coller → une URL par ligne",
     "regAnimKeySave": "Tout enregistrer → une fenêtre par bloc",
     "regAnimLabel": "Animation : copiez un message qui liste des sites, collez-le, et les fenêtres sont créées d'un coup.",
-    "regAnimPauseLabel": "Mettre l'animation en pause"
+    "regAnimPauseLabel": "Mettre l'animation en pause",
+    "moreSupportText": "AI Window Deck est gratuit et open source.",
+    "moreSupportLink": "Soutenir le développement sur Ko-fi"
   },
   "de": {
     "regTitleAdd": "URLs + Fenster registrieren",
@@ -130,7 +142,9 @@
     "regAnimKeyPaste": "Einfügen → eine URL pro Zeile",
     "regAnimKeySave": "Alle speichern → ein Fenster pro Block",
     "regAnimLabel": "Animation: Eine Nachricht mit Websites kopieren und einfügen, dann werden die Fenster auf einmal angelegt.",
-    "regAnimPauseLabel": "Animation anhalten"
+    "regAnimPauseLabel": "Animation anhalten",
+    "moreSupportText": "AI Window Deck ist kostenlos und Open Source.",
+    "moreSupportLink": "Entwicklung auf Ko-fi unterstützen"
   },
   "pt-BR": {
     "regTitleAdd": "Registrar URLs + janela",
@@ -149,6 +163,8 @@
     "regAnimKeyPaste": "Colar → uma URL por linha",
     "regAnimKeySave": "Salvar tudo → uma janela por bloco",
     "regAnimLabel": "Animação: copie uma mensagem que lista sites, cole e as janelas são criadas de uma vez.",
-    "regAnimPauseLabel": "Pausar a animação"
+    "regAnimPauseLabel": "Pausar a animação",
+    "moreSupportText": "O AI Window Deck é gratuito e de código aberto.",
+    "moreSupportLink": "Apoie o desenvolvimento no Ko-fi"
   }
 }

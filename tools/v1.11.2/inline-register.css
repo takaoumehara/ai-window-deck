@@ -63,3 +63,7 @@
 @container (min-width:640px){.register-static{grid-template-columns:minmax(0,.8fr) auto minmax(0,1.2fr)}}
 @keyframes register-caret{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.register-msg,.register-box,.register-lines,.register-tile,.register-stage-arrow{transition:none}.register-box-caret{animation:none}}
+.more-support{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;font-size:13px;padding:4px 2px 8px}
+.more-support a{color:var(--foreground);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.more-support a:hover{text-decoration-thickness:2px}
+.more-support a:focus-visible{outline:2px solid var(--ring,currentColor);outline-offset:3px;border-radius:2px}

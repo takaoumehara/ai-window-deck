@@ -34,6 +34,7 @@ test("every locale gets the same strings", () => {
     for (const k of keys) assert.ok(strings[l][k].trim(), `${l}.${k}`);
   }
   assert.equal(strings.en.regTitleAdd, "Register URLs + Window");
+  for (const l of locales) assert.match(strings[l].moreSupportLink, /Ko-fi/, l);
 });
 
 // The store package is not in the repo; point AWD_V1110_DIR at the unpacked 1.11.0 zip.
@@ -48,6 +49,7 @@ test("the patch builds a valid 1.11.2 bundle", { skip: !pkg || !existsSync(pkg) 
     new vm.Script(js.replace(/^import[^;]*;/gm, ""), { filename: "app.js" });
     assert.equal(js.split('regTitleAdd:"Register URLs + Window"').length - 1, 1);
     assert.ok(js.includes("open:he&&w,"));
+    assert.equal(js.split('href:"https://ko-fi.com/G2G71VP1DF"').length - 1, 1);
   } finally {
     rmSync(out, { recursive: true, force: true });
   }

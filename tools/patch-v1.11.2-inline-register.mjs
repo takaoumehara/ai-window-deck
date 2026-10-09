@@ -3,7 +3,7 @@
 // bulk import patch, then "Register URLs + Window" opens inside the page instead of a modal
 // dialog. The page view starts with a choice between one-by-one and bulk (with an animation
 // of pasting a list of sites), and the placement choice after a bulk save is inline too.
-// The small dock window (?mode=dock) keeps the dialogs.
+// The small dock window (?mode=dock) keeps the dialogs. The More view gets a Ko-fi link.
 //
 //   node tools/patch-v1.11.2-inline-register.mjs <unpacked-1.11.0-dir> <output-dir>
 //
@@ -127,7 +127,17 @@ js = replaceOnce(
   "placement dialog only in dock mode",
 );
 
-// 4. Strings: existing keys (the renamed button) are replaced, new ones added after it.
+// 4. More view ends with a Ko-fi link.
+const KOFI_URL = "https://ko-fi.com/G2G71VP1DF";
+js = replaceOnce(
+  js,
+  "a.jsx(Hg,{lang:s,onFactoryReset:f})]})}",
+  'a.jsx(Hg,{lang:s,onFactoryReset:f}),a.jsxs("p",{className:"more-support quiet","data-testid":"more-support",children:[a.jsx("span",{children:m("moreSupportText")}),' +
+    `a.jsx("a",{href:${JSON.stringify(KOFI_URL)},target:"_blank",rel:"noopener noreferrer",children:m("moreSupportLink")})]})]})}`,
+  "more view support link",
+);
+
+// 5. Strings: existing keys (the renamed button) are replaced, new ones added after it.
 const strings = JSON.parse(read("strings.json"));
 const LOCALE_KEYS = { ja: "ja", en: "en", "zh-CN": '"zh-CN"', ko: "ko", es: "es", fr: "fr", de: "de", "pt-BR": '"pt-BR"' };
 const VALUE = String.raw`("(?:[^"\\]|\\.)*"|` + "`[^`]*`|" + String.raw`'(?:[^'\\]|\\.)*')`;
