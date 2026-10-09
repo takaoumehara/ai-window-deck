@@ -28,7 +28,7 @@ Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweit
 
 ### Chrome Web Store
 
-Demnächst verfügbar. Der Eintrag wird derzeit geprüft.
+Installieren Sie die Erweiterung aus dem [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### Aus einem Release-ZIP
 

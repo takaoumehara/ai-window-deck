@@ -28,7 +28,7 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 
 ### Chrome 웹 스토어
 
-곧 제공될 예정입니다. 현재 등록 심사가 진행 중입니다.
+[Chrome 웹 스토어](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc)에서 설치할 수 있습니다.
 
 ### 릴리스 ZIP에서 설치
 

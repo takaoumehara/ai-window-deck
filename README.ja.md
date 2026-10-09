@@ -28,7 +28,7 @@ Chrome のプロファイル、ログイン状態、パスワードマネージ�
 
 ### Chrome ウェブストア
 
-近日公開予定です。現在、掲載の審査中です。
+[Chrome ウェブストア](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc) からインストールできます。
 
 ### リリース ZIP から
 

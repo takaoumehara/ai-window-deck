@@ -28,7 +28,7 @@ Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continua
 
 ### Chrome Web Store
 
-Em breve. A página da extensão está em análise.
+Instale pela [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### A partir de um ZIP de versão
 

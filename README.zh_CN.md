@@ -28,7 +28,7 @@
 
 ### Chrome 应用商店
 
-即将上线，商店页面正在审核中。
+可从 [Chrome 应用商店](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc) 安装。
 
 ### 通过发布版 ZIP 安装
 

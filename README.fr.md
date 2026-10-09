@@ -28,7 +28,7 @@ Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos 
 
 ### Chrome Web Store
 
-Bientôt disponible. La fiche est en cours d'examen.
+Installez l'extension depuis le [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### À partir d'un ZIP de version
 

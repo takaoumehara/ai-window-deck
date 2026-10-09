@@ -28,7 +28,7 @@ Tu perfil de Chrome, tus sesiones iniciadas, tu gestor de contraseñas y tus dem
 
 ### Chrome Web Store
 
-Próximamente. La ficha está en revisión.
+Instálala desde la [Chrome Web Store](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc).
 
 ### Desde un ZIP de una versión publicada
 
