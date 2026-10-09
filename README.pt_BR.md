@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+Gerenciador de janelas para o Claude Code na nuvem e o Codex: trabalhe em vários projetos ao mesmo tempo sem se confundir.
+
 Uma extensão do Chrome para quem trabalha com várias ferramentas de IA e referências lado a lado. Salve as janelas que você usa juntas, organize-as em um quadro, abra todas de uma vez como janelas do Chrome lado a lado e destaque uma delas com um único atalho.
 
 Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continuam como estão. O AI Window Deck apenas organiza janelas comuns do Chrome.
