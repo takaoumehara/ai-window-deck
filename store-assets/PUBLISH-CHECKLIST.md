@@ -44,7 +44,7 @@ Both capture scripts take `PLAYWRIGHT` (path to `playwright-core`) and `CHROME` 
 
 ## In the publisher's Chrome Web Store account
 
-- [ ] Upload `ai-window-deck-v1.11.2.zip` to the existing item and confirm the version reads 1.11.2.
+- [ ] Upload `ai-window-deck-v1.11.2.zip` to the existing item and confirm the version reads 1.11.2. With `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` and `CWS_EXTENSION_ID` set, `node tools/cws-publish.mjs --check` confirms access, `node tools/cws-publish.mjs <zip>` uploads a draft, and adding `--publish` submits it for review. The API cannot change the listing text or graphics, so do the next step in the dashboard before submitting.
 - [ ] Paste the detailed description from `listing/<locale>/description.txt` and upload the screenshots and promo tiles.
 - [ ] Privacy practices: unchanged. Only **Web history** is checked, plus all three certifications, and remote code is **No**.
 - [ ] Submit for review.
