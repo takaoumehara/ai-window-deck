@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 一款 Chrome 扩展程序，适合需要同时并排使用多个 AI 工具和参考资料的人。保存经常一起使用的窗口，在画布上排好布局，一次性以平铺的 Chrome 窗口全部打开，并用一个快捷键将其中一个窗口放大突出显示。
 
 你的 Chrome 个人资料、登录状态、密码管理器和其他扩展程序都保持原样。AI Window Deck 只负责排列普通的 Chrome 窗口。

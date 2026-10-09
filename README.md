@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
 
 A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.

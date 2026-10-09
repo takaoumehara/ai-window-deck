@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 여러 AI 도구와 참고 자료를 나란히 띄워 놓고 작업하는 사람을 위한 Chrome 확장 프로그램입니다. 함께 사용하는 창을 저장하고, 캔버스에 배치하고, 타일 형태로 정렬된 Chrome 창으로 한 번에 열 수 있습니다. 단축키 하나로 그중 한 창을 확대(Spotlight)할 수도 있습니다.
 
 Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로그램은 그대로 유지됩니다. AI Window Deck은 일반 Chrome 창을 정렬하기만 합니다.

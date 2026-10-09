@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 Eine Chrome-Erweiterung für alle, die mit mehreren KI-Tools und Referenzen nebeneinander arbeiten. Speichern Sie die Fenster, die Sie gemeinsam nutzen, ordnen Sie sie auf einer Arbeitsfläche an, öffnen Sie alle auf einmal als gekachelte Chrome-Fenster und heben Sie eines davon mit einer einzigen Tastenkombination hervor.
 
 Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweiterungen bleiben unverändert. AI Window Deck ordnet lediglich gewöhnliche Chrome-Fenster an.

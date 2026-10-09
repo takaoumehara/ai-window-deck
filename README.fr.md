@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 Une extension Chrome pour celles et ceux qui travaillent avec plusieurs outils d'IA et références côte à côte. Enregistrez les fenêtres que vous utilisez ensemble, disposez-les sur un canevas, ouvrez-les toutes d'un coup sous forme de fenêtres Chrome en mosaïque et mettez-en une en avant avec un seul raccourci.
 
 Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos autres extensions restent tels quels. AI Window Deck se contente d'organiser des fenêtres Chrome ordinaires.

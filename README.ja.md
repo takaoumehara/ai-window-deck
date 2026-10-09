@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 複数の AI ツールや資料を並べて作業する人のための Chrome 拡張機能です。一緒に使うウィンドウを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。さらに、ショートカット 1 つでそのうちの 1 つを拡大（Spotlight）できます。
 
 Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。AI Window Deck は通常の Chrome ウィンドウを並べるだけです。

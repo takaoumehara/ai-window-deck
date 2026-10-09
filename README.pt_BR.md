@@ -2,6 +2,8 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
 Uma extensão do Chrome para quem trabalha com várias ferramentas de IA e referências lado a lado. Salve as janelas que você usa juntas, organize-as em um quadro, abra todas de uma vez como janelas do Chrome lado a lado e destaque uma delas com um único atalho.
 
 Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continuam como estão. O AI Window Deck apenas organiza janelas comuns do Chrome.
