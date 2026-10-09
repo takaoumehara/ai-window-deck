@@ -3,7 +3,7 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "Fenstermanager für Claude Code in der Cloud und Codex — mehrere Projekte gleichzeitig, ohne Chaos."
+    "message": "Ordnet KI-Fenster in Kacheln an, vergrößert eins per Kürzel und wechselt schnell zwischen ihnen."
   },
   "cmdSpotlight": {
     "message": "Vergrößern / Zurück"

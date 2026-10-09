@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Dialog, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Download, Upload } from "lucide-react";
 import { getTranslation } from "@/lib/i18n";
+import { canFix, fixAll, fixIssue, ISSUE, parseBulkText } from "@/lib/bulk-import";
+
+const ISSUE_MESSAGE = {
+  [ISSUE.nameWithoutBlank]: "bulkIssueNameWithoutBlank",
+  [ISSUE.missingScheme]: "bulkIssueMissingScheme",
+  [ISSUE.notUrl]: "bulkIssueNotUrl",
+  [ISSUE.badUrl]: "bulkIssueBadUrl",
+};
+
+// The textarea and its highlight layer must wrap identically, so they share these classes.
+const BULK_TEXT_CLASS = "p-3 text-xs leading-5 font-mono whitespace-pre-wrap break-words overflow-y-scroll";
 
 export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, onBulkSave, onImportFile, onExportFile }) {
   const t = (key, values) => getTranslation(lang, key, values);
@@ -13,6 +24,11 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
   const [urlRows, setUrlRows] = useState(["", ""]);
   const [bulkText, setBulkText] = useState("");
   const [mode, setMode] = useState("single"); // "single" | "bulk"
+  const [bulkChecked, setBulkChecked] = useState(false);
+  const bulkRef = useRef(null);
+  const backdropRef = useRef(null);
+  const bulkIssues = useMemo(() => (bulkChecked ? parseBulkText(bulkText).issues : []), [bulkChecked, bulkText]);
+  const issueLines = useMemo(() => new Set(bulkIssues.map((issue) => issue.line)), [bulkIssues]);
 
   useEffect(() => {
     if (editingItem) {
@@ -25,7 +41,28 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
       setUrlRows(["", ""]);
       setBulkText("");
     }
+    setBulkChecked(false);
   }, [editingItem, open]);
+
+  const jumpToLine = (line) => {
+    const textarea = bulkRef.current;
+    if (!textarea) return;
+    const lines = bulkText.split("\n");
+    const start = lines.slice(0, line - 1).reduce((sum, l) => sum + l.length + 1, 0);
+    textarea.focus();
+    textarea.setSelectionRange(start, start + (lines[line - 1]?.length ?? 0));
+    const row = backdropRef.current?.children[line - 1];
+    if (row) textarea.scrollTop = Math.max(0, row.offsetTop - 24);
+  };
+
+  const handleBulkSubmit = () => {
+    if (parseBulkText(bulkText).issues.length) {
+      setBulkChecked(true);
+      return;
+    }
+    onBulkSave(bulkText);
+    onClose();
+  };
 
   const handleAddRow = () => {
     setUrlRows([...urlRows, ""]);
@@ -160,14 +197,65 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
           <p id={`${fieldId}-bulk`} className="text-xs text-zinc-400">
             {t("bulkHint")}
           </p>
-          <textarea
-            rows={8}
-            aria-labelledby={`${fieldId}-bulk`}
-            value={bulkText}
-            onChange={(e) => setBulkText(e.target.value)}
-            placeholder={`Research\nhttps://example.com/docs\n\nChat AI\nhttps://claude.ai`}
-            className="w-full rounded-md border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
-          />
+          <div className={`relative h-48 overflow-hidden rounded-md border bg-zinc-900 ${bulkIssues.length ? "border-red-500/70" : "border-zinc-800"}`}>
+            <div ref={backdropRef} aria-hidden="true" className={`pointer-events-none absolute inset-0 text-transparent ${BULK_TEXT_CLASS}`}>
+              {bulkText.split("\n").map((lineText, idx) => (
+                <span
+                  key={idx}
+                  className={issueLines.has(idx + 1) ? "block -mx-3 px-3 bg-red-500/25 shadow-[inset_3px_0_0_rgb(239,68,68)]" : "block"}
+                >
+                  {lineText || " "}
+                </span>
+              ))}
+            </div>
+            <textarea
+              ref={bulkRef}
+              aria-labelledby={`${fieldId}-bulk`}
+              aria-invalid={bulkIssues.length > 0}
+              aria-describedby={bulkIssues.length ? `${fieldId}-issues` : undefined}
+              value={bulkText}
+              onChange={(e) => setBulkText(e.target.value)}
+              onScroll={(e) => { if (backdropRef.current) backdropRef.current.scrollTop = e.currentTarget.scrollTop; }}
+              placeholder={`Research\nhttps://example.com/docs\n\nChat AI\nhttps://claude.ai`}
+              className={`relative block h-full w-full resize-none bg-transparent text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${BULK_TEXT_CLASS}`}
+            />
+          </div>
+          {bulkIssues.length > 0 && (
+            <div id={`${fieldId}-issues`} role="alert" className="rounded-md border border-red-500/50 bg-red-500/10 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-red-300">{t("bulkIssuesTitle", { count: bulkIssues.length })}</p>
+                {bulkIssues.filter(canFix).length > 1 && (
+                  <Button type="button" variant="outline" size="sm" onClick={() => setBulkText(fixAll(bulkText))} className="h-7 text-xs">
+                    {t("bulkFixAllBtn")}
+                  </Button>
+                )}
+              </div>
+              <ul className="mt-2 flex max-h-32 flex-col gap-1.5 overflow-y-auto">
+                {bulkIssues.map((issue) => (
+                  <li key={`${issue.line}-${issue.text}`} className="flex items-start gap-2 text-xs leading-5 text-zinc-200">
+                    <button
+                      type="button"
+                      onClick={() => jumpToLine(issue.line)}
+                      aria-label={t("bulkJumpLabel", { n: issue.line })}
+                      className="shrink-0 rounded bg-red-500/20 px-1.5 font-mono font-semibold text-red-200 hover:bg-red-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+                    >
+                      {t("bulkLineLabel", { n: issue.line })}
+                    </button>
+                    <span className="flex-1">{t(ISSUE_MESSAGE[issue.kind], { text: issue.text })}</span>
+                    {canFix(issue) && (
+                      <button
+                        type="button"
+                        onClick={() => setBulkText(fixIssue(bulkText, issue))}
+                        className="shrink-0 rounded border border-zinc-700 px-2 font-semibold text-zinc-100 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                      >
+                        {t("bulkFixBtn")}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <button
               type="button"
@@ -180,13 +268,7 @@ export function RegisterModal({ lang, open, onClose, editingItem, onSaveWindow, 
               <Button variant="outline" size="sm" onClick={onClose}>
                 {t("cancelBtn")}
               </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  onBulkSave(bulkText);
-                  onClose();
-                }}
-              >
+              <Button size="sm" onClick={handleBulkSubmit}>
                 {t("bulkSaveBtn")}
               </Button>
             </div>
