@@ -73,7 +73,7 @@ Instálala desde la [Chrome Web Store](https://chromewebstore.google.com/detail/
 
 ### Desde un ZIP de una versión publicada
 
-1. Descarga `AI-Window-Deck-vX.Y.Z.zip` desde [Releases](https://github.com/takaoumehara/ai-window-deck/releases) y descomprímelo.
+1. Descarga `ai-window-deck-vX.Y.Z.zip` desde [Releases](https://github.com/takaoumehara/ai-window-deck/releases) y descomprímelo.
 2. Abre `chrome://extensions` y activa el **Modo de desarrollador**.
 3. Haz clic en **Cargar descomprimida** y selecciona la carpeta descomprimida.
 
@@ -133,7 +133,7 @@ Requiere Node.js 20 o superior (y Python 3 con Pillow para los gráficos de la t
 
 ```sh
 npm test              # node --test
-npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
 El código fuente de 1.11.x no está en este repositorio. La raíz contiene el paquete 1.11.2 tal como se publica. Su paquete `dist/` se regenera a partir del paquete 1.11.0 publicado en la tienda mediante sustituciones de texto exactas y probadas. Con el paquete 1.11.0 descomprimido, las pruebas también comprueban que el parche reproduce la raíz byte a byte:

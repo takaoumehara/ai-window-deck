@@ -1,5 +1,5 @@
 // Validate a store archive before upload.
-//   node tools/validate-package.mjs AI-Window-Deck-v1.7.0.zip
+//   node tools/validate-package.mjs ai-window-deck-v1.11.2.zip
 //
 // Checks: manifest parses; every file it references exists; every __MSG_key__
 // it uses exists in every locale; name <= 75 and description <= 132 characters

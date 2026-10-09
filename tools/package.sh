@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build the Chrome Web Store upload / release archive from the repository root.
-#   ./tools/package.sh            -> AI-Window-Deck-v<version>.zip in the repo root
+#   ./tools/package.sh            -> ai-window-deck-v<version>.zip in the repo root
 #
 # The repository root is the extension package as shipped: the manifest, the service
 # worker, the panel (dist/), the display-identify page, icons and _locales. Nothing is
@@ -11,7 +11,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
 version="$(node -p "require('./manifest.json').version")"
-output="$root/AI-Window-Deck-v${version}.zip"
+output="$root/ai-window-deck-v${version}.zip"
 
 rm -f "$output"
 # Python's zipfile instead of zip(1): available everywhere python3 is, and

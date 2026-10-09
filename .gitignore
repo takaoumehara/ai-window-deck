@@ -2,7 +2,7 @@
 node_modules/
 
 # Release archives (regenerate with npm run package; attached to GitHub Releases)
-/AI-Window-Deck-v*.zip
+/ai-window-deck-v*.zip
 /*.zip
 
 # OS / editor

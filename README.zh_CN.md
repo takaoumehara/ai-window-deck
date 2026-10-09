@@ -73,7 +73,7 @@
 
 ### 通过发布版 ZIP 安装
 
-1. 从 [Releases](https://github.com/takaoumehara/ai-window-deck/releases) 下载 `AI-Window-Deck-vX.Y.Z.zip` 并解压。
+1. 从 [Releases](https://github.com/takaoumehara/ai-window-deck/releases) 下载 `ai-window-deck-vX.Y.Z.zip` 并解压。
 2. 打开 `chrome://extensions`，开启 **开发者模式**。
 3. 点击 **加载已解压的扩展程序**，然后选择解压后的文件夹。
 
@@ -133,7 +133,7 @@ AI Window Deck 没有主机权限，也没有内容脚本，不会读取网页�
 
 ```sh
 npm test              # node --test
-npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
 本仓库不包含 1.11.x 的源代码。根目录存放的是原样发布的 1.11.2 包，其 `dist/` 构建产物由已发布的 1.11.0 商店包通过经过测试的精确字符串补丁重新生成。指定解压后的 1.11.0 包时，测试还会确认补丁结果与根目录逐字节一致：

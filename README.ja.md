@@ -73,7 +73,7 @@ Web サイト: <https://ai-window-deck.vercel.app/>
 
 ### リリース ZIP から
 
-1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases) から `AI-Window-Deck-vX.Y.Z.zip` をダウンロードして解凍します。
+1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases) から `ai-window-deck-vX.Y.Z.zip` をダウンロードして解凍します。
 2. `chrome://extensions` を開き、**デベロッパー モード**をオンにします。
 3. **パッケージ化されていない拡張機能を読み込む**をクリックし、解凍したフォルダを選択します。
 
@@ -133,7 +133,7 @@ Node.js 20 以上が必要です（ストア用画像の生成には Python 3 �
 
 ```sh
 npm test              # node --test
-npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
 1.11.x のソースはこのリポジトリにありません。ルートには出荷したとおりの 1.11.2 パッケージがあり、`dist/` のバンドルは公開済みの 1.11.0 ストアパッケージから、テスト付きの完全一致の文字列パッチで再生成します。1.11.0 パッケージを展開して指定すると、パッチの結果がルートとバイト単位で一致することもテストで確認します：

@@ -73,7 +73,7 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 
 ### 릴리스 ZIP에서 설치
 
-1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases)에서 `AI-Window-Deck-vX.Y.Z.zip`을 다운로드하고 압축을 풉니다.
+1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases)에서 `ai-window-deck-vX.Y.Z.zip`을 다운로드하고 압축을 풉니다.
 2. `chrome://extensions`를 열고 **개발자 모드**를 켭니다.
 3. **압축해제된 확장 프로그램을 로드합니다**를 클릭하고 압축을 푼 폴더를 선택합니다.
 
@@ -133,7 +133,7 @@ Node.js 20 이상이 필요합니다(스토어 이미지 생성에는 Python 3�
 
 ```sh
 npm test              # node --test
-npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
 1.11.x의 소스는 이 저장소에 없습니다. 루트에는 배포된 그대로의 1.11.2 패키지가 있으며, `dist/` 번들은 공개된 1.11.0 스토어 패키지에서 테스트를 거친 정확한 문자열 패치로 다시 만듭니다. 1.11.0 패키지의 압축을 풀어 지정하면, 패치 결과가 루트와 바이트 단위로 같은지도 테스트에서 확인합니다:

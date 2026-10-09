@@ -73,7 +73,7 @@ Installez-la depuis le [Chrome Web Store](https://chromewebstore.google.com/deta
 
 ### À partir d'un ZIP de version
 
-1. Téléchargez `AI-Window-Deck-vX.Y.Z.zip` depuis [Releases](https://github.com/takaoumehara/ai-window-deck/releases) et décompressez-le.
+1. Téléchargez `ai-window-deck-vX.Y.Z.zip` depuis [Releases](https://github.com/takaoumehara/ai-window-deck/releases) et décompressez-le.
 2. Ouvrez `chrome://extensions` et activez le **Mode développeur**.
 3. Cliquez sur **Charger l'extension non empaquetée** et sélectionnez le dossier décompressé.
 
@@ -133,7 +133,7 @@ Nécessite Node.js 20+ (et Python 3 avec Pillow pour les visuels du store).
 
 ```sh
 npm test              # node --test
-npm run package       # zip + validate AI-Window-Deck-v<version>.zip
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
 Les sources de 1.11.x ne sont pas dans ce dépôt. La racine contient le paquet 1.11.2 tel qu'il est publié. Son bundle `dist/` est régénéré à partir du paquet 1.11.0 publié sur le store par des remplacements de texte exacts et testés. Avec le paquet 1.11.0 décompressé, les tests vérifient aussi que le patch reproduit la racine octet pour octet :

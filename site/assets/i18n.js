@@ -70,7 +70,7 @@ window.AWD_I18N = {
     'inst.storeTitle': 'Chrome ウェブストア',
     'inst.storeBody': 'Chrome ウェブストアで公開中。ワンクリックでインストールでき、自動で更新されます。',
     'inst.zipTitle': 'リリース ZIP から',
-    'inst.zip1': '<a href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a> から <code>AI-Window-Deck-vX.Y.Z.zip</code> をダウンロードして解凍します。',
+    'inst.zip1': '<a href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a> から <code>ai-window-deck-vX.Y.Z.zip</code> をダウンロードして解凍します。',
     'inst.zip2': '<code>chrome://extensions</code> を開き、<b>デベロッパー モード</b>をオンにします。',
     'inst.zip3': '<b>パッケージ化されていない拡張機能を読み込む</b>をクリックし、解凍したフォルダを選択します。',
     'inst.srcTitle': 'ソースから',
