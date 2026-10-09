@@ -3,13 +3,13 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "Organiza tus ventanas de IA en cuadrícula, amplía una con un atajo y cambia rápidamente entre ventanas."
+    "message": "Gestor de ventanas para Claude Code en la nube y Codex: varios proyectos a la vez, sin confusión."
   },
   "cmdSpotlight": {
     "message": "Ampliar / restaurar"
   },
   "cmdHome": {
-    "message": "Volver a su casilla del diseño"
+    "message": "Volver a la casilla de origen"
   },
   "cmdTile": {
     "message": "Reorganizar"

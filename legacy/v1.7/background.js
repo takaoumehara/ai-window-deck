@@ -38,40 +38,7 @@ async function session(key, fallback) {
 }
 
 async function settings() {
-  try {
-    const stored = await chrome.storage.sync.get(null); // Get ALL stored values
-    const merged = { ...DEFAULTS, ...stored };
-    
-    console.log('[AI Window Deck] Settings loaded:', {
-      spotlightSize: merged.spotlightSize,
-      spotlightWidth: merged.spotlightWidth,
-      spotlightHeight: merged.spotlightHeight,
-      spotlightAnchor: merged.spotlightAnchor,
-      targetDisplays: merged.targetDisplays,
-      fromStorage: {
-        spotlightSize: stored.spotlightSize,
-        spotlightWidth: stored.spotlightWidth,
-        spotlightHeight: stored.spotlightHeight,
-        spotlightAnchor: stored.spotlightAnchor,
-      }
-    });
-    
-    // Validate spotlight settings
-    if (merged.spotlightSize && !['full', 'height', 'tall', 'half', 'threeFourths', 'custom'].includes(merged.spotlightSize)) {
-      console.warn('[AI Window Deck] Invalid spotlightSize:', merged.spotlightSize, '- resetting to "full"');
-      merged.spotlightSize = 'full';
-    }
-    
-    if (merged.spotlightAnchor && !['keep', 'center'].includes(merged.spotlightAnchor)) {
-      console.warn('[AI Window Deck] Invalid spotlightAnchor:', merged.spotlightAnchor, '- resetting to "keep"');
-      merged.spotlightAnchor = 'keep';
-    }
-    
-    return merged;
-  } catch (error) {
-    console.error('[AI Window Deck] Error reading settings:', error);
-    return { ...DEFAULTS };
-  }
+  return { ...DEFAULTS, ...(await chrome.storage.sync.get(DEFAULTS)) };
 }
 
 // The arrangement in use, whichever storage generation it was written by. A
@@ -137,73 +104,12 @@ function inReadingOrder(windows) {
     || (a.left ?? 0) - (b.left ?? 0));
 }
 
-// ---- the Deck's own tab ------------------------------------------------
-//
-// The panel used to be the toolbar popup, which is not a window: "the last
-// focused window" was always the browser window the user was working in, and
-// arranging never touched the panel. The panel is now an ordinary tab, so the
-// window showing it would otherwise be tiled, enlarged and cycled through
-// like any other — moving the page out from under the click that asked for it.
-//
-// Rule: a window whose *active* tab is one of our pages (the Deck tab, the
-// floating controller) is "showing the Deck" and is left alone by Arrange,
-// Retile, focus cycling and the window list. A window where the Deck tab sits
-// in the background is a normal window again. Commands that act on "the
-// current window" (Spotlight, Restore, Full screen, Next/Previous) act on the
-// window the user was last working in, exactly as they did from the popup.
-const isOwnPage = (tab) => (tab?.url || tab?.pendingUrl || "").startsWith(chrome.runtime.getURL(""));
-
-function showsDeck(window) {
-  const tabs = window?.tabs ?? [];
-  if (!tabs.length) return false;
-  const active = tabs.find((tab) => tab.active) ?? tabs[0];
-  return isOwnPage(active) || tabs.every(isOwnPage);
-}
-
-// Remember the last window the user worked in that is not showing the Deck,
-// so a button pressed inside the Deck tab still reaches that window.
-async function noteWorkWindow(windowId) {
-  if (windowId == null || windowId === chrome.windows.WINDOW_ID_NONE) return;
-  try {
-    const window = await chrome.windows.get(windowId, { populate: true });
-    if (window.type === "normal" && !showsDeck(window)) {
-      await chrome.storage.session.set({ workWindowId: window.id });
-    }
-  } catch {
-    // The window closed before we could look at it.
-  }
-}
-
-chrome.windows.onFocusChanged?.addListener((windowId) => { noteWorkWindow(windowId); });
-chrome.tabs.onActivated?.addListener(({ windowId }) => { noteWorkWindow(windowId); });
-
-// The window an action on "the current window" should act on: the focused
-// one, unless that is the Deck itself, in which case the window the user was
-// in before opening the Deck. Null when there is no such window.
-async function workingWindow() {
-  const last = await chrome.windows.getLastFocused({ populate: true });
-  if (!showsDeck(last)) return last;
-  const id = await session("workWindowId", null);
-  if (id != null && id !== last.id) {
-    try {
-      const window = await chrome.windows.get(id, { populate: true });
-      if (window.type === "normal" && !showsDeck(window)) return window;
-    } catch {
-      // Closed since; fall through.
-    }
-  }
-  // Nothing remembered (fresh service worker): only guess when there is
-  // exactly one candidate, never pick an arbitrary window to resize.
-  const others = (await chrome.windows.getAll({ populate: true })).filter((window) =>
-    window.type === "normal" && window.state !== "minimized" && !showsDeck(window));
-  return others.length === 1 ? others[0] : null;
-}
-
 async function normalWindows(config, displays) {
+  const ownUrl = chrome.runtime.getURL("");
   let windows = (await chrome.windows.getAll({ populate: true })).filter(
     (window) => window.type === "normal"
       && !(config.skipMinimized && window.state === "minimized")
-      && !showsDeck(window)
+      && !(window.tabs ?? []).some((tab) => (tab.url || tab.pendingUrl || "").startsWith(ownUrl))
   );
   if (displays?.length && config.sameDisplayOnly) {
     windows = windows.filter((window) =>
@@ -252,56 +158,6 @@ async function undoLayout() {
     });
   }
   return { ok: true, restored: frame.length };
-}
-
-// ---- window close tracking ------------------------------------------------
-
-// Track windows opened by the extension so we can offer to close only those.
-// Uses session storage (cleared when browser closes) so we don't need sessions permission.
-async function trackExtensionWindow(windowId) {
-  const tracked = await session("extensionOpenedWindows", []);
-  if (!tracked.includes(windowId)) {
-    tracked.push(windowId);
-    await chrome.storage.session.set({ extensionOpenedWindows: tracked });
-    console.log('[AI Window Deck] Tracking window:', windowId);
-  }
-}
-
-async function untrackExtensionWindow(windowId) {
-  const tracked = await session("extensionOpenedWindows", []);
-  const filtered = tracked.filter(id => id !== windowId);
-  await chrome.storage.session.set({ extensionOpenedWindows: filtered });
-  console.log('[AI Window Deck] Untracked window:', windowId);
-}
-
-async function getTrackedWindows() {
-  const tracked = await session("extensionOpenedWindows", []);
-  // Filter out windows that no longer exist
-  const allWindows = await chrome.windows.getAll();
-  const existingIds = new Set(allWindows.map(w => w.id));
-  const validTracked = tracked.filter(id => existingIds.has(id));
-  
-  // Update session if any windows were removed
-  if (validTracked.length !== tracked.length) {
-    await chrome.storage.session.set({ extensionOpenedWindows: validTracked });
-  }
-  
-  return validTracked;
-}
-
-async function closeExtensionWindows(windowIds) {
-  const results = { closed: [], failed: [] };
-  for (const windowId of windowIds) {
-    try {
-      await chrome.windows.remove(windowId);
-      await untrackExtensionWindow(windowId);
-      results.closed.push(windowId);
-    } catch (error) {
-      console.error('[AI Window Deck] Failed to close window:', windowId, error);
-      results.failed.push(windowId);
-    }
-  }
-  return results;
 }
 
 // ---- layout -----------------------------------------------------------
@@ -456,14 +312,6 @@ async function launchDeck(options = {}) {
   }
 
   if (config.groupTabs) await groupWindows(created, planned);
-  const liveIds = new Set((await chrome.windows.getAll()).map((window) => window.id));
-  const deckSlotMap = Object.fromEntries(Object.entries(await session("deckSlotMap", {}))
-    .filter(([id]) => liveIds.has(Number(id))));
-  created.forEach((window, i) => {
-    deckSlotMap[window.id] = { presetIndex: options.presetIndex ?? null,
-      slotId: planned[i].id ?? null, slotIndex: planned[i].index };
-  });
-  await chrome.storage.session.set({ deckSlotMap });
   await chrome.storage.session.set({ deckWindowIds: created.map((window) => window.id) });
 
   // A window keeps settling for a moment after it is created, and Chrome
@@ -487,63 +335,35 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 // Grows the window around its own centre so it stays where the eye expects it,
 // then pulls it back inside the work area.
 function spotlightBounds(workArea, window, config) {
-  console.log('[AI Window Deck] spotlightBounds called with:', {
-    workArea,
-    windowState: { left: window.left, top: window.top, width: window.width, height: window.height },
-    config: {
-      spotlightSize: config.spotlightSize,
-      spotlightWidth: config.spotlightWidth,
-      spotlightHeight: config.spotlightHeight,
-      spotlightAnchor: config.spotlightAnchor,
-    }
-  });
-  
   let width;
   let height;
   if (config.spotlightSize === "height") {
     width = window.width ?? workArea.width;   // leave the width exactly as it is
     height = workArea.height;
-    console.log('[AI Window Deck] Using "height" mode: keeping width', width, 'setting height to', height);
   } else {
-    const preset = PRESETS[config.spotlightSize];
-    const [percentW, percentH] = preset ?? [config.spotlightWidth, config.spotlightHeight];
-    
-    console.log('[AI Window Deck] Size calculation:', {
-      spotlightSize: config.spotlightSize,
-      foundPreset: !!preset,
-      percentW,
-      percentH,
-      workAreaWidth: workArea.width,
-      workAreaHeight: workArea.height,
-    });
-    
+    const [percentW, percentH] = PRESETS[config.spotlightSize]
+      ?? [config.spotlightWidth, config.spotlightHeight];
     width = Math.round(workArea.width * clamp(percentW, 20, 100) / 100);
     height = Math.round(workArea.height * clamp(percentH, 20, 100) / 100);
   }
   width = Math.min(width, workArea.width);
   height = Math.min(height, workArea.height);
 
-  console.log('[AI Window Deck] Calculated dimensions:', { width, height });
-
   if (config.spotlightAnchor === "center") {
-    const bounds = {
+    return {
       left: workArea.left + Math.round((workArea.width - width) / 2),
       top: workArea.top + Math.round((workArea.height - height) / 2),
       width,
       height,
     };
-    console.log('[AI Window Deck] Using "center" anchor, final bounds:', bounds);
-    return bounds;
   }
   const { x: centerX, y: centerY } = centreOf(window);
-  const bounds = {
+  return {
     left: clamp(Math.round(centerX - width / 2), workArea.left, workArea.left + workArea.width - width),
     top: clamp(Math.round(centerY - height / 2), workArea.top, workArea.top + workArea.height - height),
     width,
     height,
   };
-  console.log('[AI Window Deck] Using "keep" anchor, centered on window, final bounds:', bounds);
-  return bounds;
 }
 
 const SNAP = 8; // px of slack, so a window nudged by the OS still counts as placed
@@ -581,283 +401,13 @@ async function stepBack(window, saved, stack) {
   await place(window.id, window.state, { ...entry.bounds, focused: true });
 }
 
-// Where the window really ended up after an enlarge. The OS or window manager
-// may refuse the exact frame (a menu bar, a title bar kept on screen, Chrome's
-// minimum width), so the next press compares against both the frame asked for
-// and the frame that landed; otherwise a nudged window would enlarge again
-// instead of going back.
-async function noteLanded(windowId, saved, stack) {
-  const top = stack[stack.length - 1];
-  const actual = await chrome.windows.get(windowId).catch(() => null);
-  if (!top || !actual || actual.state !== "normal") return;
-  top.landed = { left: actual.left, top: actual.top, width: actual.width, height: actual.height };
-  saved[windowId] = stack.slice(-STACK_LIMIT);
-  await chrome.storage.session.set({ previousBounds: saved });
-}
-
 const snapshotGeometry = (window) => ({
   bounds: { left: window.left, top: window.top, width: window.width, height: window.height },
   state: window.state,
 });
 
-// ---- focus view (per layout) ------------------------------------------
-//
-// Step ③ of the setup flow saves `preset.focus` on a layout:
-//   { size: fill | large | half | height | custom, side: left | right | here,
-//     origin: keep | center, width, height (custom, %), others: leave | strip | hide }
-// (v1.10 stored size "center": read as large + center.)
-// A window opened by that layout then enlarges the way the layout says, inside
-// the layout's own launch display. A window that belongs to no layout follows
-// `focusOutside` when step ③ set it; otherwise, like a layout without `focus`,
-// it keeps the shared behaviour above (spotlightSize & co., an OS maximize by
-// default), so nothing changes for anyone who never opens step ③.
-// Mirrored for the preview in src/lib/focus-view.js.
-
-const FOCUS_SIZES = ["fill", "large", "half", "height", "custom"];
-const FOCUS_SIDES = ["left", "right", "here"];
-const FOCUS_ORIGINS = ["keep", "center"];
-const FOCUS_OTHERS = ["leave", "strip", "hide"];
-const FOCUS_LARGE_RATIO = 0.8;
-const FOCUS_STRIP = { ratio: 0.18, min: 120, max: 220 };
-
-const focusPercent = (value, fallback) => {
-  const number = Number(value);
-  return Number.isFinite(number) ? Math.max(20, Math.min(100, Math.round(number))) : fallback;
-};
-
-function normaliseFocus(focus) {
-  if (!focus || typeof focus !== "object") return null;
-  const legacyCenter = focus.size === "center";
-  return {
-    size: legacyCenter ? "large" : FOCUS_SIZES.includes(focus.size) ? focus.size : "fill",
-    side: FOCUS_SIDES.includes(focus.side) ? focus.side : "left",
-    origin: legacyCenter ? "center" : FOCUS_ORIGINS.includes(focus.origin) ? focus.origin : "center",
-    width: focusPercent(focus.width, 70),
-    height: focusPercent(focus.height, 90),
-    others: FOCUS_OTHERS.includes(focus.others) ? focus.others : "leave",
-  };
-}
-
-// target: bounds for the enlarged window, or null for a real OS maximize.
-// strip: bounds for each other window when they line up along the bottom.
-// current: the window's bounds now; "grow in place" centres the new size on
-// it and pulls it back inside, so it grows toward the side with room.
-function focusLayout(workArea, focus, otherCount = 0, gap = 8, minWidth = 0, current = null) {
-  const f = normaliseFocus(focus) ?? normaliseFocus({});
-  const useStrip = f.others === "strip" && otherCount > 0;
-  const stripHeight = useStrip
-    ? Math.min(FOCUS_STRIP.max, Math.max(FOCUS_STRIP.min, Math.round(workArea.height * FOCUS_STRIP.ratio)))
-    : 0;
-  const region = {
-    left: workArea.left, top: workArea.top, width: workArea.width,
-    height: useStrip ? workArea.height - stripHeight - gap : workArea.height,
-  };
-  const at = current && Number.isFinite(current.left) && Number.isFinite(current.width) ? current : null;
-  const cx = at ? at.left + at.width / 2 : region.left + region.width / 2;
-  const cy = at ? at.top + at.height / 2 : region.top + region.height / 2;
-  const sized = (width, height) => {
-    width = Math.min(width, region.width);
-    height = Math.min(height, region.height);
-    if (f.origin === "center" || !at) {
-      return {
-        left: region.left + Math.round((region.width - width) / 2),
-        top: region.top + Math.round((region.height - height) / 2),
-        width, height,
-      };
-    }
-    return {
-      left: clamp(Math.round(cx - width / 2), region.left, region.left + region.width - width),
-      top: clamp(Math.round(cy - height / 2), region.top, region.top + region.height - height),
-      width, height,
-    };
-  };
-  let target = null;
-  if (f.size === "fill") {
-    target = useStrip ? { ...region } : null;
-  } else if (f.size === "large") {
-    target = sized(Math.round(region.width * FOCUS_LARGE_RATIO), Math.round(region.height * FOCUS_LARGE_RATIO));
-  } else if (f.size === "custom") {
-    target = sized(Math.round(region.width * f.width / 100), Math.round(region.height * f.height / 100));
-  } else if (f.size === "height") {
-    target = sized(at ? Math.round(at.width) : Math.round(region.width * 0.5), region.height);
-  } else {
-    const width = Math.round(region.width / 2);
-    const side = f.side === "here" ? (cx >= region.left + region.width / 2 ? "right" : "left") : f.side;
-    target = {
-      left: side === "right" ? region.left + region.width - width : region.left,
-      top: region.top, width, height: region.height,
-    };
-  }
-  const strip = [];
-  if (useStrip) {
-    const top = workArea.top + workArea.height - stripHeight;
-    const natural = (workArea.width - gap * (otherCount - 1)) / otherCount;
-    const width = Math.max(natural, Math.min(minWidth, workArea.width));
-    const step = otherCount > 1
-      ? (natural >= width ? width + gap : (workArea.width - width) / (otherCount - 1))
-      : 0;
-    for (let i = 0; i < otherCount; i++) {
-      strip.push({ left: Math.round(workArea.left + i * step), top, width: Math.round(width), height: stripHeight });
-    }
-  }
-  return { target, strip };
-}
-
-// The same URL comparison the panel uses to match open windows to slots.
-function comparableUrl(value) {
-  let text = String(value ?? "").trim();
-  if (!text) return "";
-  if (/^[^/:?#]+:\d+(?:[/?#]|$)/.test(text)) text = `http://${text}`;
-  else if (!/^[a-z][a-z\d+.-]*:/i.test(text)) text = `https://${text}`;
-  try {
-    const url = new URL(text);
-    if (!/^https?:$/.test(url.protocol)) return "";
-    url.hash = "";
-    url.hostname = url.hostname.toLowerCase();
-    url.pathname = url.pathname.replace(/\/+$/, "");
-    return url.href.replace(/\/+$/, "");
-  } catch {
-    return "";
-  }
-}
-
-const slotUrls = (slot) => (Array.isArray(slot?.urls) ? slot.urls : String(slot?.urls ?? "").split("\n"))
-  .map(comparableUrl).filter(Boolean);
-const windowUrls = (window) => (window.tabs ?? [])
-  .map((tab) => comparableUrl(tab.url || tab.pendingUrl)).filter(Boolean);
-
-// Which saved layout a window belongs to: the slot map written at launch, or,
-// after a browser restart (session storage is gone), the first layout one of
-// whose windows has a URL the window has open. Null for any other window.
-function layoutIndexOf(window, config, slotMap) {
-  const presets = config.presets ?? [];
-  const recorded = slotMap[window.id]?.presetIndex;
-  if (Number.isInteger(recorded) && presets[recorded]) return recorded;
-  const urls = windowUrls(window);
-  if (!urls.length) return null;
-  const index = presets.findIndex((preset) => (preset?.slots ?? []).some((slot) =>
-    slotUrls(slot).some((prefix) => urls.some((url) => url === prefix || url.startsWith(prefix)))));
-  return index >= 0 ? index : null;
-}
-
-// The layout's launch display (by id, then by identical bounds); a saved
-// display that is gone means the primary one, as at launch. Null = automatic.
-function layoutDisplay(preset, displays) {
-  const saved = preset?.launchDisplay;
-  if (!saved) return null;
-  return displays.find((display) => display.id === saved.id)
-    ?? displays.find((display) => saved.bounds
-      && ["left", "top", "width", "height"].every((key) => display.bounds[key] === saved.bounds[key]))
-    ?? displays.find(({ isPrimary }) => isPrimary) ?? displays[0] ?? null;
-}
-
-// The other open windows of the same layout, on screen and not minimised.
-async function layoutSiblings(window, index, config, slotMap) {
-  const all = await chrome.windows.getAll({ populate: true });
-  return inReadingOrder(all.filter((other) => other.id !== window.id
-    && other.type === "normal" && other.state !== "minimized" && !showsDeck(other)
-    && layoutIndexOf(other, config, slotMap) === index));
-}
-
-const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Chrome will not make a window narrower than its own minimum (about 500 px),
-// so a strip of many windows can come out wider than planned. Measure what the
-// OS actually gave them and spread them so the row still ends at the edge.
-async function settleStrip(others, frames, workArea) {
-  const actual = await Promise.all(others.map((other) => chrome.windows.get(other.id).catch(() => null)));
-  const width = Math.max(...actual.map((entry) => entry?.width ?? 0));
-  const planned = frames[0]?.width ?? 0;
-  if (!(width > planned + SNAP) || others.length < 2) return frames;
-  const step = (workArea.width - width) / (others.length - 1);
-  const settled = frames.map((frame, i) => ({ ...frame, left: Math.round(workArea.left + i * step), width }));
-  await Promise.all(others.map((other, i) => chrome.windows.update(other.id, settled[i])));
-  return settled;
-}
-
-// index: the window's layout, or null for a window outside every layout
-// (then only the window itself moves, on the display it is on).
-async function enterFocusView(window, saved, stack, config, index, focus, slotMap) {
-  const displays = await chrome.system.display.getInfo();
-  const display = (index == null ? null : layoutDisplay(config.presets[index], displays)) ?? await displayFor(window);
-  const { workArea } = display;
-  const others = focus.others === "leave" || index == null ? [] : await layoutSiblings(window, index, config, slotMap);
-  const previous = snapshotGeometry(window);
-  // "Grow in place" and "the half it is on" start from the window as a window,
-  // not from the whole screen a maximised window happens to cover.
-  let current = window;
-  if (focus.size !== "fill" && window.state !== "normal") {
-    await chrome.windows.update(window.id, { state: "normal" });
-    current = await chrome.windows.get(window.id);
-  }
-  const onDisplay = contains(display, centreOf(current)) ? current : null;
-  const { target, strip } = focusLayout(workArea, focus, others.length, config.gap ?? 8, 0, onDisplay);
-
-  await pushUndo([window, ...others]);
-
-  // The others first, so the enlarged window ends up in front of them.
-  if (others.length) {
-    const memory = await session("focusOthers", {});
-    memory[window.id] = others.map(snapshotGeometry).map((entry, i) => ({ id: others[i].id, ...entry }));
-    await chrome.storage.session.set({ focusOthers: memory });
-    if (focus.others === "hide") {
-      await Promise.all(others.map((other) => chrome.windows.update(other.id, { state: "minimized" })));
-    } else {
-      await Promise.all(others.map((other, i) => place(other.id, other.state, strip[i])));
-    }
-  }
-
-  if (!target) {
-    // Fill without a strip is today's OS maximize, on the layout's display.
-    if (!contains(display, centreOf(window))) {
-      await place(window.id, window.state, {
-        left: workArea.left + Math.round(workArea.width * 0.1), top: workArea.top + Math.round(workArea.height * 0.1),
-        width: Math.round(workArea.width * 0.8), height: Math.round(workArea.height * 0.8),
-      });
-    }
-    await stepInto(window, saved, stack, previous, null, "maximized");
-    await chrome.windows.update(window.id, { state: "maximized", focused: true });
-    return { ok: true, restored: false, focus };
-  }
-
-  if (window.state !== "normal") await chrome.windows.update(window.id, { state: "normal" });
-  await stepInto(window, saved, stack, previous, target, null);
-  await chrome.windows.update(window.id, { ...target, focused: true });
-  // The OS can nudge a window straight after a resize; one repeat makes it stick.
-  await pause(250);
-  await chrome.windows.update(window.id, target);
-  if (focus.others === "strip" && others.length) {
-    await Promise.all(others.map((other, i) => chrome.windows.update(other.id, strip[i])));
-    await settleStrip(others, strip, workArea);
-    await chrome.windows.update(window.id, { focused: true });
-  }
-  await noteLanded(window.id, saved, stack);
-  return { ok: true, restored: false, focus };
-}
-
-// Put back the windows a focus view moved or minimised, then return focus to
-// the window that was enlarged.
-async function restoreOthers(windowId) {
-  const memory = await session("focusOthers", {});
-  const entries = memory[windowId];
-  if (!entries?.length) return;
-  delete memory[windowId];
-  await chrome.storage.session.set({ focusOthers: memory });
-  const alive = new Set((await chrome.windows.getAll()).map((window) => window.id));
-  await Promise.all(entries.filter((entry) => alive.has(entry.id)).map(async (entry) => {
-    if (entry.state === "maximized" || entry.state === "fullscreen") {
-      await chrome.windows.update(entry.id, { state: entry.state });
-      return;
-    }
-    const current = await chrome.windows.get(entry.id).catch(() => null);
-    await place(entry.id, current?.state, entry.bounds);
-  }));
-  await chrome.windows.update(windowId, { focused: true }).catch(() => {});
-}
-
 async function toggleSpotlight() {
-  let window = await workingWindow();
-  if (!window) return { ok: false, reason: "empty" };
+  let window = await chrome.windows.getLastFocused();
   const config = await settings();
   const { saved, stack } = await geometry(window.id);
   const top = stack[stack.length - 1];
@@ -870,19 +420,11 @@ async function toggleSpotlight() {
   // of two sizes.
   const enlarged = window.state === "fullscreen"
     || (window.state === "maximized" && top?.appliedState === "maximized")
-    || isAt(window, top?.applied)
-    || isAt(window, top?.landed);
+    || isAt(window, top?.applied);
   if (stack.length && enlarged) {
     await goHome(window, saved, stack);
     return { ok: true, restored: true, home: true };
   }
-
-  // A window opened by a layout with its own Focus view follows that layout;
-  // a window outside every layout follows step ③'s "outside" choice, if made.
-  const slotMap = await session("deckSlotMap", {});
-  const index = layoutIndexOf(window, config, slotMap);
-  const focus = index == null ? normaliseFocus(config.focusOutside) : normaliseFocus(config.presets?.[index]?.focus);
-  if (focus) return enterFocusView(window, saved, stack, config, index, index == null ? { ...focus, others: "leave" } : focus, slotMap);
 
   await pushUndo([window]);
   const previous = snapshotGeometry(window);
@@ -900,18 +442,11 @@ async function toggleSpotlight() {
     window = await chrome.windows.get(window.id);
   }
   const spotlight = spotlightBounds((await displayFor(window)).workArea, window, config);
-  console.log('[AI Window Deck] Applying spotlight bounds:', spotlight, 'with config:', {
-    size: config.spotlightSize,
-    width: config.spotlightWidth,
-    height: config.spotlightHeight,
-    anchor: config.spotlightAnchor,
-  });
   await stepInto(window, saved, stack, previous, spotlight, null);
   await chrome.windows.update(window.id, { ...spotlight, focused: true });
   // The OS can nudge a window straight after a resize; one repeat makes it stick.
   await new Promise((resolve) => setTimeout(resolve, 250));
   await chrome.windows.update(window.id, spotlight);
-  await noteLanded(window.id, saved, stack);
   return { ok: true, restored: false };
 }
 
@@ -922,71 +457,16 @@ async function goHome(window, saved, stack) {
   await chrome.storage.session.set({ previousBounds: saved });
   if (first.state === "maximized" || first.state === "fullscreen") {
     await chrome.windows.update(window.id, { state: first.state, focused: true });
-  } else {
-    await place(window.id, window.state, { ...first.bounds, focused: true });
+    return;
   }
-  // A focus view may also have moved or hidden the layout's other windows.
-  await restoreOthers(window.id);
+  await place(window.id, window.state, { ...first.bounds, focused: true });
 }
 
-// The window's own tile in its layout: the slot it was launched into (slot
-// map), or the first slot whose URLs it has open. Same frames as launchDeck:
-// the panel launches every slot of a 12 × 12 board, on the layout's display
-// (automatic = the display the window is on now). Null outside every layout.
-async function slotFrame(window, config, slotMap) {
-  const urls = windowUrls(window);
-  const active = config.activePreset ?? 0;
-  const activeMatches = (config.presets?.[active]?.slots ?? []).some((slot) =>
-    slotUrls(slot).some((prefix) => urls.some((url) => url === prefix || url.startsWith(prefix))));
-  // Shared windows follow the active layout, even if they were launched by
-  // another layout or the browser restart discarded their launch record.
-  const index = activeMatches ? active : layoutIndexOf(window, config, slotMap);
-  if (index == null) return null;
-  const preset = config.presets[index];
-  const slots = preset?.slots ?? [];
-  const recorded = slotMap[window.id];
-  let position = -1;
-  if (recorded?.presetIndex === index) {
-    position = recorded.slotId != null ? slots.findIndex((slot) => slot?.id === recorded.slotId) : -1;
-    if (position < 0 && Number.isInteger(recorded.slotIndex) && recorded.slotIndex < slots.length) position = recorded.slotIndex;
-  }
-  if (position < 0) {
-    const urls = windowUrls(window);
-    position = slots.findIndex((slot) => slotUrls(slot).some((prefix) => urls.some((url) => url === prefix || url.startsWith(prefix))));
-  }
-  if (position < 0) return null;
-  const cells = slots.map((slot, i) => ({
-    x: slot?.gridX ?? (i % 2) * 6, y: slot?.gridY ?? Math.floor(i / 2) * 6,
-    w: slot?.gridW ?? 6, h: slot?.gridH ?? 6,
-  }));
-  const displays = await chrome.system.display.getInfo();
-  const display = layoutDisplay(preset, displays) ?? await displayFor(window);
-  return cellFrames(cells, display.workArea, 12, config.gap ?? 8)[position] ?? null;
-}
-
-// ⌥Z: the focused window goes back to its tile in its layout, whatever was
-// done to it since (enlarged, moved or resized by hand); a focus view's other
-// windows come back too. A window outside every layout only undoes an
-// enlarge, if there is one, and otherwise nothing happens (no error).
+// Whatever size it is now, put it back where it started. Always available, so
+// there is a way out that needs no counting.
 async function restoreHome() {
-  const window = await workingWindow();
-  if (!window) return { ok: false, reason: "empty" };
-  const config = await settings();
+  const window = await chrome.windows.getLastFocused();
   const { saved, stack } = await geometry(window.id);
-  const frame = await slotFrame(window, config, await session("deckSlotMap", {}));
-  if (frame) {
-    await pushUndo([window]);
-    if (stack.length) {
-      delete saved[window.id];
-      await chrome.storage.session.set({ previousBounds: saved });
-    }
-    await place(window.id, window.state, { ...frame, focused: true });
-    // The OS can nudge a window straight after a resize; one repeat makes it stick.
-    await pause(250);
-    await chrome.windows.update(window.id, frame);
-    await restoreOthers(window.id);
-    return { ok: true, slot: true };
-  }
   if (!stack.length) return { ok: false, reason: "empty" };
   await goHome(window, saved, stack);
   return { ok: true };
@@ -1005,8 +485,7 @@ async function focusTile(index) {
 }
 
 async function toggleFullscreen() {
-  const window = await workingWindow();
-  if (!window) return { ok: false, reason: "empty" };
+  const window = await chrome.windows.getLastFocused();
   const { saved, stack } = await geometry(window.id);
 
   if (window.state === "fullscreen" && stack.length) {
@@ -1027,8 +506,8 @@ async function step(offset) {
   const displays = config.sameDisplayOnly ? await targetDisplays(config) : null;
   const windows = await normalWindows(config, displays);
   if (!windows.length) return { ok: false, reason: "empty" };
-  const current = await workingWindow();
-  const index = windows.findIndex((window) => window.id === current?.id);
+  const current = await chrome.windows.getLastFocused();
+  const index = windows.findIndex((window) => window.id === current.id);
   const next = ((index < 0 ? 0 : index + offset) + windows.length) % windows.length;
   await chrome.windows.update(windows[next].id, { focused: true });
   return { ok: true };
@@ -1061,6 +540,37 @@ const COMMANDS = {
   ...Object.fromEntries(Array.from({ length: 8 }, (_, i) =>
     [`focus-tile-${i + 1}`, () => focusTile(i + 1)])),
 };
+
+// The toolbar popup is capped by Chrome at 800x600. Anything roomier has to be
+// a window of its own — not a tab, so it stays out of the way, and not full
+// screen. Four fifths of the work area, remembered wherever the user drags or
+// resizes it to.
+const SETTINGS_SHARE = 0.8;
+
+async function openBigSettings() {
+  const url = chrome.runtime.getURL("dist/index.html?mode=page");
+  const existing = (await chrome.tabs.query({})).find(
+    (tab) => tab.url?.startsWith(chrome.runtime.getURL("dist/index.html")) && tab.url.includes("mode=page")
+  );
+  if (existing) {
+    await chrome.windows.update(existing.windowId, { focused: true });
+    await chrome.tabs.update(existing.id, { active: true });
+    return { ok: true, reused: true };
+  }
+
+  const { workArea } = (await targetDisplays(await settings()))[0];
+  const width = Math.round(workArea.width * 0.82);
+  const height = Math.round(workArea.height * 0.82);
+  const left = workArea.left + Math.round((workArea.width - width) / 2);
+  const top = workArea.top + Math.round((workArea.height - height) / 2);
+
+  const saved = (await chrome.storage.sync.get({ settingsWindow: null })).settingsWindow;
+  const window = await createSized({ url, type: "normal", focused: true }, saved ?? {
+    width, height, left, top,
+  });
+  await chrome.storage.session.set({ settingsWindowId: window.id });
+  return { ok: true, opened: window.id };
+}
 
 // Bounds handed to windows.create do not stick — Chrome re-applies its
 // remembered size once the window settles. Measured in tools: only a delayed
@@ -1104,7 +614,9 @@ chrome.windows.onBoundsChanged?.addListener(async (window) => {
   const bounds = {
     left: window.left, top: window.top, width: window.width, height: window.height,
   };
-  if (window.id === await session("dockWindowId", null)) {
+  if (window.id === await session("settingsWindowId", null)) {
+    await chrome.storage.sync.set({ settingsWindow: bounds });
+  } else if (window.id === await session("dockWindowId", null)) {
     await chrome.storage.sync.set({ dockWindow: bounds });
   }
 });
@@ -1120,8 +632,10 @@ async function listWindows() {
   const displays = await chrome.system.display.getInfo();
   const ordered = [...displays].sort((a, b) => a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
 
+  const ownUrl = chrome.runtime.getURL("");
   return inReadingOrder(windows.filter((window) =>
-    window.type === "normal" && !showsDeck(window)
+    window.type === "normal"
+      && !(window.tabs ?? []).some((tab) => (tab.url || tab.pendingUrl || "").startsWith(ownUrl))
   )).map((window) => {
     const active = window.tabs.find((tab) => tab.active) ?? window.tabs[0];
     const group = groups.find((entry) => entry.windowId === window.id);
@@ -1133,7 +647,6 @@ async function listWindows() {
       favIconUrl: active?.favIconUrl ?? "",
       color: group?.color ?? null,
       tabs: window.tabs.length,
-      urls: window.tabs.map((tab) => tab.url || tab.pendingUrl || ""),
       screen: screen < 0 ? null : screen + 1,
       minimized: window.state === "minimized",
       isFocused: window.id === focused.id,
@@ -1216,47 +729,6 @@ async function openShortcutSettings() {
   await chrome.windows.update(tab.windowId, { focused: true });
 }
 
-// ---- toolbar icon -----------------------------------------------------
-
-// The toolbar icon (and the _execute_action shortcut, which fires the same
-// event when no popup is set) opens the Deck as a full tab. One Deck tab: if
-// it is already open anywhere, bring that tab and its window forward instead
-// of opening another. The floating controller (?mode=dock) is not the Deck tab.
-const DECK_PAGE = "dist/index.html";
-
-const isDeckTab = (tab) => {
-  const url = tab?.url || tab?.pendingUrl || "";
-  return url.startsWith(chrome.runtime.getURL(DECK_PAGE)) && !/[?&]mode=dock\b/.test(url);
-};
-
-async function openDeckTab(fromTab) {
-  const existing = (await chrome.tabs.query({})).find(isDeckTab);
-  if (existing) {
-    await chrome.tabs.update(existing.id, { active: true });
-    const host = await chrome.windows.get(existing.windowId).catch(() => null);
-    await chrome.windows.update(existing.windowId,
-      host?.state === "minimized" ? { focused: true, state: "normal" } : { focused: true });
-    return { ok: true, reused: true, tabId: existing.id };
-  }
-  // Remember where the user was, so Focus view from the Deck reaches it.
-  if (fromTab?.windowId != null) await noteWorkWindow(fromTab.windowId);
-  const url = chrome.runtime.getURL(DECK_PAGE);
-  let tab;
-  try {
-    // Next to the tab the user clicked from, in that window.
-    tab = await chrome.tabs.create(fromTab?.windowId != null && fromTab.index != null
-      ? { url, active: true, windowId: fromTab.windowId, index: fromTab.index + 1 }
-      : { url, active: true });
-  } catch {
-    // That window cannot hold tabs (an app or popup window): let Chrome pick.
-    tab = await chrome.tabs.create({ url, active: true });
-  }
-  await chrome.windows.update(tab.windowId, { focused: true }).catch(() => {});
-  return { ok: true, opened: tab.id };
-}
-
-chrome.action?.onClicked?.addListener((tab) => { openDeckTab(tab); });
-
 chrome.commands.onCommand.addListener((command) => {
   COMMANDS[command]?.();
 });
@@ -1281,6 +753,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === "dock") {
     openDock().then((result) => sendResponse(result), () => sendResponse({ ok: false }));
+    return true;
+  }
+  if (message.type === "bigSettings") {
+    openBigSettings().then((result) => sendResponse(result), () => sendResponse({ ok: false }));
     return true;
   }
   if (message.type === "displays") {

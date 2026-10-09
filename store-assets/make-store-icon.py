@@ -1,7 +1,8 @@
 """Monochrome v6 icons drawn from site/assets/icon-v6.svg.
 
 Writes the 128 x 128 Chrome Web Store icon (96 px artwork, 16 px transparent padding, as
-Chrome's icon guidelines ask for) and the extension's icons/icon-{16,32,48,128}.png.
+Chrome's icon guidelines ask for). The extension's own icons/ ship as they are in the store
+package and are not regenerated here.
 """
 from pathlib import Path
 from PIL import Image, ImageDraw
@@ -29,8 +30,7 @@ def icon(size, art):
     return img.resize((size, size), Image.LANCZOS)
 
 
-targets = {ROOT / "store-assets/listing/store-icon-128.png": (128, 96), ROOT / "icons/icon-128.png": (128, 96)}
-targets.update({ROOT / f"icons/icon-{s}.png": (s, s) for s in (16, 32, 48)})
+targets = {ROOT / "store-assets/listing/store-icon-128.png": (128, 96)}
 for path, (size, art) in targets.items():
     path.parent.mkdir(parents=True, exist_ok=True)
     icon(size, art).save(path)

@@ -37,7 +37,7 @@ test("every locale gets the same strings", () => {
   for (const l of locales) assert.match(strings[l].moreSupportLink, /Ko-fi/, l);
 });
 
-// The store package is not in the repo; point AWD_V1110_DIR at the unpacked 1.11.0 zip.
+// The 1.11.0 store package is not in the repo; point AWD_V1110_DIR at the unpacked zip.
 const pkg = process.env.AWD_V1110_DIR;
 test("the patch builds a valid 1.11.2 bundle", { skip: !pkg || !existsSync(pkg) ? "set AWD_V1110_DIR to the unpacked 1.11.0 package" : false }, () => {
   const out = mkdtempSync(join(tmpdir(), "awd-1112-"));
@@ -50,6 +50,11 @@ test("the patch builds a valid 1.11.2 bundle", { skip: !pkg || !existsSync(pkg) 
     assert.equal(js.split('regTitleAdd:"Register URLs + Window"').length - 1, 1);
     assert.ok(js.includes("open:he&&w,"));
     assert.equal(js.split('href:"https://ko-fi.com/G2G71VP1DF"').length - 1, 1);
+    // The repository root is the shipped 1.11.2 package, so the patch must reproduce it.
+    const files = (dir, base = dir) =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name), base) : [join(dir, e.name).slice(base.length + 1)]));
+    const root = new URL("..", tools).pathname;
+    for (const file of files(out)) assert.ok(readFileSync(join(out, file)).equals(readFileSync(join(root, file))), `${file} differs from the repo root`);
   } finally {
     rmSync(out, { recursive: true, force: true });
   }

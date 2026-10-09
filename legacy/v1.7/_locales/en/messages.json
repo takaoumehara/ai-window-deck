@@ -3,13 +3,13 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "Tile AI workspaces, bring one into focus with a shortcut, and switch between them quickly."
+    "message": "Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused."
   },
   "cmdSpotlight": {
     "message": "Enlarge / back to the tile"
   },
   "cmdHome": {
-    "message": "Back to its tile in the layout"
+    "message": "Back to the tile it started from"
   },
   "cmdTile": {
     "message": "Re-tile"

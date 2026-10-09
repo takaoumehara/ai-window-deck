@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>AI Window Deck</title>
+    <style>
+      /* A full-bleed number, the way macOS flashes a display when you click it
+         in Arrangement. It closes itself; nothing here is interactive. */
+      html, body { margin:0; height:100%; overflow:hidden; }
+      body {
+        display:grid; place-items:center;
+        background:#2F5BFF; color:#fff;
+        font-family:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .n { font-size:34vh; font-weight:800; line-height:1; letter-spacing:-.04em; }
+      .label { position:absolute; bottom:8vh; font-size:3.2vh; opacity:.92; text-align:center; padding:0 4vw; }
+    </style>
+  </head>
+  <body>
+    <div class="n" id="n"></div>
+    <div class="label" id="label"></div>
+    <script src="identify.js"></script>
+  </body>
+</html>
