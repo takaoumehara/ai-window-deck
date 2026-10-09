@@ -2,16 +2,22 @@
 
 ## Package
 
-The 1.11.2 package is built from the published 1.11.0 store package by the patch scripts, not by `npm run build`:
+The repository root is the 1.11.2 package. Zip it with no build step:
 
 ```sh
-node tools/patch-v1.11.2-inline-register.mjs <unpacked-1.11.0> <out>   # also applies the 1.11.1 patch
-cd <out> && zip -X -r ../ai-window-deck-v1.11.2.zip manifest.json background.js identify.html identify.js icons _locales dist
-node tools/validate-package.mjs ../ai-window-deck-v1.11.2.zip
+npm test
+npm run package          # writes and validates ai-window-deck-v1.11.2.zip
+```
+
+The root files come from the published 1.11.0 store package through the patch scripts. To reproduce them:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>          # also applies the 1.11.1 patch
+AWD_V1110_DIR=<unpacked-1.11.0> npm test          # checks the output equals the root, byte for byte
 ```
 
 - [x] `ai-window-deck-v1.11.2.zip`: 19 files, manifest 1.11.2, permissions `tabs`, `tabGroups`, `storage`, `system.display` (unchanged from 1.11.0), validated.
-- [x] `AWD_V1110_DIR=<unpacked-1.11.0> npm test` builds the package in a temp folder and checks it.
+- [x] `npm run package` from the root gives the same 19 files, byte for byte.
 
 ## Listing graphics
 
@@ -29,8 +35,8 @@ Listing text, including "What's new in 1.11.2": `listing/en/description.txt` and
 
 Regenerate the graphics in this order:
 
-1. `python3 store-assets/make-store-icon.py` (store icon and `icons/icon-*.png`).
-2. Serve the unpacked 1.11.2 package (`python3 -m http.server 8782` in its folder) and run `store-assets/capture-app-screens.mjs`. It writes the extension screenshots used by the site, the READMEs and the listing into `site/assets/img/`.
+1. `python3 store-assets/make-store-icon.py` (store icon only; the package icons ship unchanged).
+2. Serve the repository root (`python3 -m http.server 8782`) and run `store-assets/capture-app-screens.mjs`. It writes the extension screenshots used by the site, the READMEs and the listing into `site/assets/img/`.
 3. Serve `site/` and run `store-assets/capture-listing-graphics.mjs` with `SITE_URL` pointing at it.
 
 Both capture scripts take `PLAYWRIGHT` (path to `playwright-core`) and `CHROME` (path to Chrome).
@@ -40,7 +46,7 @@ Both capture scripts take `PLAYWRIGHT` (path to `playwright-core`) and `CHROME` 
 - [x] Listing graphics above, all at the store's exact sizes (screenshots and promo tiles opaque RGB; the store icon keeps its transparent padding).
 - [x] Privacy policy: `../PRIVACY.md`, plus generated `privacy-policy.html`. Dashboard answers: `CHROME_WEB_STORE_PRIVACY_PRACTICES.md` (unchanged: no new permissions or data use in 1.11.2).
 - [x] Support contact: `https://github.com/takaoumehara/ai-window-deck/issues`
-- [x] Site (`site/`) updated for 1.11.2. Vercel deploys it from `main` after the release PR is merged.
+- [x] Site (`site/`) updated for 1.11.2. Vercel deploys it from `main` after the release PR is merged; the root `vercel.json` serves `site/` as is, with no install or build.
 
 ## In the publisher's Chrome Web Store account
 

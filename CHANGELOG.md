@@ -14,6 +14,10 @@ their dates are approximate (taken from file timestamps inside those archives).
 
 Built from the 1.11.0 store package with `tools/patch-v1.11.2-inline-register.mjs`, which applies the 1.11.1 patch first.
 
+### Repository
+- The repository root is now the 1.11.2 package itself: load it unpacked or zip it with `npm run package`, with no install or build. The 1.7 source (`src/`, Vite, `deck.html` and their tests) moved to `legacy/v1.7/`.
+- Vercel serves `site/` as a static site (root `vercel.json`), instead of building the repository with Vite.
+
 ### Changed
 - The register button is now **Register URLs + Window**, and it opens inside the page instead of a modal dialog. The view you came from stays in place and keyboard focus returns to the button when the panel closes. The small dock window keeps the dialog.
 - A new window starts at a choice between *One by one* and *Bulk (paste text)*. The bulk card shows a short animation of copying a list of sites from a chat and pasting it; with reduced motion it shows a still version. `Escape` in a form goes back to the choice first.
