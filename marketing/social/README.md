@@ -8,7 +8,9 @@ LinkedIn・Reddit・X / Bluesky にそのまま貼れる原稿と、投稿順・
 | [reddit.md](reddit.md) | サブレディットごとのタイトル・本文、コメント返信テンプレート |
 | [x-bluesky.md](x-bluesky.md) | 短文ポスト（EN / JP）とスレッド |
 | [calendar.md](calendar.md) | 4 週間の投稿カレンダー |
-| `media/launch-clip-45s.mp4` | プロモ動画 100〜145 秒の切り出し（1920 × 1056、音声なし、1.5 MB）。8 枚の Claude Code ウィンドウが一斉にタイル表示される場面 |
+| `media/ai-window-deck-promo-en.mp4` / `-ja.mp4` | 1.11.2 の現行デザインで撮ったプロモ動画（66 秒、1920 × 1080、約 3 MB）。英語版と日本語版 |
+| `media/thumbnail-en.png` / `-ja.png` | 動画から切り出した静止画（Alt+X で 1 枚を拡大した場面）。サムネイルや画像投稿に |
+| [video/](video/) | プロモ動画を撮り直すためのスクリプト |
 
 ## リンク（必ずこちらを使う）
 
@@ -26,14 +28,15 @@ Gemini 案にあった `ai-window-deck-4w1e3txyn-...vercel.app` は Vercel の�
 
 | 素材 | 向いている場所 |
 | --- | --- |
-| `media/launch-clip-45s.mp4` | LinkedIn、Reddit（動画投稿）、X（140 秒以内なのでそのまま可） |
+| `media/ai-window-deck-promo-en.mp4` / `-ja.mp4` | LinkedIn、Reddit（動画投稿）、X（140 秒以内なのでそのまま可）、YouTube |
 | `docs/images/focus-preview-en-dark.gif` / `-ja-dark.gif` | X / Bluesky の Alt+X デモ。Reddit のコメント欄 |
 | `docs/images/register-paste-en-dark.gif` / `-ja-dark.gif` | 一括登録（チャットの URL リストを貼るだけ）の紹介 |
-| `store-assets/screenshots/01-arrange.png` 〜 `05-popup.png` | LinkedIn のカルーセル（PDF にまとめるとカルーセル表示になります） |
+| `store-assets/listing/en/01〜05` / `listing/ja/01〜05` | LinkedIn のカルーセル（PDF にまとめるとカルーセル表示になります） |
 | `site/assets/img/05-focus-enlarge.png` | 「その場で拡大 / 中央に拡大」の比較 |
-| `AI-window-deck-promo.mp4`（3 分 24 秒） | YouTube や Web サイト用。SNS には長すぎます |
 
-切り出し動画は Chrome for Testing で撮ったため、各ウィンドウ上部に「Chrome for Testing … only for automated testing」のバーが写っています。気になる場合は通常の Chrome で撮り直してください。
+リポジトリ直下の `AI-window-deck-promo.mp4` と `store-assets/screenshots/` は旧デザイン（1.7）なので、SNS には使わないでください。
+
+プロモ動画の中身は、拡張を実際に Chrome に入れて操作したものです。サイト一覧を貼って登録し、キャンバスに並べ、Focus view を「大きく・中央」に設定して起動し、Alt+X で拡大と復帰を 2 回見せています。開いているのは公開ページ（Claude Code on the web のドキュメント、openai/codex の GitHub、Vercel のドキュメント、AI Window Deck のサイトとリポジトリ、Chrome 拡張のドキュメント）です。ログインが必要な claude.ai/code や chatgpt.com/codex の実画面ではありません。撮影は Linux 版 Chrome なので、ウィンドウの枠は Mac と見た目が少し違います。
 
 ## 書き方のルール
 

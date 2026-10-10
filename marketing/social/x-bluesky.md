@@ -14,7 +14,7 @@ https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdc
 
 ## A. 課題共感
 
-**A-1 EN** — 添付: `media/launch-clip-45s.mp4`
+**A-1 EN** — 添付: `media/ai-window-deck-promo-en.mp4`
 
 ```text
 The agents run in the cloud now. My laptop is quiet.
@@ -24,7 +24,7 @@ The new bottleneck: 5 Claude Code sessions, a preview, a PR, the docs, and me dr
 So I built a Chrome extension that opens the whole set tiled in one click.
 ```
 
-**A-1 JP** — 添付: `media/launch-clip-45s.mp4`
+**A-1 JP** — 添付: `media/ai-window-deck-promo-ja.mp4`
 
 ```text
 重い処理は Claude Code や Codex がクラウドでやってくれる。Mac は静か。
@@ -111,7 +111,7 @@ Pick one in step ③ of AI Window Deck.
 
 ## C. 構成レシピ
 
-**C-1 EN** — 添付: `store-assets/screenshots/01-arrange.png`
+**C-1 EN** — 添付: `store-assets/listing/en/03-layout.png`
 
 ```text
 My 4-slot layout for running two features at once:
@@ -124,7 +124,7 @@ My 4-slot layout for running two features at once:
 Saved once. Opens tiled every morning in one click, tabs grouped and named.
 ```
 
-**C-1 JP** — 添付: `store-assets/screenshots/01-arrange.png`
+**C-1 JP** — 添付: `store-assets/listing/ja/03-layout.png`
 
 ```text
 「どのタブで何が動いてたっけ？」をなくす 4 枠レシピ

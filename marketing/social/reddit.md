@@ -26,7 +26,7 @@ Reddit は宣伝に厳しいので、LinkedIn とは書き方を変えていま�
 
 ## 1. r/ClaudeAI / r/ClaudeCode
 
-形式: Video 投稿（`media/launch-clip-45s.mp4`）
+形式: Video 投稿（`media/ai-window-deck-promo-en.mp4`）
 
 **Title**
 
@@ -62,7 +62,7 @@ Curious how others here handle many sessions at once. Separate Chrome profiles? 
 
 ## 2. r/chrome_extensions
 
-形式: Video 投稿、または画像投稿（`store-assets/screenshots/01-arrange.png`）
+形式: Video 投稿、または画像投稿（`store-assets/listing/en/03-layout.png`）
 
 **Title**
 
@@ -93,7 +93,7 @@ Feedback on the onboarding and the canvas especially welcome. It's the part I'm 
 
 ## 3. r/SideProject
 
-形式: Video 投稿（`media/launch-clip-45s.mp4`）
+形式: Video 投稿（`media/ai-window-deck-promo-en.mp4`）
 
 **Title**
 

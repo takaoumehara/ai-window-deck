@@ -3,7 +3,7 @@
 LinkedIn では最初の 2〜3 行（約 210 文字）だけが「…もっと見る」の前に表示されます。どの投稿も冒頭の 2 行で要点が伝わるようにしています。
 
 - 外部リンクを本文に入れるとリーチが落ちやすいので、リンクは投稿後すぐに**自分の最初のコメント**に貼ります（本文の最後に「Link in the first comment」）。
-- 動画（`media/launch-clip-45s.mp4`）を直接アップロードします。LinkedIn は自動再生が無音なので、音声なしの動画で問題ありません。
+- 動画（`media/ai-window-deck-promo-en.mp4`、日本語投稿は `-ja.mp4`）を直接アップロードします。LinkedIn は自動再生が無音なので、音声なしの動画で問題ありません。
 - ハッシュタグは 3 個まで。
 - 英語版と日本語版は同じ日に出さず、2〜3 日あけます。
 
@@ -11,7 +11,7 @@ LinkedIn では最初の 2〜3 行（約 210 文字）だけが「…もっと�
 
 ## 1. ローンチ投稿（EN）
 
-添付: `media/launch-clip-45s.mp4`
+添付: `media/ai-window-deck-promo-en.mp4`
 
 ```text
 My laptop stays quiet now. The agents run in the cloud. The hard part moved to my screen.
@@ -48,7 +48,7 @@ Source: https://github.com/takaoumehara/ai-window-deck
 
 ## 2. ローンチ投稿（JP）
 
-添付: `media/launch-clip-45s.mp4`
+添付: `media/ai-window-deck-promo-ja.mp4`
 
 ```text
 Mac のファンが静かになった代わりに、画面の上が忙しくなりました。
@@ -85,7 +85,7 @@ GitHub: https://github.com/takaoumehara/ai-window-deck
 
 ## 3. フォローアップ: ワークスペースの構成例（EN）
 
-添付: `store-assets/screenshots/01-arrange.png`（または 01〜05 を PDF にしてカルーセル）
+添付: `store-assets/listing/en/03-layout.png`（または `store-assets/listing/en/` の 01〜05 を PDF にしてカルーセル）
 
 ```text
 A layout I use to run two features in parallel without losing the thread:
@@ -108,7 +108,7 @@ What does your layout look like when you run more than one agent?
 
 ## 4. フォローアップ: なぜ専用ブラウザではなく Chrome 拡張なのか（EN）
 
-添付: `store-assets/screenshots/05-popup.png`
+添付: `media/thumbnail-en.png`（タイル表示された通常の Chrome ウィンドウ）
 
 ```text
 Why I built a Chrome extension instead of a new browser or desktop app.
