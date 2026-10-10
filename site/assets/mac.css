@@ -1,0 +1,91 @@
+/* mac.html only. Built on style.css tokens and the focus-preview stage/keycap styles. */
+
+.mac-demo { max-width: 960px; }
+.mac-stage svg, .compare-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* App window drawing (mac-demo.js). Two inks: --text and --bg, plus their alphas. */
+.md-window { fill: var(--surface); stroke: var(--cie-stroke-strong); stroke-width: 1.5; }
+.md-titlebar-rule, .md-head-rule { stroke: var(--border-strong); stroke-width: 1; }
+.md-light { fill: none; stroke: var(--cie-stroke-strong); stroke-width: 1.5; }
+.md-title { fill: var(--text); font: 500 15px var(--font); letter-spacing: -0.01em; }
+.md-chip rect { fill: var(--cie-btn); transition: fill 360ms var(--cie-ease-expo); }
+.md-chip text { fill: var(--text); font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; transition: fill 360ms var(--cie-ease-expo); }
+.md-chip.is-on rect { fill: var(--text); }
+.md-chip.is-on text { fill: var(--bg); }
+.md-card rect { fill: none; stroke: var(--border-strong); stroke-width: 1; transition: fill 360ms var(--cie-ease-expo), stroke 360ms var(--cie-ease-expo); }
+.md-card text { fill: var(--text); font: 12px var(--font); transition: fill 360ms var(--cie-ease-expo); }
+.md-card .md-num { fill: var(--muted); font: 11px var(--mono); }
+.md-card.is-focused rect { fill: var(--text); stroke: var(--text); }
+.md-card.is-focused text { fill: var(--bg); }
+.md-side-label { fill: var(--text); font: 300 15px var(--font); }
+
+.md-pane .md-frame { fill: var(--bg); stroke: var(--cie-stroke-strong); stroke-width: 1.5; transition: fill 360ms var(--cie-ease-expo), stroke 360ms var(--cie-ease-expo); }
+.md-pane .md-name { fill: var(--text); font: 13px var(--font); transition: fill 360ms var(--cie-ease-expo); }
+.md-pane .md-num { fill: var(--muted); font: 12px var(--mono); transition: fill 360ms var(--cie-ease-expo); }
+.md-pane .md-bar { fill: var(--border-strong); transition: fill 360ms var(--cie-ease-expo); }
+.md-pane.is-focused .md-frame { fill: var(--text); stroke: var(--text); }
+.md-pane.is-focused .md-name, .md-pane.is-focused .md-num { fill: var(--bg); }
+.md-pane.is-focused .md-bar { fill: color-mix(in srgb, var(--bg) 32%, transparent); }
+.md-pane.is-focused .md-head-rule { stroke: color-mix(in srgb, var(--bg) 22%, transparent); }
+
+.md-cursor path { fill: var(--text); stroke: var(--bg); stroke-width: 1.5; stroke-linejoin: round; }
+.md-cursor .md-ripple { fill: none; stroke: var(--text); stroke-width: 1.5; opacity: 0; }
+.md-cursor.is-clicking .md-ripple { animation: md-ripple 520ms var(--cie-ease-expo); }
+@keyframes md-ripple { 0% { opacity: .9; transform: scale(.3); } 100% { opacity: 0; transform: scale(1.6); } }
+.md-cursor .md-ripple { transform-box: fill-box; transform-origin: center; }
+
+.mac-demo .stage-key-row { min-height: 84px; }
+.mac-static { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 720px) { .mac-static { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.mac-static figure { margin: 0; }
+.mac-static figcaption { margin-top: 8px; font-family: var(--mono); font-size: .75rem; letter-spacing: .04em; color: var(--muted); }
+
+.cta-note { margin: 14px 0 0; }
+
+/* Compare */
+.compare-figures { display: grid; gap: 32px; margin-bottom: clamp(36px, 4.5vw, 56px); }
+@media (min-width: 860px) { .compare-figures { grid-template-columns: 1fr 1fr; } }
+.compare-figure { margin: 0; min-width: 0; }
+.compare-art {
+  --cie-stroke-strong: #7a7975; --cie-btn: rgba(11, 11, 11, .055); --cie-ease-expo: cubic-bezier(.76, 0, .18, 1);
+  border: 1px solid var(--border-strong); border-radius: 16px; background: var(--surface); padding: clamp(14px, 2vw, 24px);
+}
+.compare-figure figcaption { display: grid; gap: 4px; margin-top: 12px; font-size: .9375rem; color: var(--text); }
+.compare-figure .fig-no { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.cmp-display { fill: var(--bg-soft); stroke: var(--cie-stroke-strong); stroke-width: 1.5; }
+.cmp-stand { fill: var(--cie-stroke-strong); }
+.cmp-win rect.cmp-frame { fill: var(--surface); stroke: var(--text); stroke-width: 1.25; }
+.cmp-win rect.cmp-bar { fill: var(--text); }
+.cmp-win.is-focused rect.cmp-frame { fill: var(--text); }
+.cmp-win.is-focused rect.cmp-bar { fill: var(--bg); opacity: .35; }
+.cmp-label { fill: var(--muted); font: 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.compare-table td { min-width: 180px; }
+.compare-table td:first-child { min-width: 130px; font-weight: 500; }
+.compare-note { margin-top: 16px; }
+
+:root[data-theme="dark"] .mac-demo, :root[data-theme="dark"] .compare-art { --cie-btn: rgba(243, 242, 238, .07); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mac-demo, :root:not([data-theme="light"]) .compare-art { --cie-btn: rgba(243, 242, 238, .07); }
+}
+
+/* Pricing */
+.plans { display: grid; gap: 0 32px; }
+@media (min-width: 960px) { .plans { grid-template-columns: repeat(3, 1fr); } }
+.plan { border-top: 1px solid var(--border); padding: 20px 0 32px; display: flex; flex-direction: column; align-items: flex-start; }
+.plan.is-current { border-top-color: var(--text); }
+.plan h3 { margin-bottom: 6px; }
+.plan p { color: var(--text); font-size: .9375rem; }
+.plan .btn { margin-top: auto; }
+.price { display: flex; align-items: baseline; gap: 10px; margin: 4px 0 14px; }
+.price > span:first-child { font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem); font-weight: 500; letter-spacing: -0.03em; line-height: 1; }
+.price-note { font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* Install */
+.install-grid { display: grid; gap: 40px 56px; }
+@media (min-width: 960px) { .install-grid { grid-template-columns: 1.3fr 1fr; align-items: start; } }
+.install-grid .steps { margin: 0; }
+.install-grid .facts { margin-bottom: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mac-demo *, .compare-art * { animation: none !important; transition: none !important; }
+}

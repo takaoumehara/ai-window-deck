@@ -1,0 +1,94 @@
+{
+  "name": "ai-window-deck-desktop",
+  "productName": "AI Window Deck",
+  "private": true,
+  "version": "0.2.0",
+  "description": "AI Window Deck as a desktop app: registered windows split inside one window.",
+  "author": "Takao Umehara",
+  "license": "MIT",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k \"vite --port 5174 --strictPort\" \"wait-on tcp:5174 && cross-env DECK_DEV_URL=http://localhost:5174 electron .\"",
+    "build": "vite build",
+    "start": "vite build && electron .",
+    "test": "node --test test/*.test.js",
+    "dist:mac": "vite build && electron-builder --mac",
+    "dist:win": "vite build && electron-builder --win",
+    "dist:dir": "vite build && electron-builder --dir"
+  },
+  "devDependencies": {
+    "@fontsource-variable/outfit": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0",
+    "@fontsource/zen-kaku-gothic-new": "^5.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.0",
+    "lucide-react": "^0.469.0",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.creativityiseverywhere.aiwindowdeck",
+    "productName": "AI Window Deck",
+    "artifactName": "AI-Window-Deck-${version}-${arch}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**",
+      "dist/**"
+    ],
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "minimumSystemVersion": "12.0",
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "A page open in AI Window Deck wants to use the microphone, for example for voice input.",
+        "NSCameraUsageDescription": "A page open in AI Window Deck wants to use the camera, for example for a video call."
+      },
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
+  }
+}

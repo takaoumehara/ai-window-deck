@@ -11,3 +11,7 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+
+# Desktop app build output (desktop/dist is rebuilt by `npm start` / `npm run dist:*`)
+/desktop/dist/
+/desktop/release/

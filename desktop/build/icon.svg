@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>AI Window Deck</title>
+  <!-- site/assets/icon-v6.svg on the macOS icon grid: an 824px body inset 100px. -->
+  <g transform="translate(100 100) scale(12.875)">
+    <rect width="64" height="64" rx="14.4" fill="#0b0b0b"/>
+    <rect x="10.5" y="10.5" width="20.5" height="20.5" rx="3.75" fill="#f3f2ee"/>
+    <g fill="#f3f2ee" fill-opacity="0.46">
+      <rect x="34.5" y="12" width="17.5" height="17.5" rx="3.25"/>
+      <rect x="12" y="34.5" width="17.5" height="17.5" rx="3.25"/>
+      <rect x="34.5" y="34.5" width="17.5" height="17.5" rx="3.25"/>
+    </g>
+  </g>
+</svg>
