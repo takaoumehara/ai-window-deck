@@ -1,4 +1,4 @@
-import { computeDynamicLayout } from "../../../src/lib/layout-model.js";
+import { computeDynamicLayout } from "./grid-layout.js";
 
 export const MODES = ["grid", "spotlight", "fill"];
 

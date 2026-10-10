@@ -12,7 +12,6 @@ on:
   pull_request:
     paths:
       - "desktop/**"
-      - "src/lib/layout-model.js"
       - ".github/workflows/desktop-mac.yml"
   push:
     tags:
