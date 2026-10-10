@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>AI Window Deck for Mac: every AI session in one window</title>
+<meta content="AI Window Deck as a Mac app. Your registered windows open as live panes inside one window. Click a title bar or press ⌥X to bring one forward. Free during the beta." data-i18n-key="mac.meta.description" name="description"/>
+<meta content="#f3f2ee" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#0b0b0b" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="light dark" name="color-scheme"/>
+<link href="assets/icon-v6.svg?v=1.11.2" rel="icon" type="image/svg+xml"/>
+<link href="assets/icon-v6-32.png?v=1.11.2" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/apple-touch-icon-v6.png?v=1.11.2" rel="apple-touch-icon"/>
+<link href="https://ai-window-deck.vercel.app/mac" rel="canonical"/>
+<meta content="website" property="og:type"/>
+<meta content="AI Window Deck" property="og:site_name"/>
+<meta content="AI Window Deck for Mac: every AI session in one window" property="og:title"/>
+<meta content="Your registered windows open as live panes inside one window. Click a title bar or press ⌥X to bring one forward. Free during the beta." property="og:description"/>
+<meta content="https://ai-window-deck.vercel.app/mac" property="og:url"/>
+<meta content="https://ai-window-deck.vercel.app/assets/icon-v6-192.png?v=1.11.2" property="og:image"/>
+<meta content="192" property="og:image:width"/>
+<meta content="192" property="og:image:height"/>
+<meta content="summary" name="twitter:card"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/style.css" rel="stylesheet"/>
+<link href="assets/focus-preview.css" rel="stylesheet"/>
+<link href="assets/mac.css" rel="stylesheet"/>
+<script src="assets/boot.js"></script>
+<link rel="manifest" href="assets/site.webmanifest?v=1.11.2">
+</head>
+<body data-title-key="mac.meta.title">
+<a class="skip-link" data-i18n="ui.skip" href="#main">Skip to content</a>
+<header class="nav">
+<div class="container">
+<a aria-label="AI Window Deck home" class="brand" href="./">
+<img alt="" height="22" src="assets/icon-v6.svg?v=1.11.2" width="22"/>
+<span>AI Window Deck</span>
+</a>
+<ul class="nav-links">
+<li><a data-i18n="mac.nav.overview" href="#overview">Overview</a></li>
+<li><a data-i18n="mac.nav.compare" href="#compare">Mac or Chrome</a></li>
+<li><a data-i18n="mac.nav.pricing" href="#pricing">Pricing</a></li>
+<li><a data-i18n="mac.nav.install" href="#install">Install</a></li>
+<li><a data-i18n="mac.nav.privacy" href="#privacy">Privacy</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+<div class="nav-tools">
+<a class="icon-btn nav-cta" data-download="" data-i18n="mac.nav.download" href="https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest/AI-Window-Deck-mac.dmg">Download</a>
+<button aria-label="日本語に切り替え" class="icon-btn" data-lang-toggle="" lang="ja" type="button"><span class="lang-long">日本語</span><span aria-hidden="true" class="lang-short">JA</span></button>
+<button aria-label="Toggle theme" class="icon-btn" data-theme-toggle="" type="button"></button>
+<a aria-label="GitHub repository" class="icon-btn" href="https://github.com/takaoumehara/ai-window-deck" title="GitHub">
+<svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"></path></svg>
+</a>
+<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Menu" class="icon-btn menu-btn" data-menu-toggle="" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"></path></svg>
+</button>
+</div>
+</div>
+</header>
+<nav aria-label="Sections" class="mobile-menu" id="mobile-menu">
+<a data-i18n="mac.nav.overview" href="#overview">Overview</a>
+<a data-i18n="mac.nav.compare" href="#compare">Mac or Chrome</a>
+<a data-i18n="mac.nav.pricing" href="#pricing">Pricing</a>
+<a data-i18n="mac.nav.install" href="#install">Install</a>
+<a data-i18n="mac.nav.privacy" href="#privacy">Privacy</a>
+<a href="#faq">FAQ</a>
+<a href="./" data-i18n="mac.nav.extension">Chrome extension</a>
+</nav>
+<main id="main">
+<!-- ================= HERO ================= -->
+<section class="hero">
+<div class="container">
+<div class="hero-meta">
+<span class="eyebrow" data-i18n="mac.hero.eyebrow">Mac app · Public beta</span>
+<span data-i18n="mac.hero.meta">v0.2 · macOS 12 or later · Apple silicon and Intel</span>
+</div>
+<figure class="focus-preview mac-demo" data-mac-demo="">
+<div class="stage-head"><p class="diagram-phase"><span data-demo-label="">Preview</span> · <span data-demo-phase="">Grid</span></p><button type="button" class="deck-button stage-pause" aria-pressed="false"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><span data-demo-pause="">Pause</span></button></div>
+<div data-demo-live=""><div class="mac-stage" data-demo-stage=""></div><div class="stage-key-row"></div></div>
+<div class="mac-static" data-demo-static="" hidden></div>
+</figure>
+<h1 data-i18n="mac.hero.title">AI Window Deck for Mac</h1>
+<div class="hero-grid">
+<p class="tagline" data-i18n="mac.hero.tagline">Every AI session in one window.</p>
+<div>
+<p class="lead" data-i18n="mac.hero.lead">The windows you register open as live panes inside one Mac window. Click a pane's title bar, or press ⌥X, and it takes the stage while the rest stay running at the side. ⌥Z puts everything back.</p>
+<ul aria-label="Highlights" class="meta-list" data-i18n-attr="aria-label:hero.metaLabel">
+<li data-i18n="mac.hero.m1">Grid, Spotlight, Fill</li><li data-i18n="mac.hero.m2">Click to enlarge</li><li data-i18n="mac.hero.m3">Imports your extension setup</li><li data-i18n="mac.hero.m4">Updates itself</li>
+</ul>
+<div class="cta">
+<a class="btn btn-primary" data-download="" href="https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest/AI-Window-Deck-mac.dmg"><span data-i18n="mac.hero.cta">Download for Mac</span><span aria-hidden="true" class="arr">↓</span></a>
+<a class="btn btn-ghost" data-i18n="mac.hero.compare" href="#compare">Mac app or Chrome extension?</a>
+</div>
+<p class="muted small cta-note" data-i18n="mac.hero.note">Free during the beta. Signed and notarized by Apple. About 210 MB.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= OVERVIEW ================= -->
+<section id="overview">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">01</span><span class="eyebrow" data-i18n="mac.ov.eyebrow">Overview</span></p>
+<div>
+<h2 data-i18n="mac.ov.title">One window. Nothing to arrange.</h2>
+<p class="lead" data-i18n="mac.ov.lead">The Chrome extension lines up separate Chrome windows. The Mac app keeps them all in one window instead, split into panes. Move the window, make it full screen, put it on another display: the deck goes with it.</p>
+</div>
+</div>
+<div class="cols cols-3" data-reveal="">
+<article class="col"><span class="col-k">Spotlight</span><h3 data-i18n="mac.ov.1.title">Click to bring one forward</h3><p data-i18n="mac.ov.1.body">Click a pane's title bar and it grows to most of the window. The others stay live on a rail at the side, so you can keep an eye on them. Click again, or press ⌥Z, to go back to the grid.</p></article>
+<article class="col"><span class="col-k">⌥X ⌥Z ⌥Q</span><h3 data-i18n="mac.ov.2.title">Every shortcut, already set</h3><p data-i18n="mac.ov.2.body">⌥X spotlight, ⌥Z grid, ⌥Q fill the window, ⌥1–8 jump to a pane, ⌥] and ⌥[ cycle, ⌥B the sidebar. They work even while a page has the keyboard.</p></article>
+<article class="col"><span class="col-k">Import</span><h3 data-i18n="mac.ov.3.title">Bring your deck along</h3><p data-i18n="mac.ov.3.body">Already use the extension? Save a backup there and open it in the app. Your windows, names and URLs come across, and the ones on your active layout start visible.</p></article>
+</div>
+</div>
+</section>
+<!-- ================= COMPARE ================= -->
+<section id="compare">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">02</span><span class="eyebrow" data-i18n="mac.cmp.eyebrow">Mac or Chrome</span></p>
+<div>
+<h2 data-i18n="mac.cmp.title">Same deck, two ways to hold it.</h2>
+<p class="lead" data-i18n="mac.cmp.lead">Both use the same windows and the same shortcuts. The difference is where the windows live.</p>
+</div>
+</div>
+<div class="compare-figures" data-reveal="">
+<figure class="compare-figure">
+<div class="compare-art" data-compare="extension"></div>
+<figcaption><span class="fig-no" data-i18n="mac.cmp.extLabel">Chrome extension</span><span data-i18n="mac.cmp.extCaption">Arranges real Chrome windows across your displays.</span></figcaption>
+</figure>
+<figure class="compare-figure">
+<div class="compare-art" data-compare="app"></div>
+<figcaption><span class="fig-no" data-i18n="mac.cmp.appLabel">Mac app</span><span data-i18n="mac.cmp.appCaption">Splits one window into panes. Nothing else on screen moves.</span></figcaption>
+</figure>
+</div>
+<div class="table-wrap compare-table" data-reveal=""><table>
+<thead><tr><th></th><th data-i18n="mac.cmp.extLabel">Chrome extension</th><th data-i18n="mac.cmp.appLabel">Mac app</th></tr></thead>
+<tbody>
+<tr><td data-i18n="mac.cmp.r1">Your windows</td><td data-i18n="mac.cmp.r1e">Separate Chrome windows, tiled on one or more displays</td><td data-i18n="mac.cmp.r1a">Panes inside one window that you move as a whole</td></tr>
+<tr><td data-i18n="mac.cmp.r2">Bring one forward</td><td data-i18n="mac.cmp.r2e">⌥X enlarges the active window</td><td data-i18n="mac.cmp.r2a">⌥X, or click its title bar. The rest keep running at the side</td></tr>
+<tr><td data-i18n="mac.cmp.r3">Shortcuts</td><td data-i18n="mac.cmp.r3e">Chrome allows four defaults; set the rest yourself</td><td data-i18n="mac.cmp.r3a">All set from the start, and they work while a page has focus</td></tr>
+<tr><td data-i18n="mac.cmp.r4">Sign-ins</td><td data-i18n="mac.cmp.r4e">Your Chrome profile, password manager and extensions</td><td data-i18n="mac.cmp.r4a">You sign in once inside the app; panes share that sign-in</td></tr>
+<tr><td data-i18n="mac.cmp.r5">Several displays</td><td data-i18n="mac.cmp.r5e">Yes, one deck across all of them</td><td data-i18n="mac.cmp.r5a">One window, on whichever display you put it</td></tr>
+<tr><td data-i18n="mac.cmp.r6">Install</td><td data-i18n="mac.cmp.r6e">Chrome Web Store, one click</td><td data-i18n="mac.cmp.r6a">Download a .dmg and drag it to Applications</td></tr>
+<tr><td data-i18n="mac.cmp.r7">Updates</td><td data-i18n="mac.cmp.r7e">Automatic, through Chrome</td><td data-i18n="mac.cmp.r7a">Automatic: downloads in the background, then asks to restart</td></tr>
+<tr><td data-i18n="mac.cmp.r8">Runs on</td><td data-i18n="mac.cmp.r8e">Chrome on Mac, Windows and Linux</td><td data-i18n="mac.cmp.r8a">macOS 12 or later, Apple silicon and Intel</td></tr>
+<tr><td data-i18n="mac.cmp.r9">Price</td><td data-i18n="mac.cmp.r9e">Free</td><td data-i18n="mac.cmp.r9a">Free during the beta</td></tr>
+</tbody>
+</table></div>
+<p class="muted small compare-note" data-i18n="mac.cmp.note">Not sure? Start with the <a href="./">Chrome extension</a>: it takes a minute and keeps your Chrome as it is. Choose the Mac app when you'd rather have every session in one window you can put anywhere.</p>
+</div>
+</section>
+<!-- ================= PRICING ================= -->
+<section id="pricing">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">03</span><span class="eyebrow" data-i18n="mac.price.eyebrow">Pricing</span></p>
+<div>
+<h2 data-i18n="mac.price.title">Free while it's a beta.</h2>
+<p class="lead" data-i18n="mac.price.lead">The Chrome extension stays free. The Mac app is free during the public beta; version 1.0 is planned as a one-time purchase, with no subscription and no account.</p>
+</div>
+</div>
+<div class="plans" data-reveal="">
+<article class="plan">
+<span class="status ready" data-i18n="mac.price.available">Available</span>
+<h3 data-i18n="mac.cmp.extLabel">Chrome extension</h3>
+<p class="price"><span data-i18n="mac.price.free">Free</span></p>
+<p data-i18n="mac.price.extBody">Open source under the MIT license. If it helps your day, you can support it on Ko-fi.</p>
+<a class="btn btn-ghost" data-i18n="mac.price.extCta" href="https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc">Add to Chrome ↗</a>
+</article>
+<article class="plan is-current">
+<span class="status ready" data-i18n="mac.price.beta">Public beta</span>
+<h3 data-i18n="mac.cmp.appLabel">Mac app</h3>
+<p class="price"><span data-i18n="mac.price.free">Free</span><span class="price-note" data-i18n="mac.price.betaNote">during the beta</span></p>
+<p data-i18n="mac.price.betaBody">Every feature, signed and notarized by Apple, with automatic updates. Tell us what works and what doesn't on GitHub.</p>
+<a class="btn btn-primary" data-download="" href="https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest/AI-Window-Deck-mac.dmg"><span data-i18n="mac.hero.cta">Download for Mac</span><span aria-hidden="true" class="arr">↓</span></a>
+</article>
+<article class="plan">
+<span class="status pending" data-i18n="mac.price.planned">Planned</span>
+<h3 data-i18n="mac.price.v1Title">Mac app 1.0</h3>
+<p class="price"><span data-i18n="mac.price.v1Price">$14.99</span><span class="price-note" data-i18n="mac.price.v1Note">one-time</span></p>
+<p data-i18n="mac.price.v1Body">Buy once and keep every 1.x update. No subscription, no account. The price may change before launch; it will be announced here first.</p>
+</article>
+</div>
+</div>
+</section>
+<!-- ================= INSTALL ================= -->
+<section id="install">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">04</span><span class="eyebrow" data-i18n="mac.inst.eyebrow">Install</span></p>
+<div>
+<h2 data-i18n="mac.inst.title">Four steps, about a minute.</h2>
+<p class="lead" data-i18n="mac.inst.lead">The app is signed with a Developer ID and notarized by Apple, so macOS opens it after one ordinary confirmation.</p>
+</div>
+</div>
+<div class="install-grid" data-reveal="">
+<ol class="steps">
+<li data-i18n="mac.inst.s1">Download <a data-download="" href="https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest/AI-Window-Deck-mac.dmg"><code>AI-Window-Deck-mac.dmg</code></a> and open it.</li>
+<li data-i18n="mac.inst.s2">Drag <b>AI Window Deck</b> into <b>Applications</b>.</li>
+<li data-i18n="mac.inst.s3">Open it from Applications. When macOS says it was downloaded from the internet, choose <b>Open</b>.</li>
+<li data-i18n="mac.inst.s4">Optional: in the extension, save a <b>Backup</b>, then choose <b>Import from extension</b> in the app's sidebar.</li>
+</ol>
+<div>
+<h3 class="tbl-title" data-i18n="mac.inst.reqTitle">Requirements</h3>
+<ul class="facts">
+<li data-i18n="mac.inst.r1">macOS 12 Monterey or later</li>
+<li data-i18n="mac.inst.r2">Apple silicon or Intel: one universal app</li>
+<li data-i18n="mac.inst.r3">About 210 MB to download</li>
+</ul>
+<p class="muted small" data-i18n="mac.inst.older">Past versions and release notes are on <a href="https://github.com/takaoumehara/ai-window-deck/releases">GitHub Releases</a>.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= PRIVACY ================= -->
+<section id="privacy">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">05</span><span class="eyebrow" data-i18n="mac.priv.eyebrow">Privacy</span></p>
+<div>
+<h2 data-i18n="mac.priv.title">Your sessions stay on your Mac.</h2>
+<p class="lead" data-i18n="mac.priv.lead">No account, no analytics, no server of our own. The app talks to the sites you open in it, and to GitHub to look for updates.</p>
+</div>
+</div>
+<ul class="facts" data-reveal="">
+<li data-i18n="mac.priv.f1">Your windows and settings are saved in a file on your Mac, in <code>~/Library/Application Support/AI Window Deck</code>.</li>
+<li data-i18n="mac.priv.f2">Sign-ins and cookies from the sites in your panes are kept by the app, separate from Chrome or Safari.</li>
+<li data-i18n="mac.priv.f3">About every six hours the app downloads a small file from GitHub Releases to see if there is a newer version. Nothing about you or your windows is sent.</li>
+<li data-i18n="mac.priv.f4">No analytics, no advertising, no crash reporting to the developer.</li>
+<li data-i18n="mac.priv.f5">A page can use the microphone or camera only after macOS asks you, as in any browser.</li>
+</ul>
+</div>
+</section>
+<!-- ================= FAQ ================= -->
+<section id="faq">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">06</span><span class="eyebrow">FAQ</span></p>
+<div>
+<h2 data-i18n="faq.title">Frequently asked questions</h2>
+</div>
+</div>
+<div class="faq-list" data-reveal="">
+<details class="faq"><summary data-i18n="mac.faq.q1">Do I need the Chrome extension too?</summary><div data-i18n="mac.faq.a1">No. The Mac app works on its own. Use either one, or both: the extension for Chrome windows across several displays, the app when you want one window.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q2">Why isn't it on the Mac App Store?</summary><div data-i18n="mac.faq.a2">The App Store requires a sandbox that would get in the way of running full web apps side by side. The app is still signed with a Developer ID and notarized by Apple, which means Apple has checked it for malicious software.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q3">Will I have to sign in to every site again?</summary><div data-i18n="mac.faq.a3">Once, inside the app. The app keeps its own sign-ins, separate from Chrome, and all panes share them, so signing in to a site in one pane signs in every pane that shows it.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q4">How do updates work?</summary><div data-i18n="mac.faq.a4">The app checks for a new version when it starts and about every six hours. It downloads in the background, then a button in the title bar offers to restart. If you skip it, the update installs the next time you quit. <i>Check for Updates…</i> in the app menu checks right away.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q5">What happens to the price after the beta?</summary><div data-i18n="mac.faq.a5">Beta versions stay free to use. Version 1.0 is planned as a one-time purchase, and the price will be announced here before it launches. The Chrome extension stays free.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q6">Is there a Windows version?</summary><div data-i18n="mac.faq.a6">Not yet. The app is built so that one can follow, but the Mac version comes first.</div></details>
+<details class="faq"><summary data-i18n="mac.faq.q7">How do I uninstall it?</summary><div data-i18n="mac.faq.a7">Quit the app and move it from Applications to the Trash. To remove your windows and sign-ins as well, delete <code>~/Library/Application Support/AI Window Deck</code>.</div></details>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<div class="container">
+<div aria-hidden="true" class="foot-word">AI Window Deck</div>
+<p class="foot-credit" data-i18n="footer.credit">Made by <a href="https://takaoumehara.com">Takao Umehara</a> · <a href="https://creativityiseverywhere.com">creativity is everywhere</a></p>
+<div class="foot-row">
+<span data-i18n="footer.license">MIT License</span>
+<span class="foot-links">
+<a href="./" data-i18n="mac.nav.extension">Chrome extension</a>
+<a href="https://github.com/takaoumehara/ai-window-deck">GitHub</a>
+<a data-i18n="footer.releases" href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a>
+<a data-i18n="footer.privacy" href="https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md">Privacy policy</a>
+<a data-i18n="footer.issues" href="https://github.com/takaoumehara/ai-window-deck/issues">Issues</a>
+</span>
+</div>
+<div class="foot-legal">
+<p data-i18n="footer.copyright">© 2026 Takao Umehara / creativity is everywhere. AI Window Deck is a project of creativity is everywhere.</p>
+<p data-i18n="footer.trademark">AI Window Deck is not affiliated with Anthropic or OpenAI. All trademarks belong to their respective owners.</p>
+<p data-i18n="mac.footer.apple">Mac and macOS are trademarks of Apple Inc.</p>
+</div>
+</div>
+</footer>
+<script src="assets/i18n.js"></script>
+<script src="assets/i18n-mac.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/mac-demo.js"></script>
+</body>
+</html>
