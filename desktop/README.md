@@ -74,6 +74,27 @@ Locally on a Mac, the same values go in `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_I
 
 Unsigned builds still run, but macOS blocks them on first launch. Since macOS 15 the right-click → Open bypass is gone: users have to try opening the app, then choose **Open Anyway** in System Settings → Privacy & Security.
 
+### Releasing a version
+
+1. Set `version` in `desktop/package.json` (for example `0.3.0`) and merge it.
+2. Tag that commit `desktop-v0.3.0` and push the tag. The workflow refuses a tag that
+   doesn't match `package.json`.
+3. The workflow publishes two releases, neither marked as the repository's latest (that
+   stays the Chrome extension):
+   - `desktop-v0.3.0`, the permanent record. Versions below 1.0 and versions with a
+     `-` (such as `1.0.0-rc.1`) are marked pre-release.
+   - `desktop-latest`, rebuilt on every tag. Its `latest-mac.yml` is the in-app update
+     feed (`build.publish`), and its `AI-Window-Deck-mac.dmg` is the website's download
+     link. Never delete it by hand.
+
+### Updates
+
+Packaged builds use `electron-updater` (`electron/updates.cjs`). They check
+`desktop-latest` at launch and every six hours, download in the background, and show
+*Restart to update* in the title bar. An update that isn't applied installs on quit.
+*Check for Updates…* (app menu) and the shortcuts sheet check on demand. macOS only
+applies an update signed by the same Developer ID, so every release must be signed.
+
 ## How it works
 
 - `electron/main.cjs` owns one `BrowserWindow` for the shell UI (React, `src/`) and one
@@ -90,4 +111,4 @@ Unsigned builds still run, but macOS blocks them on first launch. Since macOS 15
 
 - Sites with bot checks (Cloudflare and others) may challenge the panes the same way they challenge any new browser.
 - Panes share one login session; separate sessions per pane (for example, two accounts on the same service) are not built yet.
-- No app icon, auto-update, or signing configuration yet.
+- No Windows build in CI yet; `npm run dist:win` works locally but is unsigned.
