@@ -39,19 +39,34 @@ jobs:
       - run: npm ci
       - run: npm test
 
+      # electron-builder's own CSC_LINK import passes the .p12 password to
+      # set-key-partition-list instead of its random keychain password, which
+      # fails, so the certificate goes into a keychain made here instead.
       - name: Build .dmg
         env:
           SIGN: ${{ github.event_name != 'pull_request' }}
-          CSC_LINK: ${{ secrets.MAC_CERT_P12_BASE64 }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          CERT_P12: ${{ secrets.MAC_CERT_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          if [ "$SIGN" != "true" ] || [ -z "$CSC_LINK" ]; then
+          if [ "$SIGN" != "true" ] || [ -z "$CERT_P12" ]; then
             echo "Building unsigned (no certificate, or a pull request build)."
-            unset CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+            unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
             export CSC_IDENTITY_AUTO_DISCOVERY=false
+          else
+            keychain="$RUNNER_TEMP/signing.keychain-db"
+            keychain_password="$(openssl rand -base64 32)"
+            echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+            security create-keychain -p "$keychain_password" "$keychain"
+            security set-keychain-settings -lut 21600 "$keychain"
+            security unlock-keychain -p "$keychain_password" "$keychain"
+            security import "$RUNNER_TEMP/cert.p12" -k "$keychain" -P "$CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain"
+            security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+            rm "$RUNNER_TEMP/cert.p12"
+            security find-identity -v -p codesigning "$keychain"
           fi
           npm run build
           npx electron-builder --mac --publish never
