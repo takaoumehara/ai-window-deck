@@ -54,7 +54,7 @@ npm run dist:win       # Windows installer
 For a Mac build that opens without a Gatekeeper warning, the app must be signed
 with a Developer ID certificate and notarized (Apple Developer Program). Give
 electron-builder `CSC_LINK`/`CSC_KEY_PASSWORD` and `APPLE_ID`/`APPLE_APP_SPECIFIC_PASSWORD`/`APPLE_TEAM_ID`.
-Unsigned builds work, but users have to right-click → Open the first time.
+Unsigned builds still run, but macOS blocks them on first launch. Since macOS 15 the right-click → Open bypass is gone: users have to try opening the app, then choose **Open Anyway** in System Settings → Privacy & Security.
 
 ## How it works
 
