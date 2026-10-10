@@ -20,4 +20,7 @@ contextBridge.exposeInMainWorld("deck", {
   onPaneFocused: subscribe("pane:focused"),
   onPaneState: subscribe("pane:state"),
   onPaneError: subscribe("pane:error"),
+  checkForUpdates: () => ipcRenderer.send("update:check"),
+  installUpdate: () => ipcRenderer.send("update:install"),
+  onUpdateState: subscribe("update:state"),
 });

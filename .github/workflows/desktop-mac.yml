@@ -39,6 +39,16 @@ jobs:
       - run: npm ci
       - run: npm test
 
+      # The updater compares versions, so a release tag must carry the version it ships.
+      - name: Check tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/desktop-v')
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "desktop-v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version (expected desktop-v$version)."
+            exit 1
+          fi
+
       # electron-builder's own CSC_LINK import passes the .p12 password to
       # set-key-partition-list instead of its random keychain password, which
       # fails, so the certificate goes into a keychain made here instead.
@@ -91,8 +101,34 @@ jobs:
           path: desktop/release/*.dmg
           if-no-files-found: error
 
-      - name: Attach to GitHub Release
+      # Two releases per tag. desktop-vX.Y.Z keeps the history; desktop-latest is
+      # rebuilt every time and is what the in-app updater (build.publish) and the
+      # website's download button read. Neither is marked as the repository's
+      # latest release, which stays the Chrome extension.
+      - name: Publish releases
         if: startsWith(github.ref, 'refs/tags/desktop-v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" release/*.dmg --title "AI Window Deck desktop ${GITHUB_REF_NAME#desktop-v}" --generate-notes --prerelease
+        run: |
+          version="${GITHUB_REF_NAME#desktop-v}"
+          files=(release/*.dmg release/*.zip release/*.blockmap release/latest-mac.yml)
+          ls -l "${files[@]}"
+          prerelease=()
+          case "$version" in 0.*|*-*) prerelease=(--prerelease) ;; esac
+          cat > "$RUNNER_TEMP/notes.md" <<EOF
+          AI Window Deck for Mac $version. Universal build for Apple silicon and Intel Macs, macOS 12 or later.
+
+          1. Download \`AI-Window-Deck-$version-universal.dmg\` below and open it.
+          2. Drag AI Window Deck into Applications.
+          3. Open it. The app is signed and notarized by Apple, and later versions install themselves.
+
+          About the app: https://ai-window-deck.vercel.app/mac
+          EOF
+          gh release create "$GITHUB_REF_NAME" "${files[@]}" --title "AI Window Deck for Mac $version" --notes-file "$RUNNER_TEMP/notes.md" --latest=false "${prerelease[@]}"
+
+          cp release/*.dmg "$RUNNER_TEMP/AI-Window-Deck-mac.dmg"
+          gh release delete desktop-latest --yes --cleanup-tag || true
+          gh release create desktop-latest "${files[@]}" "$RUNNER_TEMP/AI-Window-Deck-mac.dmg" \
+            --target "$GITHUB_SHA" --title "AI Window Deck for Mac (latest: $version)" \
+            --notes "Always the newest Mac build. The app's updater and the website download read from here. Version history: $GITHUB_REF_NAME and earlier desktop-v* releases." \
+            --latest=false --prerelease

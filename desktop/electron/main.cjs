@@ -2,8 +2,12 @@ const { app, BrowserWindow, WebContentsView, Menu, ipcMain, dialog, session, she
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const { matchCommand, COMMAND_ACCELERATORS } = require("./commands.cjs");
+const { createUpdater } = require("./updates.cjs");
+const { loadWindowState, trackWindowState } = require("./window-state.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
+const SITE_URL = "https://ai-window-deck.vercel.app/mac";
+const ISSUES_URL = "https://github.com/takaoumehara/ai-window-deck/issues";
 const PARTITION = "persist:deck";
 const isMac = process.platform === "darwin";
 // Native window and view backgrounds can't read CSS variables; this mirrors --cie-ink.
@@ -11,6 +15,8 @@ const CIE_INK = "#0b0b0b";
 
 let shellWindow = null;
 let overlayOpen = false;
+let updater = null;
+let lastUpdateState = null;
 // paneId -> { urls, activeTab, bounds, visible, views: Map<tabIndex, WebContentsView> }
 const panes = new Map();
 
@@ -179,8 +185,25 @@ function buildMenu() {
     registerAccelerator: false,
     click: () => send("deck:command", id),
   });
+  const checkForUpdates = { label: "Check for Updates…", click: () => updater?.check(true) };
   const template = [
-    ...(isMac ? [{ role: "appMenu" }] : []),
+    ...(isMac
+      ? [{
+          label: app.name,
+          submenu: [
+            { role: "about" },
+            checkForUpdates,
+            { type: "separator" },
+            { role: "services" },
+            { type: "separator" },
+            { role: "hide" },
+            { role: "hideOthers" },
+            { role: "unhide" },
+            { type: "separator" },
+            { role: "quit" },
+          ],
+        }]
+      : []),
     { role: "fileMenu" },
     { role: "editMenu" },
     {
@@ -205,14 +228,22 @@ function buildMenu() {
       ],
     },
     { role: "windowMenu" },
+    {
+      role: "help",
+      submenu: [
+        { label: "AI Window Deck Website", click: () => shell.openExternal(SITE_URL) },
+        { label: "Report an Issue", click: () => shell.openExternal(ISSUES_URL) },
+        ...(isMac ? [] : [{ type: "separator" }, checkForUpdates, { role: "about" }]),
+      ],
+    },
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 function createShellWindow() {
+  const { maximized, ...frame } = loadWindowState();
   shellWindow = new BrowserWindow({
-    width: 1440,
-    height: 900,
+    ...frame,
     minWidth: 900,
     minHeight: 600,
     backgroundColor: CIE_INK,
@@ -230,7 +261,14 @@ function createShellWindow() {
     },
   });
   interceptCommands(shellWindow.webContents);
-  shellWindow.once("ready-to-show", () => shellWindow.show());
+  trackWindowState(shellWindow);
+  shellWindow.once("ready-to-show", () => {
+    if (maximized) shellWindow.maximize();
+    shellWindow.show();
+  });
+  shellWindow.webContents.on("did-finish-load", () => {
+    if (lastUpdateState?.status === "ready") send("update:state", { ...lastUpdateState, manual: false });
+  });
   shellWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: "deny" };
@@ -246,7 +284,9 @@ function createShellWindow() {
 
 ipcMain.handle("store:load", () => readStore());
 ipcMain.handle("store:save", (_event, data) => writeStore(data));
-ipcMain.handle("app:info", () => ({ platform: process.platform, locale: app.getLocale() }));
+ipcMain.handle("app:info", () => ({ platform: process.platform, locale: app.getLocale(), version: app.getVersion() }));
+ipcMain.on("update:check", () => updater?.check(true));
+ipcMain.on("update:install", () => updater?.install());
 
 ipcMain.on("panes:sync", (_event, nextPanes) => syncPanes(nextPanes));
 ipcMain.on("panes:bounds", (_event, list) => {
@@ -284,12 +324,34 @@ ipcMain.handle("backup:import", async () => {
   return { name: path.basename(file), text: await fs.readFile(file, "utf8") };
 });
 
+const isPrimaryInstance = app.requestSingleInstanceLock();
+if (!isPrimaryInstance) app.quit();
+
+app.on("second-instance", () => {
+  if (!shellWindow) return;
+  if (shellWindow.isMinimized()) shellWindow.restore();
+  shellWindow.focus();
+});
+
+app.setAboutPanelOptions({
+  applicationName: "AI Window Deck",
+  applicationVersion: app.getVersion(),
+  copyright: "© 2026 Takao Umehara / creativity is everywhere",
+  website: SITE_URL,
+});
+
 app.whenReady().then(() => {
+  if (!isPrimaryInstance) return;
   const userAgent = plainChromeUserAgent();
   app.userAgentFallback = userAgent;
   session.fromPartition(PARTITION).setUserAgent(userAgent);
   buildMenu();
   createShellWindow();
+  updater = createUpdater((state) => {
+    lastUpdateState = state;
+    send("update:state", state);
+  });
+  updater.check(false);
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createShellWindow();
   });

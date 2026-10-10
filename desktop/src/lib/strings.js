@@ -47,6 +47,13 @@ const STRINGS = {
     kbCycle: "Next / previous pane",
     kbSidebar: "Sidebar",
     languageLabel: "Language",
+    versionLabel: "Version {version}",
+    checkUpdates: "Check for updates",
+    updateChecking: "Checking for updates…",
+    updateDownloading: "Downloading {version}…",
+    updateCurrent: "You're on the latest version ({version})",
+    updateFailed: "Couldn't check for updates",
+    updateReady: "Restart to update to {version}",
   },
   ja: {
     appTitle: "AI Window Deck",
@@ -96,6 +103,13 @@ const STRINGS = {
     kbCycle: "次 / 前のペイン",
     kbSidebar: "サイドバー",
     languageLabel: "言語",
+    versionLabel: "バージョン {version}",
+    checkUpdates: "アップデートを確認",
+    updateChecking: "アップデートを確認しています…",
+    updateDownloading: "{version} をダウンロードしています…",
+    updateCurrent: "最新バージョンです（{version}）",
+    updateFailed: "アップデートを確認できませんでした",
+    updateReady: "再起動して {version} に更新",
   },
 };
 

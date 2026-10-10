@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand } from "lucide-react";
+import { Download, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand } from "lucide-react";
 import { Sheet, SHEET_MS } from "@desktop/components/ui/Sheet";
-import { IconButton } from "@desktop/components/ui/controls";
+import { Button, IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
 import { Sidebar } from "@desktop/components/Sidebar";
 import { WindowEditor } from "@desktop/components/WindowEditor";
@@ -23,6 +23,8 @@ const MODE_OPTIONS = [
 export function App() {
   const [loaded, setLoaded] = useState(false);
   const [platform, setPlatform] = useState("browser");
+  const [appVersion, setAppVersion] = useState("");
+  const [updateReady, setUpdateReady] = useState(null);
   const [windows, setWindows] = useState([]);
   const [mode, setMode] = useState("grid");
   const [focusedId, setFocusedId] = useState(null);
@@ -45,6 +47,7 @@ export function App() {
   useEffect(() => {
     Promise.all([deck.info(), deck.load()]).then(([info, saved]) => {
       setPlatform(info.platform);
+      setAppVersion(info.version || "");
       const settings = saved?.settings || {};
       setWindows(Array.isArray(saved?.windows) ? saved.windows : DEFAULT_WINDOWS);
       setMode(settings.mode || "grid");
@@ -206,6 +209,17 @@ export function App() {
     return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
   }, []);
 
+  // Background checks stay silent; a check started from the menu or the
+  // shortcuts sheet reports its outcome in the title bar.
+  useEffect(() => deck.onUpdateState(({ status, version, manual }) => {
+    if (status === "ready") setUpdateReady(version);
+    if (!manual) return;
+    if (status === "checking") showNotice(t("updateChecking"));
+    else if (status === "downloading" && version) showNotice(t("updateDownloading", { version }));
+    else if (status === "current") showNotice(t("updateCurrent", { version }));
+    else if (status === "error") showNotice(t("updateFailed"));
+  }), [t, showNotice]);
+
   const saveWindow = ({ id, name, urls }) => {
     if (id) {
       setWindows((list) => list.map((item) => (item.id === id ? { ...item, name, urls } : item)));
@@ -258,6 +272,17 @@ export function App() {
         </div>
 
         <div className="app-no-drag ml-auto flex items-center gap-2">
+          {updateReady && (
+            <button
+              type="button"
+              onClick={() => deck.installUpdate()}
+              className="cie-chip cie-pop ink-swap bg-paper text-ink hover:bg-paper/85"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("updateReady", { version: updateReady })}
+            </button>
+          )}
+
           <IconButton
             onClick={() => setSidebarOpen((open) => !open)}
             pressed={sidebarOpen}
@@ -387,6 +412,20 @@ export function App() {
             </div>
           ))}
         </dl>
+        {appVersion && (
+          <div className="mt-4 flex items-center justify-between gap-6 border-t border-ink/10 pt-4">
+            <span className="register text-paper-mute">{t("versionLabel", { version: appVersion })}</span>
+            <Button
+              tone="ink"
+              onClick={() => {
+                setShortcutsOpen(false);
+                deck.checkForUpdates();
+              }}
+            >
+              {t("checkUpdates")}
+            </Button>
+          </div>
+        )}
       </Sheet>
     </div>
   );

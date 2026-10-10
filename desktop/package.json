@@ -2,7 +2,7 @@
   "name": "ai-window-deck-desktop",
   "productName": "AI Window Deck",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "AI Window Deck as a desktop app: registered windows split inside one window.",
   "author": "Takao Umehara",
   "license": "MIT",
@@ -46,12 +46,31 @@
       "electron/**",
       "dist/**"
     ],
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com/takaoumehara/ai-window-deck/releases/download/desktop-latest"
+      }
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "hardenedRuntime": true,
+      "minimumSystemVersion": "12.0",
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "A page open in AI Window Deck wants to use the microphone, for example for voice input.",
+        "NSCameraUsageDescription": "A page open in AI Window Deck wants to use the camera, for example for a video call."
+      },
       "target": [
         {
           "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
           "arch": [
             "universal"
           ]
@@ -68,5 +87,8 @@
         "AppImage"
       ]
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

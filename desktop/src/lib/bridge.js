@@ -5,7 +5,7 @@ const noop = () => {};
 const noSubscribe = () => noop;
 
 const browserStandIn = {
-  info: async () => ({ platform: "browser", locale: navigator.language }),
+  info: async () => ({ platform: "browser", locale: navigator.language, version: "dev" }),
   load: async () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
   save: async (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data)),
   importBackup: async () => null,
@@ -18,6 +18,9 @@ const browserStandIn = {
   onPaneFocused: noSubscribe,
   onPaneState: noSubscribe,
   onPaneError: noSubscribe,
+  checkForUpdates: noop,
+  installUpdate: noop,
+  onUpdateState: noSubscribe,
 };
 
 export const deck = typeof window !== "undefined" && window.deck ? window.deck : browserStandIn;
