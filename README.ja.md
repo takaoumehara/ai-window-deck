@@ -2,15 +2,57 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**クラウドのセッションを並べて、考える余白を。**
+
+クラウドの Claude Code と Codex のためのウィンドウマネージャー。複数のプロジェクトを同時に進めても迷いません。
+
 複数の AI ツールや資料を並べて作業する人のための Chrome 拡張機能です。一緒に使うウィンドウを保存してキャンバス上に配置し、タイル状に並んだ Chrome ウィンドウとして一度に開けます。さらに、ショートカット 1 つでそのうちの 1 つを拡大（Spotlight）できます。
 
 Chrome のプロファイル、ログイン状態、パスワードマネージャー、その他の拡張機能はそのまま使えます。AI Window Deck は通常の Chrome ウィンドウを並べるだけです。
 
-![キャンバス上でウィンドウを配置する](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-ja-dark.gif">
+    <img src="docs/images/focus-preview-ja-light.gif" width="720" alt="タイル状に並んだ 5 つのウィンドウ。Alt+X で 1 枚が大きくなり、もう一度押すと元のタイルに戻ります。">
+  </picture>
+</p>
+
+Web サイト: <https://ai-window-deck.vercel.app/>
+
+## 使い方の流れ
+
+| **① URL を登録** | **② 配置** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls-ja.png" alt="① URL を登録" width="400"> | <img src="site/assets/img/02-step2-layout-ja.png" alt="② 配置" width="400"> |
+| ウィンドウごとに名前と URL を保存。サイトの一覧を貼り付けて、まとめて作ることもできます。各 URL はタブとして開きます。 | キャンバスにウィンドウを配置し、グリッドの枠を調整します。 |
+| **③ フォーカス表示** | **④ 起動** |
+| <img src="site/assets/img/03-step3-focus-ja.png" alt="③ フォーカス表示" width="400"> | <img src="site/assets/img/04-step4-launch-ja.png" alt="④ 起動" width="400"> |
+| 拡大サイズと基準位置を選択。「今の場所から拡大」または「中央に寄せる」。 | ディスプレイを選び、保存した配置で Chrome ウィンドウを開きます。 |
+
+### URL＋ウィンドウを登録（1.11.2 の新機能）
+
+*URL＋ウィンドウを登録* はページの中で開きます。1件ずつ追加するほか、サイトが並んだメッセージをそのまま貼り付ければ、空行で区切ったまとまりごとにウィンドウができます。直す必要のある行は赤く表示され、**修正** を押すと足りない空行を入れてくれます。
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-ja-dark.gif">
+    <img src="docs/images/register-paste-ja-light.gif" width="480" alt="一括登録のカード：サイトが並んだチャットのメッセージをコピーして貼り付け、3 つのウィンドウとして保存する様子。">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-ja-dark.png">
+    <img src="site/assets/img/register-bulk-ja-light.png" width="720" alt="2 行が赤く表示され、問題ごとに修正ボタンがある一括登録画面。">
+  </picture>
+</p>
 
 ## 機能
 
-- **ウィンドウライブラリ。** 保存した各ウィンドウには名前と 1 つ以上の URL があり、URL はタブとして開きます。ウィンドウは 1 つずつ追加するほか、テキストでまとめて貼り付けたり、`.txt` ファイルでインポート・エクスポートしたりできます。
+- **URL＋ウィンドウを登録。** 保存した各ウィンドウには名前と 1 つ以上の URL があり、URL はタブとして開きます。1件ずつ追加するほか、サイトの一覧を貼り付ければ、空行で区切ったまとまりごとにウィンドウができます。直す必要のある行は赤く表示され、該当行へのリンクと **修正** ボタンが出ます。`.txt` ファイルのインポート・エクスポートにも対応しています。
+- **アドレスとローカルファイル。** `github.com` は `https://github.com` として保存され、`localhost` やローカルのアドレスには `http://` が付きます。`/Users/me/My Site/index.html` や `C:\docs\notes.html` のようなローカルのパスは、拡張機能の *ファイルの URL へのアクセスを許可する* をオンにすると `file://` のタブとして開けます。1 行に並んだ複数の URL は、それぞれタブになります。
 - **レイアウトキャンバス。** 12 × 12 のキャンバスにウィンドウをドラッグし、どの辺からでもサイズを変更できます。レイアウトは「自動」「縦割り」「横割り」「グリッド」「主役」（1 つを大きく表示）「自由」から選べます。キャンバスでは取り消しとやり直しができ、複数のレイアウトプリセット（A、B、…）を保持できます。
 - **起動と並べ直し。** クリック 1 回でレイアウト内のすべてのウィンドウを開き、選んだディスプレイにタイル状に並べます。タブはグループにまとめられます。*並べ直す* を使うと、起動済みのウィンドウを元の位置に戻せます。
 - **Spotlight。** `Alt+X` でアクティブなウィンドウを拡大します。サイズは半分、横半分・縦いっぱい、3/4、縦いっぱい、全画面、任意のサイズから選べます。現在の位置から広げるか、画面中央から広げるかも選択できます。もう一度 `Alt+X` を押すか `Alt+Z` を押すと、元のタイルに戻ります。
@@ -20,19 +62,18 @@ Chrome のプロファイル、ログイン状態、パスワードマネージ�
 - **バックアップ。** すべてのウィンドウ、レイアウト、設定を JSON ファイルでバックアップ・復元できます。
 - **8 言語対応。** English、日本語、Deutsch、Español、Français、한국어、Português (Brasil)、简体中文に対応しています。言語を選ぶまでは、パネルはブラウザの言語に従います。
 
-| Spotlight | ウィンドウライブラリ | ウィンドウの登録 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![ウィンドウライブラリ](store-assets/screenshots/03-window-library.png) | ![登録](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="フォーカス拡大の比較：左は今の場所から拡大、右は中央に寄せる"></p>
+<p align="center"><em>今の場所から拡大 / 中央に寄せる — ステップ ③ で基準位置を選択。</em></p>
 
 ## インストール
 
 ### Chrome ウェブストア
 
-近日公開予定です。現在、掲載の審査中です。
+[Chrome ウェブストア](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc)からインストールできます。
 
 ### リリース ZIP から
 
-1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases) から `AI-Window-Deck-vX.Y.Z.zip` をダウンロードして解凍します。
+1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases) から `ai-window-deck-vX.Y.Z.zip` をダウンロードして解凍します。
 2. `chrome://extensions` を開き、**デベロッパー モード**をオンにします。
 3. **パッケージ化されていない拡張機能を読み込む**をクリックし、解凍したフォルダを選択します。
 
@@ -40,18 +81,15 @@ Chrome のプロファイル、ログイン状態、パスワードマネージ�
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-その後、リポジトリのフォルダ（`manifest.json` を含むフォルダ）を **パッケージ化されていない拡張機能を読み込む** で読み込みます。`dist/` はコミットされているため、クローンしたばかりのリポジトリをビルドせずに読み込むこともできます。
+リポジトリのルートが 1.11.2 の拡張機能パッケージそのものなので、インストールもビルドも不要です。クローンしたフォルダ（`manifest.json` を含むフォルダ）を **パッケージ化されていない拡張機能を読み込む** で読み込みます。
 
 ## 使い方
 
 1. ツールバーのアイコンをクリックします。初回起動時には、3 つのステップを示す短いガイドが表示されます。
 2. *配置対象のモニターを選択* で **開くモニターを選びます**。
-3. *Windows* サイドバーの **+** で **ウィンドウを登録します**。名前と 1 つ以上の URL を入力します。
+3. **URL＋ウィンドウを登録** で **ウィンドウを登録します**。*1件ずつ登録*（名前と 1 つ以上の URL）か *テキストで一括登録* を選びます。
 4. **ウィンドウをキャンバスにドラッグします。** ウィンドウの数を設定してレイアウトを選び、タイルの辺をドラッグしてサイズを調整します。
 5. **起動** をクリックします。各ウィンドウがそれぞれ独立した Chrome ウィンドウとして開き、キャンバスどおりにタイル状に並びます。
 6. 作業中は Spotlight とナビゲーションのショートカットを活用してください。
@@ -59,7 +97,7 @@ npm run build
 ヒント:
 
 - サイドバーでウィンドウカードをダブルクリックするか、カードを選んで `Enter` を押すと編集できます。`Delete` で削除します。
-- ダイアログは `Escape` で閉じ、キーボードフォーカスはダイアログを開いたボタンに戻ります。
+- 登録パネルは `Escape` で閉じ（入力画面では先に選択画面へ戻ります）、キーボードフォーカスはパネルを開いたボタンに戻ります。
 - *大きいウィンドウで開く* を使うと、ツールバーのポップアップより広いサイズで同じパネルを開けます。
 
 ### キーボードショートカット
@@ -91,53 +129,47 @@ AI Window Deck はホスト権限やコンテンツスクリプトを持たず�
 
 ## 開発
 
-Node.js 20 以上と Python 3 が必要です。
+Node.js 20 以上が必要です（ストア用画像の生成には Python 3 と Pillow も使います）。
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate ai-window-deck-v<version>.zip
 ```
 
-リポジトリの構成:
+1.11.x のソースはこのリポジトリにありません。ルートには出荷したとおりの 1.11.2 パッケージがあり、`dist/` のバンドルは公開済みの 1.11.0 ストアパッケージから、テスト付きの完全一致の文字列パッチで再生成します。1.11.0 パッケージを展開して指定すると、パッチの結果がルートとバイト単位で一致することもテストで確認します：
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
+```
+
+リポジトリの構成：
 
 | パス | 内容 |
 | --- | --- |
-| `manifest.json`, `background.js` | 拡張機能のマニフェストとサービスワーカー（ウィンドウの配置、ショートカット） |
-| `src/` | ポップアップとオプションページで使用する React + Tailwind のパネル |
-| `dist/` | ビルド済みのパネル。リポジトリをそのまま「パッケージ化されていない拡張機能」として読み込めるよう、コミットされています |
-| `identify.html`, `identify.js` | ディスプレイを識別する際に、そのディスプレイに一時的に表示される番号 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 翻訳（後述） |
-| `tools/` | i18n のビルド、パッケージ化、パッケージの検証 |
-| `store-assets/` | Chrome ウェブストアの掲載文、スクリーンショット、プロモーションタイル、キャプチャスクリプト |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 の拡張機能パッケージ。Chrome ウェブストアにアップロードするものと同一です |
+| `tools/` | パッチスクリプト（`patch-v1.11*.mjs`。文字列とコードは `v1.11.1/`・`v1.11.2/`）、パッケージ作成、パッケージ検証、Chrome ウェブストアへのアップロード |
+| `site/` | Web サイト。Vercel がデプロイします（`vercel.json` を参照） |
+| `store-assets/` | Chrome ウェブストアの掲載文、スクリーンショット、プロモ画像、撮影スクリプト |
 | `test/` | ユニットテスト |
-
-`deck.html`、`deck.js`、`dock.html`、`dock.js` は 1.7 より前のパネルです。参照用に残していますが、パッケージには含まれません。
-
-### 翻訳
-
-パネルの文字列は `tools/ui-strings.json` にあります。Chrome 自体が使う文字列（拡張機能の説明とショートカット名）は `tools/strings.json` にあります。いずれかのファイルを編集したら、次のコマンドを実行してください。
-
-```sh
-python3 tools/build-i18n.py
-```
-
-これにより `src/lib/ui-strings.js` と `_locales/*/messages.json` が再生成されます。パネルのいずれかのロケールでキーが欠けていると、ビルドは失敗します。`npm test` でも、すべての言語でプレースホルダーが一致しているかをチェックします。
+| `legacy/v1.7/` | 1.11 より前のソース（1.7 の React パネルと旧ページ）。参照用に残しています。中の README を参照してください |
 
 ## リリース手順
 
-1. `manifest.json` と `package.json` の `version` を上げ、`CHANGELOG.md` を更新します。
-2. `npm test` と `./tools/package.sh` を実行します。このスクリプトは ZIP を検証します（参照されているファイル、すべてのロケールの `__MSG_` キー、説明文の長さ）。
+1. `package.json` とパッチスクリプトの manifest 更新部分の `version` を上げ、`CHANGELOG.md` を更新します。
+2. `npm test` と `npm run package` を実行します。検証スクリプトが、参照ファイル、全ロケールの `__MSG_` キー、説明文の長さをチェックします。
 3. ZIP を Chrome ウェブストアのダッシュボードにアップロードします。
-4. ストアでそのバージョンが承認されたら、`main` に `vX.Y.Z` タグを付け、GitHub Release に ZIP を添付します。
+4. ストアで承認されたら、`main` に `vX.Y.Z` のタグを付け、GitHub Release に ZIP を添付します。
 
-詳しくは [docs/RELEASING.md](docs/RELEASING.md) をご覧ください。
+詳しくは [docs/RELEASING.md](docs/RELEASING.md) を参照してください。
 
 ## サポート
 
 バグの報告やご提案は [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues) までお寄せください。
+
+AI Window Deck が日々の作業に役立ったら、[Ko-fi](https://ko-fi.com/G2G71VP1DF) で開発を応援できます。
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## ライセンス
 

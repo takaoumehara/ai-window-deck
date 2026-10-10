@@ -1,0 +1,53 @@
+{
+  "extName": {
+    "message": "AI Window Deck"
+  },
+  "extDescription": {
+    "message": "Gerenciador de janelas para Claude Code na nuvem e Codex — vários projetos sem confusão."
+  },
+  "cmdSpotlight": {
+    "message": "Ampliar / restaurar"
+  },
+  "cmdHome": {
+    "message": "Voltar ao quadro de origem"
+  },
+  "cmdTile": {
+    "message": "Reorganizar"
+  },
+  "cmdFullscreen": {
+    "message": "Tela cheia / restaurar"
+  },
+  "cmdUndo": {
+    "message": "Desfazer"
+  },
+  "cmdNext": {
+    "message": "Próxima janela"
+  },
+  "cmdPrev": {
+    "message": "Janela anterior"
+  },
+  "cmdFocusTile1": {
+    "message": "Focar janela 1"
+  },
+  "cmdFocusTile2": {
+    "message": "Focar janela 2"
+  },
+  "cmdFocusTile3": {
+    "message": "Focar janela 3"
+  },
+  "cmdFocusTile4": {
+    "message": "Focar janela 4"
+  },
+  "cmdFocusTile5": {
+    "message": "Focar janela 5"
+  },
+  "cmdFocusTile6": {
+    "message": "Focar janela 6"
+  },
+  "cmdFocusTile7": {
+    "message": "Focar janela 7"
+  },
+  "cmdFocusTile8": {
+    "message": "Focar janela 8"
+  }
+}

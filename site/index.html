@@ -1,359 +1,255 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>AI Window Deck: window manager for Claude Code in the cloud and Codex</title>
-  <meta name="description" data-i18n-key="meta.description" content="Window manager for Claude Code in the cloud and Codex. AI Window Deck tiles your project windows so you can run multiple projects at once without getting confused. No account, no server, no tracking.">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="canonical" href="https://ai-window-deck.vercel.app/">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="AI Window Deck">
-  <meta property="og:title" content="AI Window Deck: window manager for Claude Code in the cloud and Codex">
-  <meta property="og:description" content="Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused. Tile, spotlight, stay clear.">
-  <meta property="og:url" content="https://ai-window-deck.vercel.app/">
-  <meta property="og:image" content="https://ai-window-deck.vercel.app/assets/img/01-arrange.png">
-  <meta property="og:image:width" content="1280">
-  <meta property="og:image:height" content="800">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap">
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="assets/boot.js" data-loader></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>AI Window Deck: window manager for Claude Code in the cloud and Codex</title>
+<meta content="Run Claude Code in the cloud and Codex sessions side by side. Register URLs, set a canvas layout, choose a Focus view, and launch. ⌥X enlarges; ⌥Z restores to grid." data-i18n-key="meta.description" name="description"/>
+<meta content="#f3f2ee" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#0b0b0b" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="light dark" name="color-scheme"/>
+<link href="assets/icon-v6.svg?v=1.11.2" rel="icon" type="image/svg+xml"/>
+<link href="assets/icon-v6-32.png?v=1.11.2" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/apple-touch-icon-v6.png?v=1.11.2" rel="apple-touch-icon"/>
+<link href="https://ai-window-deck.vercel.app/" rel="canonical"/>
+<meta content="website" property="og:type"/>
+<meta content="AI Window Deck" property="og:site_name"/>
+<meta content="AI Window Deck: window manager for Claude Code in the cloud and Codex" property="og:title"/>
+<meta content="Run Claude Code in the cloud and Codex sessions side by side. Register URLs, set a canvas layout, choose a Focus view, and launch. ⌥X enlarges; ⌥Z restores to grid." property="og:description"/>
+<meta content="https://ai-window-deck.vercel.app/" property="og:url"/>
+<meta content="https://ai-window-deck.vercel.app/assets/icon-v6-192.png?v=1.11.2" property="og:image"/>
+<meta content="192" property="og:image:width"/>
+<meta content="192" property="og:image:height"/>
+<meta content="summary" name="twitter:card"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/style.css" rel="stylesheet"/>
+<link href="assets/focus-preview.css" rel="stylesheet"/>
+<script data-loader="" src="assets/boot.js"></script>
+<link rel="manifest" href="assets/site.webmanifest?v=1.11.2">
 </head>
 <body data-title-key="meta.title">
-  <div class="loader" aria-hidden="true">
-    <div class="loader-mark"><span class="loader-word">AI Window Deck</span><span class="loader-rule"></span></div>
-  </div>
-  <a class="skip-link" href="#main" data-i18n="ui.skip">Skip to content</a>
+<div aria-hidden="true" class="loader">
+<div class="loader-mark"><span class="loader-word">AI Window Deck</span><span class="loader-rule"></span></div>
+</div>
+<a class="skip-link" data-i18n="ui.skip" href="#main">Skip to content</a>
+<header class="nav">
+<div class="container">
+<a aria-label="AI Window Deck home" class="brand" href="./">
+<img alt="" height="22" src="assets/icon-v6.svg?v=1.11.2" width="22"/>
+<span>AI Window Deck</span>
+</a>
+<ul class="nav-links">
+<li><a data-i18n="nav.what" href="#what">Overview</a></li>
+<li><a data-i18n="nav.how" href="#how">How it works</a></li>
+<li><a data-i18n="nav.features" href="#features">Features</a></li>
+<li><a data-i18n="nav.shortcuts" href="#shortcuts">Shortcuts</a></li>
+<li><a data-i18n="nav.privacy" href="#privacy">Privacy</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+<div class="nav-tools">
+<a class="icon-btn nav-sponsor" href="https://ko-fi.com/G2G71VP1DF" rel="noopener" target="_blank" title="Ko-fi" data-i18n-attr="aria-label:nav.sponsorLabel" aria-label="Support on Ko-fi">
+<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+<span data-i18n="nav.sponsor">Ko-fi</span>
+</a>
+<a class="icon-btn nav-cta" data-i18n="nav.install" href="#install">Install</a>
+<button aria-label="日本語に切り替え" class="icon-btn" data-lang-toggle="" lang="ja" type="button"><span class="lang-long">日本語</span><span aria-hidden="true" class="lang-short">JA</span></button>
+<button aria-label="Toggle theme" class="icon-btn" data-theme-toggle="" type="button"></button>
+<a aria-label="GitHub repository" class="icon-btn" href="https://github.com/takaoumehara/ai-window-deck" title="GitHub">
+<svg aria-hidden="true" fill="currentColor" viewbox="0 0 24 24"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"></path></svg>
+</a>
+<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Menu" class="icon-btn menu-btn" data-menu-toggle="" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" viewbox="0 0 24 24"><path d="M4 8h16M4 16h16"></path></svg>
+</button>
+</div>
+</div>
+</header>
+<nav aria-label="Sections" class="mobile-menu" id="mobile-menu">
+<a data-i18n="nav.what" href="#what">Overview</a>
+<a data-i18n="nav.how" href="#how">How it works</a>
+<a data-i18n="nav.features" href="#features">Features</a>
+<a data-i18n="nav.install" href="#install">Install</a>
+<a data-i18n="nav.shortcuts" href="#shortcuts">Shortcuts</a>
+<a data-i18n="nav.privacy" href="#privacy">Privacy</a>
+<a href="#faq">FAQ</a>
+</nav>
+<main id="main">
+<!-- ================= HERO ================= -->
+<section class="hero">
+<div class="container">
+<div class="hero-meta">
+<span class="eyebrow" data-i18n="hero.eyebrow">Chrome extension · MIT</span>
+<span>v1.11.2 · Manifest V3</span>
+</div><figure class="focus-preview deck-panel" data-focus-preview data-size="large" data-origin="center" data-others="behind" data-phase="0">
+<div class="stage-head"><p class="diagram-phase"><span data-focus-label>Preview</span> · <span data-focus-phase>Tiled as usual</span></p><button type="button" class="deck-button stage-pause" aria-pressed="false"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><span data-focus-pause>Pause</span></button></div>
+<div data-focus-live><div class="focus-stage"><div class="focus-display deck-diagram"></div><div class="focus-dock"></div></div><div class="stage-key-row"></div></div>
+<div class="focus-static" hidden></div>
+</figure>
+<h1>AI Window Deck</h1>
+<div class="hero-grid">
+<p class="tagline" data-i18n="hero.tagline">More cloud sessions. Room to think.</p>
+<div>
+<p class="lead" data-i18n="hero.lead">Run Claude Code in the cloud and Codex sessions side by side. Keep the compute in the cloud instead of loading your machine with local workers. Register URLs, arrange your windows, choose a Focus view, and launch. Your Chrome profile and sign-ins stay with you.</p>
+<ul aria-label="Highlights" class="meta-list" data-i18n-attr="aria-label:hero.metaLabel">
+<li data-i18n="hero.m1">Canvas layout</li><li data-i18n="hero.focus">Focus view</li><li data-i18n="hero.m2">Multi-display</li><li data-i18n="hero.m4">Paste to register</li><li data-i18n="hero.m3">8 languages</li>
+</ul>
+<div class="cta">
+<a class="btn btn-primary" href="#install"><span data-i18n="hero.ctaInstall">Install</span><span aria-hidden="true" class="arr">→</span></a>
+<a class="btn btn-ghost" data-i18n="hero.ctaFeatures" href="#features">See the features</a>
+<a class="btn btn-link" href="https://github.com/takaoumehara/ai-window-deck">GitHub</a>
+</div>
+</div>
+</div>
 
-  <header class="nav">
-    <div class="container">
-      <a class="brand" href="./" aria-label="AI Window Deck home">
-        <img src="assets/favicon.svg" alt="" width="22" height="22">
-        <span>AI Window Deck</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#what" data-i18n="nav.what">Overview</a></li>
-        <li><a href="#how" data-i18n="nav.how">How it works</a></li>
-        <li><a href="#features" data-i18n="nav.features">Features</a></li>
-        <li><a href="#shortcuts" data-i18n="nav.shortcuts">Shortcuts</a></li>
-        <li><a href="#privacy" data-i18n="nav.privacy">Privacy</a></li>
-        <li><a href="#faq">FAQ</a></li>
-      </ul>
-      <div class="nav-tools">
-        <a class="icon-btn nav-cta" href="#install" data-i18n="nav.install">Install</a>
-        <button class="icon-btn" type="button" data-lang-toggle aria-label="日本語に切り替え" lang="ja"><span class="lang-long">日本語</span><span class="lang-short" aria-hidden="true">JA</span></button>
-        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle theme"></button>
-        <a class="icon-btn" href="https://github.com/takaoumehara/ai-window-deck" aria-label="GitHub repository" title="GitHub">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
-        </a>
-        <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
-        </button>
-      </div>
-    </div>
-  </header>
-  <nav class="mobile-menu" id="mobile-menu" aria-label="Sections">
-    <a href="#what" data-i18n="nav.what">Overview</a>
-    <a href="#how" data-i18n="nav.how">How it works</a>
-    <a href="#features" data-i18n="nav.features">Features</a>
-    <a href="#install" data-i18n="nav.install">Install</a>
-    <a href="#shortcuts" data-i18n="nav.shortcuts">Shortcuts</a>
-    <a href="#privacy" data-i18n="nav.privacy">Privacy</a>
-    <a href="#faq">FAQ</a>
-  </nav>
+</div>
+</section>
+<!-- ================= WHAT ================= -->
+<section id="what"><div class="container"><div class="section-head"><p class="sec-label"><span class="eyebrow" data-i18n="what.eyebrow">Overview</span></p><div><h2 data-i18n="what.title">Your projects, side by side.</h2><p class="lead" data-i18n="what.lead">Ordinary Chrome windows for your cloud work. Keep sessions visible across projects and displays, then give the active window more room when you need it.</p></div></div></div></section>
+<!-- ================= HOW ================= -->
+<section id="how"><div class="container"><div class="section-head"><p class="sec-label"><span class="eyebrow" data-i18n="how.eyebrow">How it works</span></p><div><h2 data-i18n="how.title">Four steps. A workspace that stays yours.</h2><p class="lead" data-i18n="how.lead">Follow the ①–④ stepper once. Return to any step when your projects change.</p></div></div><div class="shots shots-2"><article class="flow-step"><h3 data-i18n="flow.1.title">① Register URLs</h3><p data-i18n="flow.1.body">Save a name and URLs for each window, or paste a list of sites to create several at once. Each URL opens as a tab.</p><figure class="shot"><a href="assets/img/01-step1-urls.png" data-i18n-attr="href:flow.1.src" rel="noopener" target="_blank"><img alt="Step 1: Register URLs in AI Window Deck" data-i18n-attr="alt:flow.1.alt;src:flow.1.src" height="699" loading="lazy" src="assets/img/01-step1-urls.png" width="1280"/></a><figcaption data-i18n="flow.1.fig">Register URLs · Open image for details</figcaption></figure></article><article class="flow-step"><h3 data-i18n="flow.2.title">② Layout</h3><p data-i18n="flow.2.body">Place windows on the canvas and resize their grid slots.</p><figure class="shot"><a href="assets/img/02-step2-layout.png" data-i18n-attr="href:flow.2.src" rel="noopener" target="_blank"><img alt="Step 2: Layout in AI Window Deck" data-i18n-attr="alt:flow.2.alt;src:flow.2.src" height="1053" loading="lazy" src="assets/img/02-step2-layout.png" width="1280"/></a><figcaption data-i18n="flow.2.fig">Layout · Open image for details</figcaption></figure></article><article class="flow-step"><h3 data-i18n="flow.3.title">③ Focus view</h3><p data-i18n="flow.3.body">Choose an enlargement size and origin: grow in place or center.</p><figure class="shot"><a href="assets/img/03-step3-focus.png" data-i18n-attr="href:flow.3.src" rel="noopener" target="_blank"><img alt="Step 3: Focus view in AI Window Deck" data-i18n-attr="alt:flow.3.alt;src:flow.3.src" height="1333" loading="lazy" src="assets/img/03-step3-focus.png" width="1280"/></a><figcaption data-i18n="flow.3.fig">Focus view · Open image for details</figcaption></figure></article><article class="flow-step"><h3 data-i18n="flow.4.title">④ Launch</h3><p data-i18n="flow.4.body">Choose your displays and open the saved layout as Chrome windows.</p><figure class="shot"><a href="assets/img/04-step4-launch.png" data-i18n-attr="href:flow.4.src" rel="noopener" target="_blank"><img alt="Step 4: Launch in AI Window Deck" data-i18n-attr="alt:flow.4.alt;src:flow.4.src" height="917" loading="lazy" src="assets/img/04-step4-launch.png" width="1280"/></a><figcaption data-i18n="flow.4.fig">Launch · Open image for details</figcaption></figure></article></div></div></section>
+<!-- ================= REGISTER ================= -->
+<section id="register"><div class="container"><div class="section-head"><p class="sec-label"><span class="eyebrow" data-i18n="reg.eyebrow">New in 1.11.2</span></p><div><h2 data-i18n="reg.title">Paste a list. Get your windows.</h2><p class="lead" data-i18n="reg.lead"><i>Register URLs + Window</i> opens right in the page. Add windows one by one, or paste a message that lists your sites: each block separated by a blank line becomes a window.</p></div></div><div class="shots shots-2"><article class="flow-step"><h3 data-i18n="reg.1.title">One by one, or all at once</h3><p data-i18n="reg.1.body">Choose how to register. The bulk card shows a list being copied from a chat and pasted in.</p><figure class="shot"><img class="on-light" alt="Register URLs + Window: the choice between one by one and bulk paste" data-i18n-attr="alt:reg.1.alt;src:reg.choose.light" height="900" loading="lazy" src="assets/img/register-choose-en-light.png" width="1280"/><img class="on-dark" alt="Register URLs + Window: the choice between one by one and bulk paste" data-i18n-attr="alt:reg.1.alt;src:reg.choose.dark" height="900" loading="lazy" src="assets/img/register-choose-en-dark.png" width="1280"/><figcaption data-i18n="reg.1.fig">Register URLs + Window</figcaption></figure></article><article class="flow-step"><h3 data-i18n="reg.2.title">Red lines, with a fix</h3><p data-i18n="reg.2.body">Lines that need attention turn red. Each issue links to its line, and <b>Fix</b> adds the missing blank line for you.</p><figure class="shot"><img class="on-light" alt="Bulk import with two lines marked in red and a Fix button for each issue" data-i18n-attr="alt:reg.2.alt;src:reg.bulk.light" height="607" loading="lazy" src="assets/img/register-bulk-en-light.png" width="1222"/><img class="on-dark" alt="Bulk import with two lines marked in red and a Fix button for each issue" data-i18n-attr="alt:reg.2.alt;src:reg.bulk.dark" height="607" loading="lazy" src="assets/img/register-bulk-en-dark.png" width="1222"/><figcaption data-i18n="reg.2.fig">Bulk Import Text</figcaption></figure></article></div><div class="cols cols-3"><article class="col"><h3 data-i18n="reg.httpsTitle">https:// added for you</h3><p data-i18n="reg.httpsBody">Type <code>github.com</code> and it is saved as <code>https://github.com</code>. <code>localhost</code> and local addresses get <code>http://</code>.</p></article><article class="col"><h3 data-i18n="reg.filesTitle">Local files</h3><p data-i18n="reg.filesBody">Paths such as <code>/Users/me/My Site/index.html</code> or <code>C:\docs\notes.html</code> open as <code>file://</code> tabs, spaces included. Chrome opens them once <i>Allow access to file URLs</i> is on for the extension.</p></article><article class="col"><h3 data-i18n="reg.multiTitle">Several URLs on a line</h3><p data-i18n="reg.multiBody">URLs separated by spaces on one line each become a tab. Lines starting with a label like <code>Memo:</code> stay window names.</p></article></div></div></section>
+<!-- ================= FEATURES ================= -->
+<section id="features"><div class="container"><div class="section-head"><p class="sec-label"><span class="eyebrow" data-i18n="features.eyebrow">Focus view</span></p><div><h2 data-i18n="features.title">Make room. Keep your place.</h2><p class="lead" data-i18n="features.lead">⌥X / Alt+X enlarges the active window. Grow in place to keep its position, or center it on the display. After a manual resize, ⌥Z / Alt+Z restores the window to its registered grid slot.</p></div></div><figure class="figure shot"><img alt="Focus enlargement compared: grow in place on the left, center on the right" data-i18n-attr="alt:features.alt" height="400" loading="lazy" src="assets/img/05-focus-enlarge.png" width="1154"/><figcaption data-i18n="features.fig">Grow in place / Center — choose the origin in step ③.</figcaption></figure><div class="cols cols-3"><article class="col"><h3 data-i18n="feat.displayTitle">Multiple displays</h3><p data-i18n="feat.displayBody">Choose one or more displays for your workspace.</p></article><article class="col"><h3 data-i18n="feat.backupTitle">Backup and restore</h3><p data-i18n="feat.backupBody">Save windows, layouts and settings as JSON to take them to another machine.</p></article><article class="col"><h3 data-i18n="feat.langTitle">8 languages</h3><p data-i18n="feat.langBody">English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) and 简体中文.</p></article></div></div></section>
+<!-- ================= INSTALL ================= -->
+<section id="install">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">04</span><span class="eyebrow" data-i18n="inst.eyebrow">Install</span></p>
+<div>
+<h2 data-i18n="inst.title">Three ways to install</h2>
+<p class="lead" data-i18n="inst.lead">Install from the Chrome Web Store in one click, or load a release ZIP. Both take about a minute.</p>
+</div>
+</div>
+<div class="install" data-reveal="">
+<article>
+<span class="status ready" data-i18n="inst.pending">Available</span>
+<h3 data-i18n="inst.storeTitle">Chrome Web Store</h3>
+<p data-i18n="inst.storeBody">Live on the Chrome Web Store. One-click install, automatic updates.</p><a class="btn btn-primary" data-i18n="inst.storeLink" href="https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc">Add to Chrome ↗</a>
+</article>
+<article>
+<span class="status ready" data-i18n="inst.ready">Available</span>
+<h3 data-i18n="inst.zipTitle">From a release ZIP</h3>
+<ol class="steps">
+<li data-i18n="inst.zip1">Download <code>ai-window-deck-vX.Y.Z.zip</code> from <a href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a> and unzip it.</li>
+<li data-i18n="inst.zip2">Open <code>chrome://extensions</code> and turn on <b>Developer mode</b>.</li>
+<li data-i18n="inst.zip3">Click <b>Load unpacked</b> and select the unzipped folder.</li>
+</ol>
+</article>
+<article>
+<span class="status ready" data-i18n="inst.ready">Available</span>
+<h3 data-i18n="inst.srcTitle">From source</h3>
+<div class="code"><span class="lang">sh</span><pre><code>git clone https://github.com/takaoumehara/ai-window-deck.git</code></pre></div>
+<p data-i18n="inst.srcBody">The repository root is the extension package. Select the cloned folder with <b>Load unpacked</b>; there is nothing to install or build.</p>
+</article>
+</div>
+</div>
+</section>
+<!-- ================= SHORTCUTS ================= -->
+<section id="shortcuts">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">05</span><span class="eyebrow" data-i18n="keys.eyebrow">Shortcuts</span></p>
+<div>
+<h2 data-i18n="keys.title">Keyboard commands</h2>
+<p class="lead" data-i18n="keys.lead">Chrome lets an extension suggest four default shortcuts. Assign or change any of them at <code>chrome://extensions/shortcuts</code>. The panel's <i>Change shortcuts</i> link opens that page.</p>
+</div>
+</div>
+<div class="table-wrap" data-reveal=""><table>
+<thead><tr><th data-i18n="keys.cmd">Command</th><th data-i18n="keys.default">Default</th></tr></thead>
+<tbody>
+<tr><td data-i18n="keys.r1">Focus: enlarge the active window</td><td>⌥X / Alt+X</td></tr>
+<tr><td data-i18n="keys.r2">Restore to the registered grid slot, including after a manual resize</td><td>⌥Z / Alt+Z</td></tr>
 
-  <main id="main">
-    <!-- ================= HERO ================= -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-meta">
-          <span class="eyebrow" data-i18n="hero.eyebrow">Chrome extension · MIT</span>
-          <span>v1.7.0 · Manifest V3</span>
-        </div>
-        <h1>AI Window Deck</h1>
-        <div class="hero-grid">
-          <p class="tagline" data-i18n="hero.tagline">Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.</p>
-          <div>
-            <p class="lead" data-i18n="hero.lead">Built for Claude Code in the cloud and Codex. Save the sites you use per project, lay them out on a canvas, open them as tiled Chrome windows, and spotlight one with a shortcut — so you can run Project A, B, and C at once without getting confused. Your profile and sign-ins stay as they are.</p>
-            <ul class="meta-list" aria-label="Highlights" data-i18n-attr="aria-label:hero.metaLabel">
-              <li data-i18n="hero.m1">Canvas layout</li><li>Spotlight</li><li data-i18n="hero.m2">Multi-display</li><li data-i18n="hero.m3">8 languages</li>
-            </ul>
-            <div class="cta">
-              <a class="btn btn-primary" href="#install"><span data-i18n="hero.ctaInstall">Install</span><span class="arr" aria-hidden="true">→</span></a>
-              <a class="btn btn-ghost" href="#features" data-i18n="hero.ctaFeatures">See the features</a>
-              <a class="btn btn-link" href="https://github.com/takaoumehara/ai-window-deck">GitHub</a>
-            </div>
-          </div>
-        </div>
-        <figure class="hero-art shot">
-          <img src="assets/img/01-arrange.png" width="1280" height="800" alt="The Arrange tab: saved windows in a sidebar, four of them placed on the layout canvas, with Retile Grid and Launch buttons." data-i18n-attr="alt:hero.alt">
-          <figcaption><span class="fig-no">Fig. 1</span><span data-i18n="hero.fig">Arrange: saved windows on the layout canvas</span></figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ================= WHAT ================= -->
-    <section id="what">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">01</span><span class="eyebrow" data-i18n="what.eyebrow">What it is</span></p>
-          <div>
-            <h2 data-i18n="what.title">A deck of ordinary Chrome windows</h2>
-            <p class="lead" data-i18n="what.lead">For people who run Claude Code in the cloud, Codex, and other AI tools across several projects. AI Window Deck does not embed or proxy any site. It opens normal Chrome windows and puts them where you want them.</p>
-          </div>
-        </div>
-        <div class="cols cols-3" data-reveal>
-          <article class="col">
-            <span class="col-k">01</span>
-            <h3 data-i18n="what.libTitle">Window library</h3>
-            <p data-i18n="what.libBody">Each saved window has a name and one or more URLs, which open as tabs. Add them one by one, paste a list as text, or import a <code>.txt</code> file.</p>
-          </article>
-          <article class="col">
-            <span class="col-k">02</span>
-            <h3 data-i18n="what.canvasTitle">Layout canvas</h3>
-            <p data-i18n="what.canvasBody">Drag windows onto a 12 × 12 grid and resize them from any edge. Start from Auto, Vertical, Horizontal, Grid or Focus, or place them freely. Keep several presets.</p>
-          </article>
-          <article class="col">
-            <span class="col-k">03</span>
-            <h3>Spotlight</h3>
-            <p data-i18n="what.spotBody"><kbd>Alt</kbd>+<kbd>X</kbd> enlarges the active window. Press it again, or <kbd>Alt</kbd>+<kbd>Z</kbd>, and the window goes back to its tile.</p>
-          </article>
-        </div>
-        <div class="shots shots-2" data-reveal>
-          <figure class="shot">
-            <img src="assets/img/03-window-library.png" width="1280" height="800" loading="lazy" alt="The Windows Library tab, listing saved windows with their URLs." data-i18n-attr="alt:what.libAlt">
-            <figcaption><span class="fig-no">Fig. 2</span><span data-i18n="what.libFig">Window library</span></figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="assets/img/02-spotlight.png" width="1280" height="800" loading="lazy" alt="Spotlight settings: enlarge the active window to half, three quarters, full height, full screen or a custom size." data-i18n-attr="alt:what.spotAlt">
-            <figcaption><span class="fig-no">Fig. 3</span><span data-i18n="what.spotFig">Spotlight sizes</span></figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= HOW ================= -->
-    <section id="how">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">02</span><span class="eyebrow" data-i18n="how.eyebrow">How it works</span></p>
-          <div>
-            <h2 data-i18n="how.title">Five steps, then one shortcut</h2>
-            <p class="lead" data-i18n="how.lead">Click the toolbar icon. On first run, a short guide marks where to start.</p>
-          </div>
-        </div>
-        <div class="split" data-reveal>
-          <ol class="paths">
-            <li><span class="num">01</span><div><h3 data-i18n="how.s1">Choose a display</h3><p data-i18n="how.s1Body">Under <i>Select Target Display(s)</i>, pick the monitor or monitors the deck opens on.</p></div></li>
-            <li><span class="num">02</span><div><h3 data-i18n="how.s2">Register windows</h3><p data-i18n="how.s2Body">Press <b>+</b> in the <i>Windows</i> sidebar. Give each window a name and one or more URLs.</p></div></li>
-            <li><span class="num">03</span><div><h3 data-i18n="how.s3">Lay them out</h3><p data-i18n="how.s3Body">Drag windows onto the canvas. Set how many you want, pick a layout, and resize tiles from their edges.</p></div></li>
-            <li><span class="num">04</span><div><h3 data-i18n="how.s4">Launch</h3><p data-i18n="how.s4Body">Each window opens as its own Chrome window, tiled to match the canvas, with its tabs grouped.</p></div></li>
-            <li><span class="num">05</span><div><h3 data-i18n="how.s5">Spotlight</h3><p data-i18n="how.s5Body">While you work, <kbd>Alt</kbd>+<kbd>X</kbd> brings the active window forward. <kbd>Alt</kbd>+<kbd>A</kbd> re-tiles the deck.</p></div></li>
-          </ol>
-          <figure class="shot">
-            <img src="assets/img/04-register.png" width="1280" height="800" loading="lazy" alt="The register dialog: a window name and a list of URLs that open as tabs." data-i18n-attr="alt:how.alt">
-            <figcaption><span class="fig-no">Fig. 4</span><span data-i18n="how.fig">Registering a window</span></figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= FEATURES ================= -->
-    <section id="features">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">03</span><span class="eyebrow" data-i18n="feat.eyebrow">Features</span></p>
-          <div>
-            <h2 data-i18n="feat.title">Small tools around one layout</h2>
-            <p class="lead" data-i18n="feat.lead">Everything works from the toolbar popup, a floating controller, or the keyboard.</p>
-          </div>
-        </div>
-        <div class="cols cols-3" data-reveal>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k1">Launch</span>
-            <h3 data-i18n="feat.launchTitle">Launch and retile</h3>
-            <p data-i18n="feat.launchBody">One click opens every window in the layout. <i>Retile</i> moves windows you already launched back into place.</p>
-          </article>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k2">Displays</span>
-            <h3 data-i18n="feat.displayTitle">Multiple displays</h3>
-            <p data-i18n="feat.displayBody">Choose which monitor, or which monitors, the deck opens on. Each display can briefly show its number, so you can tell them apart.</p>
-          </article>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k3">Keyboard</span>
-            <h3 data-i18n="feat.keysTitle">Shortcuts</h3>
-            <p data-i18n="feat.keysBody">Spotlight, restore, retile and full screen out of the box. Assign next, previous, undo and focus 1–8 yourself.</p>
-          </article>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k4">Controller</span>
-            <h3 data-i18n="feat.ctrlTitle">Floating controller</h3>
-            <p data-i18n="feat.ctrlBody">Keep a compact controller open next to your work, or open the settings in a larger window of their own.</p>
-          </article>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k5">Backup</span>
-            <h3 data-i18n="feat.backupTitle">Backup and restore</h3>
-            <p data-i18n="feat.backupBody">Save every window, layout and setting as a JSON file, and restore it on another machine.</p>
-          </article>
-          <article class="col">
-            <span class="col-k" data-i18n="feat.k6">Languages</span>
-            <h3 data-i18n="feat.langTitle">8 languages</h3>
-            <p data-i18n="feat.langBody">English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) and 简体中文. The panel follows the browser until you choose.</p>
-          </article>
-        </div>
-        <figure class="figure shot" data-reveal>
-          <img src="assets/img/05-popup.png" width="1280" height="800" loading="lazy" alt="The toolbar popup: Spotlight and Restore Layout buttons, navigation buttons, and spotlight size settings." data-i18n-attr="alt:feat.alt">
-          <figcaption><span class="fig-no">Fig. 5</span><span data-i18n="feat.fig">The toolbar popup</span></figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ================= INSTALL ================= -->
-    <section id="install">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">04</span><span class="eyebrow" data-i18n="inst.eyebrow">Install</span></p>
-          <div>
-            <h2 data-i18n="inst.title">Three ways to install</h2>
-            <p class="lead" data-i18n="inst.lead">Install from the Chrome Web Store in one click, or load a release ZIP. Both take about a minute.</p>
-          </div>
-        </div>
-        <div class="install" data-reveal>
-          <article>
-            <span class="status ready" data-i18n="inst.pending">Available</span>
-            <h3 data-i18n="inst.storeTitle">Chrome Web Store</h3>
-            <p data-i18n="inst.storeBody">Live on the Chrome Web Store. One-click install, automatic updates.</p>
-          </article>
-          <article>
-            <span class="status ready" data-i18n="inst.ready">Available</span>
-            <h3 data-i18n="inst.zipTitle">From a release ZIP</h3>
-            <ol class="steps">
-              <li data-i18n="inst.zip1">Download <code>AI-Window-Deck-vX.Y.Z.zip</code> from <a href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a> and unzip it.</li>
-              <li data-i18n="inst.zip2">Open <code>chrome://extensions</code> and turn on <b>Developer mode</b>.</li>
-              <li data-i18n="inst.zip3">Click <b>Load unpacked</b> and select the unzipped folder.</li>
-            </ol>
-          </article>
-          <article>
-            <span class="status ready" data-i18n="inst.ready">Available</span>
-            <h3 data-i18n="inst.srcTitle">From source</h3>
-            <div class="code"><span class="lang">sh</span><pre><code>git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build</code></pre></div>
-            <p data-i18n="inst.srcBody">Load the folder that contains <code>manifest.json</code> with <b>Load unpacked</b>. <code>dist/</code> is committed, so a fresh clone also loads without building.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= SHORTCUTS ================= -->
-    <section id="shortcuts">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">05</span><span class="eyebrow" data-i18n="keys.eyebrow">Shortcuts</span></p>
-          <div>
-            <h2 data-i18n="keys.title">Keyboard commands</h2>
-            <p class="lead" data-i18n="keys.lead">Chrome lets an extension suggest four default shortcuts. Assign or change any of them at <code>chrome://extensions/shortcuts</code>. The panel's <i>Change shortcuts</i> link opens that page.</p>
-          </div>
-        </div>
-        <div class="table-wrap" data-reveal><table>
-          <thead><tr><th data-i18n="keys.cmd">Command</th><th data-i18n="keys.default">Default</th></tr></thead>
-          <tbody>
-            <tr><td data-i18n="keys.r1">Spotlight: enlarge the active window / back to its tile</td><td><kbd>Alt</kbd><kbd>X</kbd></td></tr>
-            <tr><td data-i18n="keys.r2">Put the window back in the tile it started from</td><td><kbd>Alt</kbd><kbd>Z</kbd></td></tr>
-            <tr><td data-i18n="keys.r3">Arrange (re-tile) the deck windows</td><td><kbd>Alt</kbd><kbd>A</kbd></td></tr>
-            <tr><td data-i18n="keys.r4">Full screen / back</td><td><kbd>Alt</kbd><kbd>Q</kbd></td></tr>
-            <tr><td data-i18n="keys.r5">Undo the last arrangement</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
-            <tr><td data-i18n="keys.r6">Next window / previous window</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
-            <tr><td data-i18n="keys.r7">Focus window 1–8</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
-          </tbody>
-        </table></div>
-        <p class="muted small" style="margin-top:16px" data-i18n="keys.mac">On macOS, Chrome shows <kbd>Alt</kbd> as <kbd>⌥</kbd>.</p>
-      </div>
-    </section>
-
-    <!-- ================= PRIVACY ================= -->
-    <section id="privacy">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">06</span><span class="eyebrow" data-i18n="priv.eyebrow">Privacy</span></p>
-          <div>
-            <h2 data-i18n="priv.title">It arranges windows. That is all it does.</h2>
-            <p class="lead" data-i18n="priv.lead">No server, no account, no analytics. Your windows and layouts stay in your Chrome profile.</p>
-          </div>
-        </div>
-        <div class="privacy-grid" data-reveal>
-          <ul class="facts">
-            <li data-i18n="priv.f1">No host permissions and no content scripts. It does not read page content.</li>
-            <li data-i18n="priv.f2">No network requests and no remote code.</li>
-            <li data-i18n="priv.f3">No analytics, no advertising, no accounts.</li>
-            <li data-i18n="priv.f4">Settings live in <code>chrome.storage.sync</code>, so Chrome can sync them between your own devices if Chrome Sync is on.</li>
-            <li data-i18n="priv.f5">Undo state is kept in <code>chrome.storage.session</code> and cleared when the browser session ends.</li>
-            <li data-i18n="priv.f6">Nothing is sent to the developer or to third parties.</li>
-          </ul>
-          <div>
-            <h3 class="tbl-title" data-i18n="priv.permTitle">Permissions</h3>
-            <div class="table-wrap"><table>
-              <thead><tr><th data-i18n="priv.perm">Permission</th><th data-i18n="priv.why">Why it is needed</th></tr></thead>
-              <tbody>
-                <tr><td><code>tabs</code></td><td data-i18n="priv.tabs">Open saved URLs as tabs, and read the titles and URLs of open windows to list and arrange them.</td></tr>
-                <tr><td><code>tabGroups</code></td><td data-i18n="priv.tabGroups">Name and colour the tab group of each window the deck opens.</td></tr>
-                <tr><td><code>storage</code></td><td data-i18n="priv.storage">Save your windows, layouts and preferences.</td></tr>
-                <tr><td><code>system.display</code></td><td data-i18n="priv.display">Read display sizes and positions, so windows are tiled on the right monitor.</td></tr>
-              </tbody>
-            </table></div>
-            <p class="muted small" style="margin-top:16px" data-i18n="priv.more">The full policy is in <a href="https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md">PRIVACY.md</a>.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= FAQ ================= -->
-    <section id="faq">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <p class="sec-label"><span class="sec-num">07</span><span class="eyebrow">FAQ</span></p>
-          <div>
-            <h2 data-i18n="faq.title">Frequently asked questions</h2>
-          </div>
-        </div>
-        <div class="faq-list" data-reveal>
-        <details class="faq"><summary data-i18n="faq.q1">Which AI tools does it work with?</summary><div data-i18n="faq.a1">Any site you can open in Chrome. A saved window is just a name and a list of URLs, so chat assistants, documentation, notes and dashboards all work the same way.</div></details>
-        <details class="faq"><summary data-i18n="faq.q2">Will it change my sign-ins or Chrome profile?</summary><div data-i18n="faq.a2">No. It opens ordinary Chrome windows in your current profile. Sign-ins, your password manager and other extensions behave as they always do.</div></details>
-        <details class="faq"><summary data-i18n="faq.q3">Is any of my data sent anywhere?</summary><div data-i18n="faq.a3">No. The extension makes no network requests of its own. If Chrome Sync is on, Chrome may sync your settings between your own browsers. That is done by Chrome, not by the developer.</div></details>
-        <details class="faq"><summary data-i18n="faq.q4">Why are some shortcuts not set?</summary><div data-i18n="faq.a4">Chrome allows an extension to suggest only four default shortcuts. Assign the rest at <code>chrome://extensions/shortcuts</code>.</div></details>
-        <details class="faq"><summary data-i18n="faq.q5">Does it work across several monitors?</summary><div data-i18n="faq.a5">Yes. Choose one or more target displays before launching. The deck reads display sizes and positions to tile each window on the right one.</div></details>
-        <details class="faq"><summary data-i18n="faq.q6">Can I move my setup to another computer?</summary><div data-i18n="faq.a6">Yes. Use <i>Backup</i> to save everything as a JSON file, then restore it on the other machine. With Chrome Sync on, settings may also follow you.</div></details>
-        <details class="faq"><summary data-i18n="faq.q7">Where do I install it?</summary><div data-i18n="faq.a7">From the <a href="https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc">Chrome Web Store</a>, or from a <a href="https://github.com/takaoumehara/ai-window-deck/releases">release ZIP</a>.</div></details>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <div class="foot-word" aria-hidden="true">AI Window Deck</div>
-      <div class="foot-row">
-        <span>© 2026 Takao Umehara · <span data-i18n="footer.license">MIT License</span></span>
-        <span class="foot-links">
-          <a href="https://github.com/takaoumehara/ai-window-deck">GitHub</a>
-          <a href="https://github.com/takaoumehara/ai-window-deck/releases" data-i18n="footer.releases">Releases</a>
-          <a href="https://github.com/takaoumehara/ai-window-deck/blob/main/CHANGELOG.md" data-i18n="footer.changelog">Changelog</a>
-          <a href="https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md" data-i18n="footer.privacy">Privacy policy</a>
-          <a href="https://github.com/takaoumehara/ai-window-deck/issues" data-i18n="footer.issues">Issues</a>
-        </span>
-      </div>
-    </div>
-  </footer>
-
-  <script src="assets/i18n.js"></script>
-  <script src="assets/app.js"></script>
+<tr><td data-i18n="keys.r4">Full screen / back</td><td><kbd>Alt</kbd><kbd>Q</kbd></td></tr>
+<tr><td data-i18n="keys.r5">Undo the last arrangement</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
+<tr><td data-i18n="keys.r6">Next window / previous window</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
+<tr><td data-i18n="keys.r7">Focus window 1–8</td><td><span class="unset" data-i18n="keys.unset">not set</span></td></tr>
+</tbody>
+</table></div>
+<p class="muted small" data-i18n="keys.mac" style="margin-top:16px">On macOS, Chrome shows <kbd>Alt</kbd> as <kbd>⌥</kbd>.</p>
+</div>
+</section>
+<!-- ================= PRIVACY ================= -->
+<section id="privacy">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">06</span><span class="eyebrow" data-i18n="priv.eyebrow">Privacy</span></p>
+<div>
+<h2 data-i18n="priv.title">It arranges windows. That is all it does.</h2>
+<p class="lead" data-i18n="priv.lead">No server, no account, no analytics. Your windows and layouts stay in your Chrome profile.</p>
+</div>
+</div>
+<div class="privacy-grid" data-reveal="">
+<ul class="facts">
+<li data-i18n="priv.f1">No host permissions and no content scripts. It does not read page content.</li>
+<li data-i18n="priv.f2">No network requests and no remote code.</li>
+<li data-i18n="priv.f3">No analytics, no advertising, no accounts.</li>
+<li data-i18n="priv.f4">Settings live in <code>chrome.storage.sync</code>, so Chrome can sync them between your own devices if Chrome Sync is on.</li>
+<li data-i18n="priv.f5">Undo state is kept in <code>chrome.storage.session</code> and cleared when the browser session ends.</li>
+<li data-i18n="priv.f6">Nothing is sent to the developer or to third parties.</li>
+</ul>
+<div>
+<h3 class="tbl-title" data-i18n="priv.permTitle">Permissions</h3>
+<div class="table-wrap"><table>
+<thead><tr><th data-i18n="priv.perm">Permission</th><th data-i18n="priv.why">Why it is needed</th></tr></thead>
+<tbody>
+<tr><td><code>tabs</code></td><td data-i18n="priv.tabs">Open saved URLs as tabs, and read the titles and URLs of open windows to list and arrange them.</td></tr>
+<tr><td><code>tabGroups</code></td><td data-i18n="priv.tabGroups">Name and colour the tab group of each window the deck opens.</td></tr>
+<tr><td><code>storage</code></td><td data-i18n="priv.storage">Save your windows, layouts and preferences.</td></tr>
+<tr><td><code>system.display</code></td><td data-i18n="priv.display">Read display sizes and positions, so windows are tiled on the right monitor.</td></tr>
+</tbody>
+</table></div>
+<p class="muted small" data-i18n="priv.more" style="margin-top:16px">The full policy is in <a href="https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md">PRIVACY.md</a>.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= FAQ ================= -->
+<section id="faq">
+<div class="container">
+<div class="section-head" data-reveal="">
+<p class="sec-label"><span class="sec-num">07</span><span class="eyebrow">FAQ</span></p>
+<div>
+<h2 data-i18n="faq.title">Frequently asked questions</h2>
+</div>
+</div>
+<div class="faq-list" data-reveal="">
+<details class="faq"><summary data-i18n="faq.q1">Which AI tools does it work with?</summary><div data-i18n="faq.a1">Any site you can open in Chrome. A saved window is just a name and a list of URLs, so chat assistants, documentation, notes and dashboards all work the same way.</div></details>
+<details class="faq"><summary data-i18n="faq.q2">Will it change my sign-ins or Chrome profile?</summary><div data-i18n="faq.a2">No. It opens ordinary Chrome windows in your current profile. Sign-ins, your password manager and other extensions behave as they always do.</div></details>
+<details class="faq"><summary data-i18n="faq.q3">Is any of my data sent anywhere?</summary><div data-i18n="faq.a3">No. The extension makes no network requests of its own. If Chrome Sync is on, Chrome may sync your settings between your own browsers. That is done by Chrome, not by the developer.</div></details>
+<details class="faq"><summary data-i18n="faq.q4">Why are some shortcuts not set?</summary><div data-i18n="faq.a4">Chrome allows an extension to suggest only four default shortcuts. Assign the rest at <code>chrome://extensions/shortcuts</code>.</div></details>
+<details class="faq"><summary data-i18n="faq.q5">Does it work across several monitors?</summary><div data-i18n="faq.a5">Yes. Choose one or more target displays before launching. The deck reads display sizes and positions to tile each window on the right one.</div></details>
+<details class="faq"><summary data-i18n="faq.q6">Can I move my setup to another computer?</summary><div data-i18n="faq.a6">Yes. Use <i>Backup</i> to save everything as a JSON file, then restore it on the other machine. With Chrome Sync on, settings may also follow you.</div></details>
+<details class="faq"><summary data-i18n="faq.q7">Where do I install it?</summary><div data-i18n="faq.a7">From the <a href="https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc">Chrome Web Store</a>, or from a <a href="https://github.com/takaoumehara/ai-window-deck/releases">release ZIP</a>.</div></details>
+</div>
+</div>
+</section>
+<section class="support" id="support"><div class="container"><h2 data-i18n="support.title">Support the project</h2><p data-i18n="support.body">If AI Window Deck helps your day, you can support its development on Ko-fi.</p><div class="kofi"><script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#2E2E2D', 'G2G71VP1DF');kofiwidget2.draw();</script><noscript><a class="btn btn-ghost" href="https://ko-fi.com/G2G71VP1DF" rel="noopener" target="_blank">Support me on Ko-fi ↗</a></noscript></div></div></section></main>
+<footer>
+<div class="container">
+<div aria-hidden="true" class="foot-word">AI Window Deck</div>
+<p class="foot-credit" data-i18n="footer.credit">Made by <a href="https://takaoumehara.com">Takao Umehara</a> · <a href="https://creativityiseverywhere.com">creativity is everywhere</a></p>
+<div class="foot-row">
+<span data-i18n="footer.license">MIT License</span>
+<span class="foot-links">
+<a href="https://github.com/takaoumehara/ai-window-deck">GitHub</a>
+<a data-i18n="footer.releases" href="https://github.com/takaoumehara/ai-window-deck/releases">Releases</a>
+<a data-i18n="footer.changelog" href="https://github.com/takaoumehara/ai-window-deck/blob/main/CHANGELOG.md">Changelog</a>
+<a data-i18n="footer.privacy" href="https://github.com/takaoumehara/ai-window-deck/blob/main/PRIVACY.md">Privacy policy</a>
+<a data-i18n="footer.issues" href="https://github.com/takaoumehara/ai-window-deck/issues">Issues</a>
+</span>
+</div>
+<div class="foot-legal">
+<p data-i18n="footer.copyright">© 2026 Takao Umehara / creativity is everywhere. AI Window Deck is a project of creativity is everywhere.</p>
+<p data-i18n="footer.trademark">AI Window Deck is not affiliated with Anthropic or OpenAI. All trademarks belong to their respective owners.</p>
+</div>
+</div>
+</footer>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/focus-preview.js"></script>
 </body>
 </html>

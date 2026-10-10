@@ -1,25 +1,23 @@
 #!/usr/bin/env bash
-# Build the Chrome Web Store upload / release archive.
-#   ./tools/package.sh            -> AI-Window-Deck-v<version>.zip in the repo root
+# Build the Chrome Web Store upload / release archive from the repository root.
+#   ./tools/package.sh            -> ai-window-deck-v<version>.zip in the repo root
 #
-# The archive holds runtime files only: the manifest, the service worker, the
-# built React panel (dist/), the display-identify page, icons and _locales.
-# No sources, tests, docs, source maps or node_modules.
+# The repository root is the extension package as shipped: the manifest, the service
+# worker, the panel (dist/), the display-identify page, icons and _locales. Nothing is
+# built; the archive holds exactly these files. dist/ is the 1.11.2 bundle, produced by
+# tools/patch-v1.11.2-inline-register.mjs from the 1.11.0 store package (npm run patch).
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
 version="$(node -p "require('./manifest.json').version")"
-output="$root/AI-Window-Deck-v${version}.zip"
-
-python3 tools/build-i18n.py >/dev/null
-npm run build --silent
+output="$root/ai-window-deck-v${version}.zip"
 
 rm -f "$output"
 # Python's zipfile instead of zip(1): available everywhere python3 is, and
-# lets us pin timestamps so the same sources give the same archive.
+# lets us pin timestamps so the same files give the same archive.
 python3 - "$output" manifest.json background.js identify.html identify.js \
-  icons _locales dist/index.html dist/assets <<'PY'
+  icons _locales dist <<'PY'
 import os, sys, zipfile
 output, *paths = sys.argv[1:]
 files = []

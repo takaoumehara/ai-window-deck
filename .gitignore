@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Release archives (regenerate with ./tools/package.sh; attached to GitHub Releases)
-/AI-Window-Deck-v*.zip
+# Release archives (regenerate with npm run package; attached to GitHub Releases)
+/ai-window-deck-v*.zip
 /*.zip
 
 # OS / editor

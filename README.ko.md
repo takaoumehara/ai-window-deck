@@ -2,15 +2,57 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**더 많은 클라우드 세션, 생각할 여유.**
+
+클라우드용 Claude Code와 Codex를 위한 창 관리자. 여러 프로젝트를 동시에 진행해도 헷갈리지 않습니다.
+
 여러 AI 도구와 참고 자료를 나란히 띄워 놓고 작업하는 사람을 위한 Chrome 확장 프로그램입니다. 함께 사용하는 창을 저장하고, 캔버스에 배치하고, 타일 형태로 정렬된 Chrome 창으로 한 번에 열 수 있습니다. 단축키 하나로 그중 한 창을 확대(Spotlight)할 수도 있습니다.
 
 Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로그램은 그대로 유지됩니다. AI Window Deck은 일반 Chrome 창을 정렬하기만 합니다.
 
-![캔버스에 창 배치하기](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="타일로 정렬된 창 5개. Alt+X를 누르면 한 창이 커지고, 다시 누르면 원래 타일로 돌아갑니다.">
+  </picture>
+</p>
+
+웹사이트: <https://ai-window-deck.vercel.app/>
+
+## 사용 흐름
+
+| **① URL 등록** | **② 배치** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① URL 등록" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② 배치" width="400"> |
+| 창마다 이름과 URL을 저장하거나, 사이트 목록을 붙여 넣어 여러 창을 한 번에 만듭니다. 각 URL은 탭으로 열립니다. | 캔버스에 창을 배치하고 그리드 칸의 크기를 조절합니다. |
+| **③ 포커스 보기** | **④ 실행** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ 포커스 보기" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ 실행" width="400"> |
+| 확대 크기와 기준 위치를 고릅니다. 제자리에서 확대하거나 가운데로 모읍니다. | 디스플레이를 고르고 저장한 배치대로 Chrome 창을 엽니다. |
+
+### URL + 창 등록 (1.11.2 신규)
+
+*URL + 창 등록*은 페이지 안에서 열립니다. 창을 하나씩 추가하거나, 사이트가 나열된 메시지를 그대로 붙여 넣으면 빈 줄로 구분된 묶음마다 창이 만들어집니다. 확인이 필요한 줄은 빨간색으로 표시되고, **수정**을 누르면 빠진 빈 줄을 넣어 줍니다.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="일괄 등록 카드: 사이트가 나열된 채팅 메시지를 복사해 붙여 넣고 세 개의 창으로 저장하는 모습.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="두 줄이 빨간색으로 표시되고 문제마다 수정 버튼이 있는 일괄 등록 화면.">
+  </picture>
+</p>
 
 ## 기능
 
-- **창 라이브러리.** 저장한 각 창에는 이름과 하나 이상의 URL이 있으며, URL은 탭으로 열립니다. 창을 하나씩 추가하거나, 텍스트로 한꺼번에 붙여 넣거나, `.txt` 파일로 가져오고 내보낼 수 있습니다.
+- **URL + 창 등록.** 저장한 각 창에는 이름과 하나 이상의 URL이 있으며, URL은 탭으로 열립니다. 창을 하나씩 추가하거나, 사이트 목록을 붙여 넣으면 빈 줄로 구분된 묶음마다 창이 만들어집니다. 확인이 필요한 줄은 빨간색으로 표시되며, 해당 줄로 가는 링크와 **수정** 버튼이 나타납니다. `.txt` 파일로 가져오고 내보낼 수도 있습니다.
+- **주소와 로컬 파일.** `github.com`은 `https://github.com`으로 저장되고, `localhost`와 로컬 주소에는 `http://`가 붙습니다. `/Users/me/My Site/index.html`이나 `C:\docs\notes.html` 같은 로컬 경로는 확장 프로그램의 *파일 URL에 대한 액세스 허용*을 켜면 `file://` 탭으로 열립니다. 한 줄에 있는 여러 URL은 각각 탭이 됩니다.
 - **레이아웃 캔버스.** 12 × 12 캔버스에 창을 드래그하고 어느 가장자리에서든 크기를 조절할 수 있습니다. 레이아웃은 자동, 세로, 가로, 그리드, 포커스(큰 창 하나), 자유형 중에서 선택합니다. 캔버스에서는 실행취소와 다시 실행을 지원하며, 여러 레이아웃 프리셋(A, B, …)을 보관할 수 있습니다.
 - **실행 및 다시 정렬.** 클릭 한 번으로 레이아웃의 모든 창을 열어 선택한 디스플레이에 타일 형태로 정렬하고, 탭은 그룹으로 묶습니다. *그리드 다시 정렬*을 사용하면 이미 실행한 창을 제자리로 되돌립니다.
 - **Spotlight.** `Alt+X`를 누르면 활성 창이 확대됩니다. 크기는 절반, 너비 절반·높이 전체, 4분의 3, 높이 전체, 전체 화면, 사용자 지정 크기 중에서 고를 수 있습니다. 현재 위치에서 확대할지, 화면 중앙에서 확대할지도 선택할 수 있습니다. `Alt+X`를 다시 누르거나 `Alt+Z`를 누르면 원래 타일로 돌아갑니다.
@@ -20,19 +62,18 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 - **백업.** 모든 창, 레이아웃, 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
 - **8개 언어.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil), 简体中文을 지원합니다. 언어를 직접 선택하기 전까지 패널은 브라우저 언어를 따릅니다.
 
-| Spotlight | 창 라이브러리 | 창 등록 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![창 라이브러리](store-assets/screenshots/03-window-library.png) | ![등록](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="포커스 확대 비교: 왼쪽은 제자리에서 확대, 오른쪽은 가운데로"></p>
+<p align="center"><em>제자리에서 확대 / 가운데로 — 기준 위치는 ③ 단계에서 고릅니다.</em></p>
 
 ## 설치
 
 ### Chrome 웹 스토어
 
-곧 제공될 예정입니다. 현재 등록 심사가 진행 중입니다.
+[Chrome 웹 스토어](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc)에서 설치할 수 있습니다.
 
 ### 릴리스 ZIP에서 설치
 
-1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases)에서 `AI-Window-Deck-vX.Y.Z.zip`을 다운로드하고 압축을 풉니다.
+1. [Releases](https://github.com/takaoumehara/ai-window-deck/releases)에서 `ai-window-deck-vX.Y.Z.zip`을 다운로드하고 압축을 풉니다.
 2. `chrome://extensions`를 열고 **개발자 모드**를 켭니다.
 3. **압축해제된 확장 프로그램을 로드합니다**를 클릭하고 압축을 푼 폴더를 선택합니다.
 
@@ -40,18 +81,15 @@ Chrome 프로필, 로그인 상태, 비밀번호 관리자, 다른 확장 프로
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-그런 다음 **압축해제된 확장 프로그램을 로드합니다**로 저장소 폴더(`manifest.json`이 들어 있는 폴더)를 로드합니다. `dist/`가 커밋되어 있으므로, 새로 클론한 저장소를 빌드하지 않고 바로 로드해도 동작합니다.
+저장소 루트가 1.11.2 확장 프로그램 패키지 그 자체이므로 설치하거나 빌드할 것이 없습니다. 클론한 폴더(`manifest.json`이 있는 폴더)를 **압축해제된 확장 프로그램을 로드합니다**로 불러옵니다.
 
 ## 사용 방법
 
 1. 툴바 아이콘을 클릭합니다. 처음 실행하면 세 단계를 안내하는 짧은 가이드가 표시됩니다.
 2. *대상 디스플레이 선택*에서 **디스플레이를 선택합니다**.
-3. *창* 사이드바의 **+** 버튼으로 **창을 등록합니다**. 이름과 하나 이상의 URL을 입력합니다.
+3. **URL + 창 등록**으로 **창을 등록합니다**. *하나씩 등록*(이름과 하나 이상의 URL) 또는 *일괄 등록(텍스트 붙여넣기)*을 선택합니다.
 4. **창을 캔버스로 드래그합니다.** 원하는 창 개수를 설정하고, 레이아웃을 선택하고, 타일 가장자리를 드래그해 크기를 조절합니다.
 5. **실행**을 클릭합니다. 각 창이 개별 Chrome 창으로 열리고 캔버스와 같은 모양으로 타일 정렬됩니다.
 6. 작업하는 동안 Spotlight와 이동 단축키를 활용하세요.
@@ -59,7 +97,7 @@ npm run build
 팁:
 
 - 사이드바에서 창 카드를 더블클릭하거나 카드에서 `Enter`를 누르면 편집할 수 있습니다. `Delete`를 누르면 삭제됩니다.
-- 대화상자는 `Escape`로 닫히며, 키보드 포커스는 대화상자를 연 버튼으로 돌아갑니다.
+- 등록 패널은 `Escape`로 닫히며(입력 화면에서는 먼저 선택 화면으로 돌아갑니다), 키보드 포커스는 패널을 연 버튼으로 돌아갑니다.
 - *큰 창에서 열기*를 사용하면 툴바 팝업보다 넓은 크기로 같은 패널을 열 수 있습니다.
 
 ### 키보드 단축키
@@ -91,53 +129,47 @@ AI Window Deck에는 호스트 권한이나 콘텐츠 스크립트가 없으며,
 
 ## 개발
 
-Node.js 20 이상과 Python 3이 필요합니다.
+Node.js 20 이상이 필요합니다(스토어 이미지 생성에는 Python 3와 Pillow도 사용합니다).
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate ai-window-deck-v<version>.zip
+```
+
+1.11.x의 소스는 이 저장소에 없습니다. 루트에는 배포된 그대로의 1.11.2 패키지가 있으며, `dist/` 번들은 공개된 1.11.0 스토어 패키지에서 테스트를 거친 정확한 문자열 패치로 다시 만듭니다. 1.11.0 패키지의 압축을 풀어 지정하면, 패치 결과가 루트와 바이트 단위로 같은지도 테스트에서 확인합니다:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 저장소 구성:
 
 | 경로 | 내용 |
 | --- | --- |
-| `manifest.json`, `background.js` | 확장 프로그램 매니페스트와 서비스 워커(창 배치, 단축키) |
-| `src/` | 팝업과 옵션 페이지에서 사용하는 React + Tailwind 패널 |
-| `dist/` | 빌드된 패널. 저장소를 그대로 압축해제된 확장 프로그램으로 로드할 수 있도록 커밋되어 있습니다 |
-| `identify.html`, `identify.js` | 디스플레이를 식별할 때 해당 디스플레이에 잠시 표시되는 번호 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 번역(아래 참조) |
-| `tools/` | i18n 빌드, 패키징, 패키지 검증 |
-| `store-assets/` | Chrome 웹 스토어 등록 문구, 스크린샷, 프로모션 타일, 캡처 스크립트 |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 확장 프로그램 패키지. Chrome 웹 스토어에 업로드하는 것과 동일합니다 |
+| `tools/` | 패치 스크립트(`patch-v1.11*.mjs`, 문자열과 코드는 `v1.11.1/`, `v1.11.2/`), 패키지 생성, 패키지 검증, Chrome 웹 스토어 업로드 |
+| `site/` | 웹사이트. Vercel이 배포합니다(`vercel.json` 참고) |
+| `store-assets/` | Chrome 웹 스토어 등록 문구, 스크린샷, 프로모션 이미지, 캡처 스크립트 |
 | `test/` | 단위 테스트 |
-
-`deck.html`, `deck.js`, `dock.html`, `dock.js`는 1.7 이전 버전의 패널입니다. 참고용으로 남겨 두었으며 패키지에는 포함되지 않습니다.
-
-### 번역
-
-패널 문자열은 `tools/ui-strings.json`에 있습니다. Chrome 자체에서 사용하는 문자열(확장 프로그램 설명과 단축키 이름)은 `tools/strings.json`에 있습니다. 두 파일 중 하나를 수정한 후에는 다음 명령을 실행합니다.
-
-```sh
-python3 tools/build-i18n.py
-```
-
-이 명령은 `src/lib/ui-strings.js`와 `_locales/*/messages.json`을 다시 생성합니다. 패널 로캘 중 하나에 키가 누락되어 있으면 빌드가 실패합니다. `npm test`는 모든 언어에서 자리표시자가 일치하는지도 확인합니다.
+| `legacy/v1.7/` | 1.11 이전 소스(1.7 React 패널과 이전 페이지). 참고용으로 보관합니다. 해당 README를 참고하세요 |
 
 ## 릴리스 절차
 
-1. `manifest.json`과 `package.json`의 `version`을 올리고 `CHANGELOG.md`를 업데이트합니다.
-2. `npm test`와 `./tools/package.sh`를 실행합니다. 이 스크립트는 ZIP을 검증합니다(참조된 파일, 모든 로캘의 `__MSG_` 키, 설명 길이).
+1. `package.json`과 패치 스크립트의 manifest 단계에서 `version`을 올리고 `CHANGELOG.md`를 업데이트합니다.
+2. `npm test`와 `npm run package`를 실행합니다. 검증 스크립트가 참조 파일, 모든 로캘의 `__MSG_` 키, 설명 길이를 확인합니다.
 3. ZIP을 Chrome 웹 스토어 대시보드에 업로드합니다.
-4. 스토어에서 해당 버전이 승인되면 `main`에 `vX.Y.Z` 태그를 지정하고 GitHub Release에 ZIP을 첨부합니다.
+4. 스토어에서 승인되면 `main`에 `vX.Y.Z` 태그를 달고 GitHub Release에 ZIP을 첨부합니다.
 
-자세한 내용은 [docs/RELEASING.md](docs/RELEASING.md)를 참조하세요.
+자세한 내용은 [docs/RELEASING.md](docs/RELEASING.md)를 참고하세요.
 
 ## 지원
 
 버그 신고와 제안은 [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues)에 남겨 주세요.
+
+AI Window Deck이 작업에 도움이 된다면 [Ko-fi](https://ko-fi.com/G2G71VP1DF)에서 개발을 응원할 수 있습니다.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## 라이선스
 

@@ -2,17 +2,57 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**More cloud sessions. Room to think.**
+
 Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
 
 A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.
 
 Your Chrome profile, sign-ins, password manager and other extensions stay as they are. AI Window Deck only arranges ordinary Chrome windows.
 
-![Arrange windows on a canvas](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="Five tiled windows. Alt+X enlarges one; pressing it again puts it back in its tile.">
+  </picture>
+</p>
+
+Website: <https://ai-window-deck.vercel.app/>
+
+## How it works
+
+| **① Register URLs** | **② Layout** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① Register URLs" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② Layout" width="400"> |
+| Save a name and URLs for each window, or paste a list of sites to create several at once. Each URL opens as a tab. | Place windows on the canvas and resize their grid slots. |
+| **③ Focus view** | **④ Launch** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ Focus view" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ Launch" width="400"> |
+| Choose an enlargement size and origin: grow in place or center. | Choose your displays and open the saved layout as Chrome windows. |
+
+### Register URLs + Window (new in 1.11.2)
+
+*Register URLs + Window* opens right in the page. Add windows one by one, or paste a message that lists your sites: each block separated by a blank line becomes a window. Lines that need attention turn red, and **Fix** adds the missing blank line.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="The bulk card: a chat message listing sites is copied, pasted, and saved as three windows.">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="Bulk import with two lines marked in red and a Fix button for each issue.">
+  </picture>
+</p>
 
 ## Features
 
-- **Window library.** Each saved window has a name and one or more URLs, which open as tabs. You can add windows one at a time, paste them in bulk as text, or import and export a `.txt` file.
+- **Register URLs + Window.** Each saved window has a name and one or more URLs, which open as tabs. Add windows one by one, or paste a list of sites: each block separated by a blank line becomes a window. Lines that need attention turn red, with a link to the line and a **Fix** button. You can also import and export a `.txt` file.
+- **Addresses and local files.** `github.com` is saved as `https://github.com`; `localhost` and local addresses get `http://`. Local paths such as `/Users/me/My Site/index.html` or `C:\docs\notes.html` open as `file://` tabs once *Allow access to file URLs* is on for the extension. Several URLs on one line each become a tab.
 - **Layout canvas.** Drag windows onto a 12 × 12 canvas and resize them from any edge. Layouts include Auto, Vertical, Horizontal, Grid, Focus (one large window) and Freeform. The canvas has undo and redo, and you can keep several layout presets (A, B, …).
 - **Launch and re-tile.** One click opens every window in the layout and tiles it on the display(s) you chose, with its tabs grouped. *Retile* moves windows you already launched back into place.
 - **Spotlight.** `Alt+X` enlarges the active window: half, tall, three quarters, full height, full screen or a custom size. You choose whether it grows from where it is or from the screen centre. Press `Alt+X` again, or `Alt+Z`, to put it back in its tile.
@@ -22,9 +62,8 @@ Your Chrome profile, sign-ins, password manager and other extensions stay as the
 - **Backup.** Back up or restore all windows, layouts and settings as a JSON file.
 - **8 languages.** English, 日本語, Deutsch, Español, Français, 한국어, Português (Brasil) and 简体中文. The panel follows the browser language until you pick one.
 
-| Spotlight | Window library | Register windows |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![Window library](store-assets/screenshots/03-window-library.png) | ![Register](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="Focus enlargement compared: grow in place on the left, center on the right"></p>
+<p align="center"><em>Grow in place / Center — choose the origin in step ③.</em></p>
 
 ## Install
 
@@ -34,7 +73,7 @@ Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-
 
 ### From a release ZIP
 
-1. Download `AI-Window-Deck-vX.Y.Z.zip` from [Releases](https://github.com/takaoumehara/ai-window-deck/releases) and unzip it.
+1. Download `ai-window-deck-vX.Y.Z.zip` from [Releases](https://github.com/takaoumehara/ai-window-deck/releases) and unzip it.
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Click **Load unpacked** and select the unzipped folder.
 
@@ -42,18 +81,15 @@ Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/ai-
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-Then load the repository folder (the one that contains `manifest.json`) with **Load unpacked**. `dist/` is committed, so loading a fresh clone also works without building.
+The repository root is the 1.11.2 extension package itself, so there is nothing to install or build. Load the cloned folder (the one that contains `manifest.json`) with **Load unpacked**.
 
 ## Usage
 
 1. Click the toolbar icon. On first run, a short guide marks the three steps.
 2. **Choose a display** under *Select Target Display(s)*.
-3. **Register windows** with **+** in the *Windows* sidebar: a name, plus one or more URLs.
+3. **Register windows** with **Register URLs + Window**: choose *One by one* (a name, plus one or more URLs) or *Bulk (paste text)*.
 4. **Drag windows onto the canvas.** Set how many windows you want, pick a layout, and resize tiles from their edges.
 5. Click **Launch**. Each window opens in its own Chrome window, tiled to match the canvas.
 6. Use the spotlight and navigation shortcuts while you work.
@@ -61,7 +97,7 @@ Then load the repository folder (the one that contains `manifest.json`) with **L
 Tips:
 
 - In the sidebar, double-click a window card or press `Enter` on it to edit it. `Delete` removes it.
-- Dialogs close with `Escape`, and keyboard focus returns to the button that opened them.
+- `Escape` closes the register panel (from a form, it first goes back to the choice), and keyboard focus returns to the button that opened it.
 - *Open in Large Window* opens the same panel at a roomier size than the toolbar popup.
 
 ### Keyboard shortcuts
@@ -93,45 +129,35 @@ The full policy is in [PRIVACY.md](PRIVACY.md).
 
 ## Development
 
-Requires Node.js 20+ and Python 3.
+Requires Node.js 20+ (and Python 3 with Pillow for the store graphics).
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate ai-window-deck-v<version>.zip
+```
+
+The source of 1.11.x is not in this repository. The root holds the 1.11.2 package exactly as shipped. Its `dist/` bundle is rebuilt from the published 1.11.0 store package by exact, tested string patches. With the 1.11.0 package unpacked, the tests also check that the patch reproduces the root byte for byte:
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 Repository layout:
 
 | Path | Contents |
 | --- | --- |
-| `manifest.json`, `background.js` | Extension manifest and service worker (window placement, shortcuts) |
-| `src/` | React + Tailwind panel used by the popup and the options page |
-| `dist/` | Built panel. It is committed so the repository loads unpacked as-is |
-| `identify.html`, `identify.js` | The number briefly shown on a display when you identify it |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | Translations (see below) |
-| `tools/` | i18n build, packaging, package validation |
-| `store-assets/` | Chrome Web Store listing copy, screenshots, promo tiles and capture script |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | The 1.11.2 extension package, exactly as uploaded to the Chrome Web Store |
+| `tools/` | Patch scripts (`patch-v1.11*.mjs`, with their strings and code in `v1.11.1/`, `v1.11.2/`), packaging, package validation, Chrome Web Store upload |
+| `site/` | The website, deployed by Vercel (see `vercel.json`) |
+| `store-assets/` | Chrome Web Store listing text, screenshots, promo tiles and capture scripts |
 | `test/` | Unit tests |
-
-`deck.html`, `deck.js`, `dock.html` and `dock.js` are the pre-1.7 panel. They are kept for reference and are not packaged.
-
-### Translations
-
-The panel strings live in `tools/ui-strings.json`. Chrome's own strings (extension description and shortcut names) live in `tools/strings.json`. After editing either file, run:
-
-```sh
-python3 tools/build-i18n.py
-```
-
-This regenerates `src/lib/ui-strings.js` and `_locales/*/messages.json`. The build fails if a panel locale is missing a key. `npm test` also checks that placeholders match in every language.
+| `legacy/v1.7/` | The pre-1.11 source (the 1.7 React panel and older pages), kept for reference. See its README |
 
 ## Release process
 
-1. Bump `version` in `manifest.json` and `package.json`, and update `CHANGELOG.md`.
-2. Run `npm test` and `./tools/package.sh`. The script validates the ZIP: referenced files, `__MSG_` keys in every locale, and description length.
+1. Bump `version` in `package.json` and in the patch script's manifest step, and update `CHANGELOG.md`.
+2. Run `npm test` and `npm run package`. The validator checks referenced files, `__MSG_` keys in every locale, and description length.
 3. Upload the ZIP to the Chrome Web Store dashboard.
 4. After the store approves the version, tag `vX.Y.Z` on `main` and attach the ZIP to a GitHub Release.
 
@@ -140,6 +166,10 @@ See [docs/RELEASING.md](docs/RELEASING.md) for details.
 ## Support
 
 Report bugs and suggestions on [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues).
+
+If AI Window Deck helps your day, you can support its development on [Ko-fi](https://ko-fi.com/G2G71VP1DF).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## License
 

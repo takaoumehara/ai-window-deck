@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "version": "1.7.0",
+  "default_locale": "en",
+  "description": "__MSG_extDescription__",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "system.display"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "dist/index.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "dist/index.html",
+    "default_title": "__MSG_extName__",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "commands": {
+    "toggle-spotlight": {
+      "suggested_key": {
+        "default": "Alt+X"
+      },
+      "description": "__MSG_cmdSpotlight__"
+    },
+    "restore-home": {
+      "suggested_key": {
+        "default": "Alt+Z"
+      },
+      "description": "__MSG_cmdHome__"
+    },
+    "tile-windows": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+      "description": "__MSG_cmdTile__"
+    },
+    "toggle-fullscreen": {
+      "suggested_key": {
+        "default": "Alt+Q"
+      },
+      "description": "__MSG_cmdFullscreen__"
+    },
+    "undo-layout": {
+      "description": "__MSG_cmdUndo__"
+    },
+    "focus-next": {
+      "description": "__MSG_cmdNext__"
+    },
+    "focus-previous": {
+      "description": "__MSG_cmdPrev__"
+    },
+    "focus-tile-1": {
+      "description": "__MSG_cmdFocusTile1__"
+    },
+    "focus-tile-2": {
+      "description": "__MSG_cmdFocusTile2__"
+    },
+    "focus-tile-3": {
+      "description": "__MSG_cmdFocusTile3__"
+    },
+    "focus-tile-4": {
+      "description": "__MSG_cmdFocusTile4__"
+    },
+    "focus-tile-5": {
+      "description": "__MSG_cmdFocusTile5__"
+    },
+    "focus-tile-6": {
+      "description": "__MSG_cmdFocusTile6__"
+    },
+    "focus-tile-7": {
+      "description": "__MSG_cmdFocusTile7__"
+    },
+    "focus-tile-8": {
+      "description": "__MSG_cmdFocusTile8__"
+    }
+  }
+}

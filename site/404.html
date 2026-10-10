@@ -7,10 +7,10 @@
   <meta name="description" content="This page does not exist. Go back to the AI Window Deck site.">
   <meta name="robots" content="noindex">
   <meta name="color-scheme" content="light dark">
-  <!-- Relative asset URLs work both on Vercel (site root) and GitHub Pages project sites. -->
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <!-- Root-relative assets also work for nested missing paths. -->
+  <link rel="icon" href="/assets/icon-v6.svg?v=1.11.2" type="image/svg+xml">
+  <meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap">
@@ -26,12 +26,15 @@
     .nf .cta { margin-top: 28px; }
     .nav.is-static .nav-tools { margin-left: auto; }
   </style>
+<link rel="manifest" href="/assets/site.webmanifest?v=1.11.2">
+<link rel="icon" href="/assets/icon-v6-32.png?v=1.11.2" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon-v6.png?v=1.11.2" sizes="180x180">
 </head>
 <body data-title-key="nf.title">
   <header class="nav is-static">
     <div class="container">
-      <a class="brand" href="./">
-        <img src="/assets/favicon.svg" alt="" width="22" height="22">
+      <a class="brand" href="/">
+        <img src="/assets/icon-v6.svg?v=1.11.2" alt="" width="22" height="22">
         <span>AI Window Deck</span>
       </a>
       <div class="nav-tools">
@@ -48,7 +51,7 @@
           <h1 data-i18n="nf.title">Page not found</h1>
           <p class="muted" data-i18n="nf.body">This page doesn't exist or has moved.</p>
           <div class="cta">
-            <a class="btn btn-primary" href="./"><span data-i18n="nf.home">Back to the home page</span><span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/"><span data-i18n="nf.home">Back to the home page</span><span class="arr" aria-hidden="true">→</span></a>
             <a class="btn btn-ghost" href="https://github.com/takaoumehara/ai-window-deck" data-i18n="nf.github">Open on GitHub</a>
           </div>
         </div>

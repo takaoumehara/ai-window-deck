@@ -1,0 +1,53 @@
+{
+  "extName": {
+    "message": "AI Window Deck"
+  },
+  "extDescription": {
+    "message": "Gestionnaire de fenêtres pour Claude Code cloud et Codex — plusieurs projets à la fois, sans confusion."
+  },
+  "cmdSpotlight": {
+    "message": "Agrandir / restaurer"
+  },
+  "cmdHome": {
+    "message": "Revenir à la case d'origine"
+  },
+  "cmdTile": {
+    "message": "Réorganiser"
+  },
+  "cmdFullscreen": {
+    "message": "Plein écran / restaurer"
+  },
+  "cmdUndo": {
+    "message": "Annuler"
+  },
+  "cmdNext": {
+    "message": "Fenêtre suivante"
+  },
+  "cmdPrev": {
+    "message": "Fenêtre précédente"
+  },
+  "cmdFocusTile1": {
+    "message": "Activer la fenêtre 1"
+  },
+  "cmdFocusTile2": {
+    "message": "Activer la fenêtre 2"
+  },
+  "cmdFocusTile3": {
+    "message": "Activer la fenêtre 3"
+  },
+  "cmdFocusTile4": {
+    "message": "Activer la fenêtre 4"
+  },
+  "cmdFocusTile5": {
+    "message": "Activer la fenêtre 5"
+  },
+  "cmdFocusTile6": {
+    "message": "Activer la fenêtre 6"
+  },
+  "cmdFocusTile7": {
+    "message": "Activer la fenêtre 7"
+  },
+  "cmdFocusTile8": {
+    "message": "Activer la fenêtre 8"
+  }
+}
