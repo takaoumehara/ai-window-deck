@@ -1,0 +1,53 @@
+{
+  "extName": {
+    "message": "AI Window Deck"
+  },
+  "extDescription": {
+    "message": "클라우드 Claude Code와 Codex용 창 관리자. 여러 프로젝트를 동시에, 헷갈림 없이."
+  },
+  "cmdSpotlight": {
+    "message": "확대/복원"
+  },
+  "cmdHome": {
+    "message": "처음 있던 칸으로 되돌리기"
+  },
+  "cmdTile": {
+    "message": "다시 정렬"
+  },
+  "cmdFullscreen": {
+    "message": "전체 화면/복원"
+  },
+  "cmdUndo": {
+    "message": "되돌리기"
+  },
+  "cmdNext": {
+    "message": "다음 창"
+  },
+  "cmdPrev": {
+    "message": "이전 창"
+  },
+  "cmdFocusTile1": {
+    "message": "창 1에 포커스"
+  },
+  "cmdFocusTile2": {
+    "message": "창 2에 포커스"
+  },
+  "cmdFocusTile3": {
+    "message": "창 3에 포커스"
+  },
+  "cmdFocusTile4": {
+    "message": "창 4에 포커스"
+  },
+  "cmdFocusTile5": {
+    "message": "창 5에 포커스"
+  },
+  "cmdFocusTile6": {
+    "message": "창 6에 포커스"
+  },
+  "cmdFocusTile7": {
+    "message": "창 7에 포커스"
+  },
+  "cmdFocusTile8": {
+    "message": "창 8에 포커스"
+  }
+}

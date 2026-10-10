@@ -1,0 +1,57 @@
+AI Window Deck 1.11.2 — Chrome Web Store listing text (English)
+
+==============================
+Short description (90/132)
+==============================
+This is the manifest's extDescription. Chrome fills it in from the package; it is not typed in the dashboard.
+
+Tile AI workspaces, bring one into focus with a shortcut, and switch between them quickly.
+
+==============================
+Detailed description
+==============================
+
+AI Window Deck is the window manager for Claude Code in the cloud and Codex. Run multiple projects at once without getting confused: save the sites you use together, lay them out on a canvas, and open them all at once as tiled Chrome windows. Your Chrome profile, sign-ins, password manager and other extensions stay exactly as they are.
+
+Build a deck for Project A, Project B and Project C: research, drafting, review, or any work where Claude Code, Codex and references need to stay visible at the same time. When one window needs your full attention, press Alt+X to enlarge it. Press it again and every window goes back to its tile.
+
+Key features
+
+• Register URLs + Window: add windows right in the page, one by one or in bulk. Paste a message that lists your sites, and each block separated by a blank line becomes a window. Lines that need attention turn red, with a Fix button. You can also import and export a .txt file.
+• Smart addresses: type github.com and it is saved as https://github.com (localhost and local addresses get http://). Local files such as /Users/me/My Site/index.html or C:\docs\notes.html open as file:// tabs. Several URLs on one line each become a tab.
+• Layout canvas: drag windows onto the canvas and resize them from any edge. Choose Auto, Vertical, Horizontal, Grid, Focus (one large window) or Freeform. Undo, redo, and keep several layout presets.
+• One-click launch: open every window in the layout, tiled on the display you choose, with its tabs grouped by name. Retile moves launched windows back into place.
+• Focus view: Alt+X enlarges the active window to fill the display, about 80%, half, full height or a custom size, growing in place or centred. Alt+Z puts a window you resized by hand back into its tile.
+• Move between windows: previous and next window, focus window 1–8, undo the last arrangement, toggle full screen. Every shortcut can be changed in Chrome.
+• Multiple displays: choose which monitor or monitors the deck opens on.
+• Floating controller: keep a compact controller open next to your work.
+• Backup: back up or restore all windows, layouts and settings as a JSON file.
+• 8 languages: English, Japanese, German, Spanish, French, Korean, Brazilian Portuguese and Simplified Chinese.
+
+Privacy
+
+There is no account, server, analytics or remote code. AI Window Deck never reads page content. It reads only window positions and the titles and URLs of open tabs, to list and arrange your windows. Settings are saved in Chrome's extension storage, and Chrome can sync them between your own devices if Chrome Sync is on. Nothing is sent to the developer or to third parties.
+
+Free and open source (MIT). Support development on Ko-fi: https://ko-fi.com/G2G71VP1DF
+Source code and support: https://github.com/takaoumehara/ai-window-deck
+
+==============================
+What's new in 1.11.2
+==============================
+
+• "Register URLs + Window" now opens inside the page instead of a dialog. Choose one by one or bulk paste; the bulk card shows a short animation of pasting a list of sites.
+• Bulk import marks problem lines in red and lists each issue with a link to its line, a Fix button and "Fix all fixable".
+• Addresses without https:// are completed for you; localhost and local addresses get http://.
+• Local files work, including paths with spaces, C:\ paths and file:/// URLs.
+• Several URLs on one line each become a tab. Lines like "Memo:" stay window names, and a block without a name is called "Window N".
+• After a bulk save, choose in the page whether to place the new windows on the canvas automatically.
+• The More view links to Ko-fi.
+
+==============================
+Screenshots (store-assets/listing/en/, 1280 × 800)
+==============================
+01-register.png      Register URLs + Window: one by one, or paste a list
+02-bulk-paste.png    Red lines, with a fix
+03-layout.png        Lay out the canvas
+04-focus-view.png    Alt+X: one window gets big
+05-launch.png        Launch

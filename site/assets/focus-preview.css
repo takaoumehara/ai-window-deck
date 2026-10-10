@@ -1,0 +1,68 @@
+/* Ported from src/index.css: FocusPreview, Stage and StageKey. */
+.diagram-phase { font-size: 14px; margin-bottom: 10px; min-height: 18px; }
+.deck-diagram { position: relative; aspect-ratio: 16 / 10; width: 100%; isolation: isolate; }
+.diagram-tile { position: absolute; padding: 3px; }
+.diagram-tile-inner { position: relative; display: block; width: 100%; height: 100%; border: 1.5px solid var(--cie-stroke-strong); border-radius: calc(var(--cie-r) / 2); background: var(--card); overflow: hidden; transition: background-color 600ms var(--cie-ease-expo), color 600ms var(--cie-ease-expo), border-color 600ms var(--cie-ease-expo); }
+.diagram-bar { position: absolute; inset: 0 0 auto 0; height: 14%; max-height: 18px; min-height: 8px; border-bottom: 1.5px solid var(--cie-stroke-strong); background: var(--cie-btn); transition: inherit; }
+.diagram-tile-inner::before, .diagram-tile-inner::after { content: ''; position: absolute; left: 10px; height: 3px; border-radius: 2px; background: var(--cie-stroke-strong); transition: inherit; }
+.diagram-tile-inner::before { top: calc(min(18px, 14%) + 12px); width: 42%; }
+.diagram-tile-inner::after { top: calc(min(18px, 14%) + 22px); width: 26%; }
+.diagram-tile.is-hero .diagram-tile-inner::before, .diagram-tile.is-hero .diagram-tile-inner::after { background: color-mix(in srgb, var(--primary-foreground) 28%, transparent); }
+.diagram-num { position: absolute; left: 10px; bottom: 8px; font: 14px var(--cie-mono); color: var(--muted-foreground); letter-spacing: .04em; transition: inherit; }
+.diagram-tile.is-hero .diagram-tile-inner { background: var(--primary); border-color: var(--primary); }
+.diagram-tile.is-hero .diagram-bar { background: transparent; border-bottom-color: color-mix(in srgb, var(--primary-foreground) 22%, transparent); }
+.diagram-tile.is-hero .diagram-num { color: var(--primary-foreground); }
+.deck-diagram-animated .diagram-tile { transition: left 640ms var(--cie-ease-expo), top 640ms var(--cie-ease-expo), width 640ms var(--cie-ease-expo), height 640ms var(--cie-ease-expo), opacity 480ms linear; }
+.diagram-arrow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; font-size: 15px; align-self: center; color: var(--muted-foreground); }
+.stage-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.stage-head .diagram-phase { margin: 0; color: var(--foreground); font-weight: 600; }
+.stage-pause { min-height: 30px; padding: 4px 10px; font-size: 13px; }
+.stage-pause[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+.stage-key-row { min-height: 92px; display: flex; align-items: center; justify-content: center; margin-top: 14px; }
+.stage-key { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.stage-key-caps { display: inline-flex; align-items: center; gap: 8px; }
+.keycap-plus { font: 500 18px var(--cie-mono); color: var(--muted-foreground); }
+.keycap { display: inline-flex; align-items: center; justify-content: center; min-width: 58px; height: 58px; padding: 0 16px; border: 1.5px solid var(--cie-stroke-strong); border-bottom-width: 5px; border-radius: 11px; background: var(--card); color: var(--foreground); font: 600 22px/1 var(--cie-sans); letter-spacing: -.01em; transform: translateY(0); }
+.stage-key-caption { font-size: 15px; color: var(--foreground); }
+/* Press: the key goes down (bottom edge collapses, slight tint) at ~0.3 s,
+   exactly when the tiles start moving, then comes back up. */
+@keyframes keycap-press {
+  0% { opacity: 0; transform: translateY(-4px); }
+  14% { opacity: 1; transform: translateY(0); border-bottom-width: 5px; background: var(--card); }
+  30%, 52% { transform: translateY(4px); border-bottom-width: 1.5px; background: color-mix(in srgb, var(--foreground) 14%, var(--card)); }
+  70%, 100% { opacity: 1; transform: translateY(0); border-bottom-width: 5px; background: var(--card); }
+}
+.stage-key .keycap { animation: keycap-press 1100ms var(--cie-ease-expo) both; }
+.stage-key .stage-key-caption { animation: keycap-caption 1100ms linear both; }
+@keyframes keycap-caption { 0%, 25% { opacity: 0; } 45%, 100% { opacity: 1; } }
+.stage-key.is-frozen .keycap { animation: none; transform: translateY(4px); border-bottom-width: 1.5px; background: color-mix(in srgb, var(--foreground) 14%, var(--card)); }
+.stage-key.is-frozen .stage-key-caption { animation: none; }
+/* Tiles move on the key press, not on the phase tick. */
+.deck-diagram-animated[data-diagram-phase="1"] .diagram-tile,
+.deck-diagram-animated[data-diagram-phase="2"] .diagram-tile { transition-delay: 330ms; }
+.focus-preview { margin: 0; min-width: 0; }
+.focus-stage { position: relative; padding-bottom: 34px; }
+.focus-display { border: 1.5px solid var(--cie-stroke-strong); border-radius: calc(var(--cie-r) / 2); background: var(--cie-btn); }
+/* The dock shelf the hidden windows drop into (only drawn for "Hide"). */
+.focus-dock { position: absolute; left: 50%; bottom: 2px; width: 46%; height: 26px; transform: translateX(-50%); border: 1px solid var(--cie-stroke-strong); border-radius: 8px; opacity: 0; transition: opacity 400ms var(--cie-ease-expo); }
+.focus-preview[data-others="hide"] .focus-dock { opacity: 1; }
+.focus-tile .diagram-bar, .focus-tile .diagram-num, .focus-tile .diagram-tile-inner::before, .focus-tile .diagram-tile-inner::after { transition: opacity 300ms linear, background-color 600ms var(--cie-ease-expo), color 600ms var(--cie-ease-expo), border-color 600ms var(--cie-ease-expo); }
+.focus-preview .stage-key-row { min-height: 76px; margin-top: 2px; }
+.focus-static { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: center; }
+@media (min-width: 640px) { .focus-static { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); } }
+.focus-static-caption { font-size: 14px; margin-bottom: 8px; }
+.focus-preview {
+ --cie-stroke-strong: #7a7975; --cie-r: 16px; --cie-btn: rgba(11,11,11,.055);
+ --cie-ease-expo: cubic-bezier(.76,0,.18,1); --cie-mono: var(--mono); --cie-sans: var(--font);
+ --card: var(--surface); --foreground: var(--text); --muted-foreground: var(--muted);
+ --primary: var(--text); --primary-foreground: var(--bg);
+ width: 100%; max-width: 720px; margin: 0 auto 32px; padding: clamp(16px,2.5vw,28px);
+ border: 1px solid var(--border-strong); border-radius: 16px; background: var(--surface);
+}
+.focus-preview .deck-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--cie-stroke-strong); border-radius: 8px; background: var(--cie-btn); color: var(--foreground); flex-shrink: 0; }
+.focus-preview .stage-pause[aria-pressed="true"] { background: var(--primary); color: var(--primary-foreground); }
+.focus-preview .stage-key-caps { flex-wrap: wrap; justify-content: center; }
+.focus-preview .keycap { margin: 0; box-shadow: none; }
+.focus-preview .key-cap { font: 13px var(--mono); }
+@media (max-width: 600px) { .focus-preview .stage-key { gap: 12px; text-align: center; } }
+@media (prefers-reduced-motion: reduce) { .focus-preview *, .focus-preview *::before, .focus-preview *::after { animation: none !important; transition: none !important; } }

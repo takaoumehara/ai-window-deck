@@ -2,15 +2,57 @@
 
 # AI Window Deck
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
+
+**更多云端会话，更多思考空间。**
+
+面向云端 Claude Code 与 Codex 的窗口管理器，同时推进多个项目也不会混乱。
+
 一款 Chrome 扩展程序，适合需要同时并排使用多个 AI 工具和参考资料的人。保存经常一起使用的窗口，在画布上排好布局，一次性以平铺的 Chrome 窗口全部打开，并用一个快捷键将其中一个窗口放大突出显示。
 
 你的 Chrome 个人资料、登录状态、密码管理器和其他扩展程序都保持原样。AI Window Deck 只负责排列普通的 Chrome 窗口。
 
-![在画布上排列窗口](store-assets/screenshots/01-arrange.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/focus-preview-en-dark.gif">
+    <img src="docs/images/focus-preview-en-light.gif" width="720" alt="五个平铺的窗口。按 Alt+X 放大其中一个，再按一次即回到原来的位置。">
+  </picture>
+</p>
+
+网站: <https://ai-window-deck.vercel.app/>
+
+## 使用流程
+
+| **① 注册 URL** | **② 布局** |
+| --- | --- |
+| <img src="site/assets/img/01-step1-urls.png" alt="① 注册 URL" width="400"> | <img src="site/assets/img/02-step2-layout.png" alt="② 布局" width="400"> |
+| 为每个窗口保存名称和 URL，也可以粘贴网站列表一次创建多个窗口。每个 URL 以标签页打开。 | 在画布上放置窗口，并调整其网格区域。 |
+| **③ 聚焦视图** | **④ 启动** |
+| <img src="site/assets/img/03-step3-focus.png" alt="③ 聚焦视图" width="400"> | <img src="site/assets/img/04-step4-launch.png" alt="④ 启动" width="400"> |
+| 选择放大尺寸和基准位置：原地放大或居中。 | 选择显示器，按保存的布局打开 Chrome 窗口。 |
+
+### 注册 URL + 窗口（1.11.2 新增）
+
+*注册 URL + 窗口* 直接在页面中打开。可以逐个添加窗口，也可以直接粘贴列出网站的消息：每个以空行分隔的段落都会成为一个窗口。需要处理的行会标成红色，点击 **修正** 即可补上缺少的空行。
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/register-paste-en-dark.gif">
+    <img src="docs/images/register-paste-en-light.gif" width="480" alt="批量卡片：复制一条列出网站的聊天消息，粘贴后保存为三个窗口。">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/img/register-bulk-en-dark.png">
+    <img src="site/assets/img/register-bulk-en-light.png" width="720" alt="批量导入界面：两行标为红色，每个问题都有修正按钮。">
+  </picture>
+</p>
 
 ## 功能
 
-- **窗口库。** 每个已保存的窗口都有一个名称和一个或多个 URL，这些 URL 会以标签页的形式打开。你可以逐个添加窗口，以文本形式批量粘贴，或导入、导出 `.txt` 文件。
+- **注册 URL + 窗口。** 每个已保存的窗口都有一个名称和一个或多个 URL，这些 URL 会以标签页的形式打开。可以逐个添加窗口，也可以粘贴网站列表：每个以空行分隔的段落都会成为一个窗口。需要处理的行会标成红色，并附有跳到该行的链接和 **修正** 按钮。也可以导入、导出 `.txt` 文件。
+- **地址与本地文件。** `github.com` 会保存为 `https://github.com`；`localhost` 和本地地址使用 `http://`。为扩展程序开启 *允许访问文件网址* 后，`/Users/me/My Site/index.html` 或 `C:\docs\notes.html` 这样的本地路径会以 `file://` 标签页打开。一行中的多个 URL 会各自成为一个标签页。
 - **布局画布。** 将窗口拖到 12 × 12 的画布上，并可从任意边缘调整大小。可选布局包括自动、纵向、横向、网格、焦点（一个大窗口）和自由。画布支持撤消和重做，还可以保存多个布局预设（A、B……）。
 - **启动与重新平铺。** 点击一次即可打开布局中的所有窗口，并将其平铺到你选择的显示器上，同时为标签页分组。*重新平铺* 会把已启动的窗口移回原位。
 - **Spotlight。** `Alt+X` 可放大当前窗口：宽高各一半、半宽全高、四分之三、仅全高、全屏或自定义大小。你可以选择从窗口当前位置放大，还是在屏幕中央放大。再次按 `Alt+X` 或按 `Alt+Z`，即可将其放回原来的平铺位置。
@@ -20,19 +62,18 @@
 - **备份。** 以 JSON 文件备份或恢复所有窗口、布局和设置。
 - **8 种语言。** English、日本語、Deutsch、Español、Français、한국어、Português (Brasil) 和简体中文。在你手动选择语言之前，面板会跟随浏览器语言。
 
-| Spotlight | 窗口库 | 注册窗口 |
-| --- | --- | --- |
-| ![Spotlight](store-assets/screenshots/02-spotlight.png) | ![窗口库](store-assets/screenshots/03-window-library.png) | ![注册](store-assets/screenshots/04-register.png) |
+<p align="center"><img src="site/assets/img/05-focus-enlarge.png" width="720" alt="聚焦放大对比：左为原地放大，右为居中"></p>
+<p align="center"><em>原地放大 / 居中 —— 在第 ③ 步选择基准位置。</em></p>
 
 ## 安装
 
 ### Chrome 应用商店
 
-即将上线，商店页面正在审核中。
+可从 [Chrome 应用商店](https://chromewebstore.google.com/detail/ai-window-deck/hnadegmlbljffcogkclppfdcaiijjcgc) 安装。
 
 ### 通过发布版 ZIP 安装
 
-1. 从 [Releases](https://github.com/takaoumehara/ai-window-deck/releases) 下载 `AI-Window-Deck-vX.Y.Z.zip` 并解压。
+1. 从 [Releases](https://github.com/takaoumehara/ai-window-deck/releases) 下载 `ai-window-deck-vX.Y.Z.zip` 并解压。
 2. 打开 `chrome://extensions`，开启 **开发者模式**。
 3. 点击 **加载已解压的扩展程序**，然后选择解压后的文件夹。
 
@@ -40,18 +81,15 @@
 
 ```sh
 git clone https://github.com/takaoumehara/ai-window-deck.git
-cd ai-window-deck
-npm install
-npm run build
 ```
 
-然后使用 **加载已解压的扩展程序** 加载仓库文件夹（即包含 `manifest.json` 的文件夹）。由于 `dist/` 已提交到仓库中，刚克隆下来的仓库无需构建也可以直接加载。
+仓库根目录就是 1.11.2 扩展程序包本身，无需安装依赖或构建。使用 **加载已解压的扩展程序** 加载克隆下来的文件夹（包含 `manifest.json` 的文件夹）即可。
 
 ## 使用方法
 
 1. 点击工具栏图标。首次运行时，会有一个简短的指南标出三个步骤。
 2. 在 *选择目标显示器* 中 **选择显示器**。
-3. 在 *窗口* 侧边栏中点击 **+** **注册窗口**：填写名称以及一个或多个 URL。
+3. 用 **注册 URL + 窗口** **注册窗口**：选择 *逐个注册*（名称以及一个或多个 URL）或 *批量（粘贴文本）*。
 4. **将窗口拖到画布上。** 设置所需的窗口数量，选择布局，并从边缘调整各个窗格的大小。
 5. 点击 **启动**。每个窗口都会在各自的 Chrome 窗口中打开，并按画布布局平铺。
 6. 工作时使用 Spotlight 和导航快捷键。
@@ -59,7 +97,7 @@ npm run build
 提示：
 
 - 在侧边栏中，双击窗口卡片或在卡片上按 `Enter` 即可编辑，按 `Delete` 则删除。
-- 对话框可按 `Escape` 关闭，键盘焦点会回到打开该对话框的按钮上。
+- 注册面板可按 `Escape` 关闭（在表单中会先回到选择界面），键盘焦点会回到打开面板的按钮上。
 - *在大窗口中打开* 会以比工具栏弹出窗口更宽敞的尺寸打开同一个面板。
 
 ### 键盘快捷键
@@ -91,45 +129,35 @@ AI Window Deck 没有主机权限，也没有内容脚本，不会读取网页�
 
 ## 开发
 
-需要 Node.js 20+ 和 Python 3。
+需要 Node.js 20 及以上版本（生成商店图片还需要 Python 3 和 Pillow）。
 
 ```sh
-npm install           # dependencies
-npm run build         # build the React panel into dist/
-npm test              # unit tests (node --test)
-npm run dev           # Vite dev server for the panel (no chrome.* APIs)
-./tools/package.sh    # build, validate and zip AI-Window-Deck-v<version>.zip
+npm test              # node --test
+npm run package       # zip + validate ai-window-deck-v<version>.zip
+```
+
+本仓库不包含 1.11.x 的源代码。根目录存放的是原样发布的 1.11.2 包，其 `dist/` 构建产物由已发布的 1.11.0 商店包通过经过测试的精确字符串补丁重新生成。指定解压后的 1.11.0 包时，测试还会确认补丁结果与根目录逐字节一致：
+
+```sh
+npm run patch -- <unpacked-1.11.0> <out>    # tools/patch-v1.11.2-inline-register.mjs
+AWD_V1110_DIR=<unpacked-1.11.0> npm test
 ```
 
 仓库结构：
 
 | 路径 | 内容 |
 | --- | --- |
-| `manifest.json`, `background.js` | 扩展程序清单和 Service Worker（窗口放置、快捷键） |
-| `src/` | 弹出窗口和选项页面使用的 React + Tailwind 面板 |
-| `dist/` | 构建后的面板。已提交到仓库中，因此仓库可以按原样以“已解压”方式加载 |
-| `identify.html`, `identify.js` | 识别显示器时在该显示器上短暂显示的编号 |
-| `_locales/`, `tools/strings.json`, `tools/ui-strings.json` | 翻译（见下文） |
-| `tools/` | i18n 构建、打包、包校验 |
-| `store-assets/` | Chrome 应用商店的商品详情文案、屏幕截图、宣传图块和截图脚本 |
+| `manifest.json`, `background.js`, `identify.*`, `icons/`, `_locales/`, `dist/` | 1.11.2 扩展程序包，与上传到 Chrome 应用商店的完全相同 |
+| `tools/` | 补丁脚本（`patch-v1.11*.mjs`，文本和代码位于 `v1.11.1/`、`v1.11.2/`）、打包、包校验、上传到 Chrome 应用商店 |
+| `site/` | 网站，由 Vercel 部署（见 `vercel.json`） |
+| `store-assets/` | Chrome 应用商店的商品文案、截图、宣传图和截图脚本 |
 | `test/` | 单元测试 |
-
-`deck.html`、`deck.js`、`dock.html` 和 `dock.js` 是 1.7 之前版本的面板。保留它们仅供参考，不会被打包。
-
-### 翻译
-
-面板文本位于 `tools/ui-strings.json`。Chrome 自身使用的文本（扩展程序说明和快捷键名称）位于 `tools/strings.json`。编辑其中任一文件后，请运行：
-
-```sh
-python3 tools/build-i18n.py
-```
-
-该命令会重新生成 `src/lib/ui-strings.js` 和 `_locales/*/messages.json`。如果某个面板语言缺少键，构建会失败。`npm test` 还会检查所有语言中的占位符是否一致。
+| `legacy/v1.7/` | 1.11 之前的源代码（1.7 的 React 面板和旧页面），仅供参考。请参阅其中的 README |
 
 ## 发布流程
 
-1. 在 `manifest.json` 和 `package.json` 中提升 `version`，并更新 `CHANGELOG.md`。
-2. 运行 `npm test` 和 `./tools/package.sh`。该脚本会校验 ZIP：引用的文件、每个语言中的 `__MSG_` 键以及说明的长度。
+1. 在 `package.json` 和补丁脚本的 manifest 步骤中提升 `version`，并更新 `CHANGELOG.md`。
+2. 运行 `npm test` 和 `npm run package`。校验脚本会检查引用的文件、每个语言的 `__MSG_` 键以及描述长度。
 3. 将 ZIP 上传到 Chrome 应用商店开发者信息中心。
 4. 商店批准该版本后，在 `main` 上打 `vX.Y.Z` 标签，并将 ZIP 附加到 GitHub Release。
 
@@ -138,6 +166,10 @@ python3 tools/build-i18n.py
 ## 支持
 
 请在 [GitHub Issues](https://github.com/takaoumehara/ai-window-deck/issues) 上报告问题和提出建议。
+
+如果 AI Window Deck 对你的日常工作有帮助，欢迎在 [Ko-fi](https://ko-fi.com/G2G71VP1DF) 上支持开发。
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G71VP1DF)
 
 ## 许可证
 

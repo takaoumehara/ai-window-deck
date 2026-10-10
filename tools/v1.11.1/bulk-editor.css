@@ -1,0 +1,19 @@
+:root{--bulk-alert:#b3261e;--bulk-alert-bg:rgba(179,38,30,.13)}
+[data-theme="dark"]{--bulk-alert:#ff8a80;--bulk-alert-bg:rgba(255,138,128,.2)}
+.bulk-editor{height:15rem;overflow:hidden}
+.bulk-editor:focus-within{outline:var(--cie-focus-ring);outline-offset:var(--cie-focus-offset)}
+.bulk-editor.bulk-editor-invalid{border-width:2px;border-color:var(--bulk-alert)}
+.bulk-editor-text{position:absolute;inset:0;box-sizing:border-box;margin:0;border:0;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-size:14px;line-height:20px;letter-spacing:normal;tab-size:8;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;overflow-x:hidden;overflow-y:scroll}
+.bulk-editor-backdrop{pointer-events:none;color:transparent;scrollbar-color:transparent transparent}
+.bulk-editor-input{width:100%;height:100%;resize:none;background:transparent;color:var(--foreground);caret-color:var(--foreground)}
+.bulk-editor-input:focus-visible{outline:none!important}
+.bulk-line{display:block}
+.bulk-line-bad{margin:0 -12px;padding:0 12px;background:var(--bulk-alert-bg);box-shadow:inset 3px 0 0 var(--bulk-alert)}
+.bulk-issues{border:1px solid var(--bulk-alert);border-radius:calc(var(--cie-r)/2);background:var(--bulk-alert-bg);padding:10px 12px}
+.bulk-issues-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bulk-issues-title{margin:0;font-size:14px;line-height:20px;font-weight:600;color:var(--bulk-alert)}
+.bulk-issues-list{margin:8px 0 0;padding:0;list-style:none;max-height:10rem;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.bulk-issue{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:20px;color:var(--foreground)}
+.bulk-issue-line{flex-shrink:0;padding:0;border:0;background:none;font:inherit;font-weight:600;color:var(--bulk-alert);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.bulk-issue-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.bulk-issue-text .quiet{display:block}

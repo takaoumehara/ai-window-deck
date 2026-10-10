@@ -3,13 +3,13 @@
     "message": "AI Window Deck"
   },
   "extDescription": {
-    "message": "Gerenciador de janelas para Claude Code na nuvem e Codex — vários projetos sem confusão."
+    "message": "Organiza janelas de IA em grade, amplia uma com um atalho e alterna rapidamente entre elas."
   },
   "cmdSpotlight": {
     "message": "Ampliar / restaurar"
   },
   "cmdHome": {
-    "message": "Voltar ao quadro de origem"
+    "message": "Voltar ao seu espaço no layout"
   },
   "cmdTile": {
     "message": "Reorganizar"

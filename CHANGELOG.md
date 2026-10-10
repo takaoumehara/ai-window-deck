@@ -10,6 +10,37 @@ their dates are approximate (taken from file timestamps inside those archives).
 
 ## [Unreleased]
 
+## [1.11.2] - 2026-10-09
+
+Built from the 1.11.0 store package with `tools/patch-v1.11.2-inline-register.mjs`, which applies the 1.11.1 patch first.
+
+### Repository
+- The repository root is now the 1.11.2 package itself: load it unpacked or zip it with `npm run package`, with no install or build. The 1.7 source (`src/`, Vite, `deck.html` and their tests) moved to `legacy/v1.7/`.
+- Vercel serves `site/` as a static site (root `vercel.json`), instead of building the repository with Vite.
+
+### Changed
+- The register button is now **Register URLs + Window**, and it opens inside the page instead of a modal dialog. The view you came from stays in place and keyboard focus returns to the button when the panel closes. The small dock window keeps the dialog.
+- A new window starts at a choice between *One by one* and *Bulk (paste text)*. The bulk card shows a short animation of copying a list of sites from a chat and pasting it; with reduced motion it shows a still version. `Escape` in a form goes back to the choice first.
+- After a bulk save, the choice to place the new windows on the canvas automatically or keep them in the library is shown in the page too.
+
+### Added
+- A Ko-fi link (https://ko-fi.com/G2G71VP1DF) at the end of the More view, in all eight languages.
+
+## [1.11.1] - 2026-10-09
+
+Built from the 1.11.0 store package with `tools/patch-v1.11-bulk-import.mjs`.
+
+### Added
+- Bulk import highlights the lines that need attention in red and lists each issue with a *Line N* link that jumps to it. **Fix** adds a missing blank line before a window name, and *Fix all fixable* fixes every such line at once.
+- Addresses without a scheme are completed: `https://` for ordinary hosts, `http://` for `localhost`, IP addresses and `.test` hosts.
+- Local files: absolute paths (including paths with spaces), `C:\` paths and `file:///` URLs are saved as `file://` URLs. A path that starts with `~` is reported, since Chrome cannot expand it. The hint about *Allow access to file URLs* also appears in bulk mode.
+- Several URLs separated by spaces on one line each become a tab, when all of them have a scheme or none does and none is a local path.
+
+### Fixed
+- A line such as `Memo:` or `Research: AI tools` is read as a window name instead of an invalid URL.
+- A block without a name is saved as *Window N* instead of being rejected.
+- Clearer wording for a window name that follows URLs without a blank line, and issue counts that read correctly for one issue.
+
 ## [1.7.0] - 2026-10-04
 
 The first release of the React panel. It replaces the earlier `deck.html` panel as the toolbar popup and the options page.
@@ -75,5 +106,7 @@ The first release of the React panel. It replaces the earlier `deck.html` panel 
 - Tab groups for the windows the deck opens, multi-display support, a compact window list, and the display identification flash.
 - UI in English, Japanese, German, Spanish, French, Korean, Brazilian Portuguese and Simplified Chinese.
 
-[Unreleased]: https://github.com/takaoumehara/ai-window-deck/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/takaoumehara/ai-window-deck/compare/v1.11.2...HEAD
+[1.11.2]: https://github.com/takaoumehara/ai-window-deck/releases/tag/v1.11.2
+[1.11.1]: https://github.com/takaoumehara/ai-window-deck/releases/tag/v1.11.1
 [1.7.0]: https://github.com/takaoumehara/ai-window-deck/releases/tag/v1.7.0
