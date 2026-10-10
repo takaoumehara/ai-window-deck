@@ -36,8 +36,9 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "dev.takaoumehara.aiwindowdeck",
+    "appId": "com.creativityiseverywhere.aiwindowdeck",
     "productName": "AI Window Deck",
+    "artifactName": "AI-Window-Deck-${version}-${arch}.${ext}",
     "directories": {
       "output": "release"
     },
@@ -47,8 +48,14 @@
     ],
     "mac": {
       "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
       "target": [
-        "dmg"
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
       ]
     },
     "win": {

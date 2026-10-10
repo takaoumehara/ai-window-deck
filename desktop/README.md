@@ -51,9 +51,27 @@ npm run dist:mac       # .dmg in desktop/release (run on a Mac)
 npm run dist:win       # Windows installer
 ```
 
-For a Mac build that opens without a Gatekeeper warning, the app must be signed
-with a Developer ID certificate and notarized (Apple Developer Program). Give
-electron-builder `CSC_LINK`/`CSC_KEY_PASSWORD` and `APPLE_ID`/`APPLE_APP_SPECIFIC_PASSWORD`/`APPLE_TEAM_ID`.
+The `.dmg` is universal (Apple silicon and Intel).
+
+### Signed and notarized builds (GitHub Actions)
+
+`.github/workflows/desktop-mac.yml` builds on a macOS runner. Pull requests get an
+unsigned `.dmg` as a workflow artifact. Manual runs (*Actions → Desktop app (macOS) →
+Run workflow*) and `desktop-v*` tags sign and notarize, and a tag also attaches the
+`.dmg` to a GitHub Release. Signing needs these repository secrets
+(*Settings → Secrets and variables → Actions*):
+
+| Secret | Where it comes from |
+| --- | --- |
+| `MAC_CERT_P12_BASE64` | A **Developer ID Application** certificate. Create it in Xcode (*Settings → Accounts → Manage Certificates → +*) or at developer.apple.com, export it from Keychain Access as `.p12`, then `base64 -i cert.p12 \| pbcopy`. |
+| `MAC_CERT_PASSWORD` | The password set when exporting the `.p12`. |
+| `APPLE_ID` | The Apple Account email of the developer team. |
+| `APPLE_APP_SPECIFIC_PASSWORD` | Made at account.apple.com → *Sign-In and Security → App-Specific Passwords*. |
+| `APPLE_TEAM_ID` | The 10-character Team ID at developer.apple.com/account → *Membership details*. |
+
+Locally on a Mac, the same values go in `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`,
+`APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID` before `npm run dist:mac`.
+
 Unsigned builds still run, but macOS blocks them on first launch. Since macOS 15 the right-click → Open bypass is gone: users have to try opening the app, then choose **Open Anyway** in System Settings → Privacy & Security.
 
 ## How it works

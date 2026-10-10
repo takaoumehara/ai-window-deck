@@ -1,0 +1,76 @@
+name: Desktop app (macOS)
+
+# Pull requests build an unsigned .dmg to prove the Mac build works.
+# Manual runs and desktop-v* tags sign with the Developer ID certificate and
+# notarize, once these repository secrets exist:
+#   MAC_CERT_P12_BASE64         Developer ID Application certificate (.p12), base64
+#   MAC_CERT_PASSWORD           password chosen when exporting the .p12
+#   APPLE_ID                    Apple Account email of the developer team
+#   APPLE_APP_SPECIFIC_PASSWORD app-specific password from account.apple.com
+#   APPLE_TEAM_ID               10-character team ID from developer.apple.com/account
+on:
+  pull_request:
+    paths:
+      - "desktop/**"
+      - "src/lib/layout-model.js"
+      - ".github/workflows/desktop-mac.yml"
+  push:
+    tags:
+      - "desktop-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - run: npm ci
+      - run: npm test
+
+      - name: Build .dmg
+        env:
+          SIGN: ${{ github.event_name != 'pull_request' }}
+          CSC_LINK: ${{ secrets.MAC_CERT_P12_BASE64 }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ "$SIGN" != "true" ] || [ -z "$CSC_LINK" ]; then
+            echo "Building unsigned (no certificate, or a pull request build)."
+            unset CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+            export CSC_IDENTITY_AUTO_DISCOVERY=false
+          fi
+          npm run build
+          npx electron-builder --mac --publish never
+
+      - name: Check signature and notarization
+        if: github.event_name != 'pull_request'
+        run: |
+          app="$(find release -maxdepth 2 -name '*.app' -type d | head -n 1)"
+          codesign --verify --deep --strict --verbose=2 "$app" && spctl --assess --type execute --verbose=4 "$app" || echo "::warning::App is not signed and notarized yet (secrets missing?)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AI-Window-Deck-mac
+          path: desktop/release/*.dmg
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/desktop-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/*.dmg --title "AI Window Deck desktop ${GITHUB_REF_NAME#desktop-v}" --generate-notes --prerelease
