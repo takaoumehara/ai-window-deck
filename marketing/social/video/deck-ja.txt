@@ -1,0 +1,17 @@
+Claude Code
+https://code.claude.com/docs/ja/claude-code-on-the-web
+
+Codex
+https://github.com/openai/codex
+
+Vercel
+https://vercel.com/docs
+
+プレビュー
+https://ai-window-deck.vercel.app/?lang=ja
+
+GitHub PR
+https://github.com/takaoumehara/ai-window-deck
+
+ドキュメント
+https://developer.chrome.com/docs/extensions?hl=ja

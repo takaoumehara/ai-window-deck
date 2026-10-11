@@ -1,0 +1,17 @@
+Claude Code
+https://code.claude.com/docs/en/claude-code-on-the-web
+
+Codex
+https://github.com/openai/codex
+
+Vercel
+https://vercel.com/docs
+
+Preview
+https://ai-window-deck.vercel.app/
+
+GitHub PR
+https://github.com/takaoumehara/ai-window-deck
+
+Docs
+https://developer.chrome.com/docs/extensions
