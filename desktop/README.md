@@ -17,6 +17,7 @@ and a click or a shortcut enlarges it or puts it back.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
 - Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in works inside the panes (see *How it works*).
+- **Mobile preview**: the phone button in a pane's title bar shows the page as a phone or tablet does, in a device frame. The bar under the title switches the model, rotates it, and adds another pane with the same page on the next device, so several devices sit side by side. Settings picks the device the button starts with. Each pane remembers its device, and undo covers it.
 
 | Shortcut | Action |
 | --- | --- |
@@ -124,6 +125,12 @@ applies an update signed by the same Developer ID, so every release must be sign
   `Emulation.setUserAgentOverride` per page and sign-in popup. Google's sign-in page
   (`accounts.google.com`) rejects any Electron that claims Chrome, so there the page sees the
   same user agent without the `Chrome/` token and no Chrome client hints.
+- Mobile preview is Chrome DevTools' device mode on a pane's page: the device's viewport, pixel
+  ratio, orientation, touch, user agent and client hints, scaled down to the screen of a frame
+  drawn by the shell (`src/components/DeviceStage.jsx`). It is still Chromium, so it shows the
+  layout sites serve to that device, not Safari's or a real device's rendering. Devices come
+  from `electron/devices.json`, and the app also fetches `site/devices.json` from the website
+  (twice a day, cached) so new models arrive without an app update; the newer list wins.
 - Shortcuts are matched in `before-input-event` on every web contents (`electron/commands.cjs`),
   by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it
