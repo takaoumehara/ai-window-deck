@@ -226,9 +226,12 @@ export function App() {
     return () => observer.disconnect();
   }, [loaded, measure]);
 
+  // Switching or closing tabs detaches the view that had keyboard focus, so
+  // the newly shown tab takes it over.
+  const focusedTabUrl = urlList(deckPanes.find((item) => item.id === effectiveFocusId))[activeTabs[effectiveFocusId] ?? 0];
   useEffect(() => {
     if (effectiveFocusId) deck.focusPane(effectiveFocusId);
-  }, [effectiveFocusId, mode]);
+  }, [effectiveFocusId, mode, focusedTabUrl]);
 
   const focusPane = useCallback((id) => changeLayout({ focusId: id }), [changeLayout]);
 

@@ -61,11 +61,21 @@ function send(channel, payload) {
   if (shellWindow && !shellWindow.isDestroyed()) shellWindow.webContents.send(channel, payload);
 }
 
+// On Windows and Linux, releasing Alt opens the menu bar, which then eats the
+// next shortcut. After an Alt shortcut, that release is swallowed.
+let swallowAltUp = false;
+
 function interceptCommands(webContents) {
   webContents.on("before-input-event", (event, input) => {
+    if (!isMac && input.type === "keyUp" && input.key === "Alt" && swallowAltUp) {
+      swallowAltUp = false;
+      event.preventDefault();
+      return;
+    }
     const command = matchCommand(input);
     if (!command) return;
     event.preventDefault();
+    if (input.alt) swallowAltUp = true;
     send("deck:command", command);
   });
 }
