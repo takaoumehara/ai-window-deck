@@ -78,3 +78,18 @@ export function redo(history, sets, locked) {
     entry,
   };
 }
+
+/** What the main process needs to turn its copy of `prev` into `next` (any field, layout included). */
+export function storePatchBetween(prev, next) {
+  const before = new Map(prev.map((set) => [set.id, set]));
+  const ids = new Set(next.map((set) => set.id));
+  const put = next.filter((set) => {
+    const old = before.get(set.id);
+    return old !== set && JSON.stringify(old) !== JSON.stringify(set);
+  });
+  const remove = prev.filter((set) => !ids.has(set.id)).map((set) => set.id);
+  const order = next.map((set) => set.id);
+  const reordered = prev.filter((set) => ids.has(set.id)).map((set) => set.id).join("\n") !== order.filter((id) => before.has(id)).join("\n");
+  if (!put.length && !remove.length && !reordered) return null;
+  return { put, remove, ...(reordered ? { order } : {}) };
+}

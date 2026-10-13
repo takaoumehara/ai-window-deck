@@ -4,10 +4,29 @@ const STORAGE_KEY = "ai-window-deck-desktop";
 const noop = () => {};
 const noSubscribe = () => noop;
 
+const readLocal = () => {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+  return { version: 2, sets: Array.isArray(saved?.sets) ? saved.sets : [], settings: saved?.settings || {} };
+};
+
 const browserStandIn = {
   info: async () => ({ platform: "browser", locale: navigator.language, version: "dev" }),
-  load: async () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
-  save: async (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data)),
+  load: async () => ({ store: readLocal(), setId: null, openSetIds: [] }),
+  applyStore: async ({ put = [], remove = [], order, settings } = {}) => {
+    const store = readLocal();
+    let sets = store.sets.filter((set) => !remove.includes(set.id));
+    for (const set of put) {
+      const at = sets.findIndex((candidate) => candidate.id === set.id);
+      if (at >= 0) sets[at] = set;
+      else sets.push(set);
+    }
+    if (order) sets = [...sets].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...store, sets, settings: { ...store.settings, ...settings } }));
+  },
+  onStoreChanged: noSubscribe,
+  onOpenSets: noSubscribe,
+  claimSet: async () => true,
+  openWindow: noop,
   importBackup: async () => null,
   syncPanes: noop,
   setBounds: noop,

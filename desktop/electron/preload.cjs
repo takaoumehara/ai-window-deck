@@ -9,7 +9,11 @@ const subscribe = (channel) => (callback) => {
 contextBridge.exposeInMainWorld("deck", {
   info: () => ipcRenderer.invoke("app:info"),
   load: () => ipcRenderer.invoke("store:load"),
-  save: (data) => ipcRenderer.invoke("store:save", data),
+  applyStore: (patch) => ipcRenderer.invoke("store:apply", patch),
+  onStoreChanged: subscribe("store:changed"),
+  onOpenSets: subscribe("store:open-sets"),
+  claimSet: (setId) => ipcRenderer.invoke("shell:claim-set", setId),
+  openWindow: (setId) => ipcRenderer.send("shell:open-window", setId ?? null),
   importBackup: () => ipcRenderer.invoke("backup:import"),
   syncPanes: (panes) => ipcRenderer.send("panes:sync", panes),
   setBounds: (list) => ipcRenderer.send("panes:bounds", list),

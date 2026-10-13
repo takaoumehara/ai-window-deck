@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EMPTY_HISTORY, applyPatch, diffSets, record, redo, undo } from "../src/lib/history.js";
+import { EMPTY_HISTORY, applyPatch, diffSets, record, redo, storePatchBetween, undo } from "../src/lib/history.js";
 
 const win = (id, extra = {}) => ({ id, name: id, urls: `https://${id}.test`, visible: true, ...extra });
 const set = (id, windows, extra = {}) => ({ id, name: id, windows, mode: "grid", focusedId: null, activeTabs: {}, ...extra });
@@ -89,4 +89,14 @@ test("a set open in another window is never removed by undo", () => {
   const history = record(EMPTY_HISTORY, diffSets(one, two));
   assert.deepEqual(undo(history, two, new Set(["s2"])).sets.map((s) => s.id), ["s1", "s2"]);
   assert.deepEqual(applyPatch(two, history.past[0], "before").map((s) => s.id), ["s1"]);
+});
+
+test("store patches carry only what changed, layout included", () => {
+  const a = set("a", [win("x")]);
+  const b = set("b", []);
+  assert.equal(storePatchBetween([a, b], [a, b]), null);
+  assert.deepEqual(storePatchBetween([a, b], [{ ...a, mode: "fill" }, b]), { put: [{ ...a, mode: "fill" }], remove: [] });
+  const c = set("c", []);
+  assert.deepEqual(storePatchBetween([a, b], [b, c]), { put: [c], remove: ["a"] });
+  assert.deepEqual(storePatchBetween([a, b], [b, a]), { put: [], remove: [], order: ["b", "a"] });
 });
