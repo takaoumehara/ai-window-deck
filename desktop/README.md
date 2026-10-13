@@ -9,7 +9,13 @@ and a click or a shortcut enlarges it or puts it back.
 - **Fill**: the focused pane covers the deck; the others keep running in the background.
 - Click a pane's title bar to spotlight it, and click it again to go back to the grid. Clicking a pane on the rail swaps it in.
 - Windows with several URLs get tabs in the pane's title bar.
-- **Import from extension** reads the JSON backup from *Profiles & Backup* or the `.txt` window list. Windows on the backup's active layout start visible; the rest of the library comes in hidden.
+- **Sets** are named decks, each with its own windows, layout and focus. Switch them from the sidebar (or the collapsed rail), and manage them in *Deck → Sets…*.
+- **New Deck Window** (`⌘N`) opens another window showing a set that isn't open yet, for example on a second display. A set is open in one window at a time; picking one that is open elsewhere brings that window forward. Open windows and their sets come back on relaunch.
+- **Paste a List** takes URLs (one window per URL, named by host, or all of them as tabs of one window) or the extension's window list (a name line, URL lines, a blank line between windows). It shows what will be created first, and can put the result in a new set.
+- **Import from extension** (in Settings) reads the JSON backup from *Profiles & Backup* or the `.txt` window list. Windows on the backup's active layout start visible; the rest of the library comes in hidden.
+- **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, and set changes) without a limit. Layout changes aren't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
+- **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
+- The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
 - Logins are kept in one persistent session shared by all panes.
 
 | Shortcut | Action |
@@ -21,8 +27,15 @@ and a click or a shortcut enlarges it or puts it back.
 | `⌥]` / `⌥[` | Next / previous pane |
 | `⌥B` | Show / hide the sidebar |
 | `⌘R` / `Ctrl+R` | Reload the focused pane |
+| `⌥S` / `Alt+S` | Sets |
+| `⌘⌥1`–`⌘⌥9` / `Ctrl+Shift+1`–`9` | Switch to set 1–9 |
+| `⌘N` / `Ctrl+N` | New deck window |
+| `⌘,` / `Ctrl+,` | Settings |
+| `⌘Z` / `⌘⇧Z` (`Ctrl+Z` / `Ctrl+Y`, `Ctrl+Shift+Z`) | Undo / redo a deck change |
 
 The shortcuts work while a web page has keyboard focus, and only while the app is the active window.
+Undo and redo are the exception: they only act on the deck while the deck itself has focus outside a
+text field, so pages and inputs keep their own undo. *Edit → Undo Deck Change* works from anywhere.
 
 ## Design
 
@@ -92,20 +105,24 @@ Unsigned builds still run, but macOS blocks them on first launch. Since macOS 15
 Packaged builds use `electron-updater` (`electron/updates.cjs`). They check
 `desktop-latest` at launch and every six hours, download in the background, and show
 *Restart to update* in the title bar. An update that isn't applied installs on quit.
-*Check for Updates…* (app menu) and the shortcuts sheet check on demand. macOS only
+*Check for Updates…* (app menu) and Settings check on demand. macOS only
 applies an update signed by the same Developer ID, so every release must be signed.
 
 ## How it works
 
-- `electron/main.cjs` owns one `BrowserWindow` for the shell UI (React, `src/`) and one
-  `WebContentsView` per open tab. The renderer measures each pane's content box and
+- `electron/main.cjs` owns a `BrowserWindow` per deck window for the shell UI (React, `src/`)
+  and one `WebContentsView` per open tab. Pane IPC is routed by the sending window, and menu
+  commands go to the focused one. The renderer measures each pane's content box and
   sends the rectangles over IPC; during layout transitions it streams them every frame,
   so native page views follow the CSS animation.
 - Native views draw above the DOM. Dialogs hide them while open, and messages appear in
   the title bar instead of floating over the deck.
 - Shortcuts are matched in `before-input-event` on every web contents (`electron/commands.cjs`),
   by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way.
-- Data is saved to `deck.json` in the app's user-data folder.
+- Data is saved to `deck.json` in the app's user-data folder. The main process owns it
+  (`electron/store.cjs`, which also migrates older files): windows send patches of the sets
+  they changed, and the others get the result. Undo history (`src/lib/history.js`) lives in
+  each window and holds per-set before/after pairs.
 
 ## Known limits of the prototype
 
