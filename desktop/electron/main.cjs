@@ -1,10 +1,14 @@
 const { app, BrowserWindow, WebContentsView, Menu, ipcMain, dialog, session, shell } = require("electron");
 const fs = require("node:fs/promises");
+const os = require("node:os");
 const path = require("node:path");
 const { matchCommand, COMMAND_ACCELERATORS } = require("./commands.cjs");
 const { createUpdater } = require("./updates.cjs");
 const { migrateStore, applyStorePatch } = require("./store.cjs");
 const { loadWindowStates, saveWindowStates, frameOf, cascadeFrom, DEFAULT_SIZE } = require("./window-state.cjs");
+const {
+  desktopIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
+} = require("./identity.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -52,12 +56,106 @@ function writeStore(data) {
   return pendingWrite;
 }
 
-// Google and some other sites refuse sign-in from user agents that name Electron.
-function plainChromeUserAgent() {
-  return app.userAgentFallback
-    .replace(/\sElectron\/\S+/, "")
-    .replace(new RegExp(`\\s${app.getName().replace(/\s/g, "")}\\/\\S+`, "i"), "")
-    .replace(/\sai-window-deck-desktop\/\S+/i, "");
+let browser = null;
+let languages = "";
+// Per page web contents (by id): the identity it presents away from Google's
+// sign-in page, and the one it presents right now.
+const baseIdentities = new Map();
+const identities = new Map();
+const hintCache = new WeakMap();
+// Origin → UA client hints it asked for with Accept-CH, as Chrome remembers them.
+const acceptedByOrigin = new Map();
+
+function hintsOf(identity) {
+  if (!hintCache.has(identity)) hintCache.set(identity, clientHintHeaders(identity.metadata));
+  return hintCache.get(identity);
+}
+
+const originOf = (url) => {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+};
+
+function setUpBrowserIdentity() {
+  browser = desktopIdentity({
+    chromeVersion: process.versions.chrome,
+    platform: process.platform,
+    arch: process.arch,
+    systemVersion: process.getSystemVersion?.() || os.release(),
+  });
+  languages = acceptLanguages(app.getPreferredSystemLanguages?.() ?? [app.getLocale()]);
+  app.userAgentFallback = browser.userAgent;
+  for (const target of [session.defaultSession, session.fromPartition(PARTITION)]) {
+    target.setUserAgent(browser.userAgent, languages);
+    target.webRequest.onHeadersReceived((details, callback) => {
+      const name = Object.keys(details.responseHeaders ?? {}).find((key) => key.toLowerCase() === "accept-ch");
+      const origin = name && (details.resourceType === "mainFrame" || details.resourceType === "subFrame") && originOf(details.url);
+      if (origin) acceptedByOrigin.set(origin, acceptedHints(details.responseHeaders[name]));
+      callback({});
+    });
+    target.webRequest.onBeforeSendHeaders((details, callback) => {
+      // Electron crashes when the headers of the main process's own fetches
+      // (favicons) are changed across a redirect; those have no page.
+      if (details.webContentsId == null) {
+        callback({});
+        return;
+      }
+      const identity = identities.get(details.webContentsId) ?? browser;
+      callback({
+        requestHeaders: withIdentity(details.url, details.requestHeaders, {
+          userAgent: identity.userAgent,
+          hints: hintsOf(identity),
+          accepted: acceptedByOrigin.get(originOf(details.url)),
+        }),
+      });
+    });
+  }
+}
+
+// The session's user agent doesn't reach navigator.userAgentData, which
+// still names only Chromium. A DevTools override per page sets everything
+// together (no DevTools UI is attached, and navigator.webdriver stays false).
+// It applies from the next navigation, so it is sent as a page's contents
+// are created and again as a navigation starts or redirects.
+function applyIdentity(contents, identity) {
+  if (contents.isDestroyed() || identities.get(contents.id) === identity) return;
+  identities.set(contents.id, identity);
+  contents.setUserAgent(identity.userAgent);
+  try {
+    if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
+    contents.debugger.sendCommand("Emulation.setUserAgentOverride", {
+      userAgent: identity.userAgent,
+      acceptLanguage: languages,
+      platform: identity.platform,
+      ...(identity.metadata ? { userAgentMetadata: identity.metadata } : {}),
+    }).catch(() => {});
+  } catch {
+    // Already debugged elsewhere; the session-wide identity still applies.
+  }
+}
+
+function identityFor(contents, url) {
+  const base = baseIdentities.get(contents.id) ?? browser;
+  return isSignInPage(url) ? signInVariant(base) : base;
+}
+
+// Every page and sign-in popup, as soon as its contents exist.
+function presentPage(contents) {
+  const { id } = contents;
+  baseIdentities.set(id, browser);
+  applyIdentity(contents, browser);
+  const follow = (details) => {
+    if (details.isMainFrame && !details.isSameDocument) applyIdentity(contents, identityFor(contents, details.url));
+  };
+  contents.on("did-start-navigation", follow);
+  contents.on("did-redirect-navigation", follow);
+  contents.once("destroyed", () => {
+    baseIdentities.delete(id);
+    identities.delete(id);
+  });
 }
 
 function sendTo(target, channel, payload) {
@@ -143,12 +241,19 @@ function createTabView(target, paneId, url) {
   contents.setWindowOpenHandler(({ url: link, disposition }) => {
     // Popups that ask for a window (OAuth sign-in) open as real windows on the
     // same session; plain "open in new tab" links stay inside the pane.
-    if (disposition === "new-window") return { action: "allow" };
+    if (disposition === "new-window") {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          backgroundColor: CIE_INK,
+          webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true },
+        },
+      };
+    }
     if (/^https?:/i.test(link)) contents.loadURL(link);
     else shell.openExternal(link);
     return { action: "deny" };
   });
-
   // A new view takes keyboard focus when its first page loads. Unless the deck
   // asked for this view, focus goes back to where it was (so ⌘Z after an undo
   // that brought a pane back still reaches the deck).
@@ -661,6 +766,11 @@ app.on("second-instance", () => {
   target.win.focus();
 });
 
+app.on("web-contents-created", (_event, contents) => {
+  if (!browser || contents.session !== session.fromPartition(PARTITION)) return;
+  presentPage(contents);
+});
+
 app.setAboutPanelOptions({
   applicationName: "AI Window Deck",
   applicationVersion: app.getVersion(),
@@ -670,9 +780,7 @@ app.setAboutPanelOptions({
 
 app.whenReady().then(async () => {
   if (!isPrimaryInstance) return;
-  const userAgent = plainChromeUserAgent();
-  app.userAgentFallback = userAgent;
-  session.fromPartition(PARTITION).setUserAgent(userAgent);
+  setUpBrowserIdentity();
   store = migrateStore(await readStore());
   buildMenu();
   restoreWindows();
