@@ -66,6 +66,37 @@ function desktopIdentity({ chromeVersion, platform, arch, systemVersion }) {
   };
 }
 
+const NAVIGATOR_PLATFORMS = { ios: "iPhone", ipados: "MacIntel", android: "Linux armv81" };
+
+/**
+ * A device from the catalog (electron/devices.cjs) as pages see it. Safari
+ * has no client hints, so iOS and iPadOS identities carry none; Android ones
+ * are mobile Chrome's.
+ */
+function deviceIdentity(device, { chromeVersion }) {
+  const fullVersion = String(chromeVersion);
+  const major = parseInt(fullVersion, 10);
+  const userAgent = device.ua.replace(/\{chrome\}/g, String(major));
+  if (device.os !== "android") return { userAgent, platform: NAVIGATOR_PLATFORMS[device.os] ?? "iPhone", metadata: null };
+  return {
+    userAgent,
+    platform: NAVIGATOR_PLATFORMS.android,
+    metadata: {
+      brands: brandList(major),
+      fullVersionList: brandList(major, fullVersion),
+      fullVersion,
+      platform: "Android",
+      platformVersion: "15.0.0",
+      architecture: "",
+      model: device.model || "",
+      mobile: device.type !== "tablet",
+      bitness: "",
+      wow64: false,
+      formFactors: [device.type === "tablet" ? "Tablet" : "Mobile"],
+    },
+  };
+}
+
 const quote = (value) => `"${value}"`;
 const brandHeader = (list) => list.map(({ brand, version }) => `${quote(brand)};v=${quote(version)}`).join(", ");
 
@@ -157,5 +188,5 @@ function acceptLanguages(preferred) {
 }
 
 module.exports = {
-  brandList, desktopIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
+  brandList, desktopIdentity, deviceIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
 };
