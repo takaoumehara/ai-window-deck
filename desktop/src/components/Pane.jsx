@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, Smartphone } from "lucide-react";
+import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
 
-function HeaderButton({ label, onClick, disabled, children }) {
+function HeaderButton({ label, onClick, disabled, pressed, focused, children }) {
+  const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
   return (
     <button
       type="button"
@@ -12,8 +14,11 @@ function HeaderButton({ label, onClick, disabled, children }) {
       }}
       disabled={disabled}
       aria-label={label}
+      aria-pressed={pressed}
       title={label}
-      className="cie-tap grid h-6 w-6 place-items-center rounded-pill transition-colors duration-fast hover:bg-btn disabled:pointer-events-none disabled:opacity-30"
+      className={`cie-tap grid h-6 w-6 place-items-center rounded-pill transition-colors duration-fast disabled:pointer-events-none disabled:opacity-30 ${
+        pressed ? pressedTone : "hover:bg-btn"
+      }`}
     >
       {children}
     </button>
@@ -82,9 +87,9 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
 
 export const Pane = React.forwardRef(function Pane(
   {
-    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found,
+    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
-    onFieldChange, onFieldSubmit, onFieldCancel,
+    onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice,
   },
   bodyRef
 ) {
@@ -93,6 +98,15 @@ export const Pane = React.forwardRef(function Pane(
   const enlarged = focused && mode !== "grid";
   const zoom = tabMeta?.zoom ?? 1;
   const showTabs = urls.length > 1 || !compact;
+  const pageBody = (
+    <>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
+        <span className="cie-loader cie-loader--sm" aria-hidden="true" />
+        <span className="register truncate uppercase text-ink-mute">{hostLabel(urls[activeTab] || "")}</span>
+      </div>
+      {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
+    </>
+  );
 
   return (
     <div
@@ -220,6 +234,11 @@ export const Pane = React.forwardRef(function Pane(
                 )}
               </div>
             )}
+            {(!compact || device) && (
+              <HeaderButton label={t(device ? "deviceExit" : "deviceEnter")} pressed={Boolean(device)} focused={focused} onClick={onToggleDevice}>
+                <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
+              </HeaderButton>
+            )}
             {!compact && (
               <>
                 <HeaderButton label={t("back")} disabled={!tabMeta?.canGoBack} onClick={() => onNavigate("back")}>
@@ -248,13 +267,25 @@ export const Pane = React.forwardRef(function Pane(
         </header>
 
         {/* The page itself is a native view that main.cjs lays over this box. */}
-        <div ref={bodyRef} className="relative min-h-0 flex-1 overflow-hidden bg-paper/5">
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
-            <span className="cie-loader cie-loader--sm" aria-hidden="true" />
-            <span className="register truncate uppercase text-ink-mute">{hostLabel(urls[activeTab] || "")}</span>
+        {device ? (
+          <DeviceStage
+            ref={bodyRef}
+            t={t}
+            device={device}
+            landscape={Boolean(item.device?.landscape)}
+            devices={devices}
+            focused={focused}
+            onChange={onDeviceChange}
+            onRotate={onRotateDevice}
+            onAddDevice={onAddDevice}
+          >
+            {pageBody}
+          </DeviceStage>
+        ) : (
+          <div ref={bodyRef} className="relative min-h-0 flex-1 overflow-hidden bg-paper/5">
+            {pageBody}
           </div>
-          {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
-        </div>
+        )}
       </section>
     </div>
   );

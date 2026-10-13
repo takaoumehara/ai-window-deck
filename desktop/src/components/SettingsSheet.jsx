@@ -32,7 +32,7 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
 }
 
 export function SettingsSheet({
-  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, appVersion, keys,
+  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, appVersion, keys,
   onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates,
 }) {
   return (
@@ -55,6 +55,22 @@ export function SettingsSheet({
             onChange={onDefaultMode}
           />
         </Section>
+
+        {devices.length > 0 && (
+          <Section title={t("settingsDevice")}>
+            <p className="text-xs leading-5 text-paper-mute">{t("settingsDeviceHint")}</p>
+            <Choices
+              label={t("settingsDevice")}
+              options={devices.map((device) => ({ value: device.id, label: device.name }))}
+              value={defaultDevice}
+              onChange={onDefaultDevice}
+              columns="grid-cols-2"
+            />
+            <span className="register text-paper-mute">
+              {t("deviceCatalogInfo", { count: devices.length, date: devicesUpdated || "—" })}
+            </span>
+          </Section>
+        )}
 
         <Section title={t("settingsSignIn")}>
           <p className="text-xs leading-5 text-paper-mute">{t("settingsSignInNote")}</p>
