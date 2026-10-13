@@ -96,7 +96,7 @@ export const Pane = React.forwardRef(function Pane(
 
   return (
     <div
-      className={`deck-pane absolute p-1 ${rect.visible ? "" : "is-away"}`}
+      className={`deck-pane absolute p-px ${rect.visible ? "" : "is-away"}`}
       // Above the panes Fill pushes away, so leaving Fill uncovers them instead of
       // fading them in on top of the page.
       style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%`, zIndex: focused ? 1 : 0 }}
@@ -104,7 +104,7 @@ export const Pane = React.forwardRef(function Pane(
     >
       <section
         aria-label={item.name}
-        className={`ink-swap flex h-full w-full flex-col overflow-hidden rounded-block border ${focused ? "border-paper bg-paper" : "border-paper/15 bg-ink"}`}
+        className={`ink-swap flex h-full w-full flex-col overflow-hidden border bg-ink ${focused ? "border-paper" : "border-paper/10"}`}
       >
         <header
           role="button"
@@ -248,14 +248,12 @@ export const Pane = React.forwardRef(function Pane(
         </header>
 
         {/* The page itself is a native view that main.cjs lays over this box. */}
-        <div className="min-h-0 flex-1 p-1 pt-0">
-        <div ref={bodyRef} data-radius="inner" className="relative h-full w-full overflow-hidden rounded-[calc(var(--cie-r)-5px)] bg-paper/5">
+        <div ref={bodyRef} className="relative min-h-0 flex-1 overflow-hidden bg-paper/5">
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
             <span className="cie-loader cie-loader--sm" aria-hidden="true" />
             <span className="register truncate uppercase text-ink-mute">{hostLabel(urls[activeTab] || "")}</span>
           </div>
           {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
-        </div>
         </div>
       </section>
     </div>
