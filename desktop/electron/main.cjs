@@ -194,23 +194,31 @@ async function refreshDevices() {
 
 const deviceKey = (device) => (device ? `${device.id}:${device.ua}:${device.width}x${device.height}@${device.dpr}` : "");
 
-// Chrome DevTools' device mode on one page: the device's viewport, pixel
-// ratio, orientation and touch, drawn at `scale` to fit the pane, with the
-// device's user agent and client hints. Null restores the desktop.
+// Chrome DevTools' device mode on one page: the device's user agent and
+// client hints here, its viewport, pixel ratio, orientation and touch in
+// emulateDevice, drawn at `scale` to fit the pane. Null restores the desktop.
+function presentDevice(view, device) {
+  const contents = view.webContents;
+  const key = deviceKey(device);
+  if (contents.isDestroyed() || view.deviceKey === key) return;
+  view.deviceKey = key;
+  const identity = device ? deviceIdentity(device, { chromeVersion: process.versions.chrome }) : browser;
+  baseIdentities.set(contents.id, identity);
+  applyIdentity(contents, identityFor(contents, contents.getURL()));
+}
+
+// A metrics override crashes a page that has never navigated, so a new tab
+// gets only its identity before loading and the rest once loading has begun.
 function emulateDevice(view, device, scale = 1) {
   const contents = view.webContents;
   if (contents.isDestroyed()) return;
-  const key = deviceKey(device);
-  const identityChanged = view.deviceKey !== key;
-  if (identityChanged) {
-    view.deviceKey = key;
-    const identity = device ? deviceIdentity(device, { chromeVersion: process.versions.chrome }) : browser;
-    baseIdentities.set(contents.id, identity);
-    applyIdentity(contents, identityFor(contents, contents.getURL()));
-  }
-  const metrics = device ? `${device.landscape}:${scale.toFixed(4)}` : "";
-  if (!identityChanged && view.deviceMetrics === metrics) return;
+  presentDevice(view, device);
+  const touchKey = device ? view.deviceKey : "";
+  const metrics = device ? `${touchKey}:${device.landscape}:${scale.toFixed(4)}` : "";
+  if ((view.deviceMetrics ?? "") === metrics) return;
+  const touchChanged = (view.deviceTouch ?? "") !== touchKey;
   view.deviceMetrics = metrics;
+  view.deviceTouch = touchKey;
   const send = (method, params) => contents.debugger.sendCommand(method, params).catch(() => {});
   try {
     if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
@@ -235,7 +243,7 @@ function emulateDevice(view, device, scale = 1) {
     screenHeight: height,
     screenOrientation: device.landscape ? { type: "landscapePrimary", angle: 90 } : { type: "portraitPrimary", angle: 0 },
   });
-  if (identityChanged) {
+  if (touchChanged) {
     send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     send("Emulation.setEmitTouchEventsForMouse", { enabled: true, configuration: "mobile" });
   }
@@ -407,7 +415,7 @@ function createTabView(target, paneId, url) {
   });
 
   const pane = target.panes.get(paneId);
-  if (pane?.device) emulateDevice(view, pane.device, deviceScale(pane));
+  if (pane?.device) presentDevice(view, pane.device);
   contents.loadURL(url).catch(() => {});
   target.win.contentView.addChildView(view);
   return view;
