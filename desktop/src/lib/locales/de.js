@@ -150,4 +150,6 @@ export default {
   kbSetJump: "Zu Set 1–9 wechseln",
   kbNewWindow: "Neues Deck-Fenster (für einen anderen Bildschirm)",
   kbSettings: "Einstellungen",
+  settingsSignIn: "Anmeldung",
+  settingsSignInNote: "Nach einer Anmeldung bei einer Website bleiben alle Bereiche angemeldet, auch nach einem Neustart. Die Google-Anmeldung funktioniert auch in der App.",
 };

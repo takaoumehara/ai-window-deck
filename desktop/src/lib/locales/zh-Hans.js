@@ -150,4 +150,6 @@ export default {
   kbSetJump: "切换到组合 1–9",
   kbNewWindow: "新建桌面窗口（用于另一台显示器）",
   kbSettings: "设置",
+  settingsSignIn: "登录",
+  settingsSignInNote: "在某个网站登录一次后，所有窗格都会保持登录状态，重新启动后也一样。Google 登录也可以直接在应用内完成。",
 };

@@ -150,4 +150,6 @@ export default {
   kbSetJump: "切換至組合 1–9",
   kbNewWindow: "新增桌面視窗（用於另一台螢幕）",
   kbSettings: "設定",
+  settingsSignIn: "登入",
+  settingsSignInNote: "在某個網站登入一次後，所有窗格都會保持登入狀態，重新啟動後也一樣。Google 登入也可以直接在 App 內完成。",
 };

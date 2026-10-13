@@ -150,4 +150,6 @@ export default {
   kbSetJump: "세트 1–9로 전환",
   kbNewWindow: "새 덱 창(다른 모니터용)",
   kbSettings: "설정",
+  settingsSignIn: "로그인",
+  settingsSignInNote: "한 번 로그인한 사이트는 모든 창에서, 다시 실행한 뒤에도 로그인 상태가 유지됩니다. Google 로그인도 앱 안에서 바로 할 수 있습니다.",
 };

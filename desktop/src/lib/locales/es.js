@@ -150,4 +150,6 @@ export default {
   kbSetJump: "Cambiar al conjunto 1–9",
   kbNewWindow: "Nueva ventana del deck (para otro monitor)",
   kbSettings: "Ajustes",
+  settingsSignIn: "Inicio de sesión",
+  settingsSignInNote: "Cuando inicias sesión en un sitio, todos los paneles siguen con la sesión iniciada, también después de reiniciar. El inicio de sesión de Google también funciona dentro de la app.",
 };

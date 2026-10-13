@@ -150,4 +150,6 @@ export default {
   kbSetJump: "Switch to set 1–9",
   kbNewWindow: "New deck window (for another monitor)",
   kbSettings: "Settings",
+  settingsSignIn: "Sign-in",
+  settingsSignInNote: "Once you sign in to a site, every pane stays signed in, including after a restart. Google sign-in works inside the app too.",
 };

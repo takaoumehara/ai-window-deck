@@ -150,4 +150,6 @@ export default {
   kbSetJump: "セット 1〜9 に切り替え",
   kbNewWindow: "新しいデッキウィンドウ（別のモニター用）",
   kbSettings: "設定",
+  settingsSignIn: "サインイン",
+  settingsSignInNote: "一度サインインしたサイトは、すべてのペインで、次回起動後もサインインしたままです。Google のサインインもこのアプリ内でそのまま使えます。",
 };

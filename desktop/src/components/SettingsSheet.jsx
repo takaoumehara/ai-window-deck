@@ -56,6 +56,10 @@ export function SettingsSheet({
           />
         </Section>
 
+        <Section title={t("settingsSignIn")}>
+          <p className="text-xs leading-5 text-paper-mute">{t("settingsSignInNote")}</p>
+        </Section>
+
         <Section title={t("settingsData")}>
           <div className="flex flex-col">
             <ActionRow icon={ClipboardPaste} title={t("pasteList")} hint={t("pasteListHint")} onClick={onPasteList} />

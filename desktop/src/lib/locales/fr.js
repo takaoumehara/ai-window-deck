@@ -150,4 +150,6 @@ export default {
   kbSetJump: "Passer à l’ensemble 1–9",
   kbNewWindow: "Nouvelle fenêtre de deck (pour un autre écran)",
   kbSettings: "Réglages",
+  settingsSignIn: "Connexion",
+  settingsSignInNote: "Une fois connecté à un site, tous les panneaux restent connectés, même après un redémarrage. La connexion Google fonctionne aussi dans l’app.",
 };

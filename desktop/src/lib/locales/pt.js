@@ -150,4 +150,6 @@ export default {
   kbSetJump: "Trocar para o conjunto 1–9",
   kbNewWindow: "Nova janela do deck (para outro monitor)",
   kbSettings: "Configurações",
+  settingsSignIn: "Login",
+  settingsSignInNote: "Depois de entrar em um site uma vez, todos os painéis continuam conectados, mesmo após reiniciar. O login do Google também funciona dentro do app.",
 };
