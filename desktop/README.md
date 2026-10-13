@@ -16,7 +16,7 @@ and a click or a shortcut enlarges it or puts it back.
 - **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, and set changes) without a limit. Layout changes aren't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
-- Logins are kept in one persistent session shared by all panes.
+- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in works inside the panes (see *How it works*).
 
 | Shortcut | Action |
 | --- | --- |
@@ -117,6 +117,13 @@ applies an update signed by the same Developer ID, so every release must be sign
   so native page views follow the CSS animation.
 - Native views draw above the DOM. Dialogs hide them while open, and messages appear in
   the title bar instead of floating over the deck.
+- Pages see a current desktop Chrome on the user's OS (`electron/identity.cjs`): a reduced
+  Chrome user agent built from Electron's Chromium version, client hints with the Google Chrome
+  brand (also as `Sec-CH-UA` headers, which Electron doesn't send itself, including the ones an
+  origin asks for with `Accept-CH`) and a clean `Accept-Language`. It is set through a DevTools
+  `Emulation.setUserAgentOverride` per page and sign-in popup. Google's sign-in page
+  (`accounts.google.com`) rejects any Electron that claims Chrome, so there the page sees the
+  same user agent without the `Chrome/` token and no Chrome client hints.
 - Shortcuts are matched in `before-input-event` on every web contents (`electron/commands.cjs`),
   by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it
