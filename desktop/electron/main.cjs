@@ -574,6 +574,8 @@ ipcMain.on("panes:overlay", (event, open) => {
   if (!target) return;
   target.overlayOpen = Boolean(open);
   applyAll(target);
+  // A hidden page keeps keyboard focus, which would leave the sheet deaf to Esc and typing.
+  if (target.overlayOpen) target.win.webContents.focus();
 });
 ipcMain.on("panes:transition", (event, active) => {
   const target = shellOf(event.sender);
