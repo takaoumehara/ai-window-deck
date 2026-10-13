@@ -248,7 +248,16 @@ export function App() {
     const state = transitionState.current;
     if (!state.ready) {
       state.ready = (async () => {
-        const shots = await Promise.race([deck.snapshot().catch(() => ({})), wait(SNAPSHOT_TIMEOUT_MS).then(() => ({}))]);
+        const capture = deck.snapshot().catch(() => ({})).then(async (taken) => {
+          // A frame still decoding paints as an empty pane once the views hide.
+          await Promise.all(Object.values(taken).map(({ src }) => {
+            const image = new Image();
+            image.src = src;
+            return image.decode().catch(() => {});
+          }));
+          return taken;
+        });
+        const shots = await Promise.race([capture, wait(SNAPSHOT_TIMEOUT_MS).then(() => ({}))]);
         snapshotCache.current = { ...snapshotCache.current, ...shots };
         setSnapshots(snapshotCache.current);
         await nextFrame();
@@ -336,12 +345,15 @@ export function App() {
     return () => observer.disconnect();
   }, [loaded, measure]);
 
-  // Undo and redo keep the keyboard in the deck, so ⌘Z can be pressed again
-  // instead of landing in the page that just came back.
+  // Switching or closing tabs detaches the view that had keyboard focus, so
+  // the newly shown tab takes it over. Undo and redo keep the keyboard in the
+  // deck instead, so ⌘Z can be pressed again rather than landing in the page
+  // that just came back.
   const keepShellFocusUntil = useRef(0);
+  const focusedTabUrl = urlList(deckPanes.find((item) => item.id === effectiveFocusId))[activeTabs[effectiveFocusId] ?? 0];
   useEffect(() => {
     if (effectiveFocusId && performance.now() > keepShellFocusUntil.current) deck.focusPane(effectiveFocusId);
-  }, [effectiveFocusId, mode]);
+  }, [effectiveFocusId, mode, focusedTabUrl]);
 
   const focusPane = useCallback((id) => changeLayout({ focusId: id }), [changeLayout]);
 

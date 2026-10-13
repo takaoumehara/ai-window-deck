@@ -97,7 +97,9 @@ export const Pane = React.forwardRef(function Pane(
   return (
     <div
       className={`deck-pane absolute p-1 ${rect.visible ? "" : "is-away"}`}
-      style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%` }}
+      // Above the panes Fill pushes away, so leaving Fill uncovers them instead of
+      // fading them in on top of the page.
+      style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%`, zIndex: focused ? 1 : 0 }}
       aria-hidden={!rect.visible}
     >
       <section
@@ -252,7 +254,7 @@ export const Pane = React.forwardRef(function Pane(
             <span className="cie-loader cie-loader--sm" aria-hidden="true" />
             <span className="register truncate uppercase text-ink-mute">{hostLabel(urls[activeTab] || "")}</span>
           </div>
-          {snapshot && <img src={snapshot} alt="" draggable={false} className="pane-snapshot" />}
+          {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
         </div>
         </div>
       </section>

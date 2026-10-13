@@ -103,9 +103,17 @@ function runCommand(target, command) {
 
 function interceptCommands(webContents, target) {
   webContents.on("before-input-event", (event, input) => {
+    // On Windows and Linux, releasing Alt opens the menu bar, which then eats the
+    // next shortcut. After an Alt shortcut, that release is swallowed.
+    if (!isMac && input.type === "keyUp" && input.key === "Alt" && target.swallowAltUp) {
+      target.swallowAltUp = false;
+      event.preventDefault();
+      return;
+    }
     const command = matchCommand(input);
     if (!command) return;
     event.preventDefault();
+    if (input.alt) target.swallowAltUp = true;
     runCommand(target, command);
   });
 }
@@ -582,8 +590,9 @@ ipcMain.handle("panes:snapshot", async (event) => {
     try {
       const image = await view.webContents.capturePage();
       if (image.isEmpty()) return;
-      const { width } = view.getBounds();
-      shots[paneId] = `data:image/jpeg;base64,${image.resize({ width: Math.max(1, width), quality: "good" }).toJPEG(78).toString("base64")}`;
+      const width = Math.max(1, view.getBounds().width);
+      const pixels = Math.min(image.getSize().width, width * 2);
+      shots[paneId] = { src: `data:image/jpeg;base64,${image.resize({ width: pixels, quality: "good" }).toJPEG(78).toString("base64")}`, width };
     } catch {
       // A page mid-navigation can refuse a capture; its pane just shows the placeholder.
     }
