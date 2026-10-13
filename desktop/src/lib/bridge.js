@@ -1,5 +1,7 @@
 // window.deck comes from electron/preload.cjs. Outside Electron (plain `vite`
 // for UI work) a stand-in keeps the shell usable without any web panes.
+import bundledDevices from "../../electron/devices.json";
+
 const STORAGE_KEY = "ai-window-deck-desktop";
 const noop = () => {};
 const noSubscribe = () => noop;
@@ -45,6 +47,8 @@ const browserStandIn = {
   onPaneFocused: noSubscribe,
   onPaneState: noSubscribe,
   onPaneError: noSubscribe,
+  devices: async () => bundledDevices,
+  onDevicesChanged: noSubscribe,
   checkForUpdates: noop,
   installUpdate: noop,
   onUpdateState: noSubscribe,

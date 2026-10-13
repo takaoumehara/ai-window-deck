@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, Menu, ipcMain, dialog, session, shell } = require("electron");
+const { app, BrowserWindow, WebContentsView, Menu, ipcMain, dialog, session, shell, net } = require("electron");
 const fs = require("node:fs/promises");
 const os = require("node:os");
 const path = require("node:path");
@@ -6,12 +6,15 @@ const { matchCommand, COMMAND_ACCELERATORS } = require("./commands.cjs");
 const { createUpdater } = require("./updates.cjs");
 const { migrateStore, applyStorePatch } = require("./store.cjs");
 const { loadWindowStates, saveWindowStates, frameOf, cascadeFrom, DEFAULT_SIZE } = require("./window-state.cjs");
+const { normalizeCatalog, mergeCatalogs } = require("./devices.cjs");
 const {
-  desktopIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
+  desktopIdentity, deviceIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
 } = require("./identity.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
+const DEVICES_URL = "https://ai-window-deck.vercel.app/devices.json";
+const DEVICES_RECHECK_MS = 12 * 60 * 60 * 1000;
 const ISSUES_URL = "https://github.com/takaoumehara/ai-window-deck/issues";
 const PARTITION = "persist:deck";
 const isMac = process.platform === "darwin";
@@ -155,6 +158,94 @@ function presentPage(contents) {
     baseIdentities.delete(id);
     identities.delete(id);
   });
+}
+
+let devices = normalizeCatalog(require("./devices.json"));
+const devicesPath = () => path.join(app.getPath("userData"), "devices.json");
+
+let devicesReady = null;
+
+// The last catalog fetched from the website, then a fresh one; whichever is
+// newer than the copy shipped with the app wins.
+function loadDevices() {
+  devicesReady = fs.readFile(devicesPath(), "utf8")
+    .then((text) => {
+      devices = mergeCatalogs(normalizeCatalog(JSON.parse(text)), devices);
+    })
+    .catch(() => {});
+  devicesReady.then(refreshDevices);
+  setInterval(refreshDevices, DEVICES_RECHECK_MS);
+}
+
+async function refreshDevices() {
+  try {
+    const response = await net.fetch(DEVICES_URL, { cache: "no-cache", signal: AbortSignal.timeout(15000) });
+    const remote = response.ok ? normalizeCatalog(await response.json()) : null;
+    if (!remote) return;
+    await fs.writeFile(devicesPath(), JSON.stringify(remote));
+    const next = mergeCatalogs(remote, devices);
+    if (JSON.stringify(next) === JSON.stringify(devices)) return;
+    devices = next;
+    broadcast("devices:changed", devices);
+  } catch {
+    // Offline or the site is down; the catalog in hand stays.
+  }
+}
+
+const deviceKey = (device) => (device ? `${device.id}:${device.ua}:${device.width}x${device.height}@${device.dpr}` : "");
+
+// Chrome DevTools' device mode on one page: the device's viewport, pixel
+// ratio, orientation and touch, drawn at `scale` to fit the pane, with the
+// device's user agent and client hints. Null restores the desktop.
+function emulateDevice(view, device, scale = 1) {
+  const contents = view.webContents;
+  if (contents.isDestroyed()) return;
+  const key = deviceKey(device);
+  const identityChanged = view.deviceKey !== key;
+  if (identityChanged) {
+    view.deviceKey = key;
+    const identity = device ? deviceIdentity(device, { chromeVersion: process.versions.chrome }) : browser;
+    baseIdentities.set(contents.id, identity);
+    applyIdentity(contents, identityFor(contents, contents.getURL()));
+  }
+  const metrics = device ? `${device.landscape}:${scale.toFixed(4)}` : "";
+  if (!identityChanged && view.deviceMetrics === metrics) return;
+  view.deviceMetrics = metrics;
+  const send = (method, params) => contents.debugger.sendCommand(method, params).catch(() => {});
+  try {
+    if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
+  } catch {
+    return;
+  }
+  if (!device) {
+    send("Emulation.clearDeviceMetricsOverride");
+    send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    send("Emulation.setEmitTouchEventsForMouse", { enabled: false });
+    return;
+  }
+  const width = device.landscape ? device.height : device.width;
+  const height = device.landscape ? device.width : device.height;
+  send("Emulation.setDeviceMetricsOverride", {
+    width,
+    height,
+    deviceScaleFactor: device.dpr,
+    mobile: true,
+    scale,
+    screenWidth: width,
+    screenHeight: height,
+    screenOrientation: device.landscape ? { type: "landscapePrimary", angle: 90 } : { type: "portraitPrimary", angle: 0 },
+  });
+  if (identityChanged) {
+    send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    send("Emulation.setEmitTouchEventsForMouse", { enabled: true, configuration: "mobile" });
+  }
+}
+
+// The scale that fits the device's viewport into the pane's screen box.
+function deviceScale(pane) {
+  const { device, bounds } = pane;
+  if (!device || !bounds.width) return 1;
+  return Math.max(0.05, bounds.width / (device.landscape ? device.height : device.width));
 }
 
 function sendTo(target, channel, payload) {
@@ -315,6 +406,8 @@ function createTabView(target, paneId, url) {
     if (result.finalUpdate) send("pane:found", { paneId, active: result.activeMatchOrdinal, matches: result.matches });
   });
 
+  const pane = target.panes.get(paneId);
+  if (pane?.device) emulateDevice(view, pane.device, deviceScale(pane));
   contents.loadURL(url).catch(() => {});
   target.win.contentView.addChildView(view);
   return view;
@@ -369,6 +462,7 @@ function applyPane(target, paneId) {
     if (!shown) continue;
     view.setBounds({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
     view.setBorderRadius?.(Math.round(radius));
+    if (pane.device || view.deviceKey) emulateDevice(view, pane.device, deviceScale(pane));
   }
 }
 
@@ -383,9 +477,14 @@ function syncPanes(target, nextPanes) {
     seen.add(next.id);
     let pane = panes.get(next.id);
     if (!pane) {
-      pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, views: new Map() };
+      pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, device: null, views: new Map() };
       panes.set(next.id, pane);
     }
+    // A new device (or leaving the preview) reloads the pages, so servers
+    // that pick a layout by user agent send the right one; rotating doesn't.
+    const nextDevice = next.device ?? null;
+    const deviceChanged = deviceKey(nextDevice) !== deviceKey(pane.device);
+    pane.device = nextDevice;
     // Live pages follow their URL to its new position (tabs opened, closed or
     // reordered); only a tab whose URL is gone from the list is torn down.
     const pool = new Map();
@@ -411,6 +510,12 @@ function syncPanes(target, nextPanes) {
       pane.views.set(pane.activeTab, createTabView(target, next.id, url));
     }
     if (moved) for (const view of pane.views.values()) view.report?.();
+    if (deviceChanged) {
+      for (const view of pane.views.values()) {
+        emulateDevice(view, pane.device, deviceScale(pane));
+        if (view.webContents.getURL()) view.webContents.reload();
+      }
+    }
     applyPane(target, next.id);
   }
   for (const [paneId, pane] of panes) {
@@ -655,6 +760,10 @@ ipcMain.handle("shell:claim-set", (event, setId) => {
   return true;
 });
 ipcMain.on("shell:open-window", (event, setId) => openDeckWindow(shellOf(event.sender), setId ?? undefined));
+ipcMain.handle("devices:list", async () => {
+  await devicesReady;
+  return devices;
+});
 ipcMain.handle("app:info", () => ({ platform: process.platform, locale: app.getLocale(), version: app.getVersion() }));
 ipcMain.on("update:check", () => updater?.check(true));
 ipcMain.on("update:install", () => updater?.install());
@@ -780,6 +889,7 @@ app.setAboutPanelOptions({
 app.whenReady().then(async () => {
   if (!isPrimaryInstance) return;
   setUpBrowserIdentity();
+  loadDevices();
   store = migrateStore(await readStore());
   buildMenu();
   restoreWindows();
