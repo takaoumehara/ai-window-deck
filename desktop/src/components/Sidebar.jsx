@@ -1,11 +1,98 @@
 import React from "react";
-import { Plus, Minus, Eye, EyeOff, Upload } from "lucide-react";
+import { Plus, Minus, Eye, EyeOff, Upload, PanelLeftOpen } from "lucide-react";
 import { IconButton } from "@desktop/components/ui/controls";
 import { urlList, hostLabel } from "@desktop/lib/deck-data";
 
-export function Sidebar({ t, windows, deckOrder, focusedId, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onImport }) {
+function initials(name) {
+  const words = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (words.length > 1) return (words[0][0] + words[1][0]).toUpperCase();
+  const word = words[0] || "?";
+  return word[0].toUpperCase() + (word[1] || "").toLowerCase();
+}
+
+function RailTile({ t, item, order, focused, favicon, onClick, onDoubleClick }) {
+  const inDeck = order >= 0;
+  const [iconFailed, setIconFailed] = React.useState(false);
+  React.useEffect(() => setIconFailed(false), [favicon]);
+  const name = item.name || t("untitledWindow");
   return (
-    <aside className="flex w-72 shrink-0 flex-col gap-4 py-4 pl-4 pr-3" aria-label={t("windowsHeader")}>
+    <button
+      type="button"
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      aria-current={focused ? "true" : undefined}
+      aria-label={inDeck ? `${String(order + 1).padStart(2, "0")} ${name}` : t("showPane", { name })}
+      title={inDeck ? name : t("showPane", { name })}
+      className={`ink-swap cie-tap relative flex h-11 w-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-block border ${
+        focused
+          ? "border-paper bg-paper text-ink"
+          : inDeck
+            ? "border-paper/30 bg-ink hover:border-paper/70"
+            : "border-dashed border-paper/20 bg-ink text-ink-mute hover:border-paper/50 hover:text-paper"
+      }`}
+    >
+      {favicon && !iconFailed && inDeck ? (
+        <img src={favicon} alt="" className="h-4 w-4 rounded-[3px]" onError={() => setIconFailed(true)} draggable={false} />
+      ) : (
+        <span className="weight text-[13px] leading-none tracking-[-0.02em]" style={{ "--w": focused ? 600 : 450 }}>{initials(name)}</span>
+      )}
+      <span className={`register text-[9px] leading-none ${focused ? "text-paper-mute" : "text-ink-mute"}`}>
+        {inDeck ? String(order + 1).padStart(2, "0") : "—"}
+      </span>
+    </button>
+  );
+}
+
+// Collapsed sidebar: one tile per window, so panes stay one click away.
+function SidebarRail({ t, windows, deckOrder, focusedId, favicons, onAdd, onEdit, onFocus, onReveal, onExpand, expandLabel }) {
+  return (
+    <nav className="flex h-full w-16 flex-col items-center gap-3 py-4" aria-label={t("windowsHeader")}>
+      <ul className="cie-stagger -mx-1 flex min-h-0 flex-1 flex-col items-center gap-2 overflow-y-auto px-1">
+        {windows.map((item) => {
+          const order = deckOrder.indexOf(item.id);
+          return (
+            <li key={item.id} className="cie-rise">
+              <RailTile
+                t={t}
+                item={item}
+                order={order}
+                focused={item.id === focusedId && order >= 0}
+                favicon={favicons[item.id]}
+                onClick={() => (order >= 0 ? onFocus(item.id) : onReveal(item.id))}
+                onDoubleClick={() => onEdit(item)}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      <IconButton onClick={onAdd} aria-label={t("addWindow")} title={t("addWindow")}>
+        <Plus className="h-4 w-4" aria-hidden="true" />
+      </IconButton>
+      <IconButton onClick={onExpand} aria-label={expandLabel} title={expandLabel}>
+        <PanelLeftOpen className="h-4 w-4" aria-hidden="true" />
+      </IconButton>
+    </nav>
+  );
+}
+
+export function Sidebar({ collapsed, favicons = {}, onReveal, onExpand, expandLabel, ...props }) {
+  return (
+    <aside
+      className={`shrink-0 overflow-hidden transition-[width] duration-move ease-expo motion-reduce:transition-none ${collapsed ? "w-16" : "w-72"}`}
+      aria-label={props.t("windowsHeader")}
+    >
+      {collapsed ? (
+        <SidebarRail {...props} favicons={favicons} onReveal={onReveal} onExpand={onExpand} expandLabel={expandLabel} />
+      ) : (
+        <SidebarPanel {...props} />
+      )}
+    </aside>
+  );
+}
+
+function SidebarPanel({ t, windows, deckOrder, focusedId, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onImport }) {
+  return (
+    <div className="flex h-full w-72 flex-col gap-4 py-4 pl-4 pr-3">
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           <h2 className="text-xl font-light tracking-[-0.03em]">{t("windowsHeader")}</h2>
@@ -112,6 +199,6 @@ export function Sidebar({ t, windows, deckOrder, focusedId, onAdd, onEdit, onDel
           <span className="text-xs text-ink-mute">{t("importHint")}</span>
         </span>
       </button>
-    </aside>
+    </div>
   );
 }

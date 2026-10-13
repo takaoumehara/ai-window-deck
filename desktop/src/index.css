@@ -68,11 +68,24 @@ html, body, #root {
     transform var(--cie-t-move) var(--cie-ease-expo);
 }
 
-/* "Away cell": panes pushed out by Fill. */
+/* "Away cell": panes pushed out by Fill. A small settle rather than a big
+   shrink, so a full-deck switch reads as one calm move. */
 .deck-pane.is-away {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.97);
   pointer-events: none;
+}
+
+/* Still frame of the page, shown while its pane animates (see transition() in App.jsx). */
+.pane-snapshot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* Header and card swap inks when focused (DESIGN.md "Invert"). */

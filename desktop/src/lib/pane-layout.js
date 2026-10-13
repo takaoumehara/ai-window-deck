@@ -69,6 +69,16 @@ export function nextModeForSpotlight(mode, { targetIsFocused = true } = {}) {
   return "grid";
 }
 
+// Whether moving between two layouts moves any pane (focus alone, in grid, doesn't).
+export function layoutMoves(count, from, to) {
+  const before = computePaneRects({ count, mode: from.mode, focusIndex: from.focusIndex });
+  const after = computePaneRects({ count, mode: to.mode, focusIndex: to.focusIndex });
+  return before.some((rect, index) => {
+    const next = after[index];
+    return !next || rect.visible !== next.visible || ["x", "y", "w", "h"].some((key) => Math.abs(rect[key] - next[key]) > 1e-6);
+  });
+}
+
 export function cycleIndex(current, count, step) {
   if (count <= 0) return 0;
   return (((current + step) % count) + count) % count;

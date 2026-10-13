@@ -15,6 +15,9 @@ const CIE_INK = "#0b0b0b";
 
 let shellWindow = null;
 let overlayOpen = false;
+// While panes animate, the shell shows still snapshots and the live pages wait
+// at their final size, so pages never re-layout frame by frame.
+let transitioning = false;
 let updater = null;
 let lastUpdateState = null;
 // paneId -> { urls, activeTab, bounds, visible, views: Map<tabIndex, WebContentsView> }
@@ -67,12 +70,20 @@ function interceptCommands(webContents) {
   });
 }
 
-function createTabView(paneId, tabIndex, url) {
+function tabIndexOf(paneId, view) {
+  for (const [tabIndex, candidate] of panes.get(paneId)?.views ?? []) {
+    if (candidate === view) return tabIndex;
+  }
+  return -1;
+}
+
+function createTabView(paneId, url) {
   const view = new WebContentsView({
     webPreferences: {
       partition: PARTITION,
       sandbox: true,
       contextIsolation: true,
+      preload: path.join(__dirname, "pane-preload.cjs"),
     },
   });
   view.setBackgroundColor(CIE_INK);
@@ -89,14 +100,26 @@ function createTabView(paneId, tabIndex, url) {
   });
 
   contents.on("focus", () => send("pane:focused", { paneId }));
-  const report = () => send("pane:state", {
-    paneId,
-    tabIndex,
-    title: contents.getTitle(),
-    url: contents.getURL(),
-    loading: contents.isLoading(),
-    canGoBack: contents.navigationHistory.canGoBack(),
-    canGoForward: contents.navigationHistory.canGoForward(),
+  // Tabs shift position when one is closed, so the index is looked up per report.
+  const report = () => {
+    const tabIndex = tabIndexOf(paneId, view);
+    if (tabIndex < 0 || contents.isDestroyed()) return;
+    send("pane:state", {
+      paneId,
+      tabIndex,
+      title: contents.getTitle(),
+      url: contents.getURL(),
+      loading: contents.isLoading(),
+      canGoBack: contents.navigationHistory.canGoBack(),
+      canGoForward: contents.navigationHistory.canGoForward(),
+      zoom: contents.getZoomFactor(),
+      favicon: view.favicon || null,
+    });
+  };
+  view.report = report;
+  contents.on("page-favicon-updated", (_event, icons) => {
+    view.favicon = icons.find((icon) => /^(https?|data):/i.test(icon)) || null;
+    report();
   });
   contents.on("page-title-updated", report);
   contents.on("did-start-loading", report);
@@ -104,7 +127,11 @@ function createTabView(paneId, tabIndex, url) {
   contents.on("did-navigate", report);
   contents.on("did-navigate-in-page", report);
   contents.on("did-fail-load", (_event, code, description, failedUrl, isMainFrame) => {
-    if (isMainFrame && code !== -3) send("pane:error", { paneId, tabIndex, description, url: failedUrl });
+    const tabIndex = tabIndexOf(paneId, view);
+    if (isMainFrame && code !== -3 && tabIndex >= 0) send("pane:error", { paneId, tabIndex, description, url: failedUrl });
+  });
+  contents.on("found-in-page", (_event, result) => {
+    if (result.finalUpdate) send("pane:found", { paneId, active: result.activeMatchOrdinal, matches: result.matches });
   });
 
   contents.loadURL(url).catch(() => {});
@@ -122,10 +149,11 @@ function applyPane(paneId) {
   const pane = panes.get(paneId);
   if (!pane) return;
   const { x, y, width, height, radius = 0 } = pane.bounds;
-  const showable = pane.visible && !overlayOpen && width > 1 && height > 1;
+  const showable = pane.visible && !overlayOpen && !transitioning && width > 1 && height > 1;
   for (const [tabIndex, view] of pane.views) {
     const shown = showable && tabIndex === pane.activeTab;
     view.setVisible(shown);
+    view.shown = shown;
     if (!shown) continue;
     view.setBounds({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
     view.setBorderRadius?.(Math.round(radius));
@@ -141,28 +169,31 @@ function syncPanes(nextPanes) {
       pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, views: new Map() };
       panes.set(next.id, pane);
     }
-    // A tab whose URL changed in the editor is rebuilt; untouched tabs keep their page.
-    next.urls.forEach((url, tabIndex) => {
-      const existing = pane.views.get(tabIndex);
-      if (existing && pane.urls[tabIndex] !== url) {
-        destroyView(existing);
-        pane.views.delete(tabIndex);
-      }
-    });
+    // Live pages follow their URL to its new position (tabs opened, closed or
+    // reordered); only a tab whose URL is gone from the list is torn down.
+    const pool = new Map();
     for (const [tabIndex, view] of pane.views) {
-      if (tabIndex >= next.urls.length) {
-        destroyView(view);
-        pane.views.delete(tabIndex);
-      }
+      const url = pane.urls[tabIndex];
+      if (!pool.has(url)) pool.set(url, []);
+      pool.get(url).push(view);
     }
+    const views = new Map();
+    next.urls.forEach((url, tabIndex) => {
+      const reused = pool.get(url)?.shift();
+      if (reused) views.set(tabIndex, reused);
+    });
+    for (const leftovers of pool.values()) leftovers.forEach(destroyView);
+    const moved = [...views].some(([tabIndex, view]) => pane.views.get(tabIndex) !== view);
+    pane.views = views;
     pane.urls = next.urls;
     pane.activeTab = Math.min(next.activeTab ?? 0, Math.max(0, next.urls.length - 1));
     pane.visible = next.visible;
     if (next.bounds) pane.bounds = next.bounds;
     const url = pane.urls[pane.activeTab];
     if (url && !pane.views.has(pane.activeTab)) {
-      pane.views.set(pane.activeTab, createTabView(next.id, pane.activeTab, url));
+      pane.views.set(pane.activeTab, createTabView(next.id, url));
     }
+    if (moved) for (const view of pane.views.values()) view.report?.();
     applyPane(next.id);
   }
   for (const [paneId, pane] of panes) {
@@ -204,8 +235,33 @@ function buildMenu() {
           ],
         }]
       : []),
-    { role: "fileMenu" },
-    { role: "editMenu" },
+    {
+      label: "File",
+      submenu: [
+        command("tab-new", "New Tab"),
+        command("tab-reopen", "Reopen Closed Tab"),
+        command("address-focus", "Open Location…"),
+        { type: "separator" },
+        command("tab-close", "Close Tab"),
+        { label: "Close Window", accelerator: "CmdOrCtrl+Shift+W", role: "close" },
+        ...(isMac ? [] : [{ type: "separator" }, { role: "quit" }]),
+      ],
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "pasteAndMatchStyle" },
+        { role: "selectAll" },
+        { type: "separator" },
+        command("find", "Find…"),
+      ],
+    },
     {
       label: "Deck",
       submenu: [
@@ -215,14 +271,24 @@ function buildMenu() {
         { type: "separator" },
         command("focus-next", "Next pane"),
         command("focus-previous", "Previous pane"),
+        command("tab-next", "Next tab"),
+        command("tab-previous", "Previous tab"),
         { type: "separator" },
-        command("toggle-sidebar", "Show / hide sidebar"),
-        command("reload-pane", "Reload pane"),
+        command("toggle-sidebar", "Expand / collapse sidebar"),
       ],
     },
     {
       label: "View",
       submenu: [
+        command("page-back", "Back"),
+        command("page-forward", "Forward"),
+        command("reload-pane", "Reload Page"),
+        command("reload-hard", "Hard Reload"),
+        { type: "separator" },
+        command("zoom-in", "Zoom In"),
+        command("zoom-out", "Zoom Out"),
+        command("zoom-reset", "Actual Size"),
+        { type: "separator" },
         { role: "togglefullscreen" },
         ...(DEV_URL ? [{ role: "toggleDevTools" }] : []),
       ],
@@ -301,18 +367,61 @@ ipcMain.on("panes:overlay", (_event, open) => {
   overlayOpen = Boolean(open);
   for (const paneId of panes.keys()) applyPane(paneId);
 });
+ipcMain.on("panes:transition", (_event, active) => {
+  transitioning = Boolean(active);
+  for (const paneId of panes.keys()) applyPane(paneId);
+});
+ipcMain.handle("panes:snapshot", async () => {
+  const shots = {};
+  await Promise.all([...panes].map(async ([paneId, pane]) => {
+    const view = pane.views.get(pane.activeTab);
+    if (!view?.shown || view.webContents.isDestroyed()) return;
+    try {
+      const image = await view.webContents.capturePage();
+      if (image.isEmpty()) return;
+      const { width } = view.getBounds();
+      shots[paneId] = `data:image/jpeg;base64,${image.resize({ width: Math.max(1, width), quality: "good" }).toJPEG(78).toString("base64")}`;
+    } catch {
+      // A page mid-navigation can refuse a capture; its pane just shows the placeholder.
+    }
+  }));
+  return shots;
+});
+ipcMain.on("pane:mouse-nav", (event, direction) => {
+  const history = event.sender.navigationHistory;
+  if (direction === "back" && history.canGoBack()) history.goBack();
+  else if (direction === "forward" && history.canGoForward()) history.goForward();
+});
+ipcMain.on("shell:focus", () => shellWindow?.webContents.focus());
 ipcMain.on("pane:focus", (_event, paneId) => activeContents(paneId)?.focus());
-ipcMain.on("pane:navigate", (_event, { paneId, action }) => {
+ipcMain.on("pane:navigate", (_event, { paneId, action, url }) => {
   const contents = activeContents(paneId);
   if (!contents) return;
   if (action === "back" && contents.navigationHistory.canGoBack()) contents.navigationHistory.goBack();
   else if (action === "forward" && contents.navigationHistory.canGoForward()) contents.navigationHistory.goForward();
   else if (action === "reload") contents.reload();
+  else if (action === "reload-hard") contents.reloadIgnoringCache();
+  else if (action === "load" && url) contents.loadURL(url).catch(() => {});
   else if (action === "home") {
     const pane = panes.get(paneId);
     contents.loadURL(pane.urls[pane.activeTab]).catch(() => {});
   }
 });
+ipcMain.handle("pane:zoom", (_event, { paneId, factor }) => {
+  const contents = activeContents(paneId);
+  if (!contents) return null;
+  contents.setZoomFactor(factor);
+  return contents.getZoomFactor();
+});
+ipcMain.handle("pane:get-zoom", (_event, paneId) => activeContents(paneId)?.getZoomFactor() ?? 1);
+ipcMain.on("pane:find", (_event, { paneId, text, forward = true, newSearch = true }) => {
+  const contents = activeContents(paneId);
+  if (!contents) return;
+  // Electron's findNext means "start a new search session", not "go to the next match".
+  if (text) contents.findInPage(text, { forward, findNext: newSearch });
+  else contents.stopFindInPage("clearSelection");
+});
+ipcMain.on("pane:find-stop", (_event, paneId) => activeContents(paneId)?.stopFindInPage("keepSelection"));
 
 ipcMain.handle("backup:import", async () => {
   const result = await dialog.showOpenDialog(shellWindow, {
