@@ -76,14 +76,15 @@ html, body, #root {
   pointer-events: none;
 }
 
-/* Still frame of the page, shown while its pane animates (see transition() in App.jsx). */
+/* Still frame of the page, shown while its pane animates (see transition() in App.jsx).
+   Kept at the page's own scale (width set inline) so text doesn't grow and then
+   snap back when the live page returns; the pane crops it or shows its ground. */
 .pane-snapshot {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top left;
+  top: 0;
+  left: 0;
+  max-width: none;
+  height: auto;
   pointer-events: none;
   user-select: none;
 }

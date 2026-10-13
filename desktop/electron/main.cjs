@@ -389,8 +389,9 @@ ipcMain.handle("panes:snapshot", async () => {
     try {
       const image = await view.webContents.capturePage();
       if (image.isEmpty()) return;
-      const { width } = view.getBounds();
-      shots[paneId] = `data:image/jpeg;base64,${image.resize({ width: Math.max(1, width), quality: "good" }).toJPEG(78).toString("base64")}`;
+      const width = Math.max(1, view.getBounds().width);
+      const pixels = Math.min(image.getSize().width, width * 2);
+      shots[paneId] = { src: `data:image/jpeg;base64,${image.resize({ width: pixels, quality: "good" }).toJPEG(78).toString("base64")}`, width };
     } catch {
       // A page mid-navigation can refuse a capture; its pane just shows the placeholder.
     }

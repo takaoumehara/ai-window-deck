@@ -140,7 +140,16 @@ export function App() {
     const state = transitionState.current;
     if (!state.ready) {
       state.ready = (async () => {
-        const shots = await Promise.race([deck.snapshot().catch(() => ({})), wait(SNAPSHOT_TIMEOUT_MS).then(() => ({}))]);
+        const capture = deck.snapshot().catch(() => ({})).then(async (taken) => {
+          // A frame still decoding paints as an empty pane once the views hide.
+          await Promise.all(Object.values(taken).map(({ src }) => {
+            const image = new Image();
+            image.src = src;
+            return image.decode().catch(() => {});
+          }));
+          return taken;
+        });
+        const shots = await Promise.race([capture, wait(SNAPSHOT_TIMEOUT_MS).then(() => ({}))]);
         snapshotCache.current = { ...snapshotCache.current, ...shots };
         setSnapshots(snapshotCache.current);
         await nextFrame();
