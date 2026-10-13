@@ -104,13 +104,12 @@ function setUpBrowserIdentity() {
         return;
       }
       const identity = identities.get(details.webContentsId) ?? browser;
-      callback({
-        requestHeaders: withIdentity(details.url, details.requestHeaders, {
-          userAgent: identity.userAgent,
-          hints: hintsOf(identity),
-          accepted: acceptedByOrigin.get(originOf(details.url)),
-        }),
+      const requestHeaders = withIdentity(details.url, details.requestHeaders, {
+        userAgent: identity.userAgent,
+        hints: hintsOf(identity),
+        accepted: acceptedByOrigin.get(originOf(details.url)),
       });
+      callback(requestHeaders ? { requestHeaders } : {});
     });
   }
 }
