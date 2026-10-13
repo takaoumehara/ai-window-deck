@@ -34,20 +34,34 @@ function fromRegistered(list) {
     }));
 }
 
-// The extension's "Window name / URL lines / blank line" text format.
+// Pasted lists often come as Markdown or numbered lists.
+const LIST_MARKER = /^(?:[-*•‣·]|\d+[.)])\s+/;
+
+function asUrl(line) {
+  if (/^https?:\/\/\S+$/i.test(line)) return line;
+  if (/^(?:localhost|[^\s/:@]+\.[a-z]{2,})(?::\d+)?(?:[/?#]\S*)?$/i.test(line)) return `https://${line}`;
+  return null;
+}
+
+function splitLines(text) {
+  return String(text || "").split(/\r?\n/).map((raw) => raw.trim().replace(LIST_MARKER, ""));
+}
+
+// The extension's "Window name / URL lines / blank line" text format. A window
+// without a name line is named after its first URL's host.
 function fromText(text) {
   const items = [];
   let name = "";
   let urls = [];
   const flush = () => {
-    if (name || urls.length) items.push({ name: name || `Window ${items.length + 1}`, urls: urls.join("\n") });
+    if (name || urls.length) items.push({ name: name || hostLabel(urls[0]) || `Window ${items.length + 1}`, urls: urls.join("\n") });
     name = "";
     urls = [];
   };
-  for (const raw of text.split(/\r?\n/)) {
-    const line = raw.trim();
+  for (const line of splitLines(text)) {
+    const url = line && asUrl(line);
     if (!line) flush();
-    else if (/^https?:\/\//i.test(line)) urls.push(line);
+    else if (url) urls.push(url);
     else {
       if (urls.length) flush();
       name = line;
@@ -55,6 +69,34 @@ function fromText(text) {
   }
   flush();
   return fromRegistered(items.map((item, index) => ({ ...item, id: `win-import-${Date.now()}-${index}` })));
+}
+
+/**
+ * Windows from pasted text. A list that names its windows (the extension's
+ * text format) or a JSON backup keeps its windows. A bare list of URLs becomes
+ * one window per URL, or with `together` one window holding them all as tabs.
+ * Returns { windows, named }, where `named` says the text chose the grouping.
+ */
+export function parsePastedList(text, { together = false } = {}) {
+  const trimmed = String(text || "").trim();
+  if (!trimmed) return { windows: [], named: false };
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    try {
+      return { windows: parseExtensionExport(trimmed).filter((item) => urlList(item).length), named: true };
+    } catch {
+      // Not JSON after all; read it as lines.
+    }
+  }
+  const lines = splitLines(trimmed).filter(Boolean);
+  const named = lines.some((line) => !asUrl(line));
+  if (named) return { windows: fromText(trimmed).filter((item) => urlList(item).length), named: true };
+  const urls = lines.map(asUrl);
+  const stamp = Date.now();
+  const groups = together ? [urls] : urls.map((url) => [url]);
+  return {
+    windows: groups.map((group, index) => ({ id: `win-paste-${stamp}-${index}`, name: hostLabel(group[0]), urls: group.join("\n"), visible: true })),
+    named: false,
+  };
 }
 
 /**

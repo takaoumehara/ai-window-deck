@@ -8,6 +8,7 @@ const ALT_CODES = {
   BracketRight: "focus-next",
   BracketLeft: "focus-previous",
   KeyB: "toggle-sidebar",
+  KeyS: "sets-open",
 };
 for (let n = 1; n <= 8; n += 1) ALT_CODES[`Digit${n}`] = `focus-tile-${n}`;
 
@@ -24,6 +25,8 @@ const PRIMARY_CODES = {
   NumpadSubtract: "zoom-out",
   Digit0: "zoom-reset",
   Numpad0: "zoom-reset",
+  KeyN: "new-window",
+  Comma: "open-settings",
 };
 for (let n = 1; n <= 9; n += 1) PRIMARY_CODES[`Digit${n}`] = `tab-${n}`;
 
@@ -45,6 +48,9 @@ const COMMAND_ACCELERATORS = {
   "focus-next": "Alt+Tab",
   "focus-previous": "Alt+Shift+Tab",
   "toggle-sidebar": "Alt+B",
+  "sets-open": "Alt+S",
+  "new-window": "CmdOrCtrl+N",
+  "open-settings": "CmdOrCtrl+,",
   "reload-pane": "CmdOrCtrl+R",
   "reload-hard": "CmdOrCtrl+Shift+R",
   "tab-new": "CmdOrCtrl+T",
@@ -78,6 +84,9 @@ function matchCommand(input, platform = process.platform) {
   }
 
   const primary = mac ? meta && !control : control && !meta;
+  // Sets 1–9: ⌘⌥ on macOS (⌘⇧3–5 are screenshots there), Ctrl+Shift elsewhere
+  // (Ctrl+Alt is AltGr on many layouts).
+  if (primary && /^Digit[1-9]$/.test(code) && (mac ? alt && !shift : shift && !alt)) return repeatable(`set-${code.slice(5)}`);
   if (mac && primary && alt && !shift && (code === "ArrowRight" || code === "ArrowLeft")) {
     return repeatable(code === "ArrowRight" ? "tab-next" : "tab-previous");
   }

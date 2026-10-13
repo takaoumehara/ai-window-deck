@@ -41,3 +41,19 @@ test("existing Option shortcuts still match", () => {
   assert.equal(matchCommand(key("KeyR", { meta: true }), "darwin"), "reload-pane");
   assert.equal(matchCommand(key("KeyA"), "darwin"), null);
 });
+
+test("sets, new deck window and settings have their own keys", () => {
+  assert.equal(matchCommand(key("Digit2", { meta: true, alt: true }), "darwin"), "set-2");
+  assert.equal(matchCommand(key("Digit2", { control: true, shift: true }), "win32"), "set-2");
+  assert.equal(matchCommand(key("Digit2", { control: true, alt: true }), "win32"), null);
+  assert.equal(matchCommand(key("Digit3", { meta: true, shift: true }), "darwin"), null);
+  assert.equal(matchCommand(key("KeyS", { alt: true }), "darwin"), "sets-open");
+  assert.equal(matchCommand(key("KeyN", { meta: true }), "darwin"), "new-window");
+  assert.equal(matchCommand(key("Comma", { control: true }), "linux"), "open-settings");
+});
+
+test("undo keys are never taken from pages", () => {
+  assert.equal(matchCommand(key("KeyZ", { meta: true }), "darwin"), null);
+  assert.equal(matchCommand(key("KeyZ", { meta: true, shift: true }), "darwin"), null);
+  assert.equal(matchCommand(key("KeyY", { control: true }), "win32"), null);
+});

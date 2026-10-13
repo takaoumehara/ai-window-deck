@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseExtensionExport, urlList } from "../src/lib/deck-data.js";
+import { parseExtensionExport, parsePastedList, urlList } from "../src/lib/deck-data.js";
 
 test("imports an extension JSON backup with the active layout's windows first", () => {
   const backup = {
@@ -45,4 +45,37 @@ test("rejects malformed JSON", () => {
 
 test("urlList trims blank lines and adds a missing scheme", () => {
   assert.deepEqual(urlList({ urls: " claude.ai \n\nhttps://chatgpt.com" }), ["https://claude.ai", "https://chatgpt.com"]);
+});
+
+test("pasted bare URLs become one window per URL, named by host", () => {
+  const { windows, named } = parsePastedList("https://www.notion.so/team\n\n- claude.ai\n2. https://github.com/a/b\n");
+  assert.equal(named, false);
+  assert.deepEqual(windows.map((w) => [w.name, w.urls, w.visible]), [
+    ["notion.so", "https://www.notion.so/team", true],
+    ["claude.ai", "https://claude.ai", true],
+    ["github.com", "https://github.com/a/b", true],
+  ]);
+  assert.equal(new Set(windows.map((w) => w.id)).size, 3);
+});
+
+test("pasted bare URLs can go into one window as tabs", () => {
+  const { windows } = parsePastedList("https://a.test/1\nhttps://b.test/2", { together: true });
+  assert.deepEqual(windows.map((w) => [w.name, w.urls]), [["a.test", "https://a.test/1\nhttps://b.test/2"]]);
+});
+
+test("a pasted list with names keeps the extension's grouping", () => {
+  const text = "Research\nhttps://example.com/a\nexample.com/b\n\nhttps://solo.test\n\nEmpty\n\nChat\nhttps://claude.ai";
+  const { windows, named } = parsePastedList(text, { together: true });
+  assert.equal(named, true);
+  assert.deepEqual(windows.map((w) => [w.name, w.urls]), [
+    ["Research", "https://example.com/a\nhttps://example.com/b"],
+    ["solo.test", "https://solo.test"],
+    ["Chat", "https://claude.ai"],
+  ]);
+});
+
+test("a pasted JSON backup is read like an imported file", () => {
+  const { windows } = parsePastedList(JSON.stringify([{ id: "w1", name: "A", urls: "https://a.test" }, { id: "w2", name: "No URLs" }]));
+  assert.deepEqual(windows.map((w) => w.id), ["w1"]);
+  assert.deepEqual(parsePastedList("   ").windows, []);
 });
