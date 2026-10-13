@@ -41,3 +41,29 @@ export const Field = React.forwardRef(function Field({ className = "", ...props 
     />
   );
 });
+
+// Pill radio group for a sheet (paper ground).
+export function Choices({ label, options, value, onChange, columns = "grid-cols-3" }) {
+  return (
+    <div role="radiogroup" aria-label={label} className={`grid gap-1.5 ${columns}`}>
+      {options.map((option) => {
+        const selected = option.value === value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            lang={option.lang}
+            onClick={() => onChange(option.value)}
+            className={`cie-tap ink-swap h-9 truncate rounded-pill border border-solid px-3 text-sm ${
+              selected ? "border-ink bg-ink text-paper" : "border-ink/20 hover:border-ink/60"
+            }`}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}

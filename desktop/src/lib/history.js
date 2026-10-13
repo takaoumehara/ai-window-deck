@@ -89,7 +89,8 @@ export function storePatchBetween(prev, next) {
   });
   const remove = prev.filter((set) => !ids.has(set.id)).map((set) => set.id);
   const order = next.map((set) => set.id);
-  const reordered = prev.filter((set) => ids.has(set.id)).map((set) => set.id).join("\n") !== order.filter((id) => before.has(id)).join("\n");
+  const added = next.some((set) => !before.has(set.id));
+  const reordered = added || prev.filter((set) => ids.has(set.id)).map((set) => set.id).join("\n") !== order.filter((id) => before.has(id)).join("\n");
   if (!put.length && !remove.length && !reordered) return null;
   return { put, remove, ...(reordered ? { order } : {}) };
 }

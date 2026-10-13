@@ -97,6 +97,8 @@ test("store patches carry only what changed, layout included", () => {
   assert.equal(storePatchBetween([a, b], [a, b]), null);
   assert.deepEqual(storePatchBetween([a, b], [{ ...a, mode: "fill" }, b]), { put: [{ ...a, mode: "fill" }], remove: [] });
   const c = set("c", []);
-  assert.deepEqual(storePatchBetween([a, b], [b, c]), { put: [c], remove: ["a"] });
+  assert.deepEqual(storePatchBetween([a, b], [b, c]), { put: [c], remove: ["a"], order: ["b", "c"] });
+  assert.deepEqual(storePatchBetween([a, b], [a, c, b]).order, ["a", "c", "b"]);
+  assert.deepEqual(storePatchBetween([a, b], [b]), { put: [], remove: ["a"] });
   assert.deepEqual(storePatchBetween([a, b], [b, a]), { put: [], remove: [], order: ["b", "a"] });
 });

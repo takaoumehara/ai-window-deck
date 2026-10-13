@@ -1,16 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Sheet } from "@desktop/components/ui/Sheet";
-import { Button, Field } from "@desktop/components/ui/controls";
+import { Button, Choices, Field } from "@desktop/components/ui/controls";
 import { hostLabel, parsePastedList, urlList } from "@desktop/lib/deck-data";
-
-function Choice({ name, value, checked, onChange, children }) {
-  return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm">
-      <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} className="h-3.5 w-3.5 accent-[var(--cie-ink)]" />
-      {children}
-    </label>
-  );
-}
 
 // Paste a plain list of URLs or the extension's window list, check the
 // preview, then add the windows to this set or to a new one.
@@ -57,23 +48,28 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
         </div>
 
         {!named && urlCount > 1 && (
-          <fieldset className="flex flex-col gap-2">
-            <legend className="sr-only">{t("pastePreview")}</legend>
-            <Choice name={`${fieldId}-group`} value="split" checked={!together} onChange={() => setTogether(false)}>{t("pasteSplit")}</Choice>
-            <Choice name={`${fieldId}-group`} value="together" checked={together} onChange={() => setTogether(true)}>{t("pasteTogether")}</Choice>
-          </fieldset>
+          <Choices
+            label={t("pasteLabel")}
+            columns="grid-cols-2"
+            options={[{ value: "split", label: t("pasteSplit") }, { value: "together", label: t("pasteTogether") }]}
+            value={together ? "together" : "split"}
+            onChange={(value) => setTogether(value === "together")}
+          />
         )}
 
-        <fieldset className="flex flex-col gap-2">
-          <legend className="cie-mono mb-2 text-paper-mute">{t("pasteDestination")}</legend>
-          <Choice name={`${fieldId}-dest`} value="current" checked={destination === "current"} onChange={setDestination}>
-            {t("pasteToCurrent", { name: currentSetName })}
-          </Choice>
-          <Choice name={`${fieldId}-dest`} value="new" checked={destination === "new"} onChange={setDestination}>{t("pasteToNew")}</Choice>
+        <div className="flex flex-col gap-2">
+          <span className="cie-mono text-paper-mute">{t("pasteDestination")}</span>
+          <Choices
+            label={t("pasteDestination")}
+            columns="grid-cols-2"
+            options={[{ value: "current", label: t("pasteToCurrent", { name: currentSetName }) }, { value: "new", label: t("pasteToNew") }]}
+            value={destination}
+            onChange={setDestination}
+          />
           {destination === "new" && (
             <Field value={setName} onChange={(event) => setSetName(event.target.value)} aria-label={t("pasteNewSetName")} placeholder={t("pasteNewSetName")} />
           )}
-        </fieldset>
+        </div>
 
         <section className="flex flex-col gap-2" aria-live="polite">
           <h3 className="cie-mono text-paper-mute">{t("pastePreview")}</h3>

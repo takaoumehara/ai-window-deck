@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronRight, ClipboardPaste, Keyboard, Layers, Upload } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
-import { Button } from "@desktop/components/ui/controls";
+import { Button, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
 
 function Section({ title, children }) {
@@ -10,31 +10,6 @@ function Section({ title, children }) {
       <h3 className="register uppercase text-paper-mute">{title}</h3>
       {children}
     </section>
-  );
-}
-
-function Choices({ label, options, value, onChange, columns = "grid-cols-3" }) {
-  return (
-    <div role="radiogroup" aria-label={label} className={`grid gap-1.5 ${columns}`}>
-      {options.map((option) => {
-        const selected = option.value === value;
-        return (
-          <button
-            key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            lang={option.lang}
-            onClick={() => onChange(option.value)}
-            className={`cie-tap ink-swap h-9 truncate rounded-pill border border-solid px-3 text-sm ${
-              selected ? "border-ink bg-ink text-paper" : "border-ink/20 hover:border-ink/60"
-            }`}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
   );
 }
 
