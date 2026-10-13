@@ -104,16 +104,17 @@ function runCommand(target, command) {
 function interceptCommands(webContents, target) {
   webContents.on("before-input-event", (event, input) => {
     // On Windows and Linux, releasing Alt opens the menu bar, which then eats the
-    // next shortcut. After an Alt shortcut, that release is swallowed.
+    // next shortcut. After an Alt combination (ours or the deck's own, like
+    // Alt+↑/↓ to reorder), that release is swallowed.
     if (!isMac && input.type === "keyUp" && input.key === "Alt" && target.swallowAltUp) {
       target.swallowAltUp = false;
       event.preventDefault();
       return;
     }
+    if (input.type === "keyDown" && input.alt && input.key !== "Alt") target.swallowAltUp = true;
     const command = matchCommand(input);
     if (!command) return;
     event.preventDefault();
-    if (input.alt) target.swallowAltUp = true;
     runCommand(target, command);
   });
 }
