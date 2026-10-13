@@ -140,7 +140,27 @@ function createTabView(target, paneId, url) {
     return { action: "deny" };
   });
 
-  contents.on("focus", () => send("pane:focused", { paneId }));
+  // A new view takes keyboard focus when its first page loads. Unless the deck
+  // asked for this view, focus goes back to where it was (so ⌘Z after an undo
+  // that brought a pane back still reaches the deck).
+  const focusedBefore = target.focused;
+  let settling = true;
+  const settle = () => setTimeout(() => {
+    settling = false;
+  }, FOCUS_SETTLE_MS);
+  contents.on("input-event", (_event, input) => {
+    if (input.type === "mouseDown") view.focusRequested = true;
+  });
+  contents.once("did-stop-loading", settle);
+  contents.once("did-fail-load", settle);
+  contents.on("focus", () => {
+    if (settling && !view.focusRequested && focusedBefore && !focusedBefore.isDestroyed() && focusedBefore !== contents) {
+      setTimeout(() => !focusedBefore.isDestroyed() && focusedBefore.focus(), 0);
+      return;
+    }
+    target.focused = contents;
+    send("pane:focused", { paneId });
+  });
   // Tabs shift position when one is closed, so the index is looked up per report.
   const report = () => {
     const tabIndex = tabIndexOf(target, paneId, view);
@@ -159,8 +179,15 @@ function createTabView(target, paneId, url) {
   };
   view.report = report;
   contents.on("page-favicon-updated", (_event, icons) => {
-    view.favicon = icons.find((icon) => /^(https?|data):/i.test(icon)) || null;
+    const icon = icons.find((candidate) => /^(https?|data):/i.test(candidate)) || null;
+    view.favicon = icon;
     report();
+    if (!icon || icon.startsWith("data:")) return;
+    faviconData(icon).then((data) => {
+      if (!data || view.favicon !== icon) return;
+      view.favicon = data;
+      report();
+    });
   });
   contents.on("page-title-updated", report);
   contents.on("did-start-loading", report);
@@ -178,6 +205,38 @@ function createTabView(target, paneId, url) {
   contents.loadURL(url).catch(() => {});
   target.win.contentView.addChildView(view);
   return view;
+}
+
+// The shell can't always load a page's icon itself (sites behind bot checks
+// refuse a request without the page's cookies), so it is fetched on the pages'
+// session and handed over as a data URL.
+const FAVICON_MAX_BYTES = 256 * 1024;
+const faviconCache = new Map();
+function faviconData(url) {
+  if (!faviconCache.has(url)) {
+    faviconCache.set(url, (async () => {
+      try {
+        const response = await session.fromPartition(PARTITION).fetch(url);
+        const type = response.headers.get("content-type") || "";
+        if (!response.ok || !type.startsWith("image/")) return null;
+        const bytes = Buffer.from(await response.arrayBuffer());
+        return bytes.length > FAVICON_MAX_BYTES ? null : `data:${type};base64,${bytes.toString("base64")}`;
+      } catch {
+        return null;
+      }
+    })());
+  }
+  return faviconCache.get(url);
+}
+
+const FOCUS_SETTLE_MS = 400;
+
+function focusView(target, paneId) {
+  const pane = target?.panes.get(paneId);
+  const view = pane?.views.get(pane.activeTab);
+  if (!view || view.webContents.isDestroyed()) return;
+  view.focusRequested = true;
+  view.webContents.focus();
 }
 
 function destroyView(target, view) {
@@ -387,7 +446,7 @@ function createShellWindow({ setId = null, frame = { ...DEFAULT_SIZE } } = {}) {
       backgroundThrottling: false,
     },
   });
-  const target = { win, id: win.webContents.id, setId, panes: new Map(), overlayOpen: false, transitioning: false };
+  const target = { win, id: win.webContents.id, setId, panes: new Map(), overlayOpen: false, transitioning: false, focused: null };
   shells.set(target.id, target);
   lastFocusedShell = target;
   notifyOpenSets();
@@ -399,6 +458,9 @@ function createShellWindow({ setId = null, frame = { ...DEFAULT_SIZE } } = {}) {
   });
   win.on("focus", () => {
     lastFocusedShell = target;
+  });
+  win.webContents.on("focus", () => {
+    target.focused = win.webContents;
   });
   win.on("resize", scheduleSaveStates);
   win.on("move", scheduleSaveStates);
@@ -534,7 +596,7 @@ ipcMain.on("pane:mouse-nav", (event, direction) => {
   else if (direction === "forward" && history.canGoForward()) history.goForward();
 });
 ipcMain.on("shell:focus", (event) => event.sender.focus());
-ipcMain.on("pane:focus", (event, paneId) => activeContents(shellOf(event.sender), paneId)?.focus());
+ipcMain.on("pane:focus", (event, paneId) => focusView(shellOf(event.sender), paneId));
 ipcMain.on("pane:navigate", (event, { paneId, action, url }) => {
   const target = shellOf(event.sender);
   const contents = activeContents(target, paneId);
@@ -575,6 +637,8 @@ ipcMain.handle("backup:import", async (event) => {
   return { name: path.basename(file), text: await fs.readFile(file, "utf8") };
 });
 
+// Lets a development copy run beside the installed app, with its own data.
+if (process.env.DECK_USER_DATA) app.setPath("userData", process.env.DECK_USER_DATA);
 const isPrimaryInstance = app.requestSingleInstanceLock();
 if (!isPrimaryInstance) app.quit();
 

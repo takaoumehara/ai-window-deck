@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, ClipboardPaste } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
 import { Button, Field } from "@desktop/components/ui/controls";
 
-export function WindowEditor({ t, open, item, onClose, onSave }) {
+export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
   const fieldId = React.useId();
   const [name, setName] = useState("");
   const [rows, setRows] = useState([""]);
@@ -26,6 +26,19 @@ export function WindowEditor({ t, open, item, onClose, onSave }) {
   return (
     <Sheet open={open} onClose={onClose} title={item ? t("editWindow") : t("addWindow")} closeLabel={t("close")}>
       <form onSubmit={submit} className="flex flex-col gap-5">
+        {!item && onPasteList && (
+          <button
+            type="button"
+            onClick={onPasteList}
+            className="cie-tap flex items-center gap-3 rounded-block border border-dashed border-ink/30 px-3 py-2.5 text-left transition-colors duration-fast hover:border-ink/70"
+          >
+            <ClipboardPaste className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="flex flex-col gap-0.5">
+              <span className="text-sm">{t("pasteInstead")}</span>
+              <span className="text-xs text-paper-mute">{t("pasteListHint")}</span>
+            </span>
+          </button>
+        )}
         <div className="flex flex-col gap-2">
           <label htmlFor={`${fieldId}-name`} className="cie-mono text-paper-mute">{t("nameLabel")}</label>
           <Field id={`${fieldId}-name`} value={name} onChange={(event) => setName(event.target.value)} placeholder="Claude" />
