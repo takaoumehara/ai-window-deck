@@ -1,0 +1,87 @@
+/* cie-ds 0.4 — copied from https://cie-ds.vercel.app/base.css (internal use, see https://cie-ds.vercel.app/guide.md). Update by re-copying; don't edit. */
+/* ─────────────────────────────────────────────────────────────
+   CIE base — light reset + typography matching the company site.
+   Optional. Drop in after tokens.css.
+   ───────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--cie-ink);
+}
+
+body {
+  background: var(--cie-ink);
+  color: var(--cie-paper);
+  font-family: var(--cie-sans);
+  font-weight: 400;
+  font-size: var(--cie-text-body);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+:lang(ja) body {
+  letter-spacing: 0;
+  line-height: 1.8;
+  font-feature-settings: 'palt' 1;
+  line-break: strict;
+  overflow-wrap: anywhere;
+}
+
+::selection { background: var(--cie-paper); color: var(--cie-ink); }
+
+a { color: inherit; text-decoration: none; }
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+.cie-mono,
+.mono {
+  font-family: var(--cie-mono);
+  font-size: var(--cie-text-mono);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cie-measure { max-width: var(--cie-measure); }
+
+.cie-display {
+  font-size: var(--cie-text-title);
+  font-weight: 300;
+  font-variation-settings: 'wght' 300;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+}
+:lang(ja) .cie-display {
+  letter-spacing: 0;
+  line-height: 1.35;
+  font-weight: 400;
+}
+
+.cie-on-paper {
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+}
+.cie-on-paper ::selection { background: var(--cie-ink); color: var(--cie-paper); }
+
+.cie-muted { color: var(--cie-ink-mute); }
+.cie-on-paper .cie-muted { color: var(--cie-paper-mute); }
+
+.cie-block {
+  border-radius: var(--cie-r);
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+}
+.cie-block--ink {
+  background: var(--cie-ink);
+  color: var(--cie-paper);
+  box-shadow: inset 0 0 0 1px var(--cie-stroke);
+}

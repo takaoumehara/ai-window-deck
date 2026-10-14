@@ -1,0 +1,48 @@
+/* cie-ds 0.4 — copied from https://cie-ds.vercel.app/scrollbar.css (internal use, see https://cie-ds.vercel.app/guide.md). Update by re-copying; don't edit. */
+/* ─────────────────────────────────────────────────────────────
+   CIE scrollbar — thin, simple, elegant. Not chunky.
+   Drop in after tokens.css. Optional.
+   ───────────────────────────────────────────────────────────── */
+
+html {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--cie-sb-thumb, var(--cie-ink-mute)) var(--cie-sb-track, transparent);
+}
+
+/* WebKit / Chromium / Safari */
+*::-webkit-scrollbar {
+  width: var(--cie-sb-size, 5px);
+  height: var(--cie-sb-size, 5px);
+}
+*::-webkit-scrollbar-track {
+  background: var(--cie-sb-track, transparent);
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--cie-sb-thumb, var(--cie-ink-mute));
+  border-radius: var(--cie-r-pill, 9999px);
+  border: 1px solid transparent; /* keeps thumb visually thinner */
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--cie-paper, #f3f2ee);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* On paper panels, invert thumb so it stays readable */
+.cie-on-paper,
+.cie-block:not(.cie-block--ink) {
+  scrollbar-color: var(--cie-paper-mute) transparent;
+}
+.cie-on-paper::-webkit-scrollbar-thumb,
+.cie-block:not(.cie-block--ink)::-webkit-scrollbar-thumb {
+  background: var(--cie-paper-mute);
+  background-clip: padding-box;
+}
+.cie-on-paper::-webkit-scrollbar-thumb:hover,
+.cie-block:not(.cie-block--ink)::-webkit-scrollbar-thumb:hover {
+  background: var(--cie-ink);
+  background-clip: padding-box;
+}

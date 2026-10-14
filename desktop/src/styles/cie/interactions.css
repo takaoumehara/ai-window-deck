@@ -1,0 +1,451 @@
+/* cie-ds 0.4 — copied from https://cie-ds.vercel.app/interactions.css (internal use, see https://cie-ds.vercel.app/guide.md). Update by re-copying; don't edit. */
+/* ─────────────────────────────────────────────────────────────
+   CIE interactions — snappy hover / press / cycle / invert.
+   Refined, subtle. No bounce. Honour reduced-motion below.
+   ───────────────────────────────────────────────────────────── */
+
+/* Tap — scale settle on press (buttons, cards) */
+.cie-tap {
+  transition: transform var(--cie-t-snap) var(--cie-ease-out);
+  transform-origin: center;
+  touch-action: manipulation;
+}
+.cie-tap:active {
+  transform: scale(var(--cie-press-scale, 0.97));
+}
+
+/* Lift — 1px rise on hover (cards, chips) */
+.cie-lift {
+  transition: transform var(--cie-t-fast) var(--cie-ease-out);
+}
+@media (hover: hover) {
+  .cie-lift:hover { transform: translateY(-2px); }
+}
+.cie-lift:active { transform: translateY(0); }
+
+/* Invert — ink↔paper swap on hover/focus (blocks) */
+.cie-invert {
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+  transition:
+    background-color var(--cie-t-cell) var(--cie-ease-expo),
+    color var(--cie-t-fast) var(--cie-ease-out),
+    border-color var(--cie-t-cell) var(--cie-ease-expo);
+}
+@media (hover: hover) {
+  .cie-invert:hover,
+  .cie-invert:focus-visible {
+    background: var(--cie-ink);
+    color: var(--cie-paper);
+    box-shadow: inset 0 0 0 1px var(--cie-stroke);
+  }
+}
+.cie-invert--ink {
+  background: var(--cie-ink);
+  color: var(--cie-paper);
+  box-shadow: inset 0 0 0 1px var(--cie-stroke);
+}
+@media (hover: hover) {
+  .cie-invert--ink:hover,
+  .cie-invert--ink:focus-visible {
+    background: var(--cie-paper);
+    color: var(--cie-ink);
+    box-shadow: none;
+  }
+}
+
+/* Flash — brief opacity dip on click (confirm feel) */
+.cie-flash {
+  transition: opacity var(--cie-t-snap) var(--cie-ease-out);
+}
+.cie-flash.is-flash {
+  opacity: 0.55;
+}
+
+/* Cycle control — click-to-cycle states (JS drives [data-cie-cycle-i]) */
+[data-cie-cycle] {
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--cie-t-cell) var(--cie-ease-expo),
+    color var(--cie-t-fast) var(--cie-ease-out),
+    transform var(--cie-t-snap) var(--cie-ease-out),
+    border-color var(--cie-t-cell) var(--cie-ease-expo);
+}
+[data-cie-cycle]:active {
+  transform: scale(var(--cie-press-scale, 0.97));
+}
+[data-cie-cycle] .cie-cycle-label {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Soft chip / pill for cycle demos */
+.cie-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cie-s-8);
+  padding: 0.55em 1em;
+  border-radius: var(--cie-r-pill);
+  background: var(--cie-btn);
+  font-family: var(--cie-mono);
+  font-size: var(--cie-text-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition:
+    background-color 150ms linear,
+    transform var(--cie-t-snap) var(--cie-ease-out);
+}
+@media (hover: hover) {
+  .cie-chip:hover { background: var(--cie-btn-hover); }
+}
+.cie-chip:active { transform: scale(0.96); }
+.cie-chip[aria-pressed="true"] {
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+}
+
+/* Sound section — visual frame when audio is armed */
+[data-cie-sound] {
+  position: relative;
+}
+[data-cie-sound].is-sound-on {
+  /* Strong visual feedback when sound is armed */
+  box-shadow: inset 0 0 0 2px var(--cie-stroke), 0 0 0 2px rgba(243, 242, 238, 0.2);
+}
+[data-cie-sound-toggle] {
+  /* inherits .cie-chip / .cie-pbtn when those classes are present */
+}
+[data-cie-sound-toggle][aria-pressed="true"] {
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+}
+/* Geometric speaker mark — two bars; muted = single thin bar */
+[data-cie-sound-toggle] .cie-sound-icon {
+  display: inline-block;
+  width: 12px;
+  height: 10px;
+  position: relative;
+  flex-shrink: 0;
+}
+[data-cie-sound-toggle] .cie-sound-icon::before,
+[data-cie-sound-toggle] .cie-sound-icon::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 1px;
+}
+[data-cie-sound-toggle] .cie-sound-icon::before {
+  left: 0; top: 2px;
+  width: 4px; height: 6px;
+}
+[data-cie-sound-toggle] .cie-sound-icon::after {
+  left: 6px; top: 1px;
+  width: 2px; height: 8px;
+  opacity: 0.35;
+}
+[data-cie-sound-toggle][aria-pressed="true"] .cie-sound-icon::after {
+  opacity: 1;
+  left: 6px;
+  width: 2px;
+  box-shadow: 3px 0 0 currentColor;
+}
+
+/* Interactive hit targets that request sfx from section audio */
+[data-cie-sfx] {
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cie-tap,
+  .cie-lift,
+  .cie-invert,
+  .cie-flash,
+  [data-cie-cycle],
+  .cie-chip {
+    transition: none !important;
+  }
+  .cie-tap:active,
+  .cie-lift:hover,
+  .cie-lift:active,
+  [data-cie-cycle]:active,
+  .cie-chip:active {
+    transform: none !important;
+  }
+}
+
+/* ── Focus ring (explicit utility; base already covers a:focus-visible) ─ */
+.cie-focus:focus-visible,
+.cie-focus-ring:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.cie-focus--ink:focus-visible {
+  outline-color: var(--cie-paper);
+}
+.cie-focus--paper:focus-visible {
+  outline-color: var(--cie-ink);
+}
+
+/* ── Page enter hint (route / first paint) ──────────────────── */
+@keyframes cie-page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+.cie-page-enter {
+  animation: cie-page-enter var(--cie-t-rise) var(--cie-ease-out) both;
+}
+
+/* ── List item stagger (enter when parent .is-open / .is-in) ─ */
+.cie-list-stagger > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--cie-t-rise) var(--cie-ease-out),
+    transform var(--cie-t-rise) var(--cie-ease-out);
+  transition-delay: calc(var(--i, 0) * var(--cie-t-stagger));
+}
+.cie-list-stagger.is-in > *,
+.cie-list-stagger.is-open > *,
+[data-cie-expand-panel].is-open .cie-list-stagger > *,
+.cie-sheet.is-open .cie-list-stagger > * {
+  opacity: 1;
+  transform: none;
+}
+.cie-list-stagger > *:nth-child(1) { --i: 0; }
+.cie-list-stagger > *:nth-child(2) { --i: 1; }
+.cie-list-stagger > *:nth-child(3) { --i: 2; }
+.cie-list-stagger > *:nth-child(4) { --i: 3; }
+.cie-list-stagger > *:nth-child(5) { --i: 4; }
+.cie-list-stagger > *:nth-child(6) { --i: 5; }
+.cie-list-stagger > *:nth-child(7) { --i: 6; }
+.cie-list-stagger > *:nth-child(8) { --i: 7; }
+
+/* ── Click-to-expand / morph (signature: cell → panel) ───────
+   にゅるっと but fast: --cie-t-move (~360ms) + expo / optional snap. */
+.cie-expand-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--cie-s-12);
+  position: relative;
+}
+.cie-expand-cell {
+  border-radius: var(--cie-r);
+  padding: var(--cie-s-20) var(--cie-s-16);
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+  text-align: left;
+  min-height: 96px;
+  display: grid;
+  gap: 6px;
+  align-content: space-between;
+  cursor: pointer;
+  transition:
+    transform var(--cie-t-snap) var(--cie-ease-out),
+    background-color var(--cie-t-cell) var(--cie-ease-expo),
+    color var(--cie-t-fast) var(--cie-ease-out),
+    opacity var(--cie-t-fast) linear;
+  touch-action: manipulation;
+}
+.cie-expand-cell--ink {
+  background: var(--cie-ink);
+  color: var(--cie-paper);
+  box-shadow: inset 0 0 0 1px var(--cie-stroke);
+}
+@media (hover: hover) {
+  .cie-expand-cell:hover { transform: translateY(-2px); }
+}
+.cie-expand-cell:active {
+  transform: scale(var(--cie-press-scale, 0.97));
+}
+.cie-expand-cell:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.cie-expand-board.is-expanded .cie-expand-cell:not(.is-source) {
+  opacity: 0.28;
+  pointer-events: none;
+  transform: scale(0.96);
+}
+.cie-expand-board.is-expanded .cie-expand-cell.is-source {
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-cie-expand-panel],
+.cie-expand-panel {
+  position: fixed;
+  z-index: 40;
+  display: none;
+  overflow: hidden;
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+  border-radius: var(--cie-r);
+  will-change: top, left, width, height, border-radius;
+}
+[data-cie-expand-panel].cie-expand-panel--ink,
+.cie-expand-panel--ink {
+  background: var(--cie-ink);
+  color: var(--cie-paper);
+  box-shadow: inset 0 0 0 1px var(--cie-stroke);
+}
+[data-cie-expand-panel].is-shown,
+.cie-expand-panel.is-shown { display: block; }
+[data-cie-expand-panel].is-moving,
+.cie-expand-panel.is-moving {
+  transition:
+    top var(--cie-t-move) var(--cie-ease-expo),
+    left var(--cie-t-move) var(--cie-ease-expo),
+    width var(--cie-t-move) var(--cie-ease-expo),
+    height var(--cie-t-move) var(--cie-ease-expo),
+    border-radius var(--cie-t-move) var(--cie-ease-expo);
+}
+/* Optional subtle overshoot on expand (add .cie-expand--snap on panel or board) */
+[data-cie-expand-panel].cie-expand--snap.is-moving,
+.cie-expand-panel.cie-expand--snap.is-moving,
+.cie-expand-board.cie-expand--snap ~ [data-cie-expand-panel].is-moving {
+  transition-timing-function: var(--cie-ease-snap);
+}
+[data-cie-expand-panel].is-open,
+.cie-expand-panel.is-open {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--cie-r-page);
+  transition: border-radius var(--cie-t-fast) var(--cie-ease-out);
+}
+[data-cie-expand-panel].is-fading,
+.cie-expand-panel.is-fading {
+  transition: opacity var(--cie-t-fast) linear;
+  opacity: 0;
+}
+.cie-expand-panel__bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--cie-s-16);
+  pointer-events: none;
+}
+.cie-expand-panel__bar .cie-pbtn { pointer-events: auto; }
+.cie-expand-panel__in {
+  padding: var(--cie-s-8) var(--cie-s-28) var(--cie-s-40);
+  max-width: 720px;
+}
+.cie-expand-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: rgba(11, 11, 11, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cie-t-fast) linear;
+}
+.cie-expand-backdrop.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Sheet / modal (snappy open·close) ─────────────────────── */
+.cie-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(11, 11, 11, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cie-t-sheet) linear;
+}
+.cie-sheet-backdrop.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cie-sheet {
+  position: fixed;
+  z-index: 55;
+  left: 50%;
+  bottom: 0;
+  width: min(100%, 520px);
+  max-height: min(88dvh, 720px);
+  transform: translate(-50%, 108%);
+  border-radius: var(--cie-r-page) var(--cie-r-page) 0 0;
+  background: var(--cie-paper);
+  color: var(--cie-ink);
+  padding: var(--cie-s-24);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  visibility: hidden;
+  transition:
+    transform var(--cie-t-sheet) var(--cie-ease-expo),
+    visibility 0ms linear var(--cie-t-sheet);
+}
+.cie-sheet--center {
+  top: 50%;
+  bottom: auto;
+  width: min(calc(100% - 2 * var(--cie-edge)), 440px);
+  max-height: min(84dvh, 640px);
+  border-radius: var(--cie-r-page);
+  transform: translate(-50%, -46%) scale(0.94);
+  opacity: 0;
+  transition:
+    transform var(--cie-t-sheet) var(--cie-ease-snap),
+    opacity var(--cie-t-sheet) var(--cie-ease-out),
+    visibility 0ms linear var(--cie-t-sheet);
+}
+.cie-sheet.is-open {
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition:
+    transform var(--cie-t-sheet) var(--cie-ease-expo),
+    visibility 0ms linear 0ms;
+}
+.cie-sheet--center.is-open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition:
+    transform var(--cie-t-sheet) var(--cie-ease-snap),
+    opacity var(--cie-t-sheet) var(--cie-ease-out),
+    visibility 0ms linear 0ms;
+}
+.cie-sheet__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--cie-s-16);
+  margin-bottom: var(--cie-s-16);
+}
+.cie-sheet__title {
+  font-size: var(--cie-text-cell);
+  font-weight: 300;
+  font-variation-settings: 'wght' 300;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cie-page-enter { animation: none !important; }
+  .cie-list-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .cie-expand-cell,
+  [data-cie-expand-panel],
+  .cie-expand-panel,
+  .cie-expand-backdrop,
+  .cie-sheet,
+  .cie-sheet-backdrop {
+    transition: none !important;
+  }
+  .cie-expand-board.is-expanded .cie-expand-cell:not(.is-source) {
+    opacity: 0.28;
+    transform: none;
+  }
+  .cie-sheet {
+    transform: translate(-50%, 0);
+  }
+  .cie-sheet--center {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  .cie-sheet:not(.is-open) { visibility: hidden; opacity: 0; }
+}
