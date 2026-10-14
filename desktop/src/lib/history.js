@@ -1,12 +1,13 @@
 // Undo / redo for deck edits. History holds patches, not snapshots: each entry
 // names only the sets one edit touched, with their content before and after.
 // Undoing in one deck window therefore never rolls back what another window
-// did to its own set in the meantime. Layout (mode, focus, active tabs) is not
-// content, so focusing or spotlighting a pane never lands in history.
+// did to its own set in the meantime. View state (mode, focus, active tabs) is
+// not content, so focusing or spotlighting a pane never lands in history; the
+// arrangement (`layout`: grid shape and dragged sizes) is.
 
 export const EMPTY_HISTORY = Object.freeze({ past: [], future: [] });
 
-const content = (set) => (set ? JSON.stringify([set.name ?? "", set.windows ?? []]) : null);
+const content = (set) => (set ? JSON.stringify([set.name ?? "", set.windows ?? [], set.layout ?? null]) : null);
 
 /** The patch that turns `prev` into `next`, or null when no content changed. */
 export function diffSets(prev, next) {
@@ -30,9 +31,16 @@ export function record(history, entry) {
   return { past: [...history.past, entry], future: [] };
 }
 
+/** Replaces the newest entry, so a burst of small steps (arrow-key resizing) undoes as one. */
+export function replaceLast(history, entry) {
+  if (!history.past.length) return record(history, entry);
+  const past = history.past.slice(0, -1);
+  return { past: entry ? [...past, entry] : past, future: [] };
+}
+
 /**
- * Applies one side of a patch. A set that still exists keeps its own layout
- * and takes only the recorded name and windows; a set that is gone comes back
+ * Applies one side of a patch. A set that still exists keeps its own view
+ * state and takes only the recorded name, windows and arrangement; a set that is gone comes back
  * whole. `locked` ids (sets open in another deck window) are never removed.
  */
 export function applyPatch(sets, entry, side, locked = new Set()) {
@@ -43,7 +51,8 @@ export function applyPatch(sets, entry, side, locked = new Set()) {
     if (!target) {
       if (index >= 0 && !locked.has(id)) list.splice(index, 1);
     } else if (index >= 0) {
-      list[index] = { ...list[index], name: target.name, windows: target.windows };
+      const { layout, ...rest } = list[index];
+      list[index] = { ...rest, name: target.name, windows: target.windows, ...(target.layout ? { layout: target.layout } : {}) };
     } else {
       list.push(target);
     }
