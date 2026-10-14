@@ -254,4 +254,7 @@ export default {
   tipsDone: "わかりました",
   tipsFooter: "このヒントは {palette} の一覧、またはメニューの「ヘルプ → Tips」からいつでも開けます。",
   tipsLanguageHint: "あとから設定でも変えられます。",
+  resizeBetween: "{a} と {b} の境界（ドラッグ・矢印キーでサイズ変更、ダブルクリックで均等に）",
+  resizeSpotlight: "{name} とサイドの境界（ドラッグ・矢印キーでサイズ変更、ダブルクリックで元に戻す）",
+  sizesResetMsg: "サイズを均等に戻しました",
 };

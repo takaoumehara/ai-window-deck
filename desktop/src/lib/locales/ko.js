@@ -254,4 +254,7 @@ export default {
   tipsDone: "알겠습니다",
   tipsFooter: "{palette} 목록이나 메뉴의 ‘도움말 → Tips’에서 언제든 다시 열 수 있습니다.",
   tipsLanguageHint: "나중에 설정에서도 바꿀 수 있습니다.",
+  resizeBetween: "{a}와(과) {b} 사이 구분선 (드래그하거나 화살표 키로 크기 조절, 더블클릭하면 균등하게)",
+  resizeSpotlight: "{name}와(과) 사이드 창 사이 구분선 (드래그하거나 화살표 키로 크기 조절, 더블클릭하면 초기화)",
+  sizesResetMsg: "크기를 균등하게 되돌렸습니다",
 };

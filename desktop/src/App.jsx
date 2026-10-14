@@ -11,11 +11,13 @@ import { SetsSheet } from "@desktop/components/SetsSheet";
 import { ShortcutsSheet } from "@desktop/components/ShortcutsSheet";
 import { CommandPalette } from "@desktop/components/CommandPalette";
 import { TipsSheet } from "@desktop/components/TipsSheet";
+import { ResizeHandles } from "@desktop/components/ResizeHandles";
 import { deck, isElectron } from "@desktop/lib/bridge";
 import { ASK_AI_URLS, featureGuide, paletteEntries } from "@desktop/lib/palette";
 import commandCatalog from "../electron/commands.json";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
-import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
+import { EMPTY_HISTORY, diffSets, record, redo, replaceLast, storePatchBetween, undo } from "@desktop/lib/history";
+import { arrangementHandles, resetLayout, resizeLayout, shapeStructure, spotlightHandle } from "@desktop/lib/arrangement";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
 import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
@@ -28,6 +30,10 @@ const SNAPSHOT_TIMEOUT_MS = 160;
 // Snapshots stay under the live pages briefly so a page that repaints late never shows a gap.
 const SNAPSHOT_LINGER_MS = 160;
 const COMPACT_PANE_PX = 380;
+// A divider drag stops before a pane gets narrower or shorter than this.
+const MIN_PANE_PX = 180;
+// Arrow-key steps on one divider within this long undo as a single step.
+const RESIZE_BURST_MS = 1200;
 const DEFAULT_DEVICE = "iphone-17-pro";
 const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
@@ -232,9 +238,17 @@ export function App() {
   }, [deckPanes, devices]);
   const focusIndex = Math.max(0, deckOrder.indexOf(focusedId));
   const effectiveFocusId = deckOrder[focusIndex] ?? null;
+  const arrangement = currentSet?.layout ?? null;
+  // While a divider is dragged, the panes (frozen to snapshots) follow the
+  // draft; the native views take the committed layout once, on release.
+  const [draftArrangement, setDraftArrangement] = useState(null);
   const rects = useMemo(
-    () => computePaneRects({ count: deckPanes.length, mode, focusIndex }),
-    [deckPanes.length, mode, focusIndex]
+    () => computePaneRects({ count: deckPanes.length, mode, focusIndex, layout: arrangement }),
+    [deckPanes.length, mode, focusIndex, arrangement]
+  );
+  const shownRects = useMemo(
+    () => (draftArrangement ? computePaneRects({ count: deckPanes.length, mode, focusIndex, layout: draftArrangement }) : rects),
+    [draftArrangement, rects, deckPanes.length, mode, focusIndex]
   );
 
   const noticeTimer = useRef(0);
@@ -273,12 +287,12 @@ export function App() {
   // reappear once, already at their final size.
   const snapshotCache = useRef({});
   const transitionState = useRef({ ready: null, timer: 0 });
-  const transition = useCallback(async (apply) => {
-    if (!isElectron || prefersReducedMotion()) {
-      apply();
-      return;
-    }
+  // Snapshots on, live views hidden; resolves once the views are gone. Also
+  // used while dragging a divider or a pane, so the drag moves still frames.
+  const freezeDeck = useCallback(async () => {
+    if (!isElectron) return;
     const state = transitionState.current;
+    window.clearTimeout(state.timer);
     if (!state.ready) {
       state.ready = (async () => {
         const capture = deck.snapshot().catch(() => ({})).then(async (taken) => {
@@ -299,7 +313,11 @@ export function App() {
       })();
     }
     await state.ready;
-    apply();
+  }, []);
+
+  const thawDeck = useCallback((delay) => {
+    if (!isElectron) return;
+    const state = transitionState.current;
     window.clearTimeout(state.timer);
     state.timer = window.setTimeout(() => {
       state.ready = null;
@@ -308,14 +326,24 @@ export function App() {
       window.setTimeout(() => {
         if (!transitionState.current.ready) setSnapshots({});
       }, SNAPSHOT_LINGER_MS);
-    }, LAYOUT_ANIMATION_MS);
+    }, delay);
   }, [measure]);
+
+  const transition = useCallback(async (apply) => {
+    if (!isElectron || prefersReducedMotion()) {
+      apply();
+      return;
+    }
+    await freezeDeck();
+    apply();
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [freezeDeck, thawDeck]);
 
   // Commands can arrive faster than a transition starts; each one builds on
   // the layout the previous one asked for, not the one still on screen.
   const layoutRef = useRef(null);
   const pendingLayout = useRef(null);
-  layoutRef.current = { mode, focusId: effectiveFocusId, sidebarExpanded, order: deckOrder };
+  layoutRef.current = { mode, focusId: effectiveFocusId, sidebarExpanded, order: deckOrder, layout: arrangement };
   const changeLayout = useCallback((next) => {
     const current = pendingLayout.current ?? layoutRef.current;
     const target = { ...current, ...next };
@@ -323,7 +351,11 @@ export function App() {
     const indexOf = (id) => Math.max(0, current.order.indexOf(id));
     const moves =
       target.sidebarExpanded !== current.sidebarExpanded ||
-      layoutMoves(count, { mode: current.mode, focusIndex: indexOf(current.focusId) }, { mode: target.mode, focusIndex: indexOf(target.focusId) });
+      layoutMoves(
+        count,
+        { mode: current.mode, focusIndex: indexOf(current.focusId), layout: current.layout },
+        { mode: target.mode, focusIndex: indexOf(target.focusId), layout: current.layout }
+      );
     const apply = () => {
       if (target.mode !== current.mode) setMode(target.mode);
       if (target.focusId !== current.focusId) setFocusedId(target.focusId);
@@ -338,6 +370,73 @@ export function App() {
     transition(apply);
   }, [transition]);
   const currentLayout = () => pendingLayout.current ?? layoutRef.current;
+
+  const resizeHandles = useMemo(() => {
+    const layout = draftArrangement ?? arrangement;
+    if (deckPanes.length < 2 || mode === "fill") return [];
+    if (mode === "spotlight") return [spotlightHandle(layout, focusIndex)];
+    return arrangementHandles(shapeStructure(layout?.shape, deckPanes.length), layout?.sizes);
+  }, [draftArrangement, arrangement, deckPanes.length, mode, focusIndex]);
+
+  const minShare = useCallback((axis) => {
+    const extent = axis === "x" ? deckSize.width : deckSize.height;
+    return extent ? MIN_PANE_PX / extent : 0.1;
+  }, [deckSize]);
+
+  // Arrangement edits are content: they go through commitSets and undo. A run
+  // of arrow-key steps on one divider folds into one history entry.
+  const resizeBurst = useRef(null);
+  const commitArrangement = useCallback((layout, { burstKey } = {}) => {
+    const id = setIdRef.current;
+    const prev = setsRef.current;
+    const next = prev.map((set) => (set.id === id ? { ...set, layout } : set));
+    const burst = resizeBurst.current;
+    const now = performance.now();
+    const own = (list) => list.filter((set) => set.id === id);
+    if (burstKey && burst?.key === burstKey && burst.setId === id && now - burst.time < RESIZE_BURST_MS && historyRef.current.past.at(-1) === burst.entry) {
+      commitSets(next, { record: false });
+      historyRef.current = replaceLast(historyRef.current, diffSets(own(burst.before), own(next)));
+      resizeBurst.current = { ...burst, time: now, entry: historyRef.current.past.at(-1) };
+      return;
+    }
+    commitSets(next);
+    resizeBurst.current = burstKey ? { key: burstKey, setId: id, time: now, before: prev, entry: historyRef.current.past.at(-1) } : null;
+  }, [commitSets]);
+
+  const [resizing, setResizing] = useState(false);
+  const resizeDrag = useRef(null);
+  const startResize = useCallback((handle) => {
+    resizeDrag.current = { start: arrangement, draft: null };
+    setResizing(true);
+    freezeDeck();
+  }, [arrangement, freezeDeck]);
+  const moveResize = useCallback((handle, delta) => {
+    const drag = resizeDrag.current;
+    if (!drag) return;
+    drag.draft = resizeLayout(drag.start, deckPanes.length, handle.id, delta, minShare(handle.axis));
+    setDraftArrangement(drag.draft);
+  }, [deckPanes.length, minShare]);
+  const endResize = useCallback((handle, cancelled) => {
+    const drag = resizeDrag.current;
+    resizeDrag.current = null;
+    if (drag?.draft && !cancelled) commitArrangement(drag.draft);
+    setDraftArrangement(null);
+    setResizing(false);
+    thawDeck(80);
+  }, [commitArrangement, thawDeck]);
+  const stepResize = useCallback((handle, delta) => {
+    commitArrangement(resizeLayout(arrangement, deckPanes.length, handle.id, delta, minShare(handle.axis)), { burstKey: handle.id });
+  }, [arrangement, deckPanes.length, minShare, commitArrangement]);
+  const resetSizes = useCallback((handle) => {
+    const next = resetLayout(arrangement, handle?.id ?? "grid");
+    if (next === arrangement || JSON.stringify(next) === JSON.stringify(arrangement)) return;
+    transition(() => commitArrangement(next));
+    showNotice(t("sizesResetMsg"), { undoable: true });
+  }, [arrangement, commitArrangement, transition, showNotice, t]);
+  const handleLabel = useCallback((handle) => {
+    const name = (index) => deckPanes[index]?.name || t("untitledWindow");
+    return handle.id === "spotlight" ? t("resizeSpotlight", { name: name(handle.before) }) : t("resizeBetween", { a: name(handle.before), b: name(handle.after) });
+  }, [deckPanes, t]);
 
   const overlayOpen = editor.open || sheet !== null;
   const overlayRef = useRef(overlayOpen);
@@ -1086,7 +1185,7 @@ export function App() {
         />
 
         <main className="relative min-w-0 flex-1 pb-2 pl-1 pr-2">
-          <div ref={deckRef} className="relative h-full w-full">
+          <div ref={deckRef} className={`relative h-full w-full ${resizing ? "is-resizing" : ""}`}>
             {deckPanes.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-2 rounded-block border border-dashed border-paper/20 text-center">
                 <p className="deck-display text-2xl">{t("emptyDeck")}</p>
@@ -1094,7 +1193,7 @@ export function App() {
               </div>
             ) : (
               deckPanes.map((item, index) => {
-                const rect = rects[index];
+                const rect = shownRects[index];
                 const paneField = field?.paneId === item.id ? field : null;
                 return (
                   <Pane
@@ -1147,6 +1246,16 @@ export function App() {
                 );
               })
             )}
+            <ResizeHandles
+              handles={resizeHandles}
+              size={deckSize}
+              label={handleLabel}
+              onStart={startResize}
+              onMove={moveResize}
+              onEnd={endResize}
+              onStep={stepResize}
+              onReset={resetSizes}
+            />
           </div>
         </main>
       </div>

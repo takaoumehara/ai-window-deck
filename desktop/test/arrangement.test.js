@@ -9,9 +9,12 @@ import {
   equalSizes,
   insertAround,
   normalizeLayout,
+  resetLayout,
   resizeArrangement,
+  resizeLayout,
   resolveSizes,
   shapeStructure,
+  spotlightHandle,
   swapItems,
 } from "../src/lib/arrangement.js";
 import { computePaneRects, layoutMoves } from "../src/lib/pane-layout.js";
@@ -124,4 +127,17 @@ test("drop zones: the middle swaps, the outer quarters insert", () => {
   const tall = { left: 0, top: 0, width: 200, height: 400 };
   assert.equal(dropZone(tall, 100, 20), "top");
   assert.equal(dropZone(tall, 100, 380), "bottom");
+});
+
+test("resizeLayout moves grid sizes or the spotlight share; resetLayout undoes one of them", () => {
+  const grid = resizeLayout(null, 2, "item:0:0", 0.1, 0.1);
+  assert.equal(grid.shape, "auto");
+  assert.ok(close(arrangedRects(shapeStructure("auto", 2), grid.sizes)[0].w, 0.6));
+  const both = resizeLayout(grid, 2, "spotlight", -0.12);
+  assert.ok(close(both.spotlight, 0.6));
+  assert.ok(close(spotlightHandle(both, 1).position, 0.6));
+  assert.deepEqual(spotlightHandle(both, 1).after, 0);
+  assert.deepEqual(resetLayout(both, "spotlight"), { shape: "auto", sizes: grid.sizes });
+  assert.deepEqual(resetLayout(both, "item:0:0"), { shape: "auto", spotlight: both.spotlight });
+  assert.equal(resetLayout(null, "track:0"), null);
 });

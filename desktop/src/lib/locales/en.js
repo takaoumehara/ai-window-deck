@@ -254,4 +254,7 @@ export default {
   tipsDone: "Got it",
   tipsFooter: "Open these again from the {palette} list or Help → Tips.",
   tipsLanguageHint: "You can change this later in Settings.",
+  resizeBetween: "Divider between {a} and {b} (drag or use arrow keys to resize, double-click to make equal)",
+  resizeSpotlight: "Divider between {name} and the side panes (drag or use arrow keys to resize, double-click to reset)",
+  sizesResetMsg: "Sizes made equal",
 };

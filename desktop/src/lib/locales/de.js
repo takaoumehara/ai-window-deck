@@ -254,4 +254,7 @@ export default {
   tipsDone: "Verstanden",
   tipsFooter: "Öffne die Tipps erneut über die {palette}-Liste oder Hilfe → Tips.",
   tipsLanguageHint: "Du kannst das später in den Einstellungen ändern.",
+  resizeBetween: "Trenner zwischen {a} und {b} (ziehen oder Pfeiltasten zum Ändern der Größe, Doppelklick für gleich groß)",
+  resizeSpotlight: "Trenner zwischen {name} und den Seitenbereichen (ziehen oder Pfeiltasten, Doppelklick zum Zurücksetzen)",
+  sizesResetMsg: "Größen angeglichen",
 };

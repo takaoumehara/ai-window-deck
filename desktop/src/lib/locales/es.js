@@ -254,4 +254,7 @@ export default {
   tipsDone: "Entendido",
   tipsFooter: "Vuelve a abrir estos consejos desde la lista de {palette} o Ayuda → Tips.",
   tipsLanguageHint: "Puedes cambiarlo luego en Ajustes.",
+  resizeBetween: "Divisor entre {a} y {b} (arrastra o usa las flechas para cambiar el tamaño; doble clic para igualar)",
+  resizeSpotlight: "Divisor entre {name} y los paneles laterales (arrastra o usa las flechas; doble clic para restablecer)",
+  sizesResetMsg: "Tamaños igualados",
 };

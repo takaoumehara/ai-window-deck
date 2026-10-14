@@ -254,4 +254,7 @@ export default {
   tipsDone: "知道了",
   tipsFooter: "可随时从 {palette} 列表或菜单“帮助 → Tips”再次打开。",
   tipsLanguageHint: "之后也可以在设置中更改。",
+  resizeBetween: "{a} 与 {b} 之间的分隔线（拖动或用方向键调整大小，双击恢复均等）",
+  resizeSpotlight: "{name} 与侧边窗格之间的分隔线（拖动或用方向键调整大小，双击还原）",
+  sizesResetMsg: "已恢复为均等大小",
 };

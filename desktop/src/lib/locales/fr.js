@@ -254,4 +254,7 @@ export default {
   tipsDone: "Compris",
   tipsFooter: "Rouvrez ces astuces depuis la liste {palette} ou Aide → Tips.",
   tipsLanguageHint: "Vous pourrez le changer plus tard dans Réglages.",
+  resizeBetween: "Séparateur entre {a} et {b} (glisser ou flèches pour redimensionner, double-clic pour égaliser)",
+  resizeSpotlight: "Séparateur entre {name} et les volets latéraux (glisser ou flèches pour redimensionner, double-clic pour réinitialiser)",
+  sizesResetMsg: "Tailles égalisées",
 };

@@ -254,4 +254,7 @@ export default {
   tipsDone: "Entendi",
   tipsFooter: "Abra estas dicas de novo pela lista de {palette} ou Ajuda → Tips.",
   tipsLanguageHint: "Você pode mudar isso depois em Configurações.",
+  resizeBetween: "Divisor entre {a} e {b} (arraste ou use as setas para redimensionar; clique duplo para igualar)",
+  resizeSpotlight: "Divisor entre {name} e os painéis laterais (arraste ou use as setas; clique duplo para redefinir)",
+  sizesResetMsg: "Tamanhos igualados",
 };

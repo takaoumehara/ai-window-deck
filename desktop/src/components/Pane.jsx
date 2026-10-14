@@ -238,7 +238,7 @@ export const Pane = React.forwardRef(function Pane(
 
   return (
     <div
-      className={`deck-pane absolute p-px ${rect.visible ? "" : "is-away"}`}
+      className={`deck-pane absolute p-[2px] ${rect.visible ? "" : "is-away"}`}
       // Above the panes Fill pushes away, so leaving Fill uncovers them instead of
       // fading them in on top of the page.
       style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%`, zIndex: focused ? 1 : 0 }}

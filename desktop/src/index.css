@@ -252,6 +252,58 @@ html, body, #root {
   padding-bottom: calc(var(--deck-pane-r) - 1px);
 }
 
+/* Dividers between panes. Pages are native views above the DOM, so only the
+   gap between two pages (pane padding + borders, 6px) can be hovered; the
+   hit area is 10px and the pages cover what spills past the gap. */
+.deck-divider {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  outline: none;
+}
+.deck-divider.is-vertical {
+  width: 10px;
+  margin-left: -5px;
+  cursor: col-resize;
+}
+.deck-divider.is-horizontal {
+  height: 10px;
+  margin-top: -5px;
+  cursor: row-resize;
+}
+.deck-divider__line {
+  border-radius: var(--cie-r-pill);
+  background: var(--cie-paper);
+  opacity: 0;
+  transition: opacity var(--cie-t-fast) var(--cie-ease-out);
+}
+.deck-divider.is-vertical .deck-divider__line {
+  width: 2px;
+  height: calc(100% - 16px);
+}
+.deck-divider.is-horizontal .deck-divider__line {
+  height: 2px;
+  width: calc(100% - 16px);
+}
+.deck-divider:hover .deck-divider__line {
+  opacity: 0.55;
+}
+.deck-divider:active .deck-divider__line,
+.deck-divider:focus-visible .deck-divider__line {
+  opacity: 1;
+}
+.deck-divider:focus-visible .deck-divider__line {
+  outline: 2px solid var(--cie-paper);
+  outline-offset: 2px;
+}
+
+/* While a divider is dragged the panes track the pointer directly. */
+.is-resizing .deck-pane {
+  transition: none;
+}
+
 /* Panes follow the block → page expand: --cie-t-move on expo. */
 .deck-pane {
   transition:

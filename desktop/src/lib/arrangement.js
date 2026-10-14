@@ -170,6 +170,28 @@ export function clampSpotlight(share) {
   return Number.isFinite(share) ? Math.min(high, Math.max(low, share)) : SPOTLIGHT_SHARE;
 }
 
+/** The spotlight divider: between the large pane and the side rail. */
+export function spotlightHandle(layout, focusIndex) {
+  const share = layout?.spotlight == null ? SPOTLIGHT_SHARE : clampSpotlight(layout.spotlight);
+  return { id: "spotlight", axis: "x", position: share, start: 0, length: 1, before: focusIndex, after: focusIndex === 0 ? 1 : 0, value: share };
+}
+
+/** A set's layout after moving `handleId` by `delta` from `layout`. */
+export function resizeLayout(layout, count, handleId, delta, min) {
+  const base = { ...(layout ?? {}), shape: normalizeShape(layout?.shape) };
+  if (handleId === "spotlight") {
+    return { ...base, spotlight: clampSpotlight((base.spotlight ?? SPOTLIGHT_SHARE) + delta) };
+  }
+  return { ...base, sizes: resizeArrangement(shapeStructure(base.shape, count), base.sizes, handleId, delta, min) };
+}
+
+/** Equal sizes again: the grid's, or the spotlight share. */
+export function resetLayout(layout, handleId) {
+  if (!layout) return layout;
+  const { sizes, spotlight, ...rest } = layout;
+  return handleId === "spotlight" ? { ...rest, ...(sizes ? { sizes } : {}) } : { ...rest, ...(spotlight != null ? { spotlight } : {}) };
+}
+
 export function normalizeLayout(layout) {
   if (!layout || typeof layout !== "object") return null;
   const next = { shape: normalizeShape(layout.shape) };
