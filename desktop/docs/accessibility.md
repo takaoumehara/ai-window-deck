@@ -1,6 +1,6 @@
 # Accessibility — AI Window Deck for Mac (desktop app)
 
-> Last updated: 2026-10-14 · Version 0.2.6  
+> Last updated: 2026-10-14 · Version 0.2.7  
 > Target: WCAG 2.2 AA · Platform: Electron 38 desktop app (Chromium renderer), macOS first, Windows/Linux builds share the code  
 > Surfaces: top bar, sidebar (expanded and rail), panes (title bar, tabs, address/find field, mobile preview stage), dividers between panes, pane drag and drop, sheets (Settings, Shortcuts, Sets, Edit window, Paste a list, Find a feature palette, Tips, Arrange panes), Google sign-in window  
 > Out of scope: the third-party web pages shown inside panes (ChatGPT, Claude, Gmail…). Their accessibility belongs to those sites.
