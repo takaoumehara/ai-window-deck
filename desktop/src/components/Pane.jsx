@@ -4,7 +4,7 @@ import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
 import { dropTarget } from "@desktop/lib/tabs";
 
-function HeaderButton({ label, onClick, disabled, pressed, focused, children }) {
+function HeaderButton({ label, shortcut, onClick, disabled, pressed, focused, children }) {
   const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
   return (
     <button
@@ -16,7 +16,7 @@ function HeaderButton({ label, onClick, disabled, pressed, focused, children }) 
       disabled={disabled}
       aria-label={label}
       aria-pressed={pressed}
-      title={label}
+      title={shortcut ? `${label} (${shortcut})` : label}
       className={`cie-tap grid h-6 w-6 place-items-center rounded-pill transition-colors duration-fast disabled:pointer-events-none disabled:opacity-40 ${
         pressed ? pressedTone : "hover:bg-btn"
       }`}
@@ -88,7 +88,7 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
 
 export const Pane = React.forwardRef(function Pane(
   {
-    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices,
+    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
     onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onMoveTab,
   },
@@ -294,13 +294,13 @@ export const Pane = React.forwardRef(function Pane(
             )}
             {!compact && (
               <>
-                <HeaderButton label={t("back")} disabled={!tabMeta?.canGoBack} onClick={() => onNavigate("back")}>
+                <HeaderButton label={t("back")} shortcut={keys?.back} disabled={!tabMeta?.canGoBack} onClick={() => onNavigate("back")}>
                   <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
                 </HeaderButton>
-                <HeaderButton label={t("forward")} disabled={!tabMeta?.canGoForward} onClick={() => onNavigate("forward")}>
+                <HeaderButton label={t("forward")} shortcut={keys?.forward} disabled={!tabMeta?.canGoForward} onClick={() => onNavigate("forward")}>
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </HeaderButton>
-                <HeaderButton label={t("reload")} onClick={() => onNavigate("reload")}>
+                <HeaderButton label={t("reload")} shortcut={keys?.reload} onClick={() => onNavigate("reload")}>
                   <RotateCw className="h-3.5 w-3.5" aria-hidden="true" />
                 </HeaderButton>
               </>

@@ -690,6 +690,16 @@ function createShellWindow({ setId = null, frame = { ...DEFAULT_SIZE } } = {}) {
   });
   win.on("resize", scheduleSaveStates);
   win.on("move", scheduleSaveStates);
+  // Mouse back / forward buttons on Windows and Linux, and three-finger swipes on macOS.
+  win.on("app-command", (_event, name) => {
+    if (name !== "browser-backward" && name !== "browser-forward") return;
+    if (!claimPageNav()) return;
+    runCommand(target, name === "browser-backward" ? "page-back" : "page-forward");
+  });
+  win.on("swipe", (_event, direction) => {
+    if (direction === "right") runCommand(target, "page-back");
+    else if (direction === "left") runCommand(target, "page-forward");
+  });
   win.on("close", () => {
     // The last deck window to close is remembered, so it comes back next launch.
     if (!quitting) saveStates();
@@ -823,11 +833,23 @@ ipcMain.handle("panes:snapshot", async (event) => {
   }));
   return shots;
 });
-ipcMain.on("pane:mouse-nav", (event, direction) => {
-  const history = event.sender.navigationHistory;
+// One press of a mouse's back button can reach both the page under it
+// (pane-preload.cjs) and its window (app-command); only the first counts.
+let lastPageNav = 0;
+function claimPageNav() {
+  const now = Date.now();
+  if (now - lastPageNav < 300) return false;
+  lastPageNav = now;
+  return true;
+}
+
+function stepPage(contents, direction) {
+  const history = contents.navigationHistory;
   if (direction === "back" && history.canGoBack()) history.goBack();
   else if (direction === "forward" && history.canGoForward()) history.goForward();
-});
+}
+ipcMain.on("pane:mouse-nav", (event, direction) => claimPageNav() && stepPage(event.sender, direction));
+ipcMain.on("pane:key-nav", (event, direction) => stepPage(event.sender, direction));
 ipcMain.on("shell:focus", (event) => event.sender.focus());
 ipcMain.on("pane:focus", (event, paneId) => focusView(shellOf(event.sender), paneId));
 ipcMain.on("pane:navigate", (event, { paneId, action, url }) => {

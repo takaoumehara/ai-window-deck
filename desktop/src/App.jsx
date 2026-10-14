@@ -89,6 +89,12 @@ export function App() {
   const primaryLabel = useCallback((key) => (isMac ? `⌘${key}` : `Ctrl+${key}`), [isMac]);
   const setKeyLabel = useCallback((n) => (isMac ? `⌘⌥${n}` : `Ctrl+Shift+${n}`), [isMac]);
   const setLabel = useCallback((set) => set?.name || t("defaultSetName"), [t]);
+  const paneKeys = useMemo(() => ({
+    back: isMac ? "⌘[ / ⌘←" : "Ctrl+[ / Alt+←",
+    forward: isMac ? "⌘] / ⌘→" : "Ctrl+] / Alt+→",
+    reload: primaryLabel("R"),
+    device: primaryLabel(isMac ? "⇧M" : "Shift+M"),
+  }), [isMac, primaryLabel]);
 
   const currentSet = sets.find((set) => set.id === setId) ?? null;
   const windows = useMemo(() => currentSet?.windows ?? [], [currentSet]);
@@ -660,6 +666,12 @@ export function App() {
       if (event.defaultPrevented || event.altKey) return;
       const primary = isMac ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
       if (!primary) return;
+      if (isMac && !event.shiftKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        if (overlayRef.current || isEditable(event.target)) return;
+        event.preventDefault();
+        runCommandRef.current(event.key === "ArrowLeft" ? "page-back" : "page-forward");
+        return;
+      }
       const undoKey = event.code === "KeyZ" && !event.shiftKey;
       const redoKey = (event.code === "KeyZ" && event.shiftKey) || (!isMac && event.code === "KeyY" && !event.shiftKey);
       if ((!undoKey && !redoKey) || overlayRef.current || isEditable(event.target)) return;
@@ -983,6 +995,7 @@ export function App() {
                     found={found[item.id]}
                     device={paneDevices[item.id]}
                     devices={devices}
+                    keys={paneKeys}
                     onToggleDevice={() => toggleDevice(item.id)}
                     onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
                     onRotateDevice={() => setPaneDevice(item.id, (current) => ({ ...current, landscape: !current?.landscape }))}
