@@ -17,7 +17,7 @@ import commandCatalog from "../electron/commands.json";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
-import { addressToUrl, indexAfterMove, insertTab, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
+import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
 
@@ -351,6 +351,27 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [overlayOpen]);
 
+  // Tab titles, favicons and history follow their URL whenever a window's list
+  // changes (editor, tab drag, close, undo), before the pages are told.
+  const tabUrls = useRef({});
+  useLayoutEffect(() => {
+    const previous = tabUrls.current;
+    const changed = [];
+    tabUrls.current = {};
+    for (const item of windows) {
+      const urls = urlList(item);
+      tabUrls.current[item.id] = urls;
+      const before = previous[item.id];
+      if (before && before.join("\n") !== urls.join("\n")) changed.push([item.id, before, urls]);
+    }
+    if (!changed.length) return;
+    setPaneMeta((meta) => {
+      let next = meta;
+      for (const [id, before, after] of changed) if (next[id]) next = { ...next, [id]: metaByUrl(next[id], before, after) };
+      return next;
+    });
+  }, [windows]);
+
   useLayoutEffect(() => {
     if (!loaded) return;
     const bounds = new Map(measure().map(({ id, bounds: box }) => [id, box]));
@@ -535,16 +556,6 @@ export function App() {
     setWindows((list) => list.map((entry) => (entry.id === paneId ? removeTab(entry, tabIndex) : entry)));
     const active = activeTabs[paneId] ?? 0;
     setActiveTab(paneId, tabIndex < active ? active - 1 : Math.min(active, urls.length - 2));
-    const shift = (byTab = {}) => {
-      const next = {};
-      for (const [key, value] of Object.entries(byTab)) {
-        const index = Number(key);
-        if (index < tabIndex) next[index] = value;
-        else if (index > tabIndex) next[index - 1] = value;
-      }
-      return next;
-    };
-    setPaneMeta((meta) => (meta[paneId] ? { ...meta, [paneId]: shift(meta[paneId]) } : meta));
   }, [windows, activeTabs, paneMeta, setActiveTab, setVisible, setWindows, showNotice, t, primaryLabel]);
 
   // The tab strip and the window editor reorder the same urls list, so undo
@@ -555,12 +566,6 @@ export function App() {
     if (!item || from === to || from < 0 || to < 0 || from >= count || to >= count) return;
     setWindows((list) => list.map((entry) => (entry.id === paneId ? moveTab(entry, from, to) : entry)));
     setActiveTab(paneId, indexAfterMove(activeTabs[paneId] ?? 0, from, to));
-    setPaneMeta((meta) => {
-      if (!meta[paneId]) return meta;
-      const next = {};
-      for (const [key, value] of Object.entries(meta[paneId])) next[indexAfterMove(Number(key), from, to)] = value;
-      return { ...meta, [paneId]: next };
-    });
   }, [windows, activeTabs, setActiveTab, setWindows]);
 
   const reopenTab = useCallback(() => {
@@ -695,7 +700,19 @@ export function App() {
     }
     historyRef.current = result.history;
     keepShellFocusUntil.current = performance.now() + LAYOUT_ANIMATION_MS;
+    const windowsBefore = setsRef.current.find((set) => set.id === setIdRef.current)?.windows ?? [];
     commitSets(result.sets, { record: false });
+    const windowsAfter = result.sets.find((set) => set.id === setIdRef.current)?.windows ?? [];
+    setActiveTabs((tabs) => {
+      let next = tabs;
+      for (const item of windowsAfter) {
+        const before = urlList(windowsBefore.find((candidate) => candidate.id === item.id));
+        const shown = before[tabs[item.id] ?? 0];
+        const at = urlList(item).indexOf(shown);
+        if (at >= 0 && at !== (tabs[item.id] ?? 0)) next = { ...next, [item.id]: at };
+      }
+      return next;
+    });
     const touched = Object.keys(result.entry.sets);
     const elsewhere = touched.length === 1 && touched[0] !== setIdRef.current ? result.sets.find((set) => set.id === touched[0]) : null;
     showNotice(direction === "redo" ? t("redoneMsg") : elsewhere ? t("undoneInSetMsg", { name: setLabel(elsewhere) }) : t("undoneMsg"));
@@ -915,9 +932,11 @@ export function App() {
 
   const saveWindow = ({ id, name, urls }) => {
     if (id) {
-      const shown = urlList(windows.find((item) => item.id === id))[activeTabs[id] ?? 0];
+      const before = urlList(windows.find((item) => item.id === id));
+      const after = urlList({ urls });
+      const shown = before[activeTabs[id] ?? 0];
       setWindows((list) => list.map((item) => (item.id === id ? { ...item, name, urls } : item)));
-      const at = urlList({ urls }).indexOf(shown);
+      const at = after.indexOf(shown);
       if (at >= 0 && at !== (activeTabs[id] ?? 0)) setActiveTab(id, at);
     } else {
       const created = { id: `win-${Date.now()}`, name, urls, visible: true };

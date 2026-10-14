@@ -47,6 +47,25 @@ export function indexAfterMove(index, from, to) {
   return index;
 }
 
+/**
+ * Per-tab state ({ [index]: value }) after a window's URL list changed from
+ * `before` to `after`: each URL keeps its own, duplicates pair up in order
+ * (as the main process reuses live pages), and removed URLs drop theirs.
+ */
+export function metaByUrl(byTab, before, after) {
+  const pool = new Map();
+  before.forEach((url, index) => {
+    if (!pool.has(url)) pool.set(url, []);
+    pool.get(url).push(index);
+  });
+  const next = {};
+  after.forEach((url, index) => {
+    const from = pool.get(url)?.shift();
+    if (from !== undefined && byTab[from] !== undefined) next[index] = byTab[from];
+  });
+  return next;
+}
+
 export function moveTab(item, from, to) {
   const urls = urlList(item);
   const next = moveItem(urls, from, to);

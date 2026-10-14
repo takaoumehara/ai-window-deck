@@ -59,3 +59,12 @@ test("reordering URLs: move, drop gaps, and indexes that follow the move", async
   assert.equal(moveTab(item, 2, 0).urls, "https://moime.app\nhttps://claude.ai\nhttps://vercel.com");
   assert.equal(moveTab(item, 1, 1), item);
 });
+
+test("tab state follows its URL when a window's list changes", async () => {
+  const { metaByUrl } = await import("../src/lib/tabs.js");
+  const meta = { 0: "mdn", 2: "wiki" };
+  assert.deepEqual(metaByUrl(meta, ["mdn", "gh", "wiki"], ["gh", "mdn", "wiki"]), { 1: "mdn", 2: "wiki" });
+  assert.deepEqual(metaByUrl(meta, ["mdn", "gh", "wiki"], ["mdn", "wiki"]), { 0: "mdn", 1: "wiki" });
+  assert.deepEqual(metaByUrl({ 0: "a", 1: "b" }, ["x", "x"], ["y", "x", "x"]), { 1: "a", 2: "b" });
+  assert.deepEqual(metaByUrl({ 0: "a" }, ["x"], ["z"]), {});
+});
