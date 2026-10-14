@@ -8,7 +8,10 @@ and a click or a shortcut enlarges it or puts it back.
 - **Spotlight**: the focused pane takes most of the window; the rest stay live on a side rail.
 - **Fill**: the focused pane covers the deck; the others keep running in the background.
 - Click a pane's title bar to spotlight it, and click it again to go back to the grid. Clicking a pane on the rail swaps it in.
-- Windows with several URLs get tabs in the pane's title bar.
+- Windows with several URLs get tabs in the pane's title bar. Drag a tab (or press `⇧←` / `⇧→` on a focused tab) to change the order; *Edit window* reorders the same list with drag handles, up/down buttons or `⌥↑` / `⌥↓`. Undo covers both.
+- **Find a feature** (`⌘K`, `F1`, or the button in the top bar) lists every action in plain words with its shortcut. Type in any of the 9 languages, in English or with everyday words ("スマホ", "iPhone", "mobile" all find the mobile preview), and Enter runs it on the focused pane. *Help → Tips* (also shown once on first launch) walks through the basics.
+- **Ask AI** (in the palette and the Help menu) opens Claude or ChatGPT in a pane with a guide to the app and your question filled in. No API key ships with the app; the chat uses your own account in that pane.
+- **Back / forward**: `⌘[` / `⌘]`, `⌘←` / `⌘→` outside text fields, the mouse's back/forward buttons and two-finger swipes act on the focused pane. The buttons in the title bar are enabled only when there is somewhere to go.
 - **Sets** are named decks, each with its own windows, layout and focus. Switch them from the sidebar (or the collapsed rail), and manage them in *Deck → Sets…*.
 - **New Deck Window** (`⌘N`) opens another window showing a set that isn't open yet, for example on a second display. A set is open in one window at a time; picking one that is open elsewhere brings that window forward. Open windows and their sets come back on relaunch.
 - **Paste a List** takes URLs (one window per URL, named by host, or all of them as tabs of one window) or the extension's window list (a name line, URL lines, a blank line between windows). It shows what will be created first, and can put the result in a new set.
@@ -16,11 +19,12 @@ and a click or a shortcut enlarges it or puts it back.
 - **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, and set changes) without a limit. Layout changes aren't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
-- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in works inside the panes (see *How it works*).
-- **Mobile preview**: the phone button in a pane's title bar shows the page as a phone or tablet does, in a device frame. The bar under the title switches the model, rotates it, and adds another pane with the same page on the next device, so several devices sit side by side. Settings picks the device the button starts with. Each pane remembers its device, and undo covers it.
+- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to Google…* starts it directly.
+- **Mobile preview**: the phone button in a pane's title bar shows the page as a phone or tablet does, in a device frame. The bar under the title switches the model, rotates it, and adds another pane with the same page on the next device, so several devices sit side by side. Each window keeps its own device and orientation, also while the preview is off, and undo covers them. Settings only picks the first device for a window that has never been previewed; changing it never touches existing windows. `⌘⇧M` toggles the preview on the focused pane.
 
 | Shortcut | Action |
 | --- | --- |
+| `⌘K` / `Ctrl+K`, `F1` | Find a feature (command palette) |
 | `⌥X` / `Alt+X` | Spotlight the focused pane / back to grid |
 | `⌥Z` / `Alt+Z` (also `⌥A`) | Back to grid |
 | `⌥Q` / `Alt+Q` | Fill the deck / back to grid |
@@ -28,6 +32,8 @@ and a click or a shortcut enlarges it or puts it back.
 | `⌥]` / `⌥[` | Next / previous pane |
 | `⌥B` | Show / hide the sidebar |
 | `⌘R` / `Ctrl+R` | Reload the focused pane |
+| `⌘[` / `⌘]`, `⌘←` / `⌘→` (`Ctrl+[` / `Ctrl+]`, `Alt+←` / `Alt+→`) | Back / forward in the focused pane |
+| `⌘⇧M` / `Ctrl+Shift+M` | Mobile preview on / off for the focused pane |
 | `⌥S` / `Alt+S` | Sets |
 | `⌘⌥1`–`⌘⌥9` / `Ctrl+Shift+1`–`9` | Switch to set 1–9 |
 | `⌘N` / `Ctrl+N` | New deck window |
@@ -45,7 +51,8 @@ Styled with [cie-ds](https://cie-ds.vercel.app) ([DESIGN.md](https://cie-ds.verc
 - Two inks only: ink `#0b0b0b` ground and paper `#f3f2ee`, plus alpha of the same inks. The focused pane and card swap to paper.
 - `src/styles/cie/` holds verbatim copies of the cie-ds CSS (tokens, base, scrollbar, motion, interactions). Re-copy them to update.
 - `tailwind.config.js` replaces Tailwind's palette, shadows and radii with cie tokens, so `bg-zinc-900`, `shadow-lg` and similar classes don't exist.
-- Outfit, DM Mono and Zen Kaku Gothic New (used for `:lang(ja)`) are bundled with `@fontsource`, so the app looks the same offline.
+- Inter (UI text), Outfit (display headings), DM Mono and Zen Kaku Gothic New (used for `:lang(ja)`) are bundled with `@fontsource`, all SIL OFL, so the app looks the same offline.
+- Contrast is measured, not estimated: `node scripts/contrast.mjs` composites every pair from the live tokens and `--check` fails below WCAG AA (text 4.5:1, boundaries and focus 3:1). The cie token copies stay verbatim; the app's overrides (muted inks, `--deck-edge-alpha`, `--deck-placeholder-alpha`) live in `src/index.css`. See [docs/accessibility.md](docs/accessibility.md).
 - Motion uses `--cie-t-move` / `--cie-ease-expo` for pane layout changes and cie-ds sheets for dialogs. Everything stops under `prefers-reduced-motion`.
 
 ## Run
@@ -132,7 +139,16 @@ applies an update signed by the same Developer ID, so every release must be sign
   from `electron/devices.json`, and the app also fetches `site/devices.json` from the website
   (twice a day, cached) so new models arrive without an app update; the newer list wins.
 - Shortcuts are matched in `before-input-event` on every web contents (`electron/commands.cjs`),
-  by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way.
+  by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way. `electron/commands.json`
+  lists every command once (group, accelerator, label and synonym string keys); the app menu's
+  accelerators and the palette (`src/lib/palette.js`) both read it, so they can't drift apart.
+- Google sign-in: a click that leads a pane to `accounts.google.com` opens a dedicated
+  `BrowserWindow` on the same `persist:deck` partition, so the cookies it sets are the panes'
+  cookies. When Google leaves its sign-in flow, the window closes and the pane loads where Google
+  was heading. If Google answers "This browser may not be secure", the window retries once with a
+  Firefox identity and remembers what worked. A watcher on the `SID` cookie reloads other Google
+  panes after sign-in or sign-out. Signing in in Safari or Chrome can't help: their cookies live in
+  another browser's store, which the app can't read.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it
   (`electron/store.cjs`, which also migrates older files): windows send patches of the sets
   they changed, and the others get the result. Undo history (`src/lib/history.js`) lives in
