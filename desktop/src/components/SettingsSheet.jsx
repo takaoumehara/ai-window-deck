@@ -36,7 +36,18 @@ export function SettingsSheet({
   onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates,
 }) {
   return (
-    <Sheet open={open} onClose={onClose} title={t("settings")} closeLabel={t("close")}>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t("settings")}
+      closeLabel={t("close")}
+      footer={
+        <>
+          <span className="register mr-auto text-paper-mute">{t("versionLabel", { version: appVersion || "dev" })}</span>
+          <Button tone="ink" onClick={onCheckUpdates}>{t("checkUpdates")}</Button>
+        </>
+      }
+    >
       <div className="flex flex-col gap-6">
         <Section title={t("languageLabel")}>
           <Choices
@@ -89,11 +100,6 @@ export function SettingsSheet({
             <ActionRow icon={Keyboard} title={t("shortcuts")} hint={t("shortcutsHint")} onClick={onShortcuts} />
           </div>
         </Section>
-
-        <div className="flex items-center justify-between gap-6 border-t border-ink/10 pt-4">
-          <span className="register text-paper-mute">{t("versionLabel", { version: appVersion || "dev" })}</span>
-          <Button tone="ink" onClick={onCheckUpdates}>{t("checkUpdates")}</Button>
-        </div>
       </div>
     </Sheet>
   );

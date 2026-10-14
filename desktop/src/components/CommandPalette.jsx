@@ -55,29 +55,40 @@ export function CommandPalette({ t, open, onClose, entries, groups, groupLabel, 
   const optionId = (index) => `${listId}-option-${index}`;
 
   return (
-    <Sheet open={open} onClose={onClose} title={t("paletteTitle")} closeLabel={t("close")} wide>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t("paletteTitle")}
+      closeLabel={t("close")}
+      wide
+      bodyClassName="h-[min(52vh,420px)]"
+      toolbar={
+        <div className="flex flex-col gap-3">
+          <label className="deck-focus-within flex items-center gap-2 rounded-tick border border-ink-edge px-3 focus-within:border-ink">
+            <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={onKeyDown}
+              role="combobox"
+              aria-expanded="true"
+              aria-controls={listId}
+              aria-autocomplete="list"
+              aria-activedescendant={results[active] ? optionId(active) : undefined}
+              aria-label={t("paletteTitle")}
+              placeholder={t("palettePlaceholder")}
+              spellCheck={false}
+              autoComplete="off"
+              className="h-11 min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-paper-mute"
+            />
+          </label>
+          <p className="text-xs text-paper-mute">{targetName ? t("paletteTarget", { name: targetName }) : t("paletteNoPane")}</p>
+        </div>
+      }
+      footer={<p className="register mr-auto text-paper-mute" aria-hidden="true">{t("paletteHint")}</p>}
+    >
       <div className="flex flex-col gap-3">
-        <label className="deck-focus-within flex items-center gap-2 rounded-tick border border-ink-edge px-3 focus-within:border-ink">
-          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={onKeyDown}
-            role="combobox"
-            aria-expanded="true"
-            aria-controls={listId}
-            aria-autocomplete="list"
-            aria-activedescendant={results[active] ? optionId(active) : undefined}
-            aria-label={t("paletteTitle")}
-            placeholder={t("palettePlaceholder")}
-            spellCheck={false}
-            autoComplete="off"
-            className="h-11 min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-paper-mute"
-          />
-        </label>
-        <p className="text-xs text-paper-mute">{targetName ? t("paletteTarget", { name: targetName }) : t("paletteNoPane")}</p>
-
-        <ul ref={listRef} id={listId} role="listbox" aria-label={t("paletteTitle")} className="-mx-2 flex max-h-[min(52vh,420px)] flex-col overflow-y-auto">
+        <ul ref={listRef} id={listId} role="listbox" aria-label={t("paletteTitle")} className="-mx-2 flex flex-col">
           {results.map((entry, index) => {
             const selected = index === active;
             const header = !searching && (index === 0 || results[index - 1].group !== entry.group);
@@ -122,7 +133,6 @@ export function CommandPalette({ t, open, onClose, entries, groups, groupLabel, 
           </div>
         )}
 
-        <p className="register border-t border-ink/10 pt-3 text-paper-mute" aria-hidden="true">{t("paletteHint")}</p>
         <span className="sr-only" aria-live="polite">{searching ? t("paletteResults", { count: results.length }) : ""}</span>
       </div>
     </Sheet>

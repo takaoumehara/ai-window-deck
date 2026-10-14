@@ -65,6 +65,55 @@
 .cie-sheet--center.deck-sheet-wide {
   width: min(calc(100% - 2 * var(--cie-edge)), 560px);
 }
+.cie-sheet--center.deck-sheet-xwide {
+  width: min(calc(100% - 2 * var(--cie-edge)), 780px);
+}
+
+/* The panel clips to its radius and never scrolls itself: a scrollbar on the
+   rounded panel runs over the corner curve (and macOS draws it past the edge).
+   Only __body scrolls, inset 8px from the sides and kept off the bottom curve
+   (by its margin, or by the footer), so the track always sits on flat paper. */
+.cie-sheet.deck-sheet {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  max-height: min(calc(100dvh - 2 * var(--cie-edge)), 720px);
+}
+.deck-sheet__head {
+  flex-shrink: 0;
+  padding: var(--cie-s-24) var(--cie-s-24) 0;
+}
+.deck-sheet__toolbar {
+  flex-shrink: 0;
+  padding: 0 var(--cie-s-24) var(--cie-s-12, 12px);
+}
+.deck-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 8px;
+  padding: 2px 16px var(--cie-s-16);
+}
+.deck-sheet__body.is-last {
+  margin-bottom: calc(var(--cie-r-page) - var(--cie-s-16) + 8px);
+}
+.deck-sheet__foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: var(--cie-s-16) var(--cie-s-24) var(--cie-s-24);
+  border-top: 1px solid rgb(var(--cie-ink-rgb) / 0.1);
+}
+
+/* Thin, cie-coloured scrollbars everywhere (scrollbar-width isn't inherited).
+   Chromium uses these standard properties instead of the ::-webkit ones. */
+* {
+  scrollbar-width: thin;
+}
 
 /* Text fields: a 2px ring on focus, not only a darker hairline (2.4.7). */
 .deck-focus-ring:focus-visible,

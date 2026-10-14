@@ -71,8 +71,20 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={item ? t("editWindow") : t("addWindow")} closeLabel={t("close")} wide>
-      <form onSubmit={submit} className="flex flex-col gap-5">
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={item ? t("editWindow") : t("addWindow")}
+      closeLabel={t("close")}
+      wide
+      footer={
+        <>
+          <Button onClick={onClose}>{t("cancel")}</Button>
+          <Button type="submit" form={`${fieldId}-form`} tone="ink">{t("save")}</Button>
+        </>
+      }
+    >
+      <form id={`${fieldId}-form`} onSubmit={submit} className="flex flex-col gap-5">
         {!item && onPasteList && (
           <button
             type="button"
@@ -190,10 +202,6 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
             {t("addUrl")}
           </button>
         </fieldset>
-        <div className="flex justify-end gap-2 pt-1">
-          <Button onClick={onClose}>{t("cancel")}</Button>
-          <Button type="submit" tone="ink">{t("save")}</Button>
-        </div>
       </form>
     </Sheet>
   );

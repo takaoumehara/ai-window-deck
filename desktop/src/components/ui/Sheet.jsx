@@ -9,7 +9,9 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 // cie-ds centered sheet (interactions.css .cie-sheet--center): paper panel on the
 // ink ground. Stays mounted through the --cie-t-sheet close so it can animate out.
-export function Sheet({ open, onClose, title, closeLabel, wide = false, children }) {
+// Only the body scrolls, inset from the rounded edge (.deck-sheet in index.css);
+// head, toolbar and footer stay put.
+export function Sheet({ open, onClose, title, closeLabel, size = "normal", wide = false, toolbar, footer, bodyClassName = "", children }) {
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(false);
   const panelRef = useRef(null);
@@ -79,9 +81,9 @@ export function Sheet({ open, onClose, title, closeLabel, wide = false, children
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`cie-sheet cie-sheet--center cie-on-paper focus:outline-none ${wide ? "deck-sheet-wide" : ""} ${shown ? "is-open" : ""}`}
+        className={`cie-sheet cie-sheet--center cie-on-paper deck-sheet focus:outline-none ${wide || size === "wide" ? "deck-sheet-wide" : ""} ${size === "xwide" ? "deck-sheet-xwide" : ""} ${shown ? "is-open" : ""}`}
       >
-        <div className="cie-sheet__head">
+        <div className="cie-sheet__head deck-sheet__head">
           <h2 id={titleId} className="cie-sheet__title">{title}</h2>
           <button
             type="button"
@@ -92,7 +94,9 @@ export function Sheet({ open, onClose, title, closeLabel, wide = false, children
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
-        {children}
+        {toolbar && <div className="deck-sheet__toolbar">{toolbar}</div>}
+        <div className={`deck-sheet__body ${footer ? "" : "is-last"} ${bodyClassName}`}>{children}</div>
+        {footer && <div className="deck-sheet__foot">{footer}</div>}
       </div>
     </>
   );
