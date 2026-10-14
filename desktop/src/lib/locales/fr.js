@@ -253,4 +253,5 @@ export default {
   tip5Body: "Tous les volets partagent une connexion. La connexion Google s'ouvre dans une petite fenêtre ; ensuite, les autres pages Google se rechargent d'elles-mêmes.",
   tipsDone: "Compris",
   tipsFooter: "Rouvrez ces astuces depuis la liste {palette} ou Aide → Tips.",
+  tipsLanguageHint: "Vous pourrez le changer plus tard dans Réglages.",
 };

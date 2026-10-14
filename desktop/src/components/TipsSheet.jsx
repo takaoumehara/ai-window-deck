@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useId } from "react";
+import { Globe } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
+import { LANGUAGES } from "@desktop/lib/strings";
 
 const TIPS = ["tip1", "tip2", "tip3", "tip4", "tip5"];
 
 // Shown once on first launch (settings.tipsSeen), and again from the palette or the Help menu.
 // Two columns on a normal window so it fits without scrolling.
-export function TipsSheet({ t, open, onClose, keys }) {
+export function TipsSheet({ t, open, onClose, keys, lang, onLang }) {
+  const languageId = useId();
   return (
     <Sheet
       open={open}
@@ -13,6 +16,23 @@ export function TipsSheet({ t, open, onClose, keys }) {
       title={t("tipsTitle")}
       closeLabel={t("close")}
       size="xwide"
+      toolbar={
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-block bg-ink/[0.04] px-3 py-2">
+          <Globe className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <label htmlFor={languageId} className="text-sm">{t("languageLabel")}</label>
+          <select
+            id={languageId}
+            value={lang}
+            onChange={(event) => onLang(event.target.value)}
+            className="cie-tap deck-focus-ring h-8 rounded-pill border border-ink-edge bg-paper px-3 text-sm text-ink hover:border-ink"
+          >
+            {LANGUAGES.map(({ code, label }) => (
+              <option key={code} value={code} lang={code}>{label}</option>
+            ))}
+          </select>
+          <span className="text-xs text-paper-mute">{t("tipsLanguageHint")}</span>
+        </div>
+      }
       footer={
         <>
           <p className="mr-auto min-w-0 text-xs leading-5 text-paper-mute">{t("tipsFooter", keys)}</p>

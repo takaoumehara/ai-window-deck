@@ -253,4 +253,5 @@ export default {
   tip5Body: "All panes share one login. Google's sign-in opens in a small window; afterwards the other Google pages reload by themselves.",
   tipsDone: "Got it",
   tipsFooter: "Open these again from the {palette} list or Help → Tips.",
+  tipsLanguageHint: "You can change this later in Settings.",
 };

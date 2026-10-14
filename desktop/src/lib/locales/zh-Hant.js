@@ -253,4 +253,5 @@ export default {
   tip5Body: "所有窗格共用同一登入。Google 登入會在小視窗中開啟；完成後其他 Google 頁面會自動重新載入。",
   tipsDone: "知道了",
   tipsFooter: "可隨時從 {palette} 列表或選單「說明 → Tips」再次開啟。",
+  tipsLanguageHint: "之後也可以在設定中更改。",
 };

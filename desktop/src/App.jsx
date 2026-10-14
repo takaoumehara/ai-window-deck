@@ -1239,6 +1239,8 @@ export function App() {
           deck.applyStore({ settings: { tipsSeen: true } });
         }}
         keys={{ palette: primaryLabel("K"), device: paneKeys.device, back: paneKeys.back, spotlight: keyLabel("X") }}
+        lang={lang}
+        onLang={setLang}
       />
     </div>
   );

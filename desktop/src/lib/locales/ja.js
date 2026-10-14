@@ -253,4 +253,5 @@ export default {
   tip5Body: "すべてのペインが 1 つのログインを共有します。Google のサインインは小さな専用ウィンドウで開き、終わるとほかの Google のページも自動で再読み込みされます。",
   tipsDone: "わかりました",
   tipsFooter: "このヒントは {palette} の一覧、またはメニューの「ヘルプ → Tips」からいつでも開けます。",
+  tipsLanguageHint: "あとから設定でも変えられます。",
 };

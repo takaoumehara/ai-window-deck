@@ -253,4 +253,5 @@ export default {
   tip5Body: "Todos os painéis compartilham um login. O login do Google abre em uma janela pequena; depois, as outras páginas do Google recarregam sozinhas.",
   tipsDone: "Entendi",
   tipsFooter: "Abra estas dicas de novo pela lista de {palette} ou Ajuda → Tips.",
+  tipsLanguageHint: "Você pode mudar isso depois em Configurações.",
 };

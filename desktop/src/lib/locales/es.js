@@ -253,4 +253,5 @@ export default {
   tip5Body: "Todos los paneles comparten una sesión. El inicio de sesión de Google se abre en una ventana pequeña; después, las demás páginas de Google se recargan solas.",
   tipsDone: "Entendido",
   tipsFooter: "Vuelve a abrir estos consejos desde la lista de {palette} o Ayuda → Tips.",
+  tipsLanguageHint: "Puedes cambiarlo luego en Ajustes.",
 };

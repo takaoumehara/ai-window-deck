@@ -253,4 +253,5 @@ export default {
   tip5Body: "所有窗格共享同一登录。Google 登录在一个小窗口中打开；完成后其他 Google 页面会自动重新加载。",
   tipsDone: "知道了",
   tipsFooter: "可随时从 {palette} 列表或菜单“帮助 → Tips”再次打开。",
+  tipsLanguageHint: "之后也可以在设置中更改。",
 };

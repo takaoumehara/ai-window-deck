@@ -253,4 +253,5 @@ export default {
   tip5Body: "Alle Bereiche teilen eine Anmeldung. Die Google-Anmeldung öffnet sich in einem kleinen Fenster; danach laden die anderen Google-Seiten von selbst neu.",
   tipsDone: "Verstanden",
   tipsFooter: "Öffne die Tipps erneut über die {palette}-Liste oder Hilfe → Tips.",
+  tipsLanguageHint: "Du kannst das später in den Einstellungen ändern.",
 };

@@ -253,4 +253,5 @@ export default {
   tip5Body: "모든 창이 하나의 로그인을 공유합니다. Google 로그인은 작은 창에서 열리고, 끝나면 다른 Google 페이지도 자동으로 새로고침됩니다.",
   tipsDone: "알겠습니다",
   tipsFooter: "{palette} 목록이나 메뉴의 ‘도움말 → Tips’에서 언제든 다시 열 수 있습니다.",
+  tipsLanguageHint: "나중에 설정에서도 바꿀 수 있습니다.",
 };
