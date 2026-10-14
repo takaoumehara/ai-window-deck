@@ -64,6 +64,9 @@ function matchCommand(input, platform = process.platform) {
   // ⌥Tab / ⌥⇧Tab cycle panes on every keyboard layout, which suits mouse
   // buttons mapped to a keystroke (Logi Options+).
   if (alt && !control && !meta && code === "Tab") return repeatable(shift ? "focus-previous" : "focus-next");
+  if (!mac && alt && !control && !meta && !shift && (code === "ArrowLeft" || code === "ArrowRight")) {
+    return repeatable(code === "ArrowLeft" ? "page-back" : "page-forward");
+  }
   if (alt && !control && !meta && !shift) return repeatable(ALT_CODES[code]);
 
   if (control && !meta && !alt && code === "Tab") return repeatable(shift ? "tab-previous" : "tab-next");
@@ -77,9 +80,6 @@ function matchCommand(input, platform = process.platform) {
   if (primary && /^Digit[1-9]$/.test(code) && (mac ? alt && !shift : shift && !alt)) return repeatable(`set-${code.slice(5)}`);
   if (mac && primary && alt && !shift && (code === "ArrowRight" || code === "ArrowLeft")) {
     return repeatable(code === "ArrowRight" ? "tab-next" : "tab-previous");
-  }
-  if (!mac && alt && !control && !meta && !shift && (code === "ArrowLeft" || code === "ArrowRight")) {
-    return repeatable(code === "ArrowLeft" ? "page-back" : "page-forward");
   }
   if (!primary || alt) return null;
   if (shift) return repeatable(PRIMARY_SHIFT_KEYS[key] ?? PRIMARY_SHIFT_CODES[code]);
