@@ -25,8 +25,16 @@ export function SearchList({ label, placeholder, query, onQuery, groups, onPick,
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
 
+  // Only the list scrolls: scrollIntoView would also move a sheet around it.
   useEffect(() => {
-    listRef.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
+    const list = listRef.current;
+    const option = list?.querySelector(`[data-index="${active}"]`);
+    if (!option) return;
+    const header = 28;
+    const top = option.offsetTop - header;
+    const bottom = option.offsetTop + option.offsetHeight + 4;
+    if (top < list.scrollTop) list.scrollTop = Math.max(0, top);
+    else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
   }, [active]);
 
   const onKeyDown = (event) => {
@@ -78,7 +86,7 @@ export function SearchList({ label, placeholder, query, onQuery, groups, onPick,
           className={`h-9 min-w-0 flex-1 bg-transparent text-[13px] outline-none ${onInk ? "text-paper placeholder:text-paper-hint" : "text-ink placeholder:text-ink-hint"}`}
         />
       </label>
-      <div ref={listRef} id={`${id}-list`} role="listbox" aria-label={label} className={`min-h-0 flex-1 overflow-y-auto py-1 ${listClassName}`}>
+      <div ref={listRef} id={`${id}-list`} role="listbox" aria-label={label} className={`relative min-h-0 flex-1 overflow-y-auto py-1 ${listClassName}`}>
         {items.length === 0 && <p className={`px-3 py-3 text-xs ${mute}`}>{emptyLabel}</p>}
         {groups.map((group) =>
           group.items.length ? (
