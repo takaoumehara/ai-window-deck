@@ -33,7 +33,6 @@ export function Sheet({ open, onClose, title, closeLabel, wide = false, children
     const opener = document.activeElement;
     const panel = panelRef.current;
     const focusables = () => [...(panel?.querySelectorAll(FOCUSABLE) ?? [])];
-    (panel?.querySelector("input, textarea, select") ?? focusables()[0] ?? panel)?.focus();
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -60,6 +59,14 @@ export function Sheet({ open, onClose, title, closeLabel, wide = false, children
       if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
     };
   }, [open, mounted]);
+
+  // The panel is visibility: hidden until .is-open, and focus() on a hidden element does nothing.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!open || !shown || !panel || panel.contains(document.activeElement)) return;
+    const first = panel.querySelector("input, textarea, select") ?? panel.querySelector(FOCUSABLE) ?? panel;
+    first.focus();
+  }, [open, shown]);
 
   if (!mounted) return null;
 

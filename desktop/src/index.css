@@ -73,6 +73,11 @@
   outline-offset: 2px;
 }
 
+/* Over an icon, Chromium skips the button's title and shows its parent's tooltip. */
+button svg {
+  pointer-events: none;
+}
+
 html, body, #root {
   height: 100%;
   overflow: hidden;
