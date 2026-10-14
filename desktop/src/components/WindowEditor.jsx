@@ -30,7 +30,7 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
           <button
             type="button"
             onClick={onPasteList}
-            className="cie-tap flex items-center gap-3 rounded-block border border-dashed border-ink/30 px-3 py-2.5 text-left transition-colors duration-fast hover:border-ink/70"
+            className="cie-tap flex items-center gap-3 rounded-block border border-dashed border-ink-edge px-3 py-2.5 text-left transition-colors duration-fast hover:border-ink"
           >
             <ClipboardPaste className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="flex flex-col gap-0.5">

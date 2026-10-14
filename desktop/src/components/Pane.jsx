@@ -16,7 +16,7 @@ function HeaderButton({ label, onClick, disabled, pressed, focused, children }) 
       aria-label={label}
       aria-pressed={pressed}
       title={label}
-      className={`cie-tap grid h-6 w-6 place-items-center rounded-pill transition-colors duration-fast disabled:pointer-events-none disabled:opacity-30 ${
+      className={`cie-tap grid h-6 w-6 place-items-center rounded-pill transition-colors duration-fast disabled:pointer-events-none disabled:opacity-40 ${
         pressed ? pressedTone : "hover:bg-btn"
       }`}
     >
@@ -33,7 +33,7 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
     inputRef.current?.focus();
     inputRef.current?.select();
   }, [field.kind, field.token]);
-  const tone = focused ? "border-ink/30 text-ink placeholder:text-ink/40" : "border-paper/30 text-paper placeholder:text-paper/40";
+  const tone = focused ? "border-ink-edge text-ink placeholder:text-ink-hint" : "border-paper-edge text-paper placeholder:text-paper-hint";
   const Icon = isFind ? Search : Globe;
   return (
     <form
@@ -158,7 +158,7 @@ export const Pane = React.forwardRef(function Pane(
           {tabMeta?.loading && <span className={`cie-loader cie-loader--xs shrink-0 ${focused ? "cie-loader--ink" : ""}`} aria-hidden="true" />}
           {error && (
             <span title={`${t("loadFailed")}: ${error.description}`} className="flex shrink-0 items-center">
-              <AlertTriangle className="h-3.5 w-3.5" aria-label={t("loadFailed")} />
+              <AlertTriangle className="h-3.5 w-3.5" role="img" aria-label={t("loadFailed")} />
             </span>
           )}
 
@@ -171,7 +171,8 @@ export const Pane = React.forwardRef(function Pane(
                   onResetZoom();
                 }}
                 title={t("zoomReset")}
-                className={`register cie-tap mr-1 rounded-pill border px-2 py-0.5 tabular-nums ${focused ? "border-ink/30 hover:border-ink" : "border-paper/30 hover:border-paper"}`}
+                aria-label={`${t("zoomReset")} (${Math.round(zoom * 100)}%)`}
+                className={`register cie-tap mr-1 rounded-pill border px-2 py-0.5 tabular-nums ${focused ? "border-ink-edge hover:border-ink" : "border-paper-edge hover:border-paper"}`}
               >
                 {Math.round(zoom * 100)}%
               </button>
@@ -187,7 +188,7 @@ export const Pane = React.forwardRef(function Pane(
                       className={`group/tab ink-swap flex max-w-[10rem] items-center rounded-pill border ${
                         selected
                           ? focused ? "border-ink bg-ink text-paper" : "border-paper bg-paper text-ink"
-                          : focused ? "border-ink/25 hover:border-ink/60" : "border-paper/25 text-ink-mute hover:border-paper/60 hover:text-paper"
+                          : focused ? "border-ink-edge hover:border-ink" : "border-paper-edge text-ink-mute hover:border-paper hover:text-paper"
                       }`}
                     >
                       <button

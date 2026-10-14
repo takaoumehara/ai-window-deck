@@ -42,7 +42,7 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
             placeholder={t("pastePlaceholder")}
             rows={7}
             spellCheck={false}
-            className="w-full resize-y rounded-tick border border-ink/25 bg-transparent px-3 py-2 font-mono text-xs leading-5 text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink/50 focus:border-ink focus:outline-none"
+            className="w-full resize-y rounded-tick border border-ink-edge bg-transparent px-3 py-2 font-mono text-xs leading-5 text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink focus:border-ink deck-focus-ring"
           />
           <p className="text-xs leading-5 text-paper-mute">{t("pasteHelp")}</p>
         </div>

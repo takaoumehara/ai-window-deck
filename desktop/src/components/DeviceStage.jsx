@@ -78,7 +78,7 @@ export const DeviceStage = React.forwardRef(function DeviceStage(
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-ink text-paper">
       <div className="flex h-8 shrink-0 items-center gap-2 border-b border-paper/10 px-2" onClick={(event) => event.stopPropagation()}>
-        <label className="relative flex min-w-0 items-center gap-1.5 rounded-pill border border-paper/25 py-0.5 pl-2 pr-6 transition-colors duration-fast hover:border-paper/60">
+        <label className="deck-focus-within relative flex min-w-0 items-center gap-1.5 rounded-pill border border-paper-edge py-0.5 pl-2 pr-6 transition-colors duration-fast hover:border-paper">
           <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <select
             value={device.id}

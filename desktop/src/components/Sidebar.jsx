@@ -83,7 +83,7 @@ function SetSwitcher({ t, sets, currentSetId, openElsewhere, setLabel, onSwitchS
         onClick={onOpenSets}
         aria-label={`${label}: ${setLabel(current)}`}
         title={label}
-        className="cie-tap ink-swap flex min-w-0 items-center gap-2 rounded-pill border border-solid border-paper/25 px-3 py-1.5 text-left hover:border-paper/60"
+        className="cie-tap ink-swap flex min-w-0 items-center gap-2 rounded-pill border border-solid border-paper-edge px-3 py-1.5 text-left hover:border-paper"
       >
         <span className={`weight min-w-0 flex-1 truncate ${compact ? "text-xs" : "text-sm"}`} style={{ "--w": 550 }}>{setLabel(current)}</span>
         <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-ink-mute" aria-hidden="true" />
@@ -102,10 +102,10 @@ function SetSwitcher({ t, sets, currentSetId, openElsewhere, setLabel, onSwitchS
                 onClick={() => onSwitchSet(set.id)}
                 title={elsewhere ? `${setLabel(set)} — ${t("setOpenElsewhere")}` : setLabel(set)}
                 className={`register cie-tap ink-swap flex max-w-full items-center gap-1 rounded-pill border border-solid px-2 py-0.5 ${
-                  selected ? "border-paper bg-paper text-ink" : "border-paper/20 text-ink-mute hover:border-paper/60 hover:text-paper"
+                  selected ? "border-paper bg-paper text-ink" : "border-paper-edge text-ink-mute hover:border-paper hover:text-paper"
                 }`}
               >
-                <span className="opacity-60">{index + 1}</span>
+                <span>{index + 1}</span>
                 <span className="truncate">{setLabel(set)}</span>
                 {elsewhere && <span className="h-1.5 w-1.5 shrink-0 rounded-pill bg-current" aria-hidden="true" />}
               </button>
@@ -136,17 +136,19 @@ function RailTile({ t, item, order, focused, favicon, onClick, onDoubleClick }) 
           focused
             ? "border-paper bg-paper text-ink"
             : inDeck
-              ? "border-paper/30 bg-ink hover:border-paper/70"
+              ? "border-paper-edge bg-ink hover:border-paper"
               : "border-dashed border-paper/20 bg-ink text-ink-mute hover:border-paper/50 hover:text-paper"
         }`}
       >
-        <span className={`flex items-center gap-1.5 ${inDeck ? "" : "opacity-60"}`}>
-          <Favicon favicon={favicon} url={urls[0]} name={name} />
-          <span className={`register text-[9px] leading-none ${mute}`}>{inDeck ? String(order + 1).padStart(2, "0") : "—"}</span>
+        <span className="flex items-center gap-1.5">
+          <span className={inDeck ? "" : "opacity-60"}>
+            <Favicon favicon={favicon} url={urls[0]} name={name} />
+          </span>
+          <span className={`register leading-none ${mute}`}>{inDeck ? String(order + 1).padStart(2, "0") : "—"}</span>
         </span>
-        <span className="weight truncate text-[11px] leading-tight" style={{ "--w": focused ? 600 : 450 }}>{name}</span>
+        <span className="weight truncate text-xs leading-tight" style={{ "--w": focused ? 600 : 500 }}>{name}</span>
         {hosts.map((host) => (
-          <span key={host} className={`register truncate text-[9px] leading-tight ${mute}`}>{host}</span>
+          <span key={host} className={`register truncate leading-tight ${mute}`}>{host}</span>
         ))}
       </button>
       <VisibilityButton t={t} item={item} className="absolute right-1 top-1 opacity-0 focus:opacity-100 group-hover:opacity-100" />
@@ -217,7 +219,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, on
 
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <h2 className="text-xl font-light tracking-[-0.03em]">{t("windowsHeader")}</h2>
+          <h2 className="deck-display text-xl">{t("windowsHeader")}</h2>
           <span className="register text-ink-mute">{String(windows.length).padStart(2, "0")}</span>
         </div>
         <IconButton onClick={onAdd} aria-label={t("addWindow")} title={t("addWindow")}>
@@ -225,7 +227,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, on
         </IconButton>
       </div>
 
-      <p className="text-xs leading-5 text-ink-mute">{t("windowsHint")}</p>
+      <p className="text-[13px] leading-5 text-ink-mute">{t("windowsHint")}</p>
 
       <ul className="cie-stagger -mr-1 flex flex-1 flex-col gap-2 overflow-y-auto pr-1" onDragLeave={(event) => event.currentTarget === event.target && setDropIndex(null)}>
         {windows.map((item, index) => {
@@ -285,7 +287,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, on
                   focused
                     ? "border-paper bg-paper text-ink"
                     : inDeck
-                      ? "border-paper/30 bg-ink hover:border-paper/60"
+                      ? "border-paper-edge bg-ink hover:border-paper"
                       : "border-paper/10 bg-ink text-ink-mute hover:border-paper/30"
                 }`}
               >
@@ -293,7 +295,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, on
                   <span className={`grid w-5 shrink-0 place-items-center ${inDeck ? "" : "opacity-60"}`}>
                     <Favicon favicon={favicons[item.id]} url={urls[0]} name={name} />
                   </span>
-                  <span className="weight min-w-0 flex-1 truncate text-sm" style={{ "--w": focused ? 600 : inDeck ? 450 : 350 }}>
+                  <span className="weight min-w-0 flex-1 truncate text-sm" style={{ "--w": focused ? 600 : inDeck ? 500 : 400 }}>
                     {name}
                   </span>
                   <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>

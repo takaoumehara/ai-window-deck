@@ -11,7 +11,7 @@ function RowButton({ label, onClick, disabled, children }) {
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="cie-tap grid h-7 w-7 shrink-0 place-items-center rounded-pill transition-colors duration-fast hover:bg-btn disabled:pointer-events-none disabled:opacity-30"
+      className="cie-tap grid h-7 w-7 shrink-0 place-items-center rounded-pill transition-colors duration-fast hover:bg-btn disabled:pointer-events-none disabled:opacity-40"
     >
       {children}
     </button>

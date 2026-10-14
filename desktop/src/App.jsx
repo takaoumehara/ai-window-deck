@@ -823,7 +823,7 @@ export function App() {
     <div className="flex h-full flex-col bg-background text-foreground">
       <header className={`app-drag flex h-14 shrink-0 items-center gap-4 pr-3 ${isMac ? "pl-20" : "pl-4"}`}>
         <div className="flex min-w-0 items-baseline gap-3">
-          <h1 className="shrink-0 text-lg font-light tracking-[-0.03em]">{t("appTitle")}</h1>
+          <h1 className="deck-display shrink-0 text-lg">{t("appTitle")}</h1>
           <span className="hidden truncate text-xs text-ink-mute lg:inline">{t("appSubtitle")}</span>
         </div>
 
@@ -929,7 +929,7 @@ export function App() {
           <div ref={deckRef} className="relative h-full w-full">
             {deckPanes.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-2 rounded-block border border-dashed border-paper/20 text-center">
-                <p className="text-2xl font-light tracking-[-0.03em]">{t("emptyDeck")}</p>
+                <p className="deck-display text-2xl">{t("emptyDeck")}</p>
                 <p className="text-sm text-ink-mute">{t("emptyDeckHint")}</p>
               </div>
             ) : (
