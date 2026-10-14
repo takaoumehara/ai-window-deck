@@ -44,9 +44,11 @@ export function ShortcutsSheet({ t, open, onClose, isMac }) {
       rows: [
         ["kbAddress", [primary("L")]],
         ["kbFind", [primary("F")]],
-        ["kbBackForward", [primary("["), primary("]")]],
+        ["kbBackForward", [primary("["), primary("]"), isMac ? "⌘←" : "Alt+←", isMac ? "⌘→" : "Alt+→"]],
         ["kbReload", [primary("R"), primary("⇧R")]],
         ["kbZoom", [primary("+"), primary("−"), primary("0")]],
+        ["cmdDevice", [primary(isMac ? "⇧M" : "Shift+M")]],
+        ["paletteTitle", [primary("K"), "F1"]],
       ],
     },
   ];

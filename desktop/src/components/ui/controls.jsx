@@ -36,7 +36,7 @@ export const Field = React.forwardRef(function Field({ className = "", ...props 
   return (
     <input
       ref={ref}
-      className={`h-10 w-full rounded-tick border border-ink/25 bg-transparent px-3 text-sm text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink/50 focus:border-ink focus:outline-none ${className}`}
+      className={`h-10 w-full rounded-tick border border-ink-edge bg-transparent px-3 text-sm text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink focus:border-ink deck-focus-ring ${className}`}
       {...props}
     />
   );
@@ -57,7 +57,7 @@ export function Choices({ label, options, value, onChange, columns = "grid-cols-
             lang={option.lang}
             onClick={() => onChange(option.value)}
             className={`cie-tap ink-swap h-9 truncate rounded-pill border border-solid px-3 text-sm ${
-              selected ? "border-ink bg-ink text-paper" : "border-ink/20 hover:border-ink/60"
+              selected ? "border-ink bg-ink text-paper" : "border-ink-edge hover:border-ink"
             }`}
           >
             {option.label}

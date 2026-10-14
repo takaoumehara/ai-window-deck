@@ -35,3 +35,36 @@ test("focus changes in grid don't count as a layout move", () => {
   assert.equal(layoutMoves(4, { mode: "grid", focusIndex: 0 }, { mode: "fill", focusIndex: 0 }), true);
   assert.equal(layoutMoves(4, { mode: "spotlight", focusIndex: 0 }, { mode: "spotlight", focusIndex: 1 }), true);
 });
+
+test("reordering URLs: move, drop gaps, and indexes that follow the move", async () => {
+  const { moveItem, dropTarget, indexAfterMove, moveTab } = await import("../src/lib/tabs.js");
+  assert.deepEqual(moveItem(["a", "b", "c", "d"], 0, 2), ["b", "c", "a", "d"]);
+  assert.deepEqual(moveItem(["a", "b", "c", "d"], 3, 0), ["d", "a", "b", "c"]);
+  assert.deepEqual(moveItem(["a", "b"], 1, 9), ["a", "b"]);
+  const same = ["a", "b"];
+  assert.equal(moveItem(same, 1, 1), same);
+  assert.equal(moveItem(same, 0, -1), same);
+
+  assert.equal(dropTarget(0, 3), 2);
+  assert.equal(dropTarget(3, 0), 0);
+  assert.equal(dropTarget(1, 2), 1);
+
+  const list = ["a", "b", "c", "d"];
+  const moved = moveItem(list, 0, 2);
+  for (let index = 0; index < list.length; index += 1) assert.equal(moved[indexAfterMove(index, 0, 2)], list[index]);
+  const back = moveItem(list, 3, 1);
+  for (let index = 0; index < list.length; index += 1) assert.equal(back[indexAfterMove(index, 3, 1)], list[index]);
+
+  const item = { id: "w", urls: "https://claude.ai\nvercel.com\nhttps://moime.app" };
+  assert.equal(moveTab(item, 2, 0).urls, "https://moime.app\nhttps://claude.ai\nhttps://vercel.com");
+  assert.equal(moveTab(item, 1, 1), item);
+});
+
+test("tab state follows its URL when a window's list changes", async () => {
+  const { metaByUrl } = await import("../src/lib/tabs.js");
+  const meta = { 0: "mdn", 2: "wiki" };
+  assert.deepEqual(metaByUrl(meta, ["mdn", "gh", "wiki"], ["gh", "mdn", "wiki"]), { 1: "mdn", 2: "wiki" });
+  assert.deepEqual(metaByUrl(meta, ["mdn", "gh", "wiki"], ["mdn", "wiki"]), { 0: "mdn", 1: "wiki" });
+  assert.deepEqual(metaByUrl({ 0: "a", 1: "b" }, ["x", "x"], ["y", "x", "x"]), { 1: "a", 2: "b" });
+  assert.deepEqual(metaByUrl({ 0: "a" }, ["x"], ["z"]), {});
+});

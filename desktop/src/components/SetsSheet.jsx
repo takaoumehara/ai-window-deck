@@ -11,7 +11,7 @@ function RowButton({ label, onClick, disabled, children }) {
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="cie-tap grid h-7 w-7 shrink-0 place-items-center rounded-pill transition-colors duration-fast hover:bg-btn disabled:pointer-events-none disabled:opacity-30"
+      className="cie-tap grid h-7 w-7 shrink-0 place-items-center rounded-pill transition-colors duration-fast hover:bg-btn disabled:pointer-events-none disabled:opacity-40"
     >
       {children}
     </button>
@@ -75,7 +75,22 @@ export function SetsSheet({
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={t("setsTitle")} closeLabel={t("close")}>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t("setsTitle")}
+      closeLabel={t("close")}
+      footer={
+        <form onSubmit={create} className="flex w-full items-center gap-2">
+          <label htmlFor={`${fieldId}-new`} className="sr-only">{t("newSet")}</label>
+          <Field id={`${fieldId}-new`} value={newName} onChange={(event) => setNewName(event.target.value)} placeholder={t("newSet")} />
+          <Button type="submit" tone="ink" className="shrink-0">
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("createSet")}
+          </Button>
+        </form>
+      }
+    >
       <div className="flex flex-col gap-5">
         <p className="text-xs leading-5 text-paper-mute">{t("setsHint", { key: newWindowKey })}</p>
         <ol className="cie-stagger flex flex-col">
@@ -142,14 +157,6 @@ export function SetsSheet({
             );
           })}
         </ol>
-        <form onSubmit={create} className="flex items-center gap-2">
-          <label htmlFor={`${fieldId}-new`} className="sr-only">{t("newSet")}</label>
-          <Field id={`${fieldId}-new`} value={newName} onChange={(event) => setNewName(event.target.value)} placeholder={t("newSet")} />
-          <Button type="submit" tone="ink" className="shrink-0">
-            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("createSet")}
-          </Button>
-        </form>
       </div>
     </Sheet>
   );

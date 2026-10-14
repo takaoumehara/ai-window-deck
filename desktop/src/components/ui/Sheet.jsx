@@ -9,7 +9,9 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 // cie-ds centered sheet (interactions.css .cie-sheet--center): paper panel on the
 // ink ground. Stays mounted through the --cie-t-sheet close so it can animate out.
-export function Sheet({ open, onClose, title, closeLabel, children }) {
+// Only the body scrolls, inset from the rounded edge (.deck-sheet in index.css);
+// head, toolbar and footer stay put.
+export function Sheet({ open, onClose, title, closeLabel, size = "normal", wide = false, toolbar, footer, bodyClassName = "", children }) {
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(false);
   const panelRef = useRef(null);
@@ -33,7 +35,6 @@ export function Sheet({ open, onClose, title, closeLabel, children }) {
     const opener = document.activeElement;
     const panel = panelRef.current;
     const focusables = () => [...(panel?.querySelectorAll(FOCUSABLE) ?? [])];
-    (panel?.querySelector("input, textarea, select") ?? focusables()[0] ?? panel)?.focus();
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -61,6 +62,14 @@ export function Sheet({ open, onClose, title, closeLabel, children }) {
     };
   }, [open, mounted]);
 
+  // The panel is visibility: hidden until .is-open, and focus() on a hidden element does nothing.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!open || !shown || !panel || panel.contains(document.activeElement)) return;
+    const first = panel.querySelector("input, textarea, select") ?? panel.querySelector(FOCUSABLE) ?? panel;
+    first.focus();
+  }, [open, shown]);
+
   if (!mounted) return null;
 
   return (
@@ -72,9 +81,9 @@ export function Sheet({ open, onClose, title, closeLabel, children }) {
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`cie-sheet cie-sheet--center cie-on-paper focus:outline-none ${shown ? "is-open" : ""}`}
+        className={`cie-sheet cie-sheet--center cie-on-paper deck-sheet focus:outline-none ${wide || size === "wide" ? "deck-sheet-wide" : ""} ${size === "xwide" ? "deck-sheet-xwide" : ""} ${shown ? "is-open" : ""}`}
       >
-        <div className="cie-sheet__head">
+        <div className="cie-sheet__head deck-sheet__head">
           <h2 id={titleId} className="cie-sheet__title">{title}</h2>
           <button
             type="button"
@@ -85,7 +94,9 @@ export function Sheet({ open, onClose, title, closeLabel, children }) {
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
-        {children}
+        {toolbar && <div className="deck-sheet__toolbar">{toolbar}</div>}
+        <div className={`deck-sheet__body ${footer ? "" : "is-last"} ${bodyClassName}`}>{children}</div>
+        {footer && <div className="deck-sheet__foot">{footer}</div>}
       </div>
     </>
   );

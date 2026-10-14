@@ -52,6 +52,8 @@ const browserStandIn = {
   checkForUpdates: noop,
   installUpdate: noop,
   onUpdateState: noSubscribe,
+  onGoogleSignIn: noSubscribe,
+  googleSignIn: noop,
 };
 
 export const deck = typeof window !== "undefined" && window.deck ? window.deck : browserStandIn;

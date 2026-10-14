@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Download, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand, Settings, Undo2 } from "lucide-react";
+import { Download, Keyboard, LayoutDashboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Settings, Undo2 } from "lucide-react";
 import { SHEET_MS } from "@desktop/components/ui/Sheet";
 import { IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
@@ -9,13 +9,21 @@ import { PasteListSheet } from "@desktop/components/PasteListSheet";
 import { SettingsSheet } from "@desktop/components/SettingsSheet";
 import { SetsSheet } from "@desktop/components/SetsSheet";
 import { ShortcutsSheet } from "@desktop/components/ShortcutsSheet";
+import { CommandPalette } from "@desktop/components/CommandPalette";
+import { TipsSheet } from "@desktop/components/TipsSheet";
+import { ResizeHandles } from "@desktop/components/ResizeHandles";
+import { ArrangeSheet } from "@desktop/components/ArrangeSheet";
 import { deck, isElectron } from "@desktop/lib/bridge";
+import { ASK_AI_URLS, featureGuide, paletteEntries } from "@desktop/lib/palette";
+import commandCatalog from "../electron/commands.json";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
-import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
+import { EMPTY_HISTORY, diffSets, record, redo, replaceLast, storePatchBetween, undo } from "@desktop/lib/history";
+import { arrangementHandles, dropZone, insertAround, normalizeShape, resetLayout, resizeLayout, shapeStructure, spotlightHandle, swapItems } from "@desktop/lib/arrangement";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
-import { addressToUrl, insertTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
+import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
-import { deviceForPane, findDevice } from "@desktop/lib/device-frame";
+import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
+import { nextComparisonDevice, pushRecent } from "@desktop/lib/device-catalog";
 
 // --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
 const LAYOUT_ANIMATION_MS = 420;
@@ -24,10 +32,23 @@ const SNAPSHOT_TIMEOUT_MS = 160;
 // Snapshots stay under the live pages briefly so a page that repaints late never shows a gap.
 const SNAPSHOT_LINGER_MS = 160;
 const COMPACT_PANE_PX = 380;
+// A divider drag stops before a pane gets narrower or shorter than this.
+const MIN_PANE_PX = 180;
+// Arrow-key steps on one divider within this long undo as a single step.
+const RESIZE_BURST_MS = 1200;
 const DEFAULT_DEVICE = "iphone-17-pro";
+const RECENT_DEVICES_KEY = "deck:recentDevices";
 const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
 const UNDO_NOTICE_MS = 6000;
+const ASK_AI_WINDOW = "win-ask-ai";
+const GROUP_LABELS = { help: "groupHelp", mobile: "groupMobile", page: "groupPage", layout: "groupLayout", tabs: "groupTabs", windows: "groupWindows" };
+const LANGUAGE_NAMES = {
+  ja: "Japanese", en: "English", "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ko: "Korean",
+  es: "Spanish", fr: "French", de: "German", pt: "Portuguese",
+};
+const tEnglish = translator("en");
+const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window", "arrange-open"]);
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
@@ -60,6 +81,25 @@ export function App() {
   const [lang, setLang] = useState("ja");
   const [defaultMode, setDefaultMode] = useState("grid");
   const [defaultDevice, setDefaultDevice] = useState(DEFAULT_DEVICE);
+  const [recentDevices, setRecentDevices] = useState(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(RECENT_DEVICES_KEY));
+      return Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : [];
+    } catch {
+      return [];
+    }
+  });
+  const rememberDevice = useCallback((id) => {
+    setRecentDevices((list) => {
+      const next = pushRecent(list, id);
+      try {
+        window.localStorage.setItem(RECENT_DEVICES_KEY, JSON.stringify(next));
+      } catch {
+        // Private storage off: the list just isn't kept.
+      }
+      return next;
+    });
+  }, []);
   const [catalog, setCatalog] = useState(null);
   const [activeTabs, setActiveTabs] = useState({});
   const [paneMeta, setPaneMeta] = useState({});
@@ -89,6 +129,12 @@ export function App() {
   const primaryLabel = useCallback((key) => (isMac ? `⌘${key}` : `Ctrl+${key}`), [isMac]);
   const setKeyLabel = useCallback((n) => (isMac ? `⌘⌥${n}` : `Ctrl+Shift+${n}`), [isMac]);
   const setLabel = useCallback((set) => set?.name || t("defaultSetName"), [t]);
+  const paneKeys = useMemo(() => ({
+    back: isMac ? "⌘[ / ⌘←" : "Ctrl+[ / Alt+←",
+    forward: isMac ? "⌘] / ⌘→" : "Ctrl+] / Alt+→",
+    reload: primaryLabel("R"),
+    device: primaryLabel(isMac ? "⇧M" : "Shift+M"),
+  }), [isMac, primaryLabel]);
 
   const currentSet = sets.find((set) => set.id === setId) ?? null;
   const windows = useMemo(() => currentSet?.windows ?? [], [currentSet]);
@@ -132,6 +178,7 @@ export function App() {
       setSidebarExpanded(settings.sidebarOpen !== false);
       setDefaultMode(startMode);
       if (settings.defaultDevice) setDefaultDevice(settings.defaultDevice);
+      if (!settings.tipsSeen) setSheet("tips");
       setCatalog(devices);
       setLang(language);
       setLoaded(true);
@@ -208,14 +255,22 @@ export function App() {
   const devices = useMemo(() => catalog?.devices ?? [], [catalog]);
   const paneDevices = useMemo(() => {
     const map = {};
-    for (const item of deckPanes) map[item.id] = item.device ? findDevice(devices, item.device.id, defaultDevice) : null;
+    for (const item of deckPanes) map[item.id] = paneDeviceOf(devices, item);
     return map;
-  }, [deckPanes, devices, defaultDevice]);
+  }, [deckPanes, devices]);
   const focusIndex = Math.max(0, deckOrder.indexOf(focusedId));
   const effectiveFocusId = deckOrder[focusIndex] ?? null;
+  const arrangement = currentSet?.layout ?? null;
+  // While a divider is dragged, the panes (frozen to snapshots) follow the
+  // draft; the native views take the committed layout once, on release.
+  const [draftArrangement, setDraftArrangement] = useState(null);
   const rects = useMemo(
-    () => computePaneRects({ count: deckPanes.length, mode, focusIndex }),
-    [deckPanes.length, mode, focusIndex]
+    () => computePaneRects({ count: deckPanes.length, mode, focusIndex, layout: arrangement }),
+    [deckPanes.length, mode, focusIndex, arrangement]
+  );
+  const shownRects = useMemo(
+    () => (draftArrangement ? computePaneRects({ count: deckPanes.length, mode, focusIndex, layout: draftArrangement }) : rects),
+    [draftArrangement, rects, deckPanes.length, mode, focusIndex]
   );
 
   const noticeTimer = useRef(0);
@@ -254,12 +309,12 @@ export function App() {
   // reappear once, already at their final size.
   const snapshotCache = useRef({});
   const transitionState = useRef({ ready: null, timer: 0 });
-  const transition = useCallback(async (apply) => {
-    if (!isElectron || prefersReducedMotion()) {
-      apply();
-      return;
-    }
+  // Snapshots on, live views hidden; resolves once the views are gone. Also
+  // used while dragging a divider or a pane, so the drag moves still frames.
+  const freezeDeck = useCallback(async () => {
+    if (!isElectron) return;
     const state = transitionState.current;
+    window.clearTimeout(state.timer);
     if (!state.ready) {
       state.ready = (async () => {
         const capture = deck.snapshot().catch(() => ({})).then(async (taken) => {
@@ -280,7 +335,11 @@ export function App() {
       })();
     }
     await state.ready;
-    apply();
+  }, []);
+
+  const thawDeck = useCallback((delay) => {
+    if (!isElectron) return;
+    const state = transitionState.current;
     window.clearTimeout(state.timer);
     state.timer = window.setTimeout(() => {
       state.ready = null;
@@ -289,14 +348,24 @@ export function App() {
       window.setTimeout(() => {
         if (!transitionState.current.ready) setSnapshots({});
       }, SNAPSHOT_LINGER_MS);
-    }, LAYOUT_ANIMATION_MS);
+    }, delay);
   }, [measure]);
+
+  const transition = useCallback(async (apply) => {
+    if (!isElectron || prefersReducedMotion()) {
+      apply();
+      return;
+    }
+    await freezeDeck();
+    apply();
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [freezeDeck, thawDeck]);
 
   // Commands can arrive faster than a transition starts; each one builds on
   // the layout the previous one asked for, not the one still on screen.
   const layoutRef = useRef(null);
   const pendingLayout = useRef(null);
-  layoutRef.current = { mode, focusId: effectiveFocusId, sidebarExpanded, order: deckOrder };
+  layoutRef.current = { mode, focusId: effectiveFocusId, sidebarExpanded, order: deckOrder, layout: arrangement };
   const changeLayout = useCallback((next) => {
     const current = pendingLayout.current ?? layoutRef.current;
     const target = { ...current, ...next };
@@ -304,7 +373,11 @@ export function App() {
     const indexOf = (id) => Math.max(0, current.order.indexOf(id));
     const moves =
       target.sidebarExpanded !== current.sidebarExpanded ||
-      layoutMoves(count, { mode: current.mode, focusIndex: indexOf(current.focusId) }, { mode: target.mode, focusIndex: indexOf(target.focusId) });
+      layoutMoves(
+        count,
+        { mode: current.mode, focusIndex: indexOf(current.focusId), layout: current.layout },
+        { mode: target.mode, focusIndex: indexOf(target.focusId), layout: current.layout }
+      );
     const apply = () => {
       if (target.mode !== current.mode) setMode(target.mode);
       if (target.focusId !== current.focusId) setFocusedId(target.focusId);
@@ -320,6 +393,130 @@ export function App() {
   }, [transition]);
   const currentLayout = () => pendingLayout.current ?? layoutRef.current;
 
+  const resizeHandles = useMemo(() => {
+    const layout = draftArrangement ?? arrangement;
+    if (deckPanes.length < 2 || mode === "fill") return [];
+    if (mode === "spotlight") return [spotlightHandle(layout, focusIndex)];
+    return arrangementHandles(shapeStructure(layout?.shape, deckPanes.length), layout?.sizes);
+  }, [draftArrangement, arrangement, deckPanes.length, mode, focusIndex]);
+
+  const minShare = useCallback((axis) => {
+    const extent = axis === "x" ? deckSize.width : deckSize.height;
+    return extent ? MIN_PANE_PX / extent : 0.1;
+  }, [deckSize]);
+
+  // Arrangement edits are content: they go through commitSets and undo. A run
+  // of arrow-key steps on one divider folds into one history entry.
+  const resizeBurst = useRef(null);
+  const commitArrangement = useCallback((layout, { burstKey } = {}) => {
+    const id = setIdRef.current;
+    const prev = setsRef.current;
+    const next = prev.map((set) => (set.id === id ? { ...set, layout } : set));
+    const burst = resizeBurst.current;
+    const now = performance.now();
+    const own = (list) => list.filter((set) => set.id === id);
+    if (burstKey && burst?.key === burstKey && burst.setId === id && now - burst.time < RESIZE_BURST_MS && historyRef.current.past.at(-1) === burst.entry) {
+      commitSets(next, { record: false });
+      historyRef.current = replaceLast(historyRef.current, diffSets(own(burst.before), own(next)));
+      resizeBurst.current = { ...burst, time: now, entry: historyRef.current.past.at(-1) };
+      return;
+    }
+    commitSets(next);
+    resizeBurst.current = burstKey ? { key: burstKey, setId: id, time: now, before: prev, entry: historyRef.current.past.at(-1) } : null;
+  }, [commitSets]);
+
+  const [resizing, setResizing] = useState(false);
+  const resizeDrag = useRef(null);
+  const startResize = useCallback((handle) => {
+    resizeDrag.current = { start: arrangement, draft: null };
+    setResizing(true);
+    freezeDeck();
+  }, [arrangement, freezeDeck]);
+  const moveResize = useCallback((handle, delta) => {
+    const drag = resizeDrag.current;
+    if (!drag) return;
+    drag.draft = resizeLayout(drag.start, deckPanes.length, handle.id, delta, minShare(handle.axis));
+    setDraftArrangement(drag.draft);
+  }, [deckPanes.length, minShare]);
+  const endResize = useCallback((handle, cancelled) => {
+    const drag = resizeDrag.current;
+    resizeDrag.current = null;
+    if (drag?.draft && !cancelled) commitArrangement(drag.draft);
+    setDraftArrangement(null);
+    setResizing(false);
+    thawDeck(80);
+  }, [commitArrangement, thawDeck]);
+  const stepResize = useCallback((handle, delta) => {
+    commitArrangement(resizeLayout(arrangement, deckPanes.length, handle.id, delta, minShare(handle.axis)), { burstKey: handle.id });
+  }, [arrangement, deckPanes.length, minShare, commitArrangement]);
+  const resetSizes = useCallback((handle) => {
+    const next = resetLayout(arrangement, handle?.id ?? "grid");
+    if (next === arrangement || JSON.stringify(next) === JSON.stringify(arrangement)) return;
+    transition(() => commitArrangement(next));
+    showNotice(t("sizesResetMsg"), { undoable: true });
+  }, [arrangement, commitArrangement, transition, showNotice, t]);
+  const setShape = useCallback((shape) => {
+    const next = normalizeShape(shape);
+    const current = arrangement ?? { shape: "auto" };
+    const { sizes, ...rest } = current;
+    if (normalizeShape(current.shape) === next && !sizes && mode === "grid") return;
+    transition(() => {
+      commitArrangement({ ...rest, shape: next });
+      if (mode !== "grid") setMode("grid");
+    });
+  }, [arrangement, mode, commitArrangement, transition]);
+
+  // Dragging a pane by its title bar: the pages freeze to snapshots so every
+  // pane, not only its title bar, can take the drop.
+  const [paneDrag, setPaneDrag] = useState(null);
+  const [dropHint, setDropHint] = useState(null);
+  const startPaneDrag = useCallback((id) => {
+    setPaneDrag(id);
+    freezeDeck();
+  }, [freezeDeck]);
+  const endPaneDrag = useCallback(() => {
+    setPaneDrag(null);
+    setDropHint(null);
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [thawDeck]);
+  const dropPane = useCallback((targetId, zone) => {
+    const draggedId = paneDrag;
+    setPaneDrag(null);
+    setDropHint(null);
+    if (!draggedId || draggedId === targetId) return;
+    const name = (id) => windows.find((item) => item.id === id)?.name || t("untitledWindow");
+    if (zone === "swap") {
+      setWindows((list) => swapItems(list, draggedId, targetId));
+      if (mode === "spotlight" && targetId === effectiveFocusId) setFocusedId(draggedId);
+      showNotice(t("paneSwappedMsg", { a: name(draggedId), b: name(targetId) }), { undoable: true });
+    } else {
+      setWindows((list) => insertAround(list, draggedId, targetId, zone === "right" || zone === "bottom"));
+      showNotice(t("paneMovedMsg", { name: name(draggedId) }), { undoable: true });
+    }
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [paneDrag, windows, mode, effectiveFocusId, setWindows, showNotice, thawDeck, t]);
+
+  const movePane = useCallback((id, step) => {
+    const at = deckOrder.indexOf(id);
+    const neighbour = deckOrder[at + step];
+    if (at < 0 || !neighbour) return;
+    transition(() => setWindows((list) => swapItems(list, id, neighbour)));
+  }, [deckOrder, setWindows, transition]);
+
+  const handleLabel = useCallback((handle) => {
+    const name = (index) => deckPanes[index]?.name || t("untitledWindow");
+    return handle.id === "spotlight" ? t("resizeSpotlight", { name: name(handle.before) }) : t("resizeBetween", { a: name(handle.before), b: name(handle.after) });
+  }, [deckPanes, t]);
+
+  // A drop-down over a pane (tab list, device list) opens where the page's
+  // native view is drawn, so the pages turn into snapshots while one is open.
+  const openPopovers = useRef(0);
+  const setPopover = useCallback((open) => {
+    openPopovers.current = Math.max(0, openPopovers.current + (open ? 1 : -1));
+    if (open) freezeDeck();
+    else if (!openPopovers.current) thawDeck(0);
+  }, [freezeDeck, thawDeck]);
+
   const overlayOpen = editor.open || sheet !== null;
   const overlayRef = useRef(overlayOpen);
   overlayRef.current = overlayOpen;
@@ -332,6 +529,27 @@ export function App() {
     const timer = window.setTimeout(() => deck.setOverlay(false), SHEET_MS);
     return () => window.clearTimeout(timer);
   }, [overlayOpen]);
+
+  // Tab titles, favicons and history follow their URL whenever a window's list
+  // changes (editor, tab drag, close, undo), before the pages are told.
+  const tabUrls = useRef({});
+  useLayoutEffect(() => {
+    const previous = tabUrls.current;
+    const changed = [];
+    tabUrls.current = {};
+    for (const item of windows) {
+      const urls = urlList(item);
+      tabUrls.current[item.id] = urls;
+      const before = previous[item.id];
+      if (before && before.join("\n") !== urls.join("\n")) changed.push([item.id, before, urls]);
+    }
+    if (!changed.length) return;
+    setPaneMeta((meta) => {
+      let next = meta;
+      for (const [id, before, after] of changed) if (next[id]) next = { ...next, [id]: metaByUrl(next[id], before, after) };
+      return next;
+    });
+  }, [windows]);
 
   useLayoutEffect(() => {
     if (!loaded) return;
@@ -421,17 +639,18 @@ export function App() {
   }, [transition, setWindows]);
 
   const toggleDevice = useCallback((id) => {
-    setPaneDevice(id, (current) => (current ? null : { id: findDevice(devices, defaultDevice)?.id ?? defaultDevice, landscape: false }));
-  }, [setPaneDevice, devices, defaultDevice]);
+    const fallback = findDevice(devices, defaultDevice)?.id ?? defaultDevice;
+    transition(() => {
+      setWindows((list) => list.map((item) => (item.id === id ? togglePaneDevice(item, fallback) : item)));
+    });
+  }, [transition, setWindows, devices, defaultDevice]);
 
   const addDevicePane = useCallback((id) => {
     const item = windows.find((entry) => entry.id === id);
     if (!item?.device || !devices.length) return;
     const tab = activeTabs[id] ?? 0;
     const url = paneMeta[id]?.[tab]?.url || urlList(item)[tab];
-    const at = devices.findIndex((device) => device.id === item.device.id);
-    const used = new Set(windows.filter((entry) => entry.device).map((entry) => entry.device.id));
-    const next = [...devices.slice(at + 1), ...devices.slice(0, at + 1)].find((device) => !used.has(device.id)) ?? devices[(at + 1) % devices.length];
+    const next = nextComparisonDevice(devices, item.device.id, windows.filter((entry) => entry.device).map((entry) => entry.device.id));
     const created = { id: `win-${Date.now()}`, name: next.name, urls: [url], visible: true, device: { id: next.id, landscape: false } };
     transition(() => {
       setWindows((list) => {
@@ -441,6 +660,40 @@ export function App() {
       setFocusedId(created.id);
     });
   }, [windows, devices, activeTabs, paneMeta, transition, setWindows]);
+
+  // Ask AI ships no API key: it opens Claude or ChatGPT in a pane of the deck
+  // with a guide to the app (and the question, if any) already filled in.
+  const askAi = useCallback((service, question = "") => {
+    const entries = paletteEntries(commandCatalog, { t: tEnglish, tEnglish, isMac });
+    const prompt = featureGuide(entries, { language: LANGUAGE_NAMES[lang] ?? "English", groupLabel: (group) => tEnglish(GROUP_LABELS[group]), question });
+    const name = t("askAiWindowName", { service: service === "claude" ? "Claude" : "ChatGPT" });
+    transition(() => {
+      setWindows((list) => {
+        const existing = list.find((item) => item.id === ASK_AI_WINDOW);
+        const next = { ...existing, id: ASK_AI_WINDOW, name, urls: [ASK_AI_URLS[service](prompt)], visible: true };
+        return existing ? list.map((item) => (item.id === ASK_AI_WINDOW ? next : item)) : [...list, next];
+      });
+      setActiveTab(ASK_AI_WINDOW, 0);
+      setFocusedId(ASK_AI_WINDOW);
+    });
+  }, [isMac, lang, t, transition, setWindows, setActiveTab]);
+
+  const pickDevice = useCallback((id) => {
+    const item = windows.find((entry) => entry.id === id);
+    if (!item) return;
+    if (!item.device) toggleDevice(id);
+    window.setTimeout(() => {
+      const select = document.querySelector(`[data-pane="${id}"] select`);
+      if (!select) return;
+      deck.focusShell();
+      select.focus();
+      try {
+        select.showPicker?.();
+      } catch {
+        // showPicker needs a user gesture in some versions; focus alone still works.
+      }
+    }, item.device ? 0 : LAYOUT_ANIMATION_MS);
+  }, [windows, toggleDevice]);
 
   const openField = useCallback((paneId, kind, value = "") => {
     if (!paneId) return;
@@ -480,17 +733,17 @@ export function App() {
     setWindows((list) => list.map((entry) => (entry.id === paneId ? removeTab(entry, tabIndex) : entry)));
     const active = activeTabs[paneId] ?? 0;
     setActiveTab(paneId, tabIndex < active ? active - 1 : Math.min(active, urls.length - 2));
-    const shift = (byTab = {}) => {
-      const next = {};
-      for (const [key, value] of Object.entries(byTab)) {
-        const index = Number(key);
-        if (index < tabIndex) next[index] = value;
-        else if (index > tabIndex) next[index - 1] = value;
-      }
-      return next;
-    };
-    setPaneMeta((meta) => (meta[paneId] ? { ...meta, [paneId]: shift(meta[paneId]) } : meta));
   }, [windows, activeTabs, paneMeta, setActiveTab, setVisible, setWindows, showNotice, t, primaryLabel]);
+
+  // The tab strip and the window editor reorder the same urls list, so undo
+  // covers both. The shown tab and the pages' titles follow their URL.
+  const moveTabTo = useCallback((paneId, from, to) => {
+    const item = windows.find((entry) => entry.id === paneId);
+    const count = urlList(item).length;
+    if (!item || from === to || from < 0 || to < 0 || from >= count || to >= count) return;
+    setWindows((list) => list.map((entry) => (entry.id === paneId ? moveTab(entry, from, to) : entry)));
+    setActiveTab(paneId, indexAfterMove(activeTabs[paneId] ?? 0, from, to));
+  }, [windows, activeTabs, setActiveTab, setWindows]);
 
   const reopenTab = useCallback(() => {
     while (closedTabs.current.length) {
@@ -624,7 +877,19 @@ export function App() {
     }
     historyRef.current = result.history;
     keepShellFocusUntil.current = performance.now() + LAYOUT_ANIMATION_MS;
+    const windowsBefore = setsRef.current.find((set) => set.id === setIdRef.current)?.windows ?? [];
     commitSets(result.sets, { record: false });
+    const windowsAfter = result.sets.find((set) => set.id === setIdRef.current)?.windows ?? [];
+    setActiveTabs((tabs) => {
+      let next = tabs;
+      for (const item of windowsAfter) {
+        const before = urlList(windowsBefore.find((candidate) => candidate.id === item.id));
+        const shown = before[tabs[item.id] ?? 0];
+        const at = urlList(item).indexOf(shown);
+        if (at >= 0 && at !== (tabs[item.id] ?? 0)) next = { ...next, [item.id]: at };
+      }
+      return next;
+    });
     const touched = Object.keys(result.entry.sets);
     const elsewhere = touched.length === 1 && touched[0] !== setIdRef.current ? result.sets.find((set) => set.id === touched[0]) : null;
     showNotice(direction === "redo" ? t("redoneMsg") : elsewhere ? t("undoneInSetMsg", { name: setLabel(elsewhere) }) : t("undoneMsg"));
@@ -641,6 +906,12 @@ export function App() {
       if (event.defaultPrevented || event.altKey) return;
       const primary = isMac ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
       if (!primary) return;
+      if (isMac && !event.shiftKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        if (overlayRef.current || isEditable(event.target)) return;
+        event.preventDefault();
+        runCommandRef.current(event.key === "ArrowLeft" ? "page-back" : "page-forward");
+        return;
+      }
       const undoKey = event.code === "KeyZ" && !event.shiftKey;
       const redoKey = (event.code === "KeyZ" && event.shiftKey) || (!isMac && event.code === "KeyY" && !event.shiftKey);
       if ((!undoKey && !redoKey) || overlayRef.current || isEditable(event.target)) return;
@@ -701,7 +972,16 @@ export function App() {
       if (!overlayOpen) stepHistory(command === "deck-undo" ? "undo" : "redo");
       return;
     }
+    // ⌘K / F1 also switches from another sheet to the palette, and closes it again.
+    if (command === "open-palette") {
+      if (editor.open) return;
+      deck.focusShell();
+      setSheet((current) => (current === "palette" ? null : "palette"));
+      return;
+    }
     if (overlayOpen) return;
+    // The key may come from a page, which keeps the keyboard until the shell takes it back.
+    if (SHEET_COMMANDS.has(command)) deck.focusShell();
     const count = deckOrder.length;
     const current = currentLayout();
     const paneId = current.focusId;
@@ -721,6 +1001,14 @@ export function App() {
     } else if (command.startsWith("focus-tile-")) {
       const target = deckOrder[Number(command.slice("focus-tile-".length)) - 1];
       if (target) changeLayout({ focusId: target });
+    } else if (command === "arrange-open") {
+      setSheet("arrange");
+    } else if (command.startsWith("shape-")) {
+      setShape(command.slice("shape-".length));
+    } else if (command === "sizes-reset") {
+      resetSizes(current.mode === "spotlight" ? { id: "spotlight" } : null);
+    } else if (command === "pane-move-earlier" || command === "pane-move-later") {
+      if (paneId) movePane(paneId, command === "pane-move-earlier" ? -1 : 1);
     } else if (command === "toggle-sidebar") {
       changeLayout({ sidebarExpanded: !current.sidebarExpanded });
     } else if (command === "tab-new") {
@@ -732,6 +1020,8 @@ export function App() {
       reopenTab();
     } else if (command === "tab-next" || command === "tab-previous") {
       if (tabCount > 1) setActiveTab(paneId, cycleIndex(activeTab, tabCount, command === "tab-next" ? 1 : -1));
+    } else if (command === "tab-move-left" || command === "tab-move-right") {
+      if (paneId) moveTabTo(paneId, activeTab, activeTab + (command === "tab-move-left" ? -1 : 1));
     } else if (/^tab-\d$/.test(command)) {
       const target = tabForNumber(Number(command.slice(4)), tabCount);
       if (target != null) setActiveTab(paneId, target);
@@ -757,8 +1047,33 @@ export function App() {
       setSheet("paste");
     } else if (command === "import-backup") {
       importBackup();
+    } else if (command === "device-toggle") {
+      if (paneId) toggleDevice(paneId);
+    } else if (command === "device-pick") {
+      if (paneId) pickDevice(paneId);
+    } else if (command === "device-rotate" || command === "device-add") {
+      if (!focusedItem) return;
+      if (!focusedItem.device) toggleDevice(paneId);
+      else if (command === "device-add") addDevicePane(paneId);
+      else setPaneDevice(paneId, (device) => ({ ...device, landscape: !device?.landscape }));
+    } else if (command === "hide-pane") {
+      if (paneId) hideWindow(paneId);
+    } else if (command === "edit-window") {
+      if (focusedItem) setEditor({ open: true, item: focusedItem });
+    } else if (command === "add-window") {
+      setEditor({ open: true, item: null });
+    } else if (command === "show-tips") {
+      setSheet("tips");
+    } else if (command === "check-updates") {
+      deck.checkForUpdates();
+    } else if (command === "signin-google") {
+      deck.googleSignIn();
+    } else if (command === "new-window") {
+      deck.openWindow();
+    } else if (command === "ask-ai-claude" || command === "ask-ai-chatgpt") {
+      askAi(command === "ask-ai-claude" ? "claude" : "chatgpt");
     }
-  }, [overlayOpen, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, zoomPane, stepHistory, switchSet, importBackup]);
+  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, setShape, resetSizes, movePane, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi]);
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
@@ -792,6 +1107,12 @@ export function App() {
     else if (status === "error") showNotice(t("updateFailed"));
   }), [t, showNotice]);
 
+  useEffect(() => deck.onGoogleSignIn(({ status, reloaded }) => {
+    if (status === "signed-in") showNotice(t("googleSignedInMsg", { count: reloaded ?? 0 }));
+    else if (status === "signed-out") showNotice(t("googleSignedOutMsg"));
+    else if (status === "rejected") showNotice(t("googleRejectedMsg"));
+  }), [t, showNotice]);
+
   const favicons = useMemo(() => {
     const icons = {};
     for (const item of windows) icons[item.id] = paneMeta[item.id]?.[activeTabs[item.id] ?? 0]?.favicon || null;
@@ -800,7 +1121,12 @@ export function App() {
 
   const saveWindow = ({ id, name, urls }) => {
     if (id) {
+      const before = urlList(windows.find((item) => item.id === id));
+      const after = urlList({ urls });
+      const shown = before[activeTabs[id] ?? 0];
       setWindows((list) => list.map((item) => (item.id === id ? { ...item, name, urls } : item)));
+      const at = after.indexOf(shown);
+      if (at >= 0 && at !== (activeTabs[id] ?? 0)) setActiveTab(id, at);
     } else {
       const created = { id: `win-${Date.now()}`, name, urls, visible: true };
       setWindows((list) => [...list, created]);
@@ -815,15 +1141,21 @@ export function App() {
     showNotice(t("windowDeletedMsg", { name: item.name || t("untitledWindow") }), { undoable: true });
   };
 
+  const paletteItems = useMemo(
+    () => paletteEntries(commandCatalog, { t, tEnglish, isMac, hasPane: Boolean(effectiveFocusId) }),
+    [t, isMac, effectiveFocusId]
+  );
+
   if (!loaded) return <div className="h-full bg-ink" aria-busy="true" />;
 
   const closeSheet = () => setSheet(null);
+  const focusedName = effectiveFocusId ? windows.find((item) => item.id === effectiveFocusId)?.name || t("untitledWindow") : "";
 
   return (
     <div className="flex h-full flex-col bg-background text-foreground">
       <header className={`app-drag flex h-14 shrink-0 items-center gap-4 pr-3 ${isMac ? "pl-20" : "pl-4"}`}>
         <div className="flex min-w-0 items-baseline gap-3">
-          <h1 className="shrink-0 text-lg font-light tracking-[-0.03em]">{t("appTitle")}</h1>
+          <h1 className="deck-display shrink-0 text-lg">{t("appTitle")}</h1>
           <span className="hidden truncate text-xs text-ink-mute lg:inline">{t("appSubtitle")}</span>
         </div>
 
@@ -888,6 +1220,22 @@ export function App() {
             ))}
           </div>
 
+          <IconButton onClick={() => setSheet("arrange")} aria-label={t("arrangeTitle")} title={t("arrangeTitle")}>
+            <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+          </IconButton>
+
+          <button
+            type="button"
+            onClick={() => setSheet("palette")}
+            aria-keyshortcuts={isMac ? "Meta+K F1" : "Control+K F1"}
+            title={`${t("paletteTitle")} (${primaryLabel("K")})`}
+            className="cie-chip ink-swap"
+          >
+            <Search className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("paletteButton")}
+            <kbd className="key border-ink-edge text-paper" aria-hidden="true">{primaryLabel("K")}</kbd>
+          </button>
+
           <IconButton onClick={() => setSheet("shortcuts")} aria-label={t("shortcuts")} title={t("shortcuts")}>
             <Keyboard className="h-4 w-4" aria-hidden="true" />
           </IconButton>
@@ -926,15 +1274,15 @@ export function App() {
         />
 
         <main className="relative min-w-0 flex-1 pb-2 pl-1 pr-2">
-          <div ref={deckRef} className="relative h-full w-full">
+          <div ref={deckRef} className={`relative h-full w-full ${resizing ? "is-resizing" : ""}`}>
             {deckPanes.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-2 rounded-block border border-dashed border-paper/20 text-center">
-                <p className="text-2xl font-light tracking-[-0.03em]">{t("emptyDeck")}</p>
+                <p className="deck-display text-2xl">{t("emptyDeck")}</p>
                 <p className="text-sm text-ink-mute">{t("emptyDeckHint")}</p>
               </div>
             ) : (
               deckPanes.map((item, index) => {
-                const rect = rects[index];
+                const rect = shownRects[index];
                 const paneField = field?.paneId === item.id ? field : null;
                 return (
                   <Pane
@@ -959,8 +1307,14 @@ export function App() {
                     found={found[item.id]}
                     device={paneDevices[item.id]}
                     devices={devices}
+                    recentDevices={recentDevices}
+                    onPopover={setPopover}
+                    keys={paneKeys}
                     onToggleDevice={() => toggleDevice(item.id)}
-                    onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
+                    onDeviceChange={(deviceId) => {
+                      rememberDevice(deviceId);
+                      setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }));
+                    }}
                     onRotateDevice={() => setPaneDevice(item.id, (current) => ({ ...current, landscape: !current?.landscape }))}
                     onAddDevice={() => addDevicePane(item.id)}
                     onHeaderClick={() => spotlightPane(item.id)}
@@ -969,6 +1323,7 @@ export function App() {
                       focusPane(item.id);
                     }}
                     onCloseTab={(tabIndex) => closeTab(item.id, tabIndex)}
+                    onMoveTab={(from, to) => moveTabTo(item.id, from, to)}
                     onNewTab={() => {
                       focusPane(item.id);
                       openField(item.id, "new");
@@ -981,10 +1336,29 @@ export function App() {
                     onFieldChange={changeField}
                     onFieldSubmit={submitField}
                     onFieldCancel={(options) => closeField(options)}
+                    paneDragging={paneDrag}
+                    dropHint={dropHint?.id === item.id ? dropHint.zone : null}
+                    onPaneDragStart={() => startPaneDrag(item.id)}
+                    onPaneDragEnd={endPaneDrag}
+                    onPaneDragOver={(box, x, y) => {
+                      const zone = dropZone(box, x, y);
+                      if (dropHint?.id !== item.id || dropHint.zone !== zone) setDropHint({ id: item.id, zone });
+                    }}
+                    onPaneDrop={(zone) => dropPane(item.id, zone)}
                   />
                 );
               })
             )}
+            <ResizeHandles
+              handles={resizeHandles}
+              size={deckSize}
+              label={handleLabel}
+              onStart={startResize}
+              onMove={moveResize}
+              onEnd={endResize}
+              onStep={stepResize}
+              onReset={resetSizes}
+            />
           </div>
         </main>
       </div>
@@ -1015,7 +1389,11 @@ export function App() {
         devices={devices}
         devicesUpdated={catalog?.updated || ""}
         defaultDevice={findDevice(devices, defaultDevice)?.id ?? defaultDevice}
-        onDefaultDevice={setDefaultDevice}
+        onDefaultDevice={(id) => {
+          setDefaultDevice(id);
+          rememberDevice(id);
+        }}
+        recentDevices={recentDevices}
         appVersion={appVersion}
         keys={{ sets: keyLabel("S") }}
         onPasteList={() => setSheet("paste")}
@@ -1050,6 +1428,54 @@ export function App() {
       />
 
       <ShortcutsSheet t={t} open={sheet === "shortcuts"} onClose={closeSheet} isMac={isMac} />
+
+      <CommandPalette
+        t={t}
+        open={sheet === "palette"}
+        onClose={closeSheet}
+        entries={paletteItems}
+        groups={commandCatalog.groups}
+        groupLabel={(group) => t(GROUP_LABELS[group])}
+        targetName={focusedName}
+        onRun={(id) => {
+          closeSheet();
+          window.setTimeout(() => runCommandRef.current(id), 0);
+        }}
+        onAskAi={(question) => {
+          closeSheet();
+          askAi("claude", question);
+        }}
+      />
+
+      <ArrangeSheet
+        t={t}
+        open={sheet === "arrange"}
+        onClose={closeSheet}
+        count={deckPanes.length}
+        shape={normalizeShape(arrangement?.shape)}
+        onShape={setShape}
+        customSizes={Boolean(arrangement?.sizes || arrangement?.spotlight != null)}
+        onResetSizes={() => {
+          const next = resetLayout(resetLayout(arrangement, "grid"), "spotlight");
+          if (next && JSON.stringify(next) !== JSON.stringify(arrangement)) {
+            commitArrangement(next);
+            showNotice(t("sizesResetMsg"), { undoable: true });
+          }
+        }}
+        paletteKey={primaryLabel("K")}
+      />
+
+      <TipsSheet
+        t={t}
+        open={sheet === "tips"}
+        onClose={() => {
+          closeSheet();
+          deck.applyStore({ settings: { tipsSeen: true } });
+        }}
+        keys={{ palette: primaryLabel("K"), device: paneKeys.device, back: paneKeys.back, spotlight: keyLabel("X") }}
+        lang={lang}
+        onLang={setLang}
+      />
     </div>
   );
 }

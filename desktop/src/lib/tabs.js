@@ -23,6 +23,55 @@ export function removeTab(item, index) {
   return { ...item, urls: urls.join("\n") };
 }
 
+/** `list` with the entry at `from` moved so it ends up at index `to`. */
+export function moveItem(list, from, to) {
+  const at = Math.max(0, Math.min(to, list.length - 1));
+  if (from === at || from < 0 || from >= list.length) return list;
+  const next = [...list];
+  const [moved] = next.splice(from, 1);
+  next.splice(at, 0, moved);
+  return next;
+}
+
+// A drop between entries names a gap (0 before the first, length after the
+// last); this is where the dragged entry lands once taken out of the list.
+export function dropTarget(from, gap) {
+  return gap > from ? gap - 1 : gap;
+}
+
+/** Where the entry that was at `index` sits after moving `from` to `to`. */
+export function indexAfterMove(index, from, to) {
+  if (index === from) return to;
+  if (from < index && index <= to) return index - 1;
+  if (to <= index && index < from) return index + 1;
+  return index;
+}
+
+/**
+ * Per-tab state ({ [index]: value }) after a window's URL list changed from
+ * `before` to `after`: each URL keeps its own, duplicates pair up in order
+ * (as the main process reuses live pages), and removed URLs drop theirs.
+ */
+export function metaByUrl(byTab, before, after) {
+  const pool = new Map();
+  before.forEach((url, index) => {
+    if (!pool.has(url)) pool.set(url, []);
+    pool.get(url).push(index);
+  });
+  const next = {};
+  after.forEach((url, index) => {
+    const from = pool.get(url)?.shift();
+    if (from !== undefined && byTab[from] !== undefined) next[index] = byTab[from];
+  });
+  return next;
+}
+
+export function moveTab(item, from, to) {
+  const urls = urlList(item);
+  const next = moveItem(urls, from, to);
+  return next === urls ? item : { ...item, urls: next.join("\n") };
+}
+
 // Chrome's ⌘1–8 / ⌘9: 1-based tab numbers, 9 meaning "last".
 export function tabForNumber(number, count) {
   if (!count) return null;

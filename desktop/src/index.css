@@ -16,6 +16,115 @@
   --background: var(--cie-ink);
   --foreground: var(--cie-paper);
   color-scheme: dark;
+
+  /* Readability overrides of the cie copies (measured by scripts/contrast.mjs).
+     Muted inks reach 7:1+ instead of 5–7:1, since most secondary text here is
+     12px. Boundaries of fields and pills reach 3:1 (1.4.11), placeholders 4.5:1. */
+  --cie-ink-mute: #b0b0ab;
+  --cie-paper-mute: #4f4f49;
+  --deck-edge-alpha: 0.5;
+  --deck-placeholder-alpha: 0.65;
+
+  /* Inter (with optical sizes) reads better than Outfit at 11–14px; Outfit
+     stays for display headings. Japanese keeps Zen Kaku Gothic New for kana
+     and kanji, with Latin words in Inter. */
+  --cie-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --cie-sans-ja: "Inter Variable", "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+  --deck-display: "Outfit", "Zen Kaku Gothic New", "Hiragino Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Zen Kaku Gothic New at 400 is hairline-thin at 12–13px. */
+:lang(ja) body {
+  font-weight: 500;
+}
+
+.deck-display {
+  font-family: var(--deck-display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+:lang(ja) .deck-display {
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.cie-sheet__title {
+  font-family: var(--deck-display);
+  font-weight: 400;
+  font-variation-settings: "wght" 400;
+}
+:lang(ja) .cie-sheet__title {
+  font-weight: 500;
+}
+
+.cie-mono,
+.cie-chip {
+  font-weight: 500;
+}
+
+.cie-sheet--center.deck-sheet-wide {
+  width: min(calc(100% - 2 * var(--cie-edge)), 560px);
+}
+.cie-sheet--center.deck-sheet-xwide {
+  width: min(calc(100% - 2 * var(--cie-edge)), 780px);
+}
+
+/* The panel clips to its radius and never scrolls itself: a scrollbar on the
+   rounded panel runs over the corner curve (and macOS draws it past the edge).
+   Only __body scrolls, inset 8px from the sides and kept off the bottom curve
+   (by its margin, or by the footer), so the track always sits on flat paper. */
+.cie-sheet.deck-sheet {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  max-height: min(calc(100dvh - 2 * var(--cie-edge)), 720px);
+}
+.deck-sheet__head {
+  flex-shrink: 0;
+  padding: var(--cie-s-24) var(--cie-s-24) 0;
+}
+.deck-sheet__toolbar {
+  flex-shrink: 0;
+  padding: 0 var(--cie-s-24) var(--cie-s-12, 12px);
+}
+.deck-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 8px;
+  padding: 2px 16px var(--cie-s-16);
+}
+.deck-sheet__body.is-last {
+  margin-bottom: calc(var(--cie-r-page) - var(--cie-s-16) + 8px);
+}
+.deck-sheet__foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: var(--cie-s-16) var(--cie-s-24) var(--cie-s-24);
+  border-top: 1px solid rgb(var(--cie-ink-rgb) / 0.1);
+}
+
+/* Thin, cie-coloured scrollbars everywhere (scrollbar-width isn't inherited).
+   Chromium uses these standard properties instead of the ::-webkit ones. */
+* {
+  scrollbar-width: thin;
+}
+
+/* Text fields: a 2px ring on focus, not only a darker hairline (2.4.7). */
+.deck-focus-ring:focus-visible,
+.deck-focus-within:focus-within {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Over an icon, Chromium skips the button's title and shows its parent's tooltip. */
+button svg {
+  pointer-events: none;
 }
 
 html, body, #root {
@@ -32,10 +141,12 @@ html, body, #root {
   -webkit-app-region: no-drag;
 }
 
-/* Mono register: indices, URLs, counts (DESIGN.md: 12px uppercase +0.02em). */
+/* Mono register: indices, URLs, counts (DESIGN.md: 12px uppercase +0.02em).
+   Medium weight: DM Mono 400 is too faint at this size. */
 .register {
   font-family: var(--cie-mono);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.02em;
 }
@@ -47,14 +158,169 @@ html, body, #root {
   border-radius: 4px;
   padding: 1px 5px;
   font-family: var(--cie-mono);
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: inherit;
 }
 .cie-on-paper .key {
-  border-color: rgb(var(--cie-ink-rgb) / 0.3);
+  border-color: rgb(var(--cie-ink-rgb) / var(--deck-edge-alpha));
+}
+
+/* Rounded panes. The page is a square native view laid over the inner box
+   (main.cjs; setBorderRadius can only round all four corners), so the box
+   stops one inner radius above the bottom edge and never crosses the curve. */
+:root {
+  --deck-pane-r: 8px;
+  /* Page surface behind each pane's page: the active tab shares it, so the
+     tab reads as part of the page (Chrome-style). Measured by scripts/contrast.mjs. */
+  --deck-surface-ink: #1f1f1e;
+  --deck-surface-paper: #ffffff;
+}
+.deck-pane-shell {
+  border-radius: var(--deck-pane-r);
+  --deck-surface: var(--deck-surface-ink);
+  --tab-fg: var(--cie-paper);
+  --tab-fg-mute: var(--cie-ink-mute);
+  --tab-edge: rgb(var(--cie-paper-rgb) / var(--deck-edge-alpha));
+  --tab-sep: rgb(var(--cie-paper-rgb) / 0.18);
+  --tab-hover: rgb(var(--cie-paper-rgb) / 0.07);
+  background: var(--deck-surface);
+}
+.deck-pane-shell.is-focused {
+  --deck-surface: var(--deck-surface-paper);
+  --tab-fg: var(--cie-ink);
+  --tab-fg-mute: var(--cie-paper-mute);
+  --tab-edge: rgb(var(--cie-ink-rgb) / var(--deck-edge-alpha));
+  --tab-sep: rgb(var(--cie-ink-rgb) / 0.18);
+  --tab-hover: rgb(var(--cie-ink-rgb) / 0.06);
+}
+
+/* Tabs sit on the bar's bottom edge and the active one covers the divider
+   (-1px), opening into the page. Inactive tabs are flat, split by short rules
+   that hide next to the active or hovered tab. */
+.deck-tabs {
+  align-self: flex-end;
+  height: 29px;
+  margin-bottom: -1px;
+  overflow: hidden;
+}
+/* Past their minimum width the tabs scroll sideways; overlays in Pane.jsx fade
+   the edges where more tabs are hidden (a mask on the scroller left the active
+   tab unpainted in unfocused panes). No scrollbar: the arrows, the wheel and
+   the tab list reach the rest. */
+.deck-tabs__scroller {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.deck-tabs__scroller::-webkit-scrollbar {
+  display: none;
+}
+/* The strip clips, so tab focus rings sit inside the tab. */
+.deck-tab .deck-focus-ring:focus-visible {
+  outline-offset: -3px;
+}
+.deck-tab {
+  position: relative;
+  height: 100%;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  color: var(--tab-fg-mute);
+  transition:
+    background-color var(--cie-t-fast) var(--cie-ease-out),
+    color var(--cie-t-fast) var(--cie-ease-out);
+}
+.deck-tab:hover:not(.is-active) {
+  background: var(--tab-hover);
+  color: var(--tab-fg);
+}
+.deck-tab.is-active {
+  z-index: 1;
+  background: var(--deck-surface);
+  border-color: var(--tab-edge);
+  color: var(--tab-fg);
+}
+.deck-tab__sep {
+  position: absolute;
+  left: -1px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--tab-sep);
+  pointer-events: none;
+}
+.deck-tab:hover > .deck-tab__sep,
+.deck-tab:hover + .deck-tab > .deck-tab__sep {
+  opacity: 0;
+}
+.deck-tab__close {
+  opacity: 0;
+}
+.deck-tab.is-active .deck-tab__close,
+.deck-tab:hover .deck-tab__close,
+.deck-tab:focus-within .deck-tab__close {
+  opacity: 1;
+}
+.deck-pane-page {
+  padding-bottom: calc(var(--deck-pane-r) - 1px);
+}
+
+/* Dividers between panes. Pages are native views above the DOM, so only the
+   gap between two pages (pane padding + borders, 6px) can be hovered; the
+   hit area is 10px and the pages cover what spills past the gap. */
+.deck-divider {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  outline: none;
+}
+.deck-divider.is-vertical {
+  width: 10px;
+  margin-left: -5px;
+  cursor: col-resize;
+}
+.deck-divider.is-horizontal {
+  height: 10px;
+  margin-top: -5px;
+  cursor: row-resize;
+}
+.deck-divider__line {
+  border-radius: var(--cie-r-pill);
+  background: var(--cie-paper);
+  opacity: 0;
+  transition: opacity var(--cie-t-fast) var(--cie-ease-out);
+}
+.deck-divider.is-vertical .deck-divider__line {
+  width: 2px;
+  height: calc(100% - 16px);
+}
+.deck-divider.is-horizontal .deck-divider__line {
+  height: 2px;
+  width: calc(100% - 16px);
+}
+.deck-divider:hover .deck-divider__line {
+  opacity: 0.55;
+}
+.deck-divider:active .deck-divider__line,
+.deck-divider:focus-visible .deck-divider__line {
+  opacity: 1;
+}
+.deck-divider:focus-visible .deck-divider__line {
+  outline: 2px solid var(--cie-paper);
+  outline-offset: 2px;
+}
+
+/* While a divider is dragged the panes track the pointer directly. */
+.is-resizing .deck-pane {
+  transition: none;
 }
 
 /* Panes follow the block → page expand: --cie-t-move on expo. */
@@ -118,6 +384,7 @@ html, body, #root {
 
 @media (prefers-reduced-motion: reduce) {
   .deck-pane,
+  .deck-tab,
   .ink-swap,
   .weight {
     transition: none !important;

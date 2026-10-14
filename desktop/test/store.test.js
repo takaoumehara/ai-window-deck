@@ -35,3 +35,11 @@ test("patches upsert in place, remove, reorder and merge settings", () => {
   assert.deepEqual(store.sets.map((s) => s.id), ["c", "a"]);
   assert.deepEqual(store.settings, { lang: "ja", sidebarOpen: false });
 });
+
+test("a set's arrangement survives a save; junk layouts are dropped", () => {
+  const store = { version: STORE_VERSION, sets: [], settings: {} };
+  const layout = { shape: "hero-left", sizes: { key: "cols:1,2", tracks: [0.6, 0.4], items: [[1], [0.5, 0.5]] } };
+  const saved = applyStorePatch(store, { put: [{ id: "s1", name: "A", windows: [], layout }, { id: "s2", windows: [], layout: [1] }] });
+  assert.deepEqual(saved.sets[0].layout, layout);
+  assert.equal("layout" in saved.sets[1], false);
+});

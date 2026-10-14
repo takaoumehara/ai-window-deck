@@ -3,6 +3,7 @@ import { ChevronRight, ClipboardPaste, Keyboard, Layers, Upload } from "lucide-r
 import { Sheet } from "@desktop/components/ui/Sheet";
 import { Button, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
+import { DeviceList, deviceLabel } from "@desktop/components/DevicePicker";
 
 function Section({ title, children }) {
   return (
@@ -32,11 +33,23 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
 }
 
 export function SettingsSheet({
-  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, appVersion, keys,
+  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, recentDevices, appVersion, keys,
   onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates,
 }) {
+  const currentDevice = devices.find((device) => device.id === defaultDevice);
   return (
-    <Sheet open={open} onClose={onClose} title={t("settings")} closeLabel={t("close")}>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t("settings")}
+      closeLabel={t("close")}
+      footer={
+        <>
+          <span className="register mr-auto text-paper-mute">{t("versionLabel", { version: appVersion || "dev" })}</span>
+          <Button tone="ink" onClick={onCheckUpdates}>{t("checkUpdates")}</Button>
+        </>
+      }
+    >
       <div className="flex flex-col gap-6">
         <Section title={t("languageLabel")}>
           <Choices
@@ -59,13 +72,13 @@ export function SettingsSheet({
         {devices.length > 0 && (
           <Section title={t("settingsDevice")}>
             <p className="text-xs leading-5 text-paper-mute">{t("settingsDeviceHint")}</p>
-            <Choices
-              label={t("settingsDevice")}
-              options={devices.map((device) => ({ value: device.id, label: device.name }))}
-              value={defaultDevice}
-              onChange={onDefaultDevice}
-              columns="grid-cols-2"
-            />
+            <p className="text-sm">
+              <span className="text-paper-mute">{t("settingsDeviceCurrent")} </span>
+              {currentDevice ? deviceLabel(t, currentDevice) : defaultDevice}
+            </p>
+            <div className="flex h-72 flex-col overflow-hidden rounded-block border border-ink-edge">
+              <DeviceList t={t} devices={devices} value={defaultDevice} recent={recentDevices} tone="paper" autoFocus={false} onPick={onDefaultDevice} />
+            </div>
             <span className="register text-paper-mute">
               {t("deviceCatalogInfo", { count: devices.length, date: devicesUpdated || "—" })}
             </span>
@@ -89,11 +102,6 @@ export function SettingsSheet({
             <ActionRow icon={Keyboard} title={t("shortcuts")} hint={t("shortcutsHint")} onClick={onShortcuts} />
           </div>
         </Section>
-
-        <div className="flex items-center justify-between gap-6 border-t border-ink/10 pt-4">
-          <span className="register text-paper-mute">{t("versionLabel", { version: appVersion || "dev" })}</span>
-          <Button tone="ink" onClick={onCheckUpdates}>{t("checkUpdates")}</Button>
-        </div>
       </div>
     </Sheet>
   );

@@ -31,8 +31,21 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={t("pasteList")} closeLabel={t("close")}>
-      <form onSubmit={submit} className="flex flex-col gap-5">
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t("pasteList")}
+      closeLabel={t("close")}
+      footer={
+        <>
+          <Button onClick={onClose}>{t("cancel")}</Button>
+          <Button type="submit" form={`${fieldId}-form`} tone="ink" disabled={!windows.length}>
+            {windows.length === 1 ? t("pasteSubmitOne") : t("pasteSubmit", { count: windows.length })}
+          </Button>
+        </>
+      }
+    >
+      <form id={`${fieldId}-form`} onSubmit={submit} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <label htmlFor={`${fieldId}-text`} className="cie-mono text-paper-mute">{t("pasteLabel")}</label>
           <textarea
@@ -42,7 +55,7 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
             placeholder={t("pastePlaceholder")}
             rows={7}
             spellCheck={false}
-            className="w-full resize-y rounded-tick border border-ink/25 bg-transparent px-3 py-2 font-mono text-xs leading-5 text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink/50 focus:border-ink focus:outline-none"
+            className="w-full resize-y rounded-tick border border-ink-edge bg-transparent px-3 py-2 font-mono text-xs leading-5 text-ink transition-colors duration-fast placeholder:text-paper-mute hover:border-ink focus:border-ink deck-focus-ring"
           />
           <p className="text-xs leading-5 text-paper-mute">{t("pasteHelp")}</p>
         </div>
@@ -74,7 +87,7 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
         <section className="flex flex-col gap-2" aria-live="polite">
           <h3 className="cie-mono text-paper-mute">{t("pastePreview")}</h3>
           {windows.length ? (
-            <ol className="flex max-h-56 flex-col overflow-y-auto">
+            <ol className="flex flex-col">
               {windows.map((item, index) => {
                 const urls = urlList(item);
                 return (
@@ -96,13 +109,6 @@ export function PasteListSheet({ t, open, currentSetName, onClose, onSubmit }) {
             <p className="border-t border-ink/10 py-2 text-sm text-paper-mute">{t("pasteEmpty")}</p>
           )}
         </section>
-
-        <div className="flex justify-end gap-2 pt-1">
-          <Button onClick={onClose}>{t("cancel")}</Button>
-          <Button type="submit" tone="ink" disabled={!windows.length}>
-            {windows.length === 1 ? t("pasteSubmitOne") : t("pasteSubmit", { count: windows.length })}
-          </Button>
-        </div>
       </form>
     </Sheet>
   );

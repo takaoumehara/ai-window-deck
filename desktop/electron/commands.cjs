@@ -27,6 +27,7 @@ const PRIMARY_CODES = {
   Numpad0: "zoom-reset",
   KeyN: "new-window",
   Comma: "open-settings",
+  KeyK: "open-palette",
 };
 for (let n = 1; n <= 9; n += 1) PRIMARY_CODES[`Digit${n}`] = `tab-${n}`;
 
@@ -34,6 +35,7 @@ const PRIMARY_SHIFT_CODES = {
   KeyT: "tab-reopen",
   KeyR: "reload-hard",
   Equal: "zoom-in",
+  KeyM: "device-toggle",
 };
 
 // Brackets differ by layout (JIS puts "[" on BracketRight), so ⌘[ / ⌘] use the
@@ -41,31 +43,15 @@ const PRIMARY_SHIFT_CODES = {
 const PRIMARY_KEYS = { "[": "page-back", "]": "page-forward" };
 const PRIMARY_SHIFT_KEYS = { "{": "tab-previous", "}": "tab-next", "[": "tab-previous", "]": "tab-next" };
 
-const COMMAND_ACCELERATORS = {
-  "toggle-spotlight": "Alt+X",
-  "restore-home": "Alt+Z",
-  "toggle-fullscreen": "Alt+Q",
-  "focus-next": "Alt+Tab",
-  "focus-previous": "Alt+Shift+Tab",
-  "toggle-sidebar": "Alt+B",
-  "sets-open": "Alt+S",
-  "new-window": "CmdOrCtrl+N",
-  "open-settings": "CmdOrCtrl+,",
-  "reload-pane": "CmdOrCtrl+R",
-  "reload-hard": "CmdOrCtrl+Shift+R",
-  "tab-new": "CmdOrCtrl+T",
-  "tab-close": "CmdOrCtrl+W",
-  "tab-reopen": "CmdOrCtrl+Shift+T",
-  "tab-next": "Ctrl+Tab",
-  "tab-previous": "Ctrl+Shift+Tab",
-  "address-focus": "CmdOrCtrl+L",
-  find: "CmdOrCtrl+F",
-  "page-back": "CmdOrCtrl+[",
-  "page-forward": "CmdOrCtrl+]",
-  "zoom-in": "CmdOrCtrl+=",
-  "zoom-out": "CmdOrCtrl+-",
-  "zoom-reset": "CmdOrCtrl+0",
-};
+// commands.json lists every command once, for the app menu here and the
+// command palette in the shell (src/lib/palette.js).
+const CATALOG = require("./commands.json");
+
+// Menu accelerators. ⌘Z stays with the Edit menu's own undo, so the deck's
+// undo has none there.
+const COMMAND_ACCELERATORS = Object.fromEntries(
+  CATALOG.commands.filter((command) => command.accelerator && command.menuAccelerator !== false).map((command) => [command.id, command.accelerator])
+);
 
 function matchCommand(input, platform = process.platform) {
   if (input.type !== "keyDown") return null;
@@ -73,9 +59,14 @@ function matchCommand(input, platform = process.platform) {
   const { alt, shift, control, meta, code, key } = input;
   const repeatable = (command) => (input.isAutoRepeat && !/^(tab-next|tab-previous|zoom-)/.test(command ?? "") ? null : command ?? null);
 
+  if (code === "F1" && !alt && !shift && !control && !meta) return repeatable("open-palette");
+
   // ⌥Tab / ⌥⇧Tab cycle panes on every keyboard layout, which suits mouse
   // buttons mapped to a keystroke (Logi Options+).
   if (alt && !control && !meta && code === "Tab") return repeatable(shift ? "focus-previous" : "focus-next");
+  if (!mac && alt && !control && !meta && !shift && (code === "ArrowLeft" || code === "ArrowRight")) {
+    return repeatable(code === "ArrowLeft" ? "page-back" : "page-forward");
+  }
   if (alt && !control && !meta && !shift) return repeatable(ALT_CODES[code]);
 
   if (control && !meta && !alt && code === "Tab") return repeatable(shift ? "tab-previous" : "tab-next");
@@ -90,12 +81,9 @@ function matchCommand(input, platform = process.platform) {
   if (mac && primary && alt && !shift && (code === "ArrowRight" || code === "ArrowLeft")) {
     return repeatable(code === "ArrowRight" ? "tab-next" : "tab-previous");
   }
-  if (!mac && alt && !control && !meta && !shift && (code === "ArrowLeft" || code === "ArrowRight")) {
-    return repeatable(code === "ArrowLeft" ? "page-back" : "page-forward");
-  }
   if (!primary || alt) return null;
   if (shift) return repeatable(PRIMARY_SHIFT_KEYS[key] ?? PRIMARY_SHIFT_CODES[code]);
   return repeatable(PRIMARY_KEYS[key] ?? PRIMARY_CODES[code]);
 }
 
-module.exports = { matchCommand, COMMAND_ACCELERATORS, ALT_CODES };
+module.exports = { matchCommand, COMMAND_ACCELERATORS, ALT_CODES, CATALOG };

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EMPTY_HISTORY, applyPatch, diffSets, record, redo, storePatchBetween, undo } from "../src/lib/history.js";
+import { EMPTY_HISTORY, applyPatch, diffSets, record, redo, replaceLast, storePatchBetween, undo } from "../src/lib/history.js";
 
 const win = (id, extra = {}) => ({ id, name: id, urls: `https://${id}.test`, visible: true, ...extra });
 const set = (id, windows, extra = {}) => ({ id, name: id, windows, mode: "grid", focusedId: null, activeTabs: {}, ...extra });
@@ -101,4 +101,27 @@ test("store patches carry only what changed, layout included", () => {
   assert.deepEqual(storePatchBetween([a, b], [a, c, b]).order, ["a", "c", "b"]);
   assert.deepEqual(storePatchBetween([a, b], [b]), { put: [], remove: ["a"] });
   assert.deepEqual(storePatchBetween([a, b], [b, a]), { put: [], remove: [], order: ["b", "a"] });
+});
+
+test("a set's arrangement is undoable, while its view state stays put", () => {
+  const before = [set("s1", [win("a"), win("b")])];
+  const after = [{ ...before[0], layout: { shape: "rows" } }];
+  const entry = diffSets(before, after);
+  assert.ok(entry);
+  const elsewhere = [{ ...after[0], mode: "fill" }];
+  const undone = applyPatch(elsewhere, entry, "before");
+  assert.equal(undone[0].layout, undefined);
+  assert.equal(undone[0].mode, "fill");
+  assert.deepEqual(applyPatch(undone, entry, "after")[0].layout, { shape: "rows" });
+});
+
+test("replaceLast folds a burst of steps into one undo", () => {
+  const start = [set("s1", [win("a"), win("b")])];
+  const step1 = [{ ...start[0], layout: { shape: "auto", sizes: { n: 1 } } }];
+  const step2 = [{ ...start[0], layout: { shape: "auto", sizes: { n: 2 } } }];
+  let history = record(EMPTY_HISTORY, diffSets(start, step1));
+  history = replaceLast(history, diffSets(start, step2));
+  assert.equal(history.past.length, 1);
+  assert.deepEqual(undo(history, step2).sets, start);
+  assert.equal(replaceLast(history, null).past.length, 0);
 });

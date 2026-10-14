@@ -11,6 +11,7 @@ function normalizeSet(set, index) {
     mode: set.mode || "grid",
     focusedId: set.focusedId || null,
     activeTabs: set.activeTabs && typeof set.activeTabs === "object" ? set.activeTabs : {},
+    ...(set.layout && typeof set.layout === "object" && !Array.isArray(set.layout) ? { layout: set.layout } : {}),
   };
 }
 

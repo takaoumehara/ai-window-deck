@@ -1,6 +1,9 @@
-/* cie-ds faces, bundled so the app renders the same offline:
-   Outfit 100–900, DM Mono 400, Zen Kaku Gothic New 300–700. */
+/* Bundled so the app renders the same offline: Inter (UI text, optical sizes),
+   Outfit 100–900 (display headings, the cie-ds face), DM Mono 400/500 and
+   Zen Kaku Gothic New 300–700 (Japanese). All SIL OFL 1.1. */
+@import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource/dm-mono/400.css";
+@import "@fontsource/dm-mono/500.css";
 @import "@fontsource/zen-kaku-gothic-new/300.css";
 @import "@fontsource/zen-kaku-gothic-new/400.css";
 @import "@fontsource/zen-kaku-gothic-new/500.css";

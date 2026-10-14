@@ -14,6 +14,11 @@ export default {
       paper: channel("--cie-paper-rgb"),
       "ink-mute": "var(--cie-ink-mute)",
       "paper-mute": "var(--cie-paper-mute)",
+      // Boundaries of fields and pills (≥3:1) and placeholder text (≥4.5:1); see index.css.
+      "ink-edge": "rgb(var(--cie-ink-rgb) / var(--deck-edge-alpha))",
+      "paper-edge": "rgb(var(--cie-paper-rgb) / var(--deck-edge-alpha))",
+      "ink-hint": "rgb(var(--cie-ink-rgb) / var(--deck-placeholder-alpha))",
+      "paper-hint": "rgb(var(--cie-paper-rgb) / var(--deck-placeholder-alpha))",
       stroke: "var(--cie-stroke)",
       btn: "var(--cie-btn)",
       "btn-hover": "var(--cie-btn-hover)",

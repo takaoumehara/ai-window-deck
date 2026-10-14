@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { ChevronDown, CopyPlus, RotateCcwSquare, Smartphone, Tablet } from "lucide-react";
+import { CopyPlus, RotateCcwSquare } from "lucide-react";
+import { DevicePicker } from "@desktop/components/DevicePicker";
 import { deviceMetrics, fitDevice } from "@desktop/lib/device-frame";
 
 function StageButton({ label, onClick, children }) {
@@ -53,7 +54,7 @@ function Cutout({ device, fit, landscape }) {
  * screen, which the page's native view covers.
  */
 export const DeviceStage = React.forwardRef(function DeviceStage(
-  { t, device, landscape, devices, focused, children, onChange, onRotate, onAddDevice },
+  { t, device, landscape, devices, recent, focused, children, onChange, onRotate, onAddDevice, onPopover },
   screenRef
 ) {
   const stageRef = useRef(null);
@@ -69,40 +70,10 @@ export const DeviceStage = React.forwardRef(function DeviceStage(
   }, []);
 
   const fit = fitDevice(box, device, { landscape });
-  const Icon = device.type === "phone" ? Smartphone : Tablet;
-  const groups = [
-    ["ios", "iPhone"],
-    ["android", "Android"],
-    ["ipados", "iPad"],
-  ];
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-ink text-paper">
-      <div className="flex h-8 shrink-0 items-center gap-2 border-b border-paper/10 px-2" onClick={(event) => event.stopPropagation()}>
-        <label className="relative flex min-w-0 items-center gap-1.5 rounded-pill border border-paper/25 py-0.5 pl-2 pr-6 transition-colors duration-fast hover:border-paper/60">
-          <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <select
-            value={device.id}
-            onChange={(event) => onChange(event.target.value)}
-            aria-label={t("deviceModel")}
-            title={t("deviceModel")}
-            className="min-w-0 cursor-pointer appearance-none truncate bg-transparent text-xs outline-none"
-          >
-            {groups.map(([os, label]) => {
-              const list = devices.filter((candidate) => candidate.os === os);
-              if (!list.length) return null;
-              return (
-                <optgroup key={os} label={label} className="bg-ink text-paper">
-                  {list.map((candidate) => (
-                    <option key={candidate.id} value={candidate.id}>
-                      {candidate.approx ? `${candidate.name} (${t("deviceApprox")})` : candidate.name}
-                    </option>
-                  ))}
-                </optgroup>
-              );
-            })}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-1.5 h-3 w-3 opacity-60" aria-hidden="true" />
-        </label>
+    <div className="relative flex min-h-0 flex-1 flex-col bg-ink text-paper">
+      <div className="flex h-9 shrink-0 items-center gap-2 border-b border-paper/10 px-2" onClick={(event) => event.stopPropagation()}>
+        <DevicePicker t={t} device={device} devices={devices} recent={recent} onChange={onChange} onOpenChange={onPopover} />
         <span className="register min-w-0 truncate text-ink-mute" title={t("deviceAccuracy")}>
           {deviceMetrics(device, landscape)}
           {fit.scale < 0.995 ? ` · ${Math.round(fit.scale * 100)}%` : ""}
