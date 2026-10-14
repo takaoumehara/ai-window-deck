@@ -171,8 +171,8 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
                 <button
                   type="button"
                   onClick={() => setRows(rows.length > 1 ? rows.filter((candidate) => candidate.key !== row.key) : [makeRow()])}
-                  aria-label={t("removeUrl")}
-                  title={t("removeUrl")}
+                  aria-label={t("removeUrl", { n: index + 1 })}
+                  title={t("removeUrl", { n: index + 1 })}
                   className="cie-tap grid h-8 w-8 shrink-0 place-items-center rounded-pill bg-btn transition-colors duration-fast hover:bg-btn-hover"
                 >
                   <Minus className="h-3.5 w-3.5" aria-hidden="true" />

@@ -18,7 +18,7 @@ export default {
   nameLabel: "名前",
   urlsLabel: "URL（1 行 1 タブ）",
   addUrl: "URL を追加",
-  removeUrl: "URL を削除",
+  removeUrl: "URL {n} を削除",
   cancel: "キャンセル",
   save: "保存",
   close: "閉じる",

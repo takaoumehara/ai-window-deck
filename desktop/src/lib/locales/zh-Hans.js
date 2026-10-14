@@ -18,7 +18,7 @@ export default {
   nameLabel: "名称",
   urlsLabel: "网址（每行一个标签页）",
   addUrl: "添加网址",
-  removeUrl: "移除网址",
+  removeUrl: "移除网址 {n}",
   cancel: "取消",
   save: "保存",
   close: "关闭",

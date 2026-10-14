@@ -18,7 +18,7 @@ export default {
   nameLabel: "Name",
   urlsLabel: "URLs (one per tab)",
   addUrl: "Add URL",
-  removeUrl: "Remove URL",
+  removeUrl: "Remove URL {n}",
   cancel: "Cancel",
   save: "Save",
   close: "Close",

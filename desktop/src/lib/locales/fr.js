@@ -18,7 +18,7 @@ export default {
   nameLabel: "Nom",
   urlsLabel: "URL (une par onglet)",
   addUrl: "Ajouter une URL",
-  removeUrl: "Retirer l’URL",
+  removeUrl: "Retirer l’URL {n}",
   cancel: "Annuler",
   save: "Enregistrer",
   close: "Fermer",

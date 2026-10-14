@@ -18,7 +18,7 @@ export default {
   nameLabel: "Nombre",
   urlsLabel: "URL (una por pestaña)",
   addUrl: "Añadir URL",
-  removeUrl: "Quitar URL",
+  removeUrl: "Quitar la URL {n}",
   cancel: "Cancelar",
   save: "Guardar",
   close: "Cerrar",

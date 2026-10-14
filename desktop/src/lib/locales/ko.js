@@ -18,7 +18,7 @@ export default {
   nameLabel: "이름",
   urlsLabel: "URL(한 줄에 탭 하나)",
   addUrl: "URL 추가",
-  removeUrl: "URL 삭제",
+  removeUrl: "URL {n} 삭제",
   cancel: "취소",
   save: "저장",
   close: "닫기",

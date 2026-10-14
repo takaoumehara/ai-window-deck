@@ -18,7 +18,7 @@ export default {
   nameLabel: "名稱",
   urlsLabel: "網址（每行一個分頁）",
   addUrl: "新增網址",
-  removeUrl: "移除網址",
+  removeUrl: "移除網址 {n}",
   cancel: "取消",
   save: "儲存",
   close: "關閉",
