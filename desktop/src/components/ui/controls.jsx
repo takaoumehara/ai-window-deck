@@ -42,6 +42,33 @@ export const Field = React.forwardRef(function Field({ className = "", ...props 
   );
 });
 
+// Pill checkbox group for a sheet (paper ground). `values` is the whole selection,
+// including options this group doesn't draw, so several groups can share it.
+export function Checks({ label, options, values, onChange, columns = "grid-cols-2" }) {
+  const selected = new Set(values);
+  return (
+    <div role="group" aria-label={label} className={`grid gap-1.5 ${columns}`}>
+      {options.map((option) => {
+        const on = selected.has(option.value);
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={on}
+            title={option.label}
+            onClick={() => onChange(on ? values.filter((value) => value !== option.value) : [...values, option.value])}
+            className={`cie-tap ink-swap h-9 truncate rounded-pill border border-solid px-3 text-sm ${
+              on ? "border-ink bg-ink text-paper" : "border-ink/20 hover:border-ink/60"
+            }`}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // Pill radio group for a sheet (paper ground).
 export function Choices({ label, options, value, onChange, columns = "grid-cols-3" }) {
   return (

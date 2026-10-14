@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronRight, ClipboardPaste, Keyboard, Layers, Upload } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
-import { Button, Choices } from "@desktop/components/ui/controls";
+import { Button, Checks, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
 
 function Section({ title, children }) {
@@ -31,8 +31,14 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
   );
 }
 
+const DEVICE_GROUPS = [
+  ["ios", "iPhone"],
+  ["android", "Android"],
+  ["ipados", "iPad"],
+];
+
 export function SettingsSheet({
-  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, appVersion, keys,
+  t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, previewIds, onPreviewDevices, defaultDevice, onDefaultDevice, appVersion, keys,
   onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates,
 }) {
   return (
@@ -59,9 +65,25 @@ export function SettingsSheet({
         {devices.length > 0 && (
           <Section title={t("settingsDevice")}>
             <p className="text-xs leading-5 text-paper-mute">{t("settingsDeviceHint")}</p>
+            {DEVICE_GROUPS.map(([os, label]) => {
+              const list = devices.filter((device) => device.os === os);
+              if (!list.length) return null;
+              return (
+                <div key={os} className="flex flex-col gap-1.5">
+                  <span className="register text-paper-mute">{label}</span>
+                  <Checks
+                    label={label}
+                    options={list.map((device) => ({ value: device.id, label: device.name }))}
+                    values={previewIds}
+                    onChange={onPreviewDevices}
+                  />
+                </div>
+              );
+            })}
+            <span className="register text-paper-mute">{t("settingsDeviceStart")}</span>
             <Choices
-              label={t("settingsDevice")}
-              options={devices.map((device) => ({ value: device.id, label: device.name }))}
+              label={t("settingsDeviceStart")}
+              options={(previewIds.length ? devices.filter((device) => previewIds.includes(device.id)) : devices).map((device) => ({ value: device.id, label: device.name }))}
               value={defaultDevice}
               onChange={onDefaultDevice}
               columns="grid-cols-2"

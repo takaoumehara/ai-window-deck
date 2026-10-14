@@ -160,7 +160,10 @@ export default {
   devicePortrait: "Passer en portrait",
   deviceLandscape: "Passer en paysage",
   deviceAddAnother: "Afficher aussi cette page sur un autre appareil",
-  settingsDevice: "Aperçu mobile",
-  settingsDeviceHint: "L’appareil qu’un panneau affiche avec le bouton téléphone de sa barre de titre. Les pages s’affichent dans leur vraie mise en page mobile (comme le mode appareil de Chrome, pas Safari lui-même).",
+  settingsDevice: "Appareils du sélecteur",
+  settingsDeviceHint: "Les onglets s’ouvrent sur le bureau. Les appareils choisis ici forment le sélecteur de chaque volet. Un onglet réglé sur l’un d’eux prend le nom de l’appareil, et vous pouvez encore le changer une fois ouvert. Sur un téléphone, la barre d’adresse se replie au défilement et la barre de défilement n’apparaît qu’un instant. Les pages sont dessinées par Chrome, pas par Safari.",
+  settingsDeviceStart: "Le bouton téléphone ouvre",
+  deviceDesktop: "Bureau",
+  deviceOpenTabs: "Ouvrir aussi cette page dans des onglets des autres appareils",
   deviceCatalogInfo: "{count} appareils · mis à jour le {date}",
 };

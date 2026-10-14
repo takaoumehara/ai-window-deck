@@ -7,6 +7,7 @@ const { createUpdater } = require("./updates.cjs");
 const { migrateStore, applyStorePatch } = require("./store.cjs");
 const { loadWindowStates, saveWindowStates, frameOf, cascadeFrom, DEFAULT_SIZE } = require("./window-state.cjs");
 const { normalizeCatalog, mergeCatalogs } = require("./devices.cjs");
+const { chromeAppearance, deviceChromeCss } = require("./device-chrome.cjs");
 const {
   desktopIdentity, deviceIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
 } = require("./identity.cjs");
@@ -256,6 +257,64 @@ function deviceScale(pane) {
   return Math.max(0.05, bounds.width / (device.landscape ? device.height : device.width));
 }
 
+const DEVICE_CHROME_CSS = deviceChromeCss();
+
+// One device per tab. Older shells sent a single pane device, which still
+// applies to every tab.
+function tabDeviceList(next) {
+  const urls = Array.isArray(next.urls) ? next.urls : [];
+  if (Array.isArray(next.tabDevices)) return urls.map((_, index) => next.tabDevices[index] ?? null);
+  const shared = next.device ?? null;
+  return urls.map(() => shared);
+}
+
+function locateView(contents) {
+  for (const target of shells.values()) {
+    for (const [paneId, pane] of target.panes) {
+      for (const [tabIndex, view] of pane.views) {
+        if (view.webContents === contents) return { target, paneId, tabIndex, view };
+      }
+    }
+  }
+  return null;
+}
+
+// The bar and the fading scrollbar live in the page, styled by insertCSS so a
+// site's content policy can't remove them. Navigation clears inserted CSS.
+async function showDeviceChrome(view, device, labels) {
+  const contents = view.webContents;
+  if (contents.isDestroyed()) return;
+  const appearance = chromeAppearance(device);
+  const send = () => {
+    if (contents.isDestroyed()) return;
+    contents.send("device-chrome:set", appearance ? {
+      ...appearance,
+      landscape: Boolean(device.landscape),
+      url: contents.getURL(),
+      labels: labels || {},
+    } : null);
+  };
+  if (!appearance) {
+    if (view.chromeCss) contents.removeInsertedCSS(view.chromeCss).catch(() => {});
+    view.chromeCss = null;
+    send();
+    return;
+  }
+  if (!view.chromeCss && !view.chromeInserting) {
+    view.chromeInserting = true;
+    const generation = view.chromeGeneration || 0;
+    try {
+      const key = await contents.insertCSS(DEVICE_CHROME_CSS);
+      if (!contents.isDestroyed() && (view.chromeGeneration || 0) === generation) view.chromeCss = key;
+      else if (!contents.isDestroyed()) contents.removeInsertedCSS(key).catch(() => {});
+    } catch {
+      // The bar is still built; it just won't pick up the stylesheet.
+    }
+    view.chromeInserting = false;
+  }
+  send();
+}
+
 function sendTo(target, channel, payload) {
   if (target && !target.win.isDestroyed()) target.win.webContents.send(channel, payload);
 }
@@ -322,7 +381,7 @@ function tabIndexOf(target, paneId, view) {
   return -1;
 }
 
-function createTabView(target, paneId, url) {
+function createTabView(target, paneId, url, device = null) {
   const view = new WebContentsView({
     webPreferences: {
       partition: PARTITION,
@@ -414,8 +473,21 @@ function createTabView(target, paneId, url) {
     if (result.finalUpdate) send("pane:found", { paneId, active: result.activeMatchOrdinal, matches: result.matches });
   });
 
-  const pane = target.panes.get(paneId);
-  if (pane?.device) presentDevice(view, pane.device);
+  view.boundDevice = device ?? null;
+  if (device) presentDevice(view, device);
+  const pushChrome = () => {
+    const tabIndex = tabIndexOf(target, paneId, view);
+    const current = target.panes.get(paneId)?.tabDevices?.[tabIndex] ?? view.boundDevice ?? null;
+    showDeviceChrome(view, current, target.chromeLabels);
+  };
+  contents.on("did-start-navigation", (_event, _url, isInPlace, isMainFrame) => {
+    if (!isMainFrame || isInPlace) return;
+    view.chromeGeneration = (view.chromeGeneration || 0) + 1;
+    view.chromeCss = null;
+    view.chromeInserting = false;
+  });
+  contents.on("dom-ready", pushChrome);
+  contents.on("did-navigate-in-page", pushChrome);
   contents.loadURL(url).catch(() => {});
   target.win.contentView.addChildView(view);
   return view;
@@ -488,11 +560,6 @@ function syncPanes(target, nextPanes) {
       pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, device: null, views: new Map() };
       panes.set(next.id, pane);
     }
-    // A new device (or leaving the preview) reloads the pages, so servers
-    // that pick a layout by user agent send the right one; rotating doesn't.
-    const nextDevice = next.device ?? null;
-    const deviceChanged = deviceKey(nextDevice) !== deviceKey(pane.device);
-    pane.device = nextDevice;
     // Live pages follow their URL to its new position (tabs opened, closed or
     // reordered); only a tab whose URL is gone from the list is torn down.
     const pool = new Map();
@@ -510,19 +577,32 @@ function syncPanes(target, nextPanes) {
     const moved = [...views].some(([tabIndex, view]) => pane.views.get(tabIndex) !== view);
     pane.views = views;
     pane.urls = next.urls;
+    pane.tabDevices = tabDeviceList(next);
     pane.activeTab = Math.min(next.activeTab ?? 0, Math.max(0, next.urls.length - 1));
+    pane.device = pane.tabDevices[pane.activeTab] ?? null;
     pane.visible = next.visible;
     if (next.bounds) pane.bounds = next.bounds;
     const url = pane.urls[pane.activeTab];
     if (url && !pane.views.has(pane.activeTab)) {
-      pane.views.set(pane.activeTab, createTabView(target, next.id, url));
+      pane.views.set(pane.activeTab, createTabView(target, next.id, url, pane.device));
     }
     if (moved) for (const view of pane.views.values()) view.report?.();
-    if (deviceChanged) {
-      for (const view of pane.views.values()) {
-        emulateDevice(view, pane.device, deviceScale(pane));
+    // A new device (or leaving the preview) reloads that tab, so servers that
+    // pick a layout by user agent send the right one. Rotating doesn't, and a
+    // tab that isn't showing waits until it comes forward, at the right size.
+    for (const [tabIndex, view] of pane.views) {
+      const nextDevice = pane.tabDevices[tabIndex] ?? null;
+      if (deviceKey(nextDevice) !== deviceKey(view.boundDevice)) {
+        view.boundDevice = nextDevice;
+        view.deviceDirty = true;
+      }
+      if (tabIndex !== pane.activeTab) continue;
+      if (view.deviceDirty) {
+        view.deviceDirty = false;
+        emulateDevice(view, nextDevice, deviceScale(pane));
         if (view.webContents.getURL()) view.webContents.reload();
       }
+      showDeviceChrome(view, nextDevice, target.chromeLabels);
     }
     applyPane(target, next.id);
   }
@@ -778,7 +858,9 @@ ipcMain.on("update:install", () => updater?.install());
 
 ipcMain.on("panes:sync", (event, nextPanes) => {
   const target = shellOf(event.sender);
-  if (target) syncPanes(target, nextPanes);
+  if (!target || !Array.isArray(nextPanes)) return;
+  if (nextPanes[0]?.chromeLabels) target.chromeLabels = nextPanes[0].chromeLabels;
+  syncPanes(target, nextPanes);
 });
 ipcMain.on("panes:bounds", (event, list) => {
   const target = shellOf(event.sender);
@@ -827,6 +909,16 @@ ipcMain.on("pane:mouse-nav", (event, direction) => {
   const history = event.sender.navigationHistory;
   if (direction === "back" && history.canGoBack()) history.goBack();
   else if (direction === "forward" && history.canGoForward()) history.goForward();
+});
+ipcMain.on("pane:chrome-action", (event, action) => {
+  const contents = event.sender;
+  if (action === "back" && contents.navigationHistory.canGoBack()) contents.navigationHistory.goBack();
+  else if (action === "forward" && contents.navigationHistory.canGoForward()) contents.navigationHistory.goForward();
+  else if (action === "reload") contents.reload();
+  else if (action === "address") {
+    const found = locateView(contents);
+    if (found) sendTo(found.target, "pane:chrome-action", { paneId: found.paneId, action, url: contents.getURL() });
+  }
 });
 ipcMain.on("shell:focus", (event) => event.sender.focus());
 ipcMain.on("pane:focus", (event, paneId) => focusView(shellOf(event.sender), paneId));

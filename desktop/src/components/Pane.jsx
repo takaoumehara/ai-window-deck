@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, Smartphone } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, Smartphone, Layers } from "lucide-react";
 import { DeviceStage } from "@desktop/components/DeviceStage";
+import { DeviceSwitch } from "@desktop/components/DeviceSwitch";
 import { hostLabel } from "@desktop/lib/deck-data";
+import { tabDevicesOf } from "@desktop/lib/tabs";
 
 function HeaderButton({ label, onClick, disabled, pressed, focused, children }) {
   const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
@@ -87,9 +89,9 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
 
 export const Pane = React.forwardRef(function Pane(
   {
-    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices,
+    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, switchDevices,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
-    onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice,
+    onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onSwitchDevice, onOpenDeviceTabs,
   },
   bodyRef
 ) {
@@ -98,6 +100,15 @@ export const Pane = React.forwardRef(function Pane(
   const enlarged = focused && mode !== "grid";
   const zoom = tabMeta?.zoom ?? 1;
   const showTabs = urls.length > 1 || !compact;
+  const tabDevices = tabDevicesOf(item);
+  const tabLabel = (url, tabIndex) => {
+    const spec = tabDevices[tabIndex];
+    const deviceName = spec ? devices.find((candidate) => candidate.id === spec.id)?.name : "";
+    const host = hostLabel(meta?.[tabIndex]?.url || url);
+    if (!deviceName) return host;
+    const shared = tabDevices.some((other, otherIndex) => otherIndex !== tabIndex && other?.id === spec.id);
+    return shared ? `${deviceName} · ${host}` : deviceName;
+  };
   const pageBody = (
     <>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
@@ -162,7 +173,7 @@ export const Pane = React.forwardRef(function Pane(
             </span>
           )}
 
-          <div className="ml-auto flex shrink-0 items-center gap-0.5">
+          <div className="ml-auto flex min-w-0 items-center gap-0.5">
             {Math.abs(zoom - 1) > 0.001 && (
               <button
                 type="button"
@@ -178,9 +189,9 @@ export const Pane = React.forwardRef(function Pane(
             )}
             {showTabs && (
               <div role="tablist" aria-label={item.name} className="mr-1.5 flex items-center gap-1">
-                {urls.length > 1 && urls.map((url, tabIndex) => {
+                {(urls.length > 1 || tabDevices.some(Boolean)) && urls.map((url, tabIndex) => {
                   const selected = tabIndex === activeTab;
-                  const label = meta?.[tabIndex]?.title || hostLabel(meta?.[tabIndex]?.url || url);
+                  const label = tabLabel(url, tabIndex);
                   return (
                     <span
                       key={`${tabIndex}-${url}`}
@@ -206,9 +217,9 @@ export const Pane = React.forwardRef(function Pane(
                         title={`${label}\n${meta?.[tabIndex]?.url || url}`}
                         className={`register cie-tap min-w-0 truncate py-0.5 pl-2 ${compact ? "pr-2" : "pr-1"}`}
                       >
-                        {compact ? tabIndex + 1 : hostLabel(meta?.[tabIndex]?.url || url)}
+                        {compact ? tabIndex + 1 : label}
                       </button>
-                      {!compact && (
+                      {!compact && urls.length > 1 && (
                         <button
                           type="button"
                           onClick={(event) => {
@@ -233,6 +244,21 @@ export const Pane = React.forwardRef(function Pane(
                   </HeaderButton>
                 )}
               </div>
+            )}
+            {!compact && switchDevices.length > 0 && (
+              <>
+                <DeviceSwitch
+                  t={t}
+                  focused={focused}
+                  devices={switchDevices}
+                  currentId={tabDevices[activeTab]?.id || ""}
+                  catalog={devices}
+                  onChange={onSwitchDevice}
+                />
+                <HeaderButton label={t("deviceOpenTabs")} onClick={onOpenDeviceTabs}>
+                  <Layers className="h-3.5 w-3.5" aria-hidden="true" />
+                </HeaderButton>
+              </>
             )}
             {(!compact || device) && (
               <HeaderButton label={t(device ? "deviceExit" : "deviceEnter")} pressed={Boolean(device)} focused={focused} onClick={onToggleDevice}>
@@ -272,7 +298,7 @@ export const Pane = React.forwardRef(function Pane(
             ref={bodyRef}
             t={t}
             device={device}
-            landscape={Boolean(item.device?.landscape)}
+            landscape={Boolean(tabDevices[activeTab]?.landscape)}
             devices={devices}
             focused={focused}
             onChange={onDeviceChange}

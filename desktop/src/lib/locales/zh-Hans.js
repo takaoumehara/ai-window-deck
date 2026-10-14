@@ -160,7 +160,10 @@ export default {
   devicePortrait: "旋转为竖屏",
   deviceLandscape: "旋转为横屏",
   deviceAddAnother: "在其他机型上也并排显示此页面",
-  settingsDevice: "移动端预览",
-  settingsDeviceHint: "点击窗格标题栏中的手机按钮时切换到的机型。页面会以真实的移动端布局显示（相当于 Chrome 的设备模式，并非 Safari 本身）。",
+  settingsDevice: "切换条上的机型",
+  settingsDeviceHint: "标签页默认是桌面视图。在这里勾选的机型会出现在每个窗格的切换条上。把某个标签设为其中一款机型后，标签名会变成机种名，打开之后仍可更改。在手机上，地址栏会随滚动滑走，滚动条只在滑动时出现然后淡出。页面仍由 Chrome 绘制，而不是 Safari。",
+  settingsDeviceStart: "手机按钮打开的机型",
+  deviceDesktop: "桌面",
+  deviceOpenTabs: "把此页面也用其他机型的标签打开",
   deviceCatalogInfo: "{count} 款机型 · {date} 更新",
 };

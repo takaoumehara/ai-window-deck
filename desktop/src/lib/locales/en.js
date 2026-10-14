@@ -160,7 +160,10 @@ export default {
   devicePortrait: "Rotate to portrait",
   deviceLandscape: "Rotate to landscape",
   deviceAddAnother: "Show this page on another device too",
-  settingsDevice: "Mobile preview",
-  settingsDeviceHint: "The device a pane switches to with the phone button in its title bar. Pages show their real mobile layout (like Chrome's device mode, not Safari itself).",
+  settingsDevice: "Devices on the switch",
+  settingsDeviceHint: "Tabs open on the desktop. The devices you pick here are the switch on each pane. Set a tab to one of them and its label becomes that device — you can still change it after the tab is open. On a phone, the address bar slides away as you scroll and the scrollbar fades, the way it does on the device. Pages are still drawn by Chrome, not Safari.",
+  settingsDeviceStart: "Phone button opens",
+  deviceDesktop: "Desktop",
+  deviceOpenTabs: "Open this page on the other devices as tabs",
   deviceCatalogInfo: "{count} devices · updated {date}",
 };

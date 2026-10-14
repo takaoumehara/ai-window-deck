@@ -160,7 +160,10 @@ export default {
   devicePortrait: "세로로 회전",
   deviceLandscape: "가로로 회전",
   deviceAddAnother: "이 페이지를 다른 기기에서도 나란히 보기",
-  settingsDevice: "모바일 미리보기",
-  settingsDeviceHint: "창 제목 표시줄의 휴대폰 버튼을 눌렀을 때 전환되는 기기입니다. 페이지가 실제 모바일 레이아웃으로 표시됩니다(Chrome 기기 모드와 같으며 Safari 자체는 아닙니다).",
+  settingsDevice: "전환에 둘 기기",
+  settingsDeviceHint: "탭은 처음에 데스크톱으로 열립니다. 여기서 고른 기기만 각 창의 전환 스위치에 나옵니다. 탭을 그 기기로 두면 탭 이름이 기기 이름이 되고, 연 뒤에도 그 탭의 기기를 바꿀 수 있습니다. 휴대폰에서는 스크롤하면 주소창이 들어가고, 스크롤바는 움직일 때만 나타났다가 사라집니다. 페이지는 Safari가 아니라 Chrome으로 그립니다.",
+  settingsDeviceStart: "휴대폰 버튼이 여는 기기",
+  deviceDesktop: "데스크톱",
+  deviceOpenTabs: "이 페이지를 고른 기기의 탭으로도 열기",
   deviceCatalogInfo: "기기 {count}개 · {date} 업데이트",
 };

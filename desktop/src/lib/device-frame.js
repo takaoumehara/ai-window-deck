@@ -47,8 +47,8 @@ export function findDevice(devices, id, fallbackId) {
 // What the main process needs to emulate a pane's device.
 export function deviceForPane(device, landscape) {
   if (!device) return null;
-  const { id, os, type, width, height, dpr, ua, model } = device;
-  return { id, os, type, width, height, dpr, ua, model, landscape: Boolean(landscape) };
+  const { id, os, type, width, height, dpr, ua, model, radius } = device;
+  return { id, os, type, width, height, dpr, ua, model, radius: radius || 0, landscape: Boolean(landscape) };
 }
 
 // "402×874 · 3×", in the orientation shown.

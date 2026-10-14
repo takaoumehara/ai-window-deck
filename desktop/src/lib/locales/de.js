@@ -160,7 +160,10 @@ export default {
   devicePortrait: "Ins Hochformat drehen",
   deviceLandscape: "Ins Querformat drehen",
   deviceAddAnother: "Diese Seite auch auf einem anderen Gerät zeigen",
-  settingsDevice: "Mobile Vorschau",
-  settingsDeviceHint: "Das Gerät, zu dem ein Bereich mit der Telefon-Taste in seiner Titelleiste wechselt. Seiten zeigen ihr echtes mobiles Layout (wie der Gerätemodus von Chrome, nicht Safari selbst).",
+  settingsDevice: "Geräte im Schalter",
+  settingsDeviceHint: "Tabs öffnen auf dem Desktop. Die Geräte, die du hier wählst, stehen im Schalter jedes Bereichs. Ein Tab auf einem davon trägt den Gerätenamen, und du kannst das Gerät danach noch ändern. Auf einem Telefon gleitet die Adressleiste beim Scrollen weg, und die Bildlaufleiste blendet sich wieder aus. Die Seiten zeichnet Chrome, nicht Safari.",
+  settingsDeviceStart: "Telefontaste öffnet",
+  deviceDesktop: "Desktop",
+  deviceOpenTabs: "Diese Seite auch in Tabs der anderen Geräte öffnen",
   deviceCatalogInfo: "{count} Geräte · aktualisiert am {date}",
 };

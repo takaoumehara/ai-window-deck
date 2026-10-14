@@ -112,7 +112,7 @@ test("the frame fits the stage, keeps the screen's aspect, and never enlarges", 
 test("panes get the device fields the main process emulates, or nothing", () => {
   const pixel = findDevice(bundled.devices, "pixel-9");
   assert.deepEqual(deviceForPane(pixel, true), {
-    id: "pixel-9", os: "android", type: "phone", width: 412, height: 923, dpr: 2.625, ua: pixel.ua, model: "Pixel 9", landscape: true,
+    id: "pixel-9", os: "android", type: "phone", width: 412, height: 923, dpr: 2.625, ua: pixel.ua, model: "Pixel 9", radius: 36, landscape: true,
   });
   assert.equal(deviceForPane(null, false), null);
   assert.equal(findDevice(bundled.devices, "gone", "pixel-9").id, "pixel-9");
