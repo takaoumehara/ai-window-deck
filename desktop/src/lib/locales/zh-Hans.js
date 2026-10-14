@@ -164,4 +164,11 @@ export default {
   settingsDevice: "首次开启移动端预览时使用的机型",
   settingsDeviceHint: "每个窗口都会记住自己的机型和方向，可在页面上方栏中的“机型”里更改。这里的选择只用于第一次切换到移动端预览的窗口，不会改变其他窗口。",
   deviceCatalogInfo: "{count} 款机型 · {date} 更新",
+  urlsOrderHint: "这里的顺序就是标签页的顺序。拖动 ⋮⋮ 或使用箭头按钮移动 URL。",
+  urlsOrderKeys: "⌥↑ / ⌥↓ 移动此 URL",
+  dragToReorder: "拖动以重新排序",
+  moveUrlUp: "将 URL {n} 上移",
+  moveUrlDown: "将 URL {n} 下移",
+  urlMovedMsg: "已移到第 {n} 位（共 {count} 个）",
+  tabReorderHint: "拖动以重新排序（或 ⇧← / ⇧→）",
 };

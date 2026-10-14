@@ -164,4 +164,11 @@ export default {
   settingsDevice: "새로 모바일 미리보기를 켤 때의 첫 기기",
   settingsDeviceHint: "창마다 자기 기기와 방향을 기억합니다. 바꾸려면 페이지 위 막대의 '기기'를 쓰세요. 여기서 고른 기기는 처음으로 모바일 미리보기를 켜는 창에만 쓰이며, 다른 창은 바뀌지 않습니다.",
   deviceCatalogInfo: "기기 {count}개 · {date} 업데이트",
+  urlsOrderHint: "여기 순서가 탭 순서입니다. ⋮⋮를 드래그하거나 화살표 버튼으로 URL을 옮기세요.",
+  urlsOrderKeys: "⌥↑ / ⌥↓로 이 URL 이동",
+  dragToReorder: "드래그해서 순서 바꾸기",
+  moveUrlUp: "URL {n} 위로",
+  moveUrlDown: "URL {n} 아래로",
+  urlMovedMsg: "{count}개 중 {n}번째로 옮겼습니다",
+  tabReorderHint: "드래그해서 순서 바꾸기(⇧← / ⇧→도 가능)",
 };

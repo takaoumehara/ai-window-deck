@@ -164,4 +164,11 @@ export default {
   settingsDevice: "Erstes Gerät einer neuen mobilen Vorschau",
   settingsDeviceHint: "Jedes Fenster merkt sich sein eigenes Gerät und seine Ausrichtung; ändern Sie sie mit „Gerät“ in der Leiste über der Seite. Diese Auswahl gilt nur für ein Fenster, das zum ersten Mal in die mobile Vorschau wechselt, und ändert nie die anderen.",
   deviceCatalogInfo: "{count} Geräte · aktualisiert am {date}",
+  urlsOrderHint: "Diese Reihenfolge ist die Reihenfolge der Tabs. Ziehen Sie ⋮⋮ oder nutzen Sie die Pfeile, um eine URL zu verschieben.",
+  urlsOrderKeys: "⌥↑ / ⌥↓ verschiebt diese URL",
+  dragToReorder: "Zum Umsortieren ziehen",
+  moveUrlUp: "URL {n} nach oben",
+  moveUrlDown: "URL {n} nach unten",
+  urlMovedMsg: "An Position {n} von {count} verschoben",
+  tabReorderHint: "Zum Umsortieren ziehen (oder ⇧← / ⇧→)",
 };

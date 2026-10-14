@@ -13,7 +13,7 @@ import { deck, isElectron } from "@desktop/lib/bridge";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
-import { addressToUrl, insertTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
+import { addressToUrl, indexAfterMove, insertTab, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
 
@@ -495,6 +495,22 @@ export function App() {
     setPaneMeta((meta) => (meta[paneId] ? { ...meta, [paneId]: shift(meta[paneId]) } : meta));
   }, [windows, activeTabs, paneMeta, setActiveTab, setVisible, setWindows, showNotice, t, primaryLabel]);
 
+  // The tab strip and the window editor reorder the same urls list, so undo
+  // covers both. The shown tab and the pages' titles follow their URL.
+  const moveTabTo = useCallback((paneId, from, to) => {
+    const item = windows.find((entry) => entry.id === paneId);
+    const count = urlList(item).length;
+    if (!item || from === to || from < 0 || to < 0 || from >= count || to >= count) return;
+    setWindows((list) => list.map((entry) => (entry.id === paneId ? moveTab(entry, from, to) : entry)));
+    setActiveTab(paneId, indexAfterMove(activeTabs[paneId] ?? 0, from, to));
+    setPaneMeta((meta) => {
+      if (!meta[paneId]) return meta;
+      const next = {};
+      for (const [key, value] of Object.entries(meta[paneId])) next[indexAfterMove(Number(key), from, to)] = value;
+      return { ...meta, [paneId]: next };
+    });
+  }, [windows, activeTabs, setActiveTab, setWindows]);
+
   const reopenTab = useCallback(() => {
     while (closedTabs.current.length) {
       const entry = closedTabs.current[closedTabs.current.length - 1];
@@ -735,6 +751,8 @@ export function App() {
       reopenTab();
     } else if (command === "tab-next" || command === "tab-previous") {
       if (tabCount > 1) setActiveTab(paneId, cycleIndex(activeTab, tabCount, command === "tab-next" ? 1 : -1));
+    } else if (command === "tab-move-left" || command === "tab-move-right") {
+      if (paneId) moveTabTo(paneId, activeTab, activeTab + (command === "tab-move-left" ? -1 : 1));
     } else if (/^tab-\d$/.test(command)) {
       const target = tabForNumber(Number(command.slice(4)), tabCount);
       if (target != null) setActiveTab(paneId, target);
@@ -761,7 +779,7 @@ export function App() {
     } else if (command === "import-backup") {
       importBackup();
     }
-  }, [overlayOpen, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, zoomPane, stepHistory, switchSet, importBackup]);
+  }, [overlayOpen, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup]);
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
@@ -803,7 +821,10 @@ export function App() {
 
   const saveWindow = ({ id, name, urls }) => {
     if (id) {
+      const shown = urlList(windows.find((item) => item.id === id))[activeTabs[id] ?? 0];
       setWindows((list) => list.map((item) => (item.id === id ? { ...item, name, urls } : item)));
+      const at = urlList({ urls }).indexOf(shown);
+      if (at >= 0 && at !== (activeTabs[id] ?? 0)) setActiveTab(id, at);
     } else {
       const created = { id: `win-${Date.now()}`, name, urls, visible: true };
       setWindows((list) => [...list, created]);
@@ -972,6 +993,7 @@ export function App() {
                       focusPane(item.id);
                     }}
                     onCloseTab={(tabIndex) => closeTab(item.id, tabIndex)}
+                    onMoveTab={(from, to) => moveTabTo(item.id, from, to)}
                     onNewTab={() => {
                       focusPane(item.id);
                       openField(item.id, "new");

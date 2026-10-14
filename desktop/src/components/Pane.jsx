@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, Smartphone } from "lucide-react";
 import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
+import { dropTarget } from "@desktop/lib/tabs";
 
 function HeaderButton({ label, onClick, disabled, pressed, focused, children }) {
   const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
@@ -89,10 +90,16 @@ export const Pane = React.forwardRef(function Pane(
   {
     t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
-    onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice,
+    onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onMoveTab,
   },
   bodyRef
 ) {
+  const [draggedTab, setDraggedTab] = useState(null);
+  const [tabGap, setTabGap] = useState(null);
+  const endTabDrag = () => {
+    setDraggedTab(null);
+    setTabGap(null);
+  };
   const tabMeta = meta?.[activeTab];
   const title = tabMeta?.title || item.name;
   const enlarged = focused && mode !== "grid";
@@ -178,33 +185,78 @@ export const Pane = React.forwardRef(function Pane(
               </button>
             )}
             {showTabs && (
-              <div role="tablist" aria-label={item.name} className="mr-1.5 flex items-center gap-1">
+              <div
+                role="tablist"
+                aria-label={item.name}
+                className="mr-1.5 flex items-center gap-1"
+                onDragLeave={(event) => event.currentTarget === event.target && setTabGap(null)}
+              >
                 {urls.length > 1 && urls.map((url, tabIndex) => {
                   const selected = tabIndex === activeTab;
                   const label = meta?.[tabIndex]?.title || hostLabel(meta?.[tabIndex]?.url || url);
                   return (
                     <span
                       key={`${tabIndex}-${url}`}
-                      className={`group/tab ink-swap flex max-w-[10rem] items-center rounded-pill border ${
+                      draggable
+                      onDragStart={(event) => {
+                        event.stopPropagation();
+                        event.dataTransfer.effectAllowed = "move";
+                        event.dataTransfer.setData("text/plain", meta?.[tabIndex]?.url || url);
+                        setDraggedTab(tabIndex);
+                      }}
+                      onDragOver={(event) => {
+                        if (draggedTab == null) return;
+                        event.preventDefault();
+                        const box = event.currentTarget.getBoundingClientRect();
+                        setTabGap(event.clientX < box.left + box.width / 2 ? tabIndex : tabIndex + 1);
+                      }}
+                      onDrop={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (draggedTab != null && tabGap != null) onMoveTab(draggedTab, dropTarget(draggedTab, tabGap));
+                        endTabDrag();
+                      }}
+                      onDragEnd={endTabDrag}
+                      className={`group/tab ink-swap relative flex max-w-[10rem] cursor-grab items-center rounded-pill border active:cursor-grabbing ${
+                        draggedTab === tabIndex ? "opacity-40" : ""
+                      } ${
                         selected
                           ? focused ? "border-ink bg-ink text-paper" : "border-paper bg-paper text-ink"
                           : focused ? "border-ink-edge hover:border-ink" : "border-paper-edge text-ink-mute hover:border-paper hover:text-paper"
                       }`}
                     >
+                      {draggedTab != null && tabGap === tabIndex && (
+                        <span className={`absolute -left-[3px] bottom-0 top-0 w-0.5 rounded-pill ${focused ? "bg-ink" : "bg-paper"}`} aria-hidden="true" />
+                      )}
+                      {draggedTab != null && tabGap === tabIndex + 1 && tabIndex === urls.length - 1 && (
+                        <span className={`absolute -right-[3px] bottom-0 top-0 w-0.5 rounded-pill ${focused ? "bg-ink" : "bg-paper"}`} aria-hidden="true" />
+                      )}
                       <button
                         type="button"
                         role="tab"
                         aria-selected={selected}
+                        aria-keyshortcuts="Shift+ArrowLeft Shift+ArrowRight"
                         onClick={(event) => {
                           event.stopPropagation();
                           onSelectTab(tabIndex);
+                        }}
+                        onKeyDown={(event) => {
+                          if (!event.shiftKey || event.altKey || event.metaKey || event.ctrlKey) return;
+                          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const to = tabIndex + (event.key === "ArrowLeft" ? -1 : 1);
+                          if (to < 0 || to >= urls.length) return;
+                          onMoveTab(tabIndex, to);
+                          const strip = event.currentTarget.closest("[role=tablist]");
+                          requestAnimationFrame(() => strip?.querySelectorAll("[role=tab]")[to]?.focus());
                         }}
                         onAuxClick={(event) => {
                           if (event.button !== 1) return;
                           event.stopPropagation();
                           onCloseTab(tabIndex);
                         }}
-                        title={`${label}\n${meta?.[tabIndex]?.url || url}`}
+                        title={`${label}\n${meta?.[tabIndex]?.url || url}\n${t("tabReorderHint")}`}
                         className={`register cie-tap min-w-0 truncate py-0.5 pl-2 ${compact ? "pr-2" : "pr-1"}`}
                       >
                         {compact ? tabIndex + 1 : hostLabel(meta?.[tabIndex]?.url || url)}

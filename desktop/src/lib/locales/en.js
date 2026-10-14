@@ -164,4 +164,11 @@ export default {
   settingsDevice: "First device for a new mobile preview",
   settingsDeviceHint: "Each window remembers its own device and orientation; change them with Device in the bar above the page. This choice is only used by a window that switches to mobile preview for the first time, and never changes the others.",
   deviceCatalogInfo: "{count} devices · updated {date}",
+  urlsOrderHint: "The order here is the tab order. Drag ⋮⋮ or use the arrows to move a URL.",
+  urlsOrderKeys: "⌥↑ / ⌥↓ moves this URL",
+  dragToReorder: "Drag to reorder",
+  moveUrlUp: "Move URL {n} up",
+  moveUrlDown: "Move URL {n} down",
+  urlMovedMsg: "Moved to position {n} of {count}",
+  tabReorderHint: "Drag to reorder (or ⇧← / ⇧→)",
 };

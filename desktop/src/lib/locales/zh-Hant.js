@@ -164,4 +164,11 @@ export default {
   settingsDevice: "首次開啟行動裝置預覽時使用的機型",
   settingsDeviceHint: "每個視窗都會記住自己的機型和方向，可在頁面上方列中的「機型」更改。這裡的選擇只用於第一次切換到行動裝置預覽的視窗，不會改變其他視窗。",
   deviceCatalogInfo: "{count} 款機型 · {date} 更新",
+  urlsOrderHint: "這裡的順序就是分頁的順序。拖曳 ⋮⋮ 或使用箭頭按鈕移動 URL。",
+  urlsOrderKeys: "⌥↑ / ⌥↓ 移動此 URL",
+  dragToReorder: "拖曳以重新排序",
+  moveUrlUp: "將 URL {n} 上移",
+  moveUrlDown: "將 URL {n} 下移",
+  urlMovedMsg: "已移到第 {n} 個（共 {count} 個）",
+  tabReorderHint: "拖曳以重新排序（或 ⇧← / ⇧→）",
 };

@@ -164,4 +164,11 @@ export default {
   settingsDevice: "新しくスマホ表示にしたときの最初の機種",
   settingsDeviceHint: "機種と向きはウィンドウごとに覚えています。変えるときは、ページの上のバーにある「機種」から。ここで選ぶ機種は、はじめてスマホ表示にするウィンドウにだけ使われ、いまのウィンドウは変わりません。",
   deviceCatalogInfo: "{count} 機種 · {date} 更新",
+  urlsOrderHint: "この順番がタブの並び順です。⋮⋮ をドラッグするか、矢印ボタンで動かせます。",
+  urlsOrderKeys: "⌥↑ / ⌥↓ でこの URL を移動",
+  dragToReorder: "ドラッグして並べ替え",
+  moveUrlUp: "URL {n} を上へ",
+  moveUrlDown: "URL {n} を下へ",
+  urlMovedMsg: "{count} 件中 {n} 番目に移動しました",
+  tabReorderHint: "ドラッグで並べ替え（⇧← / ⇧→ でも可）",
 };

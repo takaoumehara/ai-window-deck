@@ -164,4 +164,11 @@ export default {
   settingsDevice: "Premier appareil d’un nouvel aperçu mobile",
   settingsDeviceHint: "Chaque fenêtre garde son propre appareil et son orientation ; changez-les avec Appareil dans la barre au-dessus de la page. Ce choix ne sert qu’à une fenêtre qui passe en aperçu mobile pour la première fois et ne modifie jamais les autres.",
   deviceCatalogInfo: "{count} appareils · mis à jour le {date}",
+  urlsOrderHint: "Cet ordre est celui des onglets. Faites glisser ⋮⋮ ou utilisez les flèches pour déplacer une URL.",
+  urlsOrderKeys: "⌥↑ / ⌥↓ déplace cette URL",
+  dragToReorder: "Glisser pour réordonner",
+  moveUrlUp: "Monter l’URL {n}",
+  moveUrlDown: "Descendre l’URL {n}",
+  urlMovedMsg: "Déplacée en position {n} sur {count}",
+  tabReorderHint: "Glisser pour réordonner (ou ⇧← / ⇧→)",
 };

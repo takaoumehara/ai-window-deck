@@ -164,4 +164,11 @@ export default {
   settingsDevice: "Primer dispositivo de una nueva vista móvil",
   settingsDeviceHint: "Cada ventana recuerda su propio dispositivo y orientación; cámbialos con Dispositivo en la barra sobre la página. Esta opción solo la usa una ventana que pasa a la vista móvil por primera vez y nunca cambia las demás.",
   deviceCatalogInfo: "{count} dispositivos · actualizado {date}",
+  urlsOrderHint: "Este orden es el de las pestañas. Arrastra ⋮⋮ o usa las flechas para mover una URL.",
+  urlsOrderKeys: "⌥↑ / ⌥↓ mueve esta URL",
+  dragToReorder: "Arrastra para reordenar",
+  moveUrlUp: "Subir la URL {n}",
+  moveUrlDown: "Bajar la URL {n}",
+  urlMovedMsg: "Movida a la posición {n} de {count}",
+  tabReorderHint: "Arrastra para reordenar (o ⇧← / ⇧→)",
 };

@@ -164,4 +164,11 @@ export default {
   settingsDevice: "Primeiro dispositivo de uma nova visualização móvel",
   settingsDeviceHint: "Cada janela lembra seu próprio dispositivo e orientação; mude-os em Dispositivo, na barra acima da página. Esta escolha só é usada por uma janela que muda para a visualização móvel pela primeira vez e nunca altera as outras.",
   deviceCatalogInfo: "{count} dispositivos · atualizado em {date}",
+  urlsOrderHint: "Esta ordem é a ordem das abas. Arraste ⋮⋮ ou use as setas para mover uma URL.",
+  urlsOrderKeys: "⌥↑ / ⌥↓ move esta URL",
+  dragToReorder: "Arraste para reordenar",
+  moveUrlUp: "Mover a URL {n} para cima",
+  moveUrlDown: "Mover a URL {n} para baixo",
+  urlMovedMsg: "Movida para a posição {n} de {count}",
+  tabReorderHint: "Arraste para reordenar (ou ⇧← / ⇧→)",
 };
