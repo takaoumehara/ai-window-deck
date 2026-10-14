@@ -4,19 +4,22 @@ The extension tiles separate Chrome windows. This app puts the same registered
 windows inside **one** window: each window is a pane with its own live web page,
 and a click or a shortcut enlarges it or puts it back.
 
-- **Grid**: every visible window in a grid, using the extension's layout math (`src/lib/layout-model.js`).
+- **Grid**: every visible window in a grid. *Arrange panes* (the button in the top bar, the palette or *Deck → Arrange Panes…*) picks the shape: automatic, side by side, stacked, 2 or 3 per row, big on the left or big on top (`src/lib/arrangement.js`).
 - **Spotlight**: the focused pane takes most of the window; the rest stay live on a side rail.
 - **Fill**: the focused pane covers the deck; the others keep running in the background.
+- **Resize**: drag the gap between two panes (also the split between the spotlight and the rail). The divider is focusable: arrow keys move it 2% (`⇧` 10%), Enter or a double-click makes the panes equal again.
+- **Rearrange**: drag a pane's title bar onto another pane. Dropping in the middle swaps the two; dropping near an edge puts it before or after. *Move Pane Earlier / Later* in the palette and the Deck menu do the same from the keyboard. Shape, sizes and order are saved per set.
 - Click a pane's title bar to spotlight it, and click it again to go back to the grid. Clicking a pane on the rail swaps it in.
+- Panes have rounded corners and Chrome-style tabs: the active tab joins the page, the others are flat with separators, each shows the site icon and title, ✕ appears on hover, and **+** adds a tab.
 - Windows with several URLs get tabs in the pane's title bar. Drag a tab (or press `⇧←` / `⇧→` on a focused tab) to change the order; *Edit window* reorders the same list with drag handles, up/down buttons or `⌥↑` / `⌥↓`. Undo covers both.
-- **Find a feature** (`⌘K`, `F1`, or the button in the top bar) lists every action in plain words with its shortcut. Type in any of the 9 languages, in English or with everyday words ("スマホ", "iPhone", "mobile" all find the mobile preview), and Enter runs it on the focused pane. *Help → Tips* (also shown once on first launch) walks through the basics.
+- **Find a feature** (`⌘K`, `F1`, or the button in the top bar) lists every action in plain words with its shortcut. Type in any of the 9 languages, in English or with everyday words ("スマホ", "iPhone", "mobile" all find the mobile preview), and Enter runs it on the focused pane. *Help → Tips* (also shown once on first launch) walks through the basics, and has a language picker for all 9 languages that also changes Settings.
 - **Ask AI** (in the palette and the Help menu) opens Claude or ChatGPT in a pane with a guide to the app and your question filled in. No API key ships with the app; the chat uses your own account in that pane.
 - **Back / forward**: `⌘[` / `⌘]`, `⌘←` / `⌘→` outside text fields, the mouse's back/forward buttons and two-finger swipes act on the focused pane. The buttons in the title bar are enabled only when there is somewhere to go.
 - **Sets** are named decks, each with its own windows, layout and focus. Switch them from the sidebar (or the collapsed rail), and manage them in *Deck → Sets…*.
 - **New Deck Window** (`⌘N`) opens another window showing a set that isn't open yet, for example on a second display. A set is open in one window at a time; picking one that is open elsewhere brings that window forward. Open windows and their sets come back on relaunch.
 - **Paste a List** takes URLs (one window per URL, named by host, or all of them as tabs of one window) or the extension's window list (a name line, URL lines, a blank line between windows). It shows what will be created first, and can put the result in a new set.
 - **Import from extension** (in Settings) reads the JSON backup from *Profiles & Backup* or the `.txt` window list. Windows on the backup's active layout start visible; the rest of the library comes in hidden.
-- **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, and set changes) without a limit. Layout changes aren't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
+- **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, set changes, pane sizes, shapes and rearranging) without a limit. Switching between Grid, Spotlight and Fill isn't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
 - Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to Google…* starts it directly.
