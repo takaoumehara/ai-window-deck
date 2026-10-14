@@ -126,7 +126,7 @@ export const Pane = React.forwardRef(function Pane(
     >
       <section
         aria-label={item.name}
-        className={`ink-swap flex h-full w-full flex-col overflow-hidden border bg-ink ${focused ? "border-paper" : "border-paper/10"}`}
+        className={`ink-swap deck-pane-shell flex h-full w-full flex-col overflow-hidden border bg-ink ${focused ? "border-paper" : "border-paper/10"}`}
       >
         <header
           role="button"
@@ -142,8 +142,8 @@ export const Pane = React.forwardRef(function Pane(
           aria-pressed={enlarged}
           aria-label={`${item.name} — ${enlarged ? t("shrink") : t("enlarge")}`}
           title={enlarged ? t("shrink") : t("enlarge")}
-          className={`ink-swap weight-hover flex h-9 shrink-0 cursor-pointer select-none items-center gap-2.5 px-3 ${
-            focused ? "bg-paper text-ink" : "bg-ink text-paper hover:bg-paper/5"
+          className={`ink-swap weight-hover flex h-9 shrink-0 cursor-pointer select-none items-center gap-2.5 border-b px-3 ${
+            focused ? "border-ink/15 bg-paper text-ink" : "border-paper/10 bg-ink text-paper hover:bg-paper/5"
           }`}
         >
           <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{String(index + 1).padStart(2, "0")}</span>
@@ -336,8 +336,10 @@ export const Pane = React.forwardRef(function Pane(
             {pageBody}
           </DeviceStage>
         ) : (
-          <div ref={bodyRef} className="relative min-h-0 flex-1 overflow-hidden bg-paper/5">
-            {pageBody}
+          <div className="deck-pane-page min-h-0 flex-1 bg-paper/5">
+            <div ref={bodyRef} className="relative h-full overflow-hidden">
+              {pageBody}
+            </div>
           </div>
         )}
       </section>

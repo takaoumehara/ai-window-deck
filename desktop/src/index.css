@@ -169,6 +169,19 @@ html, body, #root {
   border-color: rgb(var(--cie-ink-rgb) / var(--deck-edge-alpha));
 }
 
+/* Rounded panes. The page is a square native view laid over the inner box
+   (main.cjs; setBorderRadius can only round all four corners), so the box
+   stops one inner radius above the bottom edge and never crosses the curve. */
+:root {
+  --deck-pane-r: 8px;
+}
+.deck-pane-shell {
+  border-radius: var(--deck-pane-r);
+}
+.deck-pane-page {
+  padding-bottom: calc(var(--deck-pane-r) - 1px);
+}
+
 /* Panes follow the block → page expand: --cie-t-move on expo. */
 .deck-pane {
   transition:
