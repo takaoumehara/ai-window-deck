@@ -1,15 +1,25 @@
 # Accessibility — AI Window Deck for Mac (desktop app)
 
-> Last updated: 2026-10-14 · Version 0.2.5  
+> Last updated: 2026-10-14 · Version 0.2.6  
 > Target: WCAG 2.2 AA · Platform: Electron 38 desktop app (Chromium renderer), macOS first, Windows/Linux builds share the code  
-> Surfaces: top bar, sidebar (expanded and rail), panes (title bar, tabs, address/find field, mobile preview stage), sheets (Settings, Shortcuts, Sets, Edit window, Paste a list, Find a feature palette, Tips), Google sign-in window  
+> Surfaces: top bar, sidebar (expanded and rail), panes (title bar, tabs, address/find field, mobile preview stage), dividers between panes, pane drag and drop, sheets (Settings, Shortcuts, Sets, Edit window, Paste a list, Find a feature palette, Tips, Arrange panes), Google sign-in window  
 > Out of scope: the third-party web pages shown inside panes (ChatGPT, Claude, Gmail…). Their accessibility belongs to those sites.
 
 ## Verdict
 
 **Not claimed conformant.** This pass measured every colour pair the app draws, fixed all failures, and walked the main flows with the keyboard on a Linux VM build of the same renderer. That evidence supports *no known AA failures in the app's own UI apart from the minor findings below*, but it is not a conformance claim. No screen-reader session ran: VoiceOver needs a real Mac, and the VM has no Orca. 200 % zoom of the shell and macOS "Increase contrast" / "Reduce motion" were also not exercised.
 
-## Remediation in this change
+## Changes in 0.2.6
+
+| Change | Criterion | Who it helps | How |
+| --- | --- | --- | --- |
+| Sheets scrolled as a whole, so the scrollbar ran over the rounded corner (on macOS past the edge) and the action button scrolled out of view ("Got it" clipped in Getting started). | 1.4.10, 2.4.11, 3.2.3 | Everyone, especially users at small window sizes or large text: the primary action was hidden. | The panel clips to its radius and never scrolls. Only the body scrolls, inset from the edges and off the bottom curve. Actions sit in a fixed footer on every sheet. Getting started uses two columns and fits without scrolling at the minimum window size (886 × 591). Checked on the VM for Getting started, Settings, Edit window with 8 URLs, the palette and Arrange panes. |
+| First-run language was the OS locale, with no visible way to change it before reading the tips. | 3.1.1, 3.3.2 | People whose OS language differs from the one they read best. | A labelled language `<select>` (9 languages, each option with its own `lang`) at the top of Getting started. It switches live and saves to Settings. |
+| Pane sizes were fixed. | 1.4.10 (reflow of the deck), 2.5.7 | Low-vision users who need one pane larger. | Dividers between panes are `role="separator"` with `aria-orientation`, `aria-valuenow` and a label naming both panes. They can be dragged, stepped with the arrow keys (Shift for 10 %), and reset with Enter or a double-click. A run of key steps undoes as one step. |
+| Pane order could only change from the sidebar. | 2.5.7, 2.1.1 | Keyboard and motor-impaired users. | Dragging a title bar onto another pane swaps or inserts it, and the non-drag alternatives are "Move pane earlier / later" in the palette and the Deck menu, plus the shape picker (a radio group) in *Arrange panes*. Every change is undoable and announced in the title-bar notice. |
+| Tabs became Chrome-style. | 1.4.3, 1.4.11, 1.4.1 | Low-vision users. | The active tab is marked by fill, weight and a 3:1+ outline against the bar, not colour alone. New pairs are in the contrast table below. The close button is now 20 × 20 px (it was 16). |
+
+## Remediation in 0.2.5
 
 | Finding (before) | Criterion | Who was blocked or hindered | Fix |
 | --- | --- | --- | --- |
@@ -29,7 +39,9 @@
 
 | Severity | Finding | Criterion | Who is blocked | Where | Next fix |
 | --- | --- | --- | --- | --- | --- |
-| Minor | Tab close buttons are 16 × 16 px, adjacent to the tab target. | 2.5.8 | Motor-impaired pointer users can hit the tab instead of ✕. ⌘W, the File menu and the palette entry close tabs without precision. | Pane title bar → tab ✕ | Grow the hit area to 24 px with a transparent pad, or show ✕ only on the selected tab with spacing. |
+| Minor | Tab close buttons are 20 × 20 px, inside the tab target. | 2.5.8 | Motor-impaired pointer users can hit the tab instead of ✕. ⌘W, the File menu and the palette entry close tabs without precision. | Pane title bar → tab ✕ | Grow the hit area to 24 px with a transparent pad. |
+| Minor | A divider can only be grabbed in the 6 px gap between two pages, because the pages are native views drawn above the app's own UI. | 2.5.8 | Pointer users with tremor. The arrow keys on a focused divider, Enter to reset and the shape picker need no precision. | Gaps between panes | Widen the gap while the pointer is near it, or show a grab handle in the title bar edge. |
+| Minor | In a very narrow pane (about 150 px) the tab strip has no room and is clipped away. | 1.4.10 | Mouse users with many panes. ⌃Tab, ⌘1–9 and the palette still switch tabs. | Pane title bar, compact | Collapse the tabs into a count button with a menu. |
 | Minor | In a compact pane (narrower than 380 px) the mobile preview button is hidden until a device is on. | 1.3.1 / discoverability | Mouse users with many panes don't see the control. Keyboard users can still use ⌘⇧M and the palette. | Pane title bar, compact | Move the button into an overflow menu instead of hiding it. |
 | Advisory | ⌘K is taken by the deck everywhere, so pages' own ⌘K (Slack, Linear, ChatGPT search) no longer fires inside panes. | — (2.1.4 covers single-character keys only) | Users relying on a site's ⌘K. F1 and the button also open the palette. | Global | Make the palette shortcut configurable, or hand ⌘K to the page while a text field in it has focus. |
 
@@ -37,10 +49,10 @@
 
 | Pass | Result | Evidence and limit |
 | --- | --- | --- |
-| 1. Automated | Executed | `npm test` (75 tests, including WCAG maths and every audited pair ≥ its threshold) and `node scripts/contrast.mjs --check`. No axe/Lighthouse run: the shell is not a web page reachable by those tools without extra wiring. |
+| 1. Automated | Executed | `npm test` (90 tests, including WCAG maths and every audited pair ≥ its threshold) and `node scripts/contrast.mjs --check`. No axe/Lighthouse run: the shell is not a web page reachable by those tools without extra wiring. |
 | 2. Keyboard | Executed on VM (Linux build, same renderer) | ⌘K (Ctrl+K on Linux) from a focused page → focus in the search field. Tab cycles inside the palette only. Esc closes and returns focus to the opener with a visible ring. Edit window: name field focused on open; move buttons keep focus on the moved row. ⇧→ on a tab moves it and keeps focus. Alt+←/→ (Linux) and Ctrl+[ step history. **Not run on macOS:** ⌘←/→, two-finger swipe and the app-command path. |
 | 3. Screen reader | Not assessable here | Markup reviewed: names on icon buttons, `aria-pressed`, combobox/listbox roles, live regions for notices, moves and result counts. A VoiceOver + this app pass on a Mac is still required. Check rotor headings in sheets, palette option announcement, and the live region on URL moves. |
-| 4. Zoom & reflow | Partial | Sheets are scrollable and capped at the window. The shell has no zoom shortcut of its own (⌘+ zooms the page). macOS display scaling not tested. |
+| 4. Zoom & reflow | Partial | Only a sheet's body scrolls; its head and actions stay visible. Checked down to the minimum window size (886 × 591). The shell has no zoom shortcut of its own (⌘+ zooms the page). macOS display scaling not tested. |
 | 5. Colour & contrast | Measured | `scripts/contrast.mjs` composites every alpha/opacity pair from the live tokens (`src/styles/cie/*.css` + `src/index.css`). Before/after below. |
 | 6. Motion & time | Reasoned | Layout and sheet transitions follow `prefers-reduced-motion` (snapshot animation skipped, sheets instant). Notices stay 3.2 s (6 s with Undo). Undo is also on ⌘Z with no time limit. OS setting not toggled on a Mac. |
 | 7. Forms & errors | Partial | Edit window and Paste a list have visible labels. Empty URL rows are dropped on save rather than flagged. The palette's empty state offers a next step (ask an AI chat). |
@@ -75,14 +87,15 @@
 
 19 pairs, 7 failing. The script listed 18 then; the key cap border in sheets (ink at alpha 0.3) was measured separately with the same functions.
 
-### After (this change)
+### After (0.2.6)
 
 | Use | Foreground | Background | Ratio | Needs | Result |
 | --- | --- | --- | --- | --- | --- |
 | Sidebar hint text, set chips, rail hosts | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
 | Mono labels on the focused card / pane header | `#4f4f49` | `#f3f2ee` | 7.36:1 | 4.5:1 | pass |
 | Pane header subtitle (unfocused) | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
-| Pane placeholder host label (page not drawn yet) | `#b0b0ab` | `#171716` | 8.27:1 | 4.5:1 | pass |
+| Pane placeholder host label (page not drawn yet) | `#b0b0ab` | `#1f1f1e` | 7.58:1 | 4.5:1 | pass |
+| Pane placeholder host label, focused pane | `#4f4f49` | `#ffffff` | 8.24:1 | 4.5:1 | pass |
 | Hidden window card: name, number, hosts | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
 | Settings and dialog helper text | `#4f4f49` | `#f3f2ee` | 7.36:1 | 4.5:1 | pass |
 | Text field placeholder (dialogs) | `#4f4f49` | `#f3f2ee` | 7.36:1 | 4.5:1 | pass |
@@ -91,17 +104,24 @@
 | Layout chip text on button fill | `#f3f2ee` | `#303030` | 11.71:1 | 4.5:1 | pass |
 | Command palette row hint on paper | `#4f4f49` | `#f3f2ee` | 7.36:1 | 4.5:1 | pass |
 | Command palette selected row hint | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
-| Unselected tab pill text (unfocused pane) | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
+| Inactive tab title (other panes) | `#b0b0ab` | `#0b0b0b` | 9.04:1 | 4.5:1 | pass |
+| Inactive tab title, focused pane | `#4f4f49` | `#f3f2ee` | 7.36:1 | 4.5:1 | pass |
+| Active tab title (other panes) | `#f3f2ee` | `#1f1f1e` | 14.73:1 | 4.5:1 | pass |
+| Active tab title, focused pane | `#0b0b0b` | `#ffffff` | 19.68:1 | 4.5:1 | pass |
 | Text field border (dialogs) | `#7f7f7d` | `#f3f2ee` | 3.60:1 | 3:1 | pass |
 | Choice pill border, unselected | `#7f7f7d` | `#f3f2ee` | 3.60:1 | 3:1 | pass |
-| Tab / select / switcher pill border on ink | `#7f7f7d` | `#0b0b0b` | 4.88:1 | 3:1 | pass |
+| Select / switcher pill border on ink | `#7f7f7d` | `#0b0b0b` | 4.88:1 | 3:1 | pass |
+| Active tab outline against the bar (other panes) | `#7f7f7d` | `#0b0b0b` | 4.88:1 | 3:1 | pass |
+| Active tab outline against the bar, focused pane | `#7f7f7d` | `#f3f2ee` | 3.60:1 | 3:1 | pass |
 | Key cap border | `#6c6c6a` | `#0b0b0b` | 3.75:1 | 3:1 | pass |
 | Key cap border in sheets | `#7f7f7d` | `#f3f2ee` | 3.60:1 | 3:1 | pass |
 | Focus ring (currentColor) on ink | `#f3f2ee` | `#0b0b0b` | 17.57:1 | 3:1 | pass |
 | Focus ring (currentColor) on paper | `#0b0b0b` | `#f3f2ee` | 17.57:1 | 3:1 | pass |
 | Disabled back / forward icon (exempt, reported) | `#686766` | `#0b0b0b` | 3.50:1 | — | exempt |
 
-21 pairs, 0 failing.
+27 pairs, 0 failing
+
+0.2.5 had 21 pairs, all passing. 0.2.6 adds the Chrome-style tab pairs and the placeholder on the page surface (now `#1f1f1e`, or white in the focused pane).
 
 ## Criterion notes
 
@@ -121,8 +141,8 @@ Results are `measured` (script or VM run), `reasoned` (source review) or `not as
 | 2.4.3 | measured (VM) | Focus enters sheets on open and returns to the opener. |
 | 2.4.7 | measured | 2 px outline on buttons, fields and tabs. Checked on the VM. |
 | 2.4.11 | reasoned | Sheets are centered and the panes stay underneath. Notices sit in the title bar and never cover focus. |
-| 2.5.7 | measured (VM) | URL, tab and window-card reordering all have non-drag alternatives. |
-| 2.5.8 | reasoned | Pane header buttons are 24 px. Tab ✕ is 16 px (Minor finding above). |
+| 2.5.7 | measured (VM) | URL, tab, window-card and pane reordering and pane resizing all have non-drag alternatives (buttons, arrow keys, palette commands, the shape picker). |
+| 2.5.8 | reasoned | Pane header buttons are 24 px. Tab ✕ is 20 px, and dividers are reachable in a 6 px gap (Minor findings above). |
 | 3.1.1 | reasoned | `html[lang]` follows the UI language (ja, en, zh-Hans, zh-Hant, ko, es, fr, de, pt). |
 | 3.2.6 | reasoned | Help is in the same place on every window: the top-bar "Find a feature" button, the Help menu and F1. |
 | 3.3.2 | reasoned | Fields have visible labels. The Edit window explains the URL order and its keys. |
@@ -135,11 +155,11 @@ Executed here:
 - The contrast script before and after.
 - Unit tests for the contrast maths and every audited pair.
 - A keyboard walkthrough on the Linux VM build: palette, Edit window, tab moves, back/forward keys, mouse back/forward buttons, focus return.
-- Screenshots and a recording in `/opt/cursor/artifacts/v025/`.
+- Screenshots and a recording in `/opt/cursor/artifacts/v025/` and `/opt/cursor/artifacts/v026/` (sheets at the minimum window size, divider drag and keyboard steps, pane swap and insert, shape picker).
 
 Needs a real Mac:
 
-- A **VoiceOver** pass: palette options, sheet titles, live-region announcements, the mobile model picker, and the Google sign-in window.
+- A **VoiceOver** pass: palette options, sheet titles, live-region announcements, the mobile model picker, the Google sign-in window, and the dividers (separator role, value and label).
 - ⌘←/→, two-finger swipe back, and Japanese IME typing into the palette. On the VM, katakana was injected through DevTools.
 - macOS Increase contrast, Reduce motion and Reduce transparency.
 - Display scaling at 1× ("Larger Text" resolutions).
