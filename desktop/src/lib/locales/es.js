@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "La lista tiene ahora las {count} URL pegadas.",
   urlsSplitMsg: "Separadas en {count} URL, una por fila.",
   urlsUndone: "Cambio deshecho",
+  tabsScrollLeft: "Desplazar pestañas a la izquierda",
+  tabsScrollRight: "Desplazar pestañas a la derecha",
+  tabsAll: "Todas las pestañas ({count})",
+  tabsSearch: "Buscar pestañas por título o URL",
+  tabsNone: "Ninguna pestaña coincide",
 };

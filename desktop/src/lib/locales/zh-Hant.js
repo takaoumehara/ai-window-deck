@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "清單已取代為貼上的 {count} 個網址。",
   urlsSplitMsg: "已拆分為 {count} 個網址，每行一個。",
   urlsUndone: "已復原變更",
+  tabsScrollLeft: "向左捲動分頁",
+  tabsScrollRight: "向右捲動分頁",
+  tabsAll: "所有分頁（{count}）",
+  tabsSearch: "依標題或網址搜尋分頁",
+  tabsNone: "沒有符合的分頁",
 };

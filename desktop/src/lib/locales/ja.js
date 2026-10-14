@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "リストを貼り付けた {count} 件に入れ替えました。",
   urlsSplitMsg: "{count} 件の URL に分けて、1 行ずつ入れました。",
   urlsUndone: "変更を元に戻しました",
+  tabsScrollLeft: "タブを左へスクロール",
+  tabsScrollRight: "タブを右へスクロール",
+  tabsAll: "すべてのタブ（{count}）",
+  tabsSearch: "タイトルや URL でタブを探す",
+  tabsNone: "当てはまるタブがありません",
 };

@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "A lista agora tem as {count} URLs coladas.",
   urlsSplitMsg: "Separadas em {count} URLs, uma por linha.",
   urlsUndone: "Alteração desfeita",
+  tabsScrollLeft: "Rolar abas para a esquerda",
+  tabsScrollRight: "Rolar abas para a direita",
+  tabsAll: "Todas as abas ({count})",
+  tabsSearch: "Buscar abas por título ou URL",
+  tabsNone: "Nenhuma aba corresponde",
 };

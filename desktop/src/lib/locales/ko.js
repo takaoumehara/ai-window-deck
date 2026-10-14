@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "목록을 붙여넣은 URL {count}개로 바꿨습니다.",
   urlsSplitMsg: "URL {count}개로 나눠 한 줄씩 넣었습니다.",
   urlsUndone: "변경을 취소했습니다",
+  tabsScrollLeft: "탭을 왼쪽으로 스크롤",
+  tabsScrollRight: "탭을 오른쪽으로 스크롤",
+  tabsAll: "모든 탭 ({count})",
+  tabsSearch: "제목이나 URL로 탭 찾기",
+  tabsNone: "맞는 탭이 없습니다",
 };

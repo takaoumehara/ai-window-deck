@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "The list now has the {count} pasted URLs.",
   urlsSplitMsg: "Split into {count} URLs, one per row.",
   urlsUndone: "Change undone",
+  tabsScrollLeft: "Scroll tabs left",
+  tabsScrollRight: "Scroll tabs right",
+  tabsAll: "All tabs ({count})",
+  tabsSearch: "Search tabs by title or URL",
+  tabsNone: "No tab matches",
 };

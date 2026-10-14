@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "列表已替换为粘贴的 {count} 个网址。",
   urlsSplitMsg: "已拆分为 {count} 个网址，每行一个。",
   urlsUndone: "已撤销更改",
+  tabsScrollLeft: "向左滚动标签页",
+  tabsScrollRight: "向右滚动标签页",
+  tabsAll: "所有标签页（{count}）",
+  tabsSearch: "按标题或网址搜索标签页",
+  tabsNone: "没有匹配的标签页",
 };

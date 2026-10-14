@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "Die Liste enthält jetzt die {count} eingefügten URLs.",
   urlsSplitMsg: "In {count} URLs aufgeteilt, eine pro Zeile.",
   urlsUndone: "Änderung rückgängig gemacht",
+  tabsScrollLeft: "Tabs nach links scrollen",
+  tabsScrollRight: "Tabs nach rechts scrollen",
+  tabsAll: "Alle Tabs ({count})",
+  tabsSearch: "Tabs nach Titel oder URL suchen",
+  tabsNone: "Kein Tab passt",
 };

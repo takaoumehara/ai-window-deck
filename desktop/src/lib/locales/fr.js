@@ -304,4 +304,9 @@ export default {
   urlsReplacedMsg: "La liste contient maintenant les {count} URL collées.",
   urlsSplitMsg: "Séparées en {count} URL, une par ligne.",
   urlsUndone: "Modification annulée",
+  tabsScrollLeft: "Faire défiler les onglets à gauche",
+  tabsScrollRight: "Faire défiler les onglets à droite",
+  tabsAll: "Tous les onglets ({count})",
+  tabsSearch: "Chercher un onglet par titre ou URL",
+  tabsNone: "Aucun onglet ne correspond",
 };

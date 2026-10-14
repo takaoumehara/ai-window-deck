@@ -207,6 +207,28 @@ html, body, #root {
   margin-bottom: -1px;
   overflow: hidden;
 }
+/* Past their minimum width the tabs scroll sideways; the edges fade where
+   more tabs are hidden. No scrollbar: the arrows, the wheel and the tab list
+   reach the rest. */
+.deck-tabs__scroller {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.deck-tabs__scroller::-webkit-scrollbar {
+  display: none;
+}
+.deck-tabs__scroller.has-start {
+  mask-image: linear-gradient(to right, transparent, #000 28px);
+}
+.deck-tabs__scroller.has-end {
+  mask-image: linear-gradient(to left, transparent, #000 28px);
+}
+.deck-tabs__scroller.has-start.has-end {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
 /* The strip clips, so tab focus rings sit inside the tab. */
 .deck-tab .deck-focus-ring:focus-visible {
   outline-offset: -3px;

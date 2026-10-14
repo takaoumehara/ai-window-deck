@@ -487,6 +487,15 @@ export function App() {
     return handle.id === "spotlight" ? t("resizeSpotlight", { name: name(handle.before) }) : t("resizeBetween", { a: name(handle.before), b: name(handle.after) });
   }, [deckPanes, t]);
 
+  // A drop-down over a pane (tab list, device list) opens where the page's
+  // native view is drawn, so the pages turn into snapshots while one is open.
+  const openPopovers = useRef(0);
+  const setPopover = useCallback((open) => {
+    openPopovers.current = Math.max(0, openPopovers.current + (open ? 1 : -1));
+    if (open) freezeDeck();
+    else if (!openPopovers.current) thawDeck(0);
+  }, [freezeDeck, thawDeck]);
+
   const overlayOpen = editor.open || sheet !== null;
   const overlayRef = useRef(overlayOpen);
   overlayRef.current = overlayOpen;
@@ -1279,6 +1288,7 @@ export function App() {
                     found={found[item.id]}
                     device={paneDevices[item.id]}
                     devices={devices}
+                    onPopover={setPopover}
                     keys={paneKeys}
                     onToggleDevice={() => toggleDevice(item.id)}
                     onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
