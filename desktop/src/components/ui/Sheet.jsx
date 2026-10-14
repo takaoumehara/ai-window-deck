@@ -9,7 +9,7 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 // cie-ds centered sheet (interactions.css .cie-sheet--center): paper panel on the
 // ink ground. Stays mounted through the --cie-t-sheet close so it can animate out.
-export function Sheet({ open, onClose, title, closeLabel, children }) {
+export function Sheet({ open, onClose, title, closeLabel, wide = false, children }) {
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(false);
   const panelRef = useRef(null);
@@ -72,7 +72,7 @@ export function Sheet({ open, onClose, title, closeLabel, children }) {
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`cie-sheet cie-sheet--center cie-on-paper focus:outline-none ${shown ? "is-open" : ""}`}
+        className={`cie-sheet cie-sheet--center cie-on-paper focus:outline-none ${wide ? "deck-sheet-wide" : ""} ${shown ? "is-open" : ""}`}
       >
         <div className="cie-sheet__head">
           <h2 id={titleId} className="cie-sheet__title">{title}</h2>

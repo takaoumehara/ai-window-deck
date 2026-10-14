@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Download, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand, Settings, Undo2 } from "lucide-react";
+import { Download, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Settings, Undo2 } from "lucide-react";
 import { SHEET_MS } from "@desktop/components/ui/Sheet";
 import { IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
@@ -9,7 +9,11 @@ import { PasteListSheet } from "@desktop/components/PasteListSheet";
 import { SettingsSheet } from "@desktop/components/SettingsSheet";
 import { SetsSheet } from "@desktop/components/SetsSheet";
 import { ShortcutsSheet } from "@desktop/components/ShortcutsSheet";
+import { CommandPalette } from "@desktop/components/CommandPalette";
+import { TipsSheet } from "@desktop/components/TipsSheet";
 import { deck, isElectron } from "@desktop/lib/bridge";
+import { ASK_AI_URLS, featureGuide, paletteEntries } from "@desktop/lib/palette";
+import commandCatalog from "../electron/commands.json";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
@@ -28,6 +32,13 @@ const DEFAULT_DEVICE = "iphone-17-pro";
 const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
 const UNDO_NOTICE_MS = 6000;
+const ASK_AI_WINDOW = "win-ask-ai";
+const GROUP_LABELS = { help: "groupHelp", mobile: "groupMobile", page: "groupPage", layout: "groupLayout", tabs: "groupTabs", windows: "groupWindows" };
+const LANGUAGE_NAMES = {
+  ja: "Japanese", en: "English", "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ko: "Korean",
+  es: "Spanish", fr: "French", de: "German", pt: "Portuguese",
+};
+const tEnglish = translator("en");
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
@@ -138,6 +149,7 @@ export function App() {
       setSidebarExpanded(settings.sidebarOpen !== false);
       setDefaultMode(startMode);
       if (settings.defaultDevice) setDefaultDevice(settings.defaultDevice);
+      if (!settings.tipsSeen) setSheet("tips");
       setCatalog(devices);
       setLang(language);
       setLoaded(true);
@@ -451,6 +463,40 @@ export function App() {
     });
   }, [windows, devices, activeTabs, paneMeta, transition, setWindows]);
 
+  // Ask AI ships no API key: it opens Claude or ChatGPT in a pane of the deck
+  // with a guide to the app (and the question, if any) already filled in.
+  const askAi = useCallback((service, question = "") => {
+    const entries = paletteEntries(commandCatalog, { t: tEnglish, tEnglish, isMac });
+    const prompt = featureGuide(entries, { language: LANGUAGE_NAMES[lang] ?? "English", groupLabel: (group) => tEnglish(GROUP_LABELS[group]), question });
+    const name = t("askAiWindowName", { service: service === "claude" ? "Claude" : "ChatGPT" });
+    transition(() => {
+      setWindows((list) => {
+        const existing = list.find((item) => item.id === ASK_AI_WINDOW);
+        const next = { ...existing, id: ASK_AI_WINDOW, name, urls: [ASK_AI_URLS[service](prompt)], visible: true };
+        return existing ? list.map((item) => (item.id === ASK_AI_WINDOW ? next : item)) : [...list, next];
+      });
+      setActiveTab(ASK_AI_WINDOW, 0);
+      setFocusedId(ASK_AI_WINDOW);
+    });
+  }, [isMac, lang, t, transition, setWindows, setActiveTab]);
+
+  const pickDevice = useCallback((id) => {
+    const item = windows.find((entry) => entry.id === id);
+    if (!item) return;
+    if (!item.device) toggleDevice(id);
+    window.setTimeout(() => {
+      const select = document.querySelector(`[data-pane="${id}"] select`);
+      if (!select) return;
+      deck.focusShell();
+      select.focus();
+      try {
+        select.showPicker?.();
+      } catch {
+        // showPicker needs a user gesture in some versions; focus alone still works.
+      }
+    }, item.device ? 0 : LAYOUT_ANIMATION_MS);
+  }, [windows, toggleDevice]);
+
   const openField = useCallback((paneId, kind, value = "") => {
     if (!paneId) return;
     deck.focusShell();
@@ -732,6 +778,11 @@ export function App() {
       if (!overlayOpen) stepHistory(command === "deck-undo" ? "undo" : "redo");
       return;
     }
+    // ⌘K / F1 also switches from another sheet to the palette, and closes it again.
+    if (command === "open-palette") {
+      if (!editor.open) setSheet((current) => (current === "palette" ? null : "palette"));
+      return;
+    }
     if (overlayOpen) return;
     const count = deckOrder.length;
     const current = currentLayout();
@@ -790,8 +841,33 @@ export function App() {
       setSheet("paste");
     } else if (command === "import-backup") {
       importBackup();
+    } else if (command === "device-toggle") {
+      if (paneId) toggleDevice(paneId);
+    } else if (command === "device-pick") {
+      if (paneId) pickDevice(paneId);
+    } else if (command === "device-rotate" || command === "device-add") {
+      if (!focusedItem) return;
+      if (!focusedItem.device) toggleDevice(paneId);
+      else if (command === "device-add") addDevicePane(paneId);
+      else setPaneDevice(paneId, (device) => ({ ...device, landscape: !device?.landscape }));
+    } else if (command === "hide-pane") {
+      if (paneId) hideWindow(paneId);
+    } else if (command === "edit-window") {
+      if (focusedItem) setEditor({ open: true, item: focusedItem });
+    } else if (command === "add-window") {
+      setEditor({ open: true, item: null });
+    } else if (command === "show-tips") {
+      setSheet("tips");
+    } else if (command === "check-updates") {
+      deck.checkForUpdates();
+    } else if (command === "signin-google") {
+      deck.googleSignIn();
+    } else if (command === "new-window") {
+      deck.openWindow();
+    } else if (command === "ask-ai-claude" || command === "ask-ai-chatgpt") {
+      askAi(command === "ask-ai-claude" ? "claude" : "chatgpt");
     }
-  }, [overlayOpen, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup]);
+  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi]);
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
@@ -857,9 +933,15 @@ export function App() {
     showNotice(t("windowDeletedMsg", { name: item.name || t("untitledWindow") }), { undoable: true });
   };
 
+  const paletteItems = useMemo(
+    () => paletteEntries(commandCatalog, { t, tEnglish, isMac, hasPane: Boolean(effectiveFocusId) }),
+    [t, isMac, effectiveFocusId]
+  );
+
   if (!loaded) return <div className="h-full bg-ink" aria-busy="true" />;
 
   const closeSheet = () => setSheet(null);
+  const focusedName = effectiveFocusId ? windows.find((item) => item.id === effectiveFocusId)?.name || t("untitledWindow") : "";
 
   return (
     <div className="flex h-full flex-col bg-background text-foreground">
@@ -929,6 +1011,18 @@ export function App() {
               </button>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={() => setSheet("palette")}
+            aria-keyshortcuts={isMac ? "Meta+K F1" : "Control+K F1"}
+            title={`${t("paletteTitle")} (${primaryLabel("K")})`}
+            className="cie-chip ink-swap"
+          >
+            <Search className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("paletteButton")}
+            <kbd className="key border-ink-edge text-paper" aria-hidden="true">{primaryLabel("K")}</kbd>
+          </button>
 
           <IconButton onClick={() => setSheet("shortcuts")} aria-label={t("shortcuts")} title={t("shortcuts")}>
             <Keyboard className="h-4 w-4" aria-hidden="true" />
@@ -1094,6 +1188,34 @@ export function App() {
       />
 
       <ShortcutsSheet t={t} open={sheet === "shortcuts"} onClose={closeSheet} isMac={isMac} />
+
+      <CommandPalette
+        t={t}
+        open={sheet === "palette"}
+        onClose={closeSheet}
+        entries={paletteItems}
+        groups={commandCatalog.groups}
+        groupLabel={(group) => t(GROUP_LABELS[group])}
+        targetName={focusedName}
+        onRun={(id) => {
+          closeSheet();
+          window.setTimeout(() => runCommandRef.current(id), 0);
+        }}
+        onAskAi={(question) => {
+          closeSheet();
+          askAi("claude", question);
+        }}
+      />
+
+      <TipsSheet
+        t={t}
+        open={sheet === "tips"}
+        onClose={() => {
+          closeSheet();
+          deck.applyStore({ settings: { tipsSeen: true } });
+        }}
+        keys={{ palette: primaryLabel("K"), device: paneKeys.device, back: paneKeys.back, spotlight: keyLabel("X") }}
+      />
     </div>
   );
 }

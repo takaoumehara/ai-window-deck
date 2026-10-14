@@ -71,7 +71,7 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={item ? t("editWindow") : t("addWindow")} closeLabel={t("close")}>
+    <Sheet open={open} onClose={onClose} title={item ? t("editWindow") : t("addWindow")} closeLabel={t("close")} wide>
       <form onSubmit={submit} className="flex flex-col gap-5">
         {!item && onPasteList && (
           <button

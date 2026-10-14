@@ -57,3 +57,12 @@ test("undo keys are never taken from pages", () => {
   assert.equal(matchCommand(key("KeyZ", { meta: true, shift: true }), "darwin"), null);
   assert.equal(matchCommand(key("KeyY", { control: true }), "win32"), null);
 });
+
+test("⌘K and F1 open the palette, ⌘⇧M toggles the mobile preview", () => {
+  assert.equal(matchCommand(key("KeyK", { meta: true }), "darwin"), "open-palette");
+  assert.equal(matchCommand(key("KeyK", { control: true }), "win32"), "open-palette");
+  assert.equal(matchCommand(key("F1"), "darwin"), "open-palette");
+  assert.equal(matchCommand(key("F1", { shift: true }), "darwin"), null);
+  assert.equal(matchCommand(key("KeyM", { meta: true, shift: true }), "darwin"), "device-toggle");
+  assert.equal(matchCommand(key("KeyM", { meta: true }), "darwin"), null);
+});

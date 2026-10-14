@@ -726,6 +726,7 @@ function buildMenu() {
         { type: "separator" },
         command("paste-list", "Paste a List of URLs…", null),
         command("import-backup", "Import from Extension…", null),
+        command("signin-google", "Sign in to Google…"),
         { type: "separator" },
         command("tab-close", "Close Tab"),
         { label: "Close Window", accelerator: "CmdOrCtrl+Shift+W", role: "close" },
@@ -781,6 +782,9 @@ function buildMenu() {
         command("zoom-out", "Zoom Out"),
         command("zoom-reset", "Actual Size"),
         { type: "separator" },
+        command("device-toggle", "Mobile Preview"),
+        command("device-rotate", "Rotate Device"),
+        { type: "separator" },
         { role: "togglefullscreen" },
         ...(DEV_URL ? [{ role: "toggleDevTools" }] : []),
       ],
@@ -789,7 +793,10 @@ function buildMenu() {
     {
       role: "help",
       submenu: [
+        command("open-palette", "Find a Feature…"),
+        command("show-tips", "Tips"),
         command("open-shortcuts", "Keyboard Shortcuts", null),
+        command("ask-ai-claude", "Ask Claude about AI Window Deck"),
         { type: "separator" },
         { label: "AI Window Deck Website", click: () => shell.openExternal(SITE_URL) },
         { label: "Report an Issue", click: () => shell.openExternal(ISSUES_URL) },
@@ -932,6 +939,9 @@ ipcMain.handle("devices:list", async () => {
 });
 ipcMain.handle("app:info", () => ({ platform: process.platform, locale: app.getLocale(), version: app.getVersion() }));
 ipcMain.on("update:check", () => updater?.check(true));
+ipcMain.on("google:signin", (event) => {
+  openSignInWindow(shellOf(event.sender) ?? focusedShell(), null, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.google.com%2F");
+});
 ipcMain.on("update:install", () => updater?.install());
 
 ipcMain.on("panes:sync", (event, nextPanes) => {

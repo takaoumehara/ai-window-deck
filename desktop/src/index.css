@@ -62,6 +62,10 @@
   font-weight: 500;
 }
 
+.cie-sheet--center.deck-sheet-wide {
+  width: min(calc(100% - 2 * var(--cie-edge)), 560px);
+}
+
 /* Text fields: a 2px ring on focus, not only a darker hairline (2.4.7). */
 .deck-focus-ring:focus-visible,
 .deck-focus-within:focus-within {

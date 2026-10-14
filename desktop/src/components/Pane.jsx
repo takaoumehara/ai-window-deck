@@ -122,6 +122,7 @@ export const Pane = React.forwardRef(function Pane(
       // fading them in on top of the page.
       style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%`, zIndex: focused ? 1 : 0 }}
       aria-hidden={!rect.visible}
+      data-pane={item.id}
     >
       <section
         aria-label={item.name}
@@ -288,7 +289,7 @@ export const Pane = React.forwardRef(function Pane(
               </div>
             )}
             {(!compact || device) && (
-              <HeaderButton label={t(device ? "deviceExit" : "deviceEnter")} pressed={Boolean(device)} focused={focused} onClick={onToggleDevice}>
+              <HeaderButton label={t(device ? "deviceExit" : "deviceEnter")} shortcut={keys?.device} pressed={Boolean(device)} focused={focused} onClick={onToggleDevice}>
                 <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
               </HeaderButton>
             )}
