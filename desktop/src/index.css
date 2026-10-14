@@ -205,6 +205,11 @@ html, body, #root {
   align-self: flex-end;
   height: 29px;
   margin-bottom: -1px;
+  overflow: hidden;
+}
+/* The strip clips, so tab focus rings sit inside the tab. */
+.deck-tab .deck-focus-ring:focus-visible {
+  outline-offset: -3px;
 }
 .deck-tab {
   position: relative;
