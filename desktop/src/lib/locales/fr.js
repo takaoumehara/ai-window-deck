@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "Nouvelle fenêtre de deck (pour un autre écran)",
   kbSettings: "Réglages",
   settingsSignIn: "Connexion",
-  settingsSignInNote: "Une fois connecté à un site, tous les panneaux restent connectés, même après un redémarrage. La connexion Google fonctionne aussi dans l’app.",
+  settingsSignInNote: "Tous les panneaux et fenêtres du deck partagent une seule session : se connecter une fois (dans Gmail, par exemple) connecte chaque panneau à tous les services Google, et cela reste après un redémarrage. La connexion Google s’ouvre dans une petite fenêtre à part ; à la fin, la page qui l’a demandée continue et les autres pages Google se rechargent. Si Google dit que le navigateur n’est peut-être pas sécurisé, l’app réessaie autrement. S’il refuse encore, Google bloque la connexion dans les apps : une connexion faite dans Safari ou Chrome ne peut pas être partagée avec l’app, utilisez donc une clé d’accès ou les autres options du site s’il en propose.",
   deviceEnter: "Aperçu mobile",
   deviceExit: "Revenir à l’affichage bureau",
   deviceModel: "Appareil",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "Descendre l’URL {n}",
   urlMovedMsg: "Déplacée en position {n} sur {count}",
   tabReorderHint: "Glisser pour réordonner (ou ⇧← / ⇧→)",
+  googleSignedInMsg: "Connecté à Google · {count} pages Google rechargées",
+  googleSignedOutMsg: "Déconnecté de Google",
+  googleRejectedMsg: "Google a refusé cette connexion · voir Réglages → Connexion",
 };

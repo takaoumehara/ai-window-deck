@@ -10,6 +10,7 @@ const { normalizeCatalog, mergeCatalogs } = require("./devices.cjs");
 const {
   desktopIdentity, deviceIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
 } = require("./identity.cjs");
+const google = require("./google-signin.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -139,9 +140,13 @@ function applyIdentity(contents, identity) {
   }
 }
 
+// Popups opened for a Google sign-in keep the sign-in identity for their
+// whole life, so the hops between Google's hosts all see one browser.
+const signInPopups = new Set();
+
 function identityFor(contents, url) {
   const base = baseIdentities.get(contents.id) ?? browser;
-  return isSignInPage(url) ? signInVariant(base) : base;
+  return signInPopups.has(contents.id) || isSignInPage(url) ? signInVariant(base) : base;
 }
 
 // Every page and sign-in popup, as soon as its contents exist.
@@ -157,7 +162,134 @@ function presentPage(contents) {
   contents.once("destroyed", () => {
     baseIdentities.delete(id);
     identities.delete(id);
+    signInPopups.delete(id);
   });
+}
+
+// Google's sign-in pages run in a window of their own rather than in a pane:
+// a top-level window on the same session, with no DevTools override attached,
+// presenting one identity from its first request to its last. When the flow
+// leaves Google's sign-in hosts, that next URL (the page that asked, or an
+// OAuth callback whose code must only be used once) loads in the pane
+// instead. If Google rejects the browser, the next identity is tried.
+let signInWindow = null;
+let creatingSignInWindow = false;
+
+function signInIdentity(strategy) {
+  if (strategy === "firefox") return google.firefoxIdentity({ chromeVersion: process.versions.chrome, platform: process.platform });
+  return signInVariant(browser);
+}
+
+function openSignInWindow(target, paneId, url, strategy = store.settings?.googleSignIn) {
+  if (!google.SIGN_IN_STRATEGIES.includes(strategy)) strategy = google.SIGN_IN_STRATEGIES[0];
+  const open = signInWindow && !signInWindow.win.isDestroyed() ? signInWindow : null;
+  if (open && open.strategy === strategy) {
+    Object.assign(open, { target, paneId, startUrl: url });
+    open.win.loadURL(url).catch(() => {});
+    open.win.show();
+    open.win.focus();
+    return;
+  }
+  if (open) {
+    open.replaced = true;
+    open.win.close();
+  }
+  const identity = signInIdentity(strategy);
+  creatingSignInWindow = true;
+  let win;
+  try {
+    win = new BrowserWindow({
+      width: 500,
+      height: 720,
+      parent: target && !target.win.isDestroyed() ? target.win : undefined,
+      title: "Google",
+      backgroundColor: "#ffffff",
+      autoHideMenuBar: true,
+      webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true, preload: path.join(__dirname, "signin-preload.cjs") },
+    });
+  } finally {
+    creatingSignInWindow = false;
+  }
+  const contents = win.webContents;
+  const state = { win, target, paneId, strategy, startUrl: url, done: false, replaced: false };
+  signInWindow = state;
+  identities.set(contents.id, identity);
+  contents.setUserAgent(identity.userAgent);
+  interceptCommands(contents, target ?? focusedShell());
+
+  const leave = (event, next, isMainFrame) => {
+    if (isMainFrame === false || !/^https?:/i.test(next || "") || google.isSignInFlow(next)) return;
+    event.preventDefault();
+    state.done = true;
+    finishSignIn(state, next);
+    win.close();
+  };
+  contents.on("will-navigate", (event) => leave(event, event.url, event.isMainFrame));
+  contents.on("will-redirect", (event) => leave(event, event.url, event.isMainFrame));
+  contents.on("did-navigate", (_event, next) => {
+    if (!google.isRejected(next)) return;
+    const following = google.nextStrategy(state.strategy);
+    if (following) openSignInWindow(state.target, state.paneId, state.startUrl, following);
+    else sendTo(state.target, "google:signin", { status: "rejected" });
+  });
+  contents.setWindowOpenHandler(({ url: link }) => {
+    if (/^https?:/i.test(link)) shell.openExternal(link);
+    return { action: "deny" };
+  });
+  win.on("closed", () => {
+    identities.delete(contents.id);
+    if (signInWindow === state) signInWindow = null;
+  });
+  contents.loadURL(url).catch(() => {});
+}
+
+function finishSignIn(state, next) {
+  if (store.settings?.googleSignIn !== state.strategy) {
+    store = applyStorePatch(store, { settings: { googleSignIn: state.strategy } });
+    writeStore(store);
+  }
+  const contents = activeContents(state.target, state.paneId);
+  if (contents && !contents.isDestroyed()) contents.loadURL(next).catch(() => {});
+  if (state.target && !state.target.win.isDestroyed()) state.target.win.focus();
+}
+
+// The SID cookie on .google.com appears when an account signs in and goes
+// when the last one signs out. Either way, every Google page in every deck
+// window reloads so it shows the new state, not the one it loaded with.
+function watchGoogleSession() {
+  const { cookies } = session.fromPartition(PARTITION);
+  let signedIn = null;
+  let timer = null;
+  cookies.get({ name: "SID" })
+    .then((list) => {
+      signedIn = list.some(google.isSessionCookie);
+    })
+    .catch(() => {
+      signedIn = false;
+    });
+  cookies.on("changed", (_event, cookie, cause, removed) => {
+    if (signedIn === null || !google.isSessionCookie(cookie) || (removed && cause === "overwrite")) return;
+    if (!removed === signedIn) return;
+    signedIn = !removed;
+    clearTimeout(timer);
+    // A sign-in sets its cookies over several redirects; reload once they've settled.
+    timer = setTimeout(() => reloadGooglePages(signedIn), 1200);
+  });
+}
+
+function reloadGooglePages(signedIn) {
+  let reloaded = 0;
+  for (const target of shells.values()) {
+    for (const pane of target.panes.values()) {
+      for (const view of pane.views.values()) {
+        const contents = view.webContents;
+        if (contents.isDestroyed() || contents.isLoading() || !google.reloadsWithGoogleSession(contents.getURL())) continue;
+        contents.reload();
+        reloaded += 1;
+      }
+    }
+  }
+  broadcast("google:signin", { status: signedIn ? "signed-in" : "signed-out", reloaded });
 }
 
 let devices = normalizeCatalog(require("./devices.json"));
@@ -352,6 +484,21 @@ function createTabView(target, paneId, url) {
     else shell.openExternal(link);
     return { action: "deny" };
   });
+  contents.on("did-create-window", (child, { url: link }) => {
+    if (!google.isSignInFlow(link)) return;
+    signInPopups.add(child.webContents.id);
+    applyIdentity(child.webContents, identityFor(child.webContents, link));
+  });
+  // Once the user has clicked or typed in this page, its way into Google's
+  // sign-in goes to the sign-in window. A page that redirects there by itself
+  // as the deck starts (a saved accounts.google.com tab) doesn't pop one up.
+  const toSignInWindow = (event) => {
+    if (!event.isMainFrame || !view.interacted || !google.isSignInPage(event.url)) return;
+    event.preventDefault();
+    openSignInWindow(target, paneId, event.url);
+  };
+  contents.on("will-navigate", toSignInWindow);
+  contents.on("will-redirect", toSignInWindow);
   // A new view takes keyboard focus when its first page loads. Unless the deck
   // asked for this view, focus goes back to where it was (so ⌘Z after an undo
   // that brought a pane back still reaches the deck).
@@ -362,6 +509,7 @@ function createTabView(target, paneId, url) {
   }, FOCUS_SETTLE_MS);
   contents.on("input-event", (_event, input) => {
     if (input.type === "mouseDown") view.focusRequested = true;
+    if (/^(mouseDown|rawKeyDown|keyDown|touchStart)$/.test(input.type)) view.interacted = true;
   });
   contents.once("did-stop-loading", settle);
   contents.once("did-fail-load", settle);
@@ -860,6 +1008,7 @@ ipcMain.on("pane:navigate", (event, { paneId, action, url }) => {
   else if (action === "forward" && contents.navigationHistory.canGoForward()) contents.navigationHistory.goForward();
   else if (action === "reload") contents.reload();
   else if (action === "reload-hard") contents.reloadIgnoringCache();
+  else if (action === "load" && url && google.isSignInPage(url)) openSignInWindow(target, paneId, url);
   else if (action === "load" && url) contents.loadURL(url).catch(() => {});
   else if (action === "home") {
     const pane = target.panes.get(paneId);
@@ -905,7 +1054,7 @@ app.on("second-instance", () => {
 });
 
 app.on("web-contents-created", (_event, contents) => {
-  if (!browser || contents.session !== session.fromPartition(PARTITION)) return;
+  if (!browser || creatingSignInWindow || contents.session !== session.fromPartition(PARTITION)) return;
   presentPage(contents);
 });
 
@@ -919,6 +1068,7 @@ app.setAboutPanelOptions({
 app.whenReady().then(async () => {
   if (!isPrimaryInstance) return;
   setUpBrowserIdentity();
+  watchGoogleSession();
   loadDevices();
   store = migrateStore(await readStore());
   buildMenu();

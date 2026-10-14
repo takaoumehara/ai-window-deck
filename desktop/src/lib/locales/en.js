@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "New deck window (for another monitor)",
   kbSettings: "Settings",
   settingsSignIn: "Sign-in",
-  settingsSignInNote: "Once you sign in to a site, every pane stays signed in, including after a restart. Google sign-in works inside the app too.",
+  settingsSignInNote: "All panes and deck windows share one login, so signing in once (Gmail, for example) signs every pane in to all Google services, and it stays after a restart. Google's sign-in opens in a small window of its own; when it finishes, the page that asked continues and other Google pages reload. If Google says the browser may not be secure, the app retries another way. If it still refuses, Google is blocking sign-in inside apps for your account: signing in in Safari or Chrome can't be shared with the app, so use a passkey or another sign-in option where the site offers one.",
   deviceEnter: "Mobile preview",
   deviceExit: "Back to the desktop view",
   deviceModel: "Device",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "Move URL {n} down",
   urlMovedMsg: "Moved to position {n} of {count}",
   tabReorderHint: "Drag to reorder (or ⇧← / ⇧→)",
+  googleSignedInMsg: "Signed in to Google · {count} Google pages reloaded",
+  googleSignedOutMsg: "Signed out of Google",
+  googleRejectedMsg: "Google refused this sign-in · see Settings → Sign-in",
 };

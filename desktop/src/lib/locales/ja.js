@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "新しいデッキウィンドウ（別のモニター用）",
   kbSettings: "設定",
   settingsSignIn: "サインイン",
-  settingsSignInNote: "一度サインインしたサイトは、すべてのペインで、次回起動後もサインインしたままです。Google のサインインもこのアプリ内でそのまま使えます。",
+  settingsSignInNote: "すべてのペインとデッキのウィンドウは 1 つのログインを共有します。どこかで一度（たとえば Gmail で）サインインすれば、すべてのペインで Google のサービスにサインインした状態になり、次回起動後も続きます。Google のサインイン画面は専用の小さなウィンドウで開き、終わると元のページが続きを表示し、ほかの Google のページも自動で再読み込みされます。「安全でないブラウザ」と表示されたら、アプリが別の方法で自動的にやり直します。それでも拒否される場合は、Google がアプリ内でのサインインを止めています。Safari や Chrome でのサインインはアプリと共有できないため、サイトに用意されていればパスキーなど別の方法をお使いください。",
   deviceEnter: "モバイル表示（スマホ・タブレットで確認）",
   deviceExit: "デスクトップ表示に戻す",
   deviceModel: "機種",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "URL {n} を下へ",
   urlMovedMsg: "{count} 件中 {n} 番目に移動しました",
   tabReorderHint: "ドラッグで並べ替え（⇧← / ⇧→ でも可）",
+  googleSignedInMsg: "Google にサインインしました · Google のページ {count} 件を再読み込み",
+  googleSignedOutMsg: "Google からサインアウトしました",
+  googleRejectedMsg: "Google がこのサインインを拒否しました · 設定 → サインイン を参照",
 };

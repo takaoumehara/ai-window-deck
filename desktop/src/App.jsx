@@ -825,6 +825,12 @@ export function App() {
     else if (status === "error") showNotice(t("updateFailed"));
   }), [t, showNotice]);
 
+  useEffect(() => deck.onGoogleSignIn(({ status, reloaded }) => {
+    if (status === "signed-in") showNotice(t("googleSignedInMsg", { count: reloaded ?? 0 }));
+    else if (status === "signed-out") showNotice(t("googleSignedOutMsg"));
+    else if (status === "rejected") showNotice(t("googleRejectedMsg"));
+  }), [t, showNotice]);
+
   const favicons = useMemo(() => {
     const icons = {};
     for (const item of windows) icons[item.id] = paneMeta[item.id]?.[activeTabs[item.id] ?? 0]?.favicon || null;

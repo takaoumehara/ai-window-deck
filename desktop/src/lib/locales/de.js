@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "Neues Deck-Fenster (für einen anderen Bildschirm)",
   kbSettings: "Einstellungen",
   settingsSignIn: "Anmeldung",
-  settingsSignInNote: "Nach einer Anmeldung bei einer Website bleiben alle Bereiche angemeldet, auch nach einem Neustart. Die Google-Anmeldung funktioniert auch in der App.",
+  settingsSignInNote: "Alle Bereiche und Deck-Fenster teilen sich eine Anmeldung: Einmal anmelden (zum Beispiel in Gmail) meldet jeden Bereich bei allen Google-Diensten an, auch nach einem Neustart. Die Google-Anmeldung öffnet sich in einem eigenen kleinen Fenster; danach geht es auf der Seite weiter, die sie angefordert hat, und andere Google-Seiten werden neu geladen. Meldet Google, der Browser sei möglicherweise nicht sicher, versucht die App es automatisch auf andere Weise. Lehnt Google weiter ab, blockiert Google die Anmeldung in Apps: Eine Anmeldung in Safari oder Chrome lässt sich nicht mit der App teilen, nutzen Sie daher einen Passkey oder andere Optionen der Website, falls vorhanden.",
   deviceEnter: "Mobile Vorschau",
   deviceExit: "Zurück zur Desktop-Ansicht",
   deviceModel: "Gerät",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "URL {n} nach unten",
   urlMovedMsg: "An Position {n} von {count} verschoben",
   tabReorderHint: "Zum Umsortieren ziehen (oder ⇧← / ⇧→)",
+  googleSignedInMsg: "Bei Google angemeldet · {count} Google-Seiten neu geladen",
+  googleSignedOutMsg: "Von Google abgemeldet",
+  googleRejectedMsg: "Google hat diese Anmeldung abgelehnt · siehe Einstellungen → Anmeldung",
 };

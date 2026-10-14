@@ -37,4 +37,5 @@ contextBridge.exposeInMainWorld("deck", {
   checkForUpdates: () => ipcRenderer.send("update:check"),
   installUpdate: () => ipcRenderer.send("update:install"),
   onUpdateState: subscribe("update:state"),
+  onGoogleSignIn: subscribe("google:signin"),
 });

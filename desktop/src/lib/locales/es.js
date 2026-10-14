@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "Nueva ventana del deck (para otro monitor)",
   kbSettings: "Ajustes",
   settingsSignIn: "Inicio de sesión",
-  settingsSignInNote: "Cuando inicias sesión en un sitio, todos los paneles siguen con la sesión iniciada, también después de reiniciar. El inicio de sesión de Google también funciona dentro de la app.",
+  settingsSignInNote: "Todos los paneles y ventanas del deck comparten una sesión, así que iniciar sesión una vez (en Gmail, por ejemplo) inicia sesión en todos los servicios de Google en cada panel, y se mantiene tras reiniciar. El inicio de sesión de Google se abre en una ventana pequeña propia; al terminar, la página que lo pidió continúa y las demás páginas de Google se recargan. Si Google dice que el navegador puede no ser seguro, la app lo reintenta de otra forma. Si aun así lo rechaza, Google bloquea el inicio de sesión dentro de apps: la sesión de Safari o Chrome no se puede compartir con la app, así que usa una llave de acceso u otras opciones del sitio si las ofrece.",
   deviceEnter: "Vista móvil",
   deviceExit: "Volver a la vista de escritorio",
   deviceModel: "Dispositivo",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "Bajar la URL {n}",
   urlMovedMsg: "Movida a la posición {n} de {count}",
   tabReorderHint: "Arrastra para reordenar (o ⇧← / ⇧→)",
+  googleSignedInMsg: "Sesión iniciada en Google · {count} páginas de Google recargadas",
+  googleSignedOutMsg: "Sesión de Google cerrada",
+  googleRejectedMsg: "Google rechazó este inicio de sesión · ver Ajustes → Inicio de sesión",
 };

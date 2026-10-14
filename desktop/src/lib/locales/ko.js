@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "새 덱 창(다른 모니터용)",
   kbSettings: "설정",
   settingsSignIn: "로그인",
-  settingsSignInNote: "한 번 로그인한 사이트는 모든 창에서, 다시 실행한 뒤에도 로그인 상태가 유지됩니다. Google 로그인도 앱 안에서 바로 할 수 있습니다.",
+  settingsSignInNote: "모든 창과 덱 창은 하나의 로그인을 함께 씁니다. 한 번(예: Gmail에서) 로그인하면 모든 창에서 모든 Google 서비스에 로그인되며, 다시 실행한 뒤에도 유지됩니다. Google 로그인은 작은 전용 창에서 열리고, 끝나면 원래 페이지가 이어지고 다른 Google 페이지도 새로고침됩니다. '안전하지 않은 브라우저'라고 나오면 앱이 다른 방법으로 자동으로 다시 시도합니다. 그래도 거부되면 Google이 앱 안 로그인을 막고 있는 것입니다. Safari나 Chrome에서의 로그인은 앱과 공유할 수 없으니, 사이트에서 제공한다면 패스키 같은 다른 방법을 쓰세요.",
   deviceEnter: "모바일 미리보기",
   deviceExit: "데스크톱 보기로 돌아가기",
   deviceModel: "기기",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "URL {n} 아래로",
   urlMovedMsg: "{count}개 중 {n}번째로 옮겼습니다",
   tabReorderHint: "드래그해서 순서 바꾸기(⇧← / ⇧→도 가능)",
+  googleSignedInMsg: "Google에 로그인했습니다 · Google 페이지 {count}개 새로고침",
+  googleSignedOutMsg: "Google에서 로그아웃했습니다",
+  googleRejectedMsg: "Google이 이 로그인을 거부했습니다 · 설정 → 로그인 참고",
 };

@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "新建桌面窗口（用于另一台显示器）",
   kbSettings: "设置",
   settingsSignIn: "登录",
-  settingsSignInNote: "在某个网站登录一次后，所有窗格都会保持登录状态，重新启动后也一样。Google 登录也可以直接在应用内完成。",
+  settingsSignInNote: "所有窗格和桌面窗口共用一个登录，所以在任一处登录一次（例如 Gmail），所有窗格就都登录了全部 Google 服务，重新启动后也会保留。Google 登录会在单独的小窗口中打开，完成后原来的页面会继续，其他 Google 页面会自动重新加载。如果 Google 提示浏览器可能不安全，应用会自动换一种方式重试。如果仍被拒绝，说明 Google 阻止了在应用内登录：在 Safari 或 Chrome 中的登录无法与应用共享，请在网站提供时使用通行密钥等其他方式。",
   deviceEnter: "移动端预览",
   deviceExit: "返回桌面视图",
   deviceModel: "机型",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "将 URL {n} 下移",
   urlMovedMsg: "已移到第 {n} 位（共 {count} 个）",
   tabReorderHint: "拖动以重新排序（或 ⇧← / ⇧→）",
+  googleSignedInMsg: "已登录 Google · 已重新加载 {count} 个 Google 页面",
+  googleSignedOutMsg: "已退出 Google",
+  googleRejectedMsg: "Google 拒绝了此次登录 · 请查看 设置 → 登录",
 };

@@ -151,7 +151,7 @@ export default {
   kbNewWindow: "Nova janela do deck (para outro monitor)",
   kbSettings: "Configurações",
   settingsSignIn: "Login",
-  settingsSignInNote: "Depois de entrar em um site uma vez, todos os painéis continuam conectados, mesmo após reiniciar. O login do Google também funciona dentro do app.",
+  settingsSignInNote: "Todos os painéis e janelas do deck compartilham um login, então entrar uma vez (no Gmail, por exemplo) conecta todos os painéis a todos os serviços do Google, e continua após reiniciar. O login do Google abre em uma janelinha própria; ao terminar, a página que pediu continua e as outras páginas do Google recarregam. Se o Google disser que o navegador pode não ser seguro, o app tenta de outro jeito. Se ainda recusar, o Google está bloqueando o login dentro de apps: o login feito no Safari ou Chrome não pode ser compartilhado com o app, então use uma chave de acesso ou outras opções do site, se houver.",
   deviceEnter: "Visualização móvel",
   deviceExit: "Voltar à visualização de computador",
   deviceModel: "Dispositivo",
@@ -171,4 +171,7 @@ export default {
   moveUrlDown: "Mover a URL {n} para baixo",
   urlMovedMsg: "Movida para a posição {n} de {count}",
   tabReorderHint: "Arraste para reordenar (ou ⇧← / ⇧→)",
+  googleSignedInMsg: "Conectado ao Google · {count} páginas do Google recarregadas",
+  googleSignedOutMsg: "Desconectado do Google",
+  googleRejectedMsg: "O Google recusou este login · veja Configurações → Login",
 };
