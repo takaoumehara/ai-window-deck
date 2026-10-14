@@ -160,17 +160,18 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
   const shown = compact ? [activeTab] : urls.map((_, index) => index);
   const listButton = compact ? urls.length > 1 : edges.overflow;
   return (
-    <div className="deck-tabs flex min-w-0 flex-1 items-end">
+    <div className={`deck-tabs flex flex-1 items-end ${compact ? "min-w-[6.25rem]" : "min-w-0"}`}>
       {edges.overflow && !compact && (
         <StripArrow label={t("tabsScrollLeft")} disabled={!edges.start} onClick={() => page(-1)}>
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
         </StripArrow>
       )}
+      <div className="relative flex h-full min-w-0 flex-1 items-end">
       <div
         ref={scrollerRef}
         role="tablist"
         aria-label={name}
-        className={`deck-tabs__scroller flex min-w-0 flex-1 items-end ${edges.start ? "has-start" : ""} ${edges.end ? "has-end" : ""}`}
+        className="deck-tabs__scroller flex min-w-0 flex-1 items-end"
         onDragLeave={(event) => event.currentTarget === event.target && setTabGap(null)}
       >
         {shown.map((tabIndex) => {
@@ -202,7 +203,7 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
                 endTabDrag();
               }}
               onDragEnd={endTabDrag}
-              className={`deck-tab group/tab flex min-w-0 items-center ${compact ? "min-w-0 flex-1" : "w-44 min-w-[6.5rem] shrink-0 cursor-grab active:cursor-grabbing"} ${
+              className={`deck-tab group/tab flex items-center ${compact ? "min-w-[2.25rem] flex-1" : "w-44 min-w-[6.5rem] shrink-0 cursor-grab active:cursor-grabbing"} ${
                 selected ? "is-active" : ""
               } ${draggedTab === tabIndex ? "opacity-40" : ""}`}
             >
@@ -237,12 +238,12 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
                   onCloseTab(tabIndex);
                 }}
                 title={`${label}\n${tabMeta?.url || url}\n${t("tabReorderHint")}`}
-                className="cie-tap deck-focus-ring flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-t-[7px] pl-2.5 pr-1 text-xs"
+                className={`cie-tap deck-focus-ring flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-t-[7px] pl-2.5 text-xs ${compact ? "pr-2.5" : "pr-1"}`}
               >
                 <TabIcon meta={tabMeta} loading={tabMeta?.loading} ink={focused} />
                 <span className={`min-w-0 truncate ${selected ? "font-medium" : ""}`}>{label}</span>
               </button>
-              <button
+              {!compact && <button
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
@@ -253,10 +254,13 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
                 className="deck-tab__close deck-focus-ring mr-1.5 grid h-5 w-5 shrink-0 place-items-center rounded-pill transition-opacity duration-fast hover:bg-btn"
               >
                 <X className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </button>}
             </span>
           );
         })}
+      </div>
+      {edges.start && <span className={`pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 bg-gradient-to-r to-transparent ${focused ? "from-paper" : "from-ink"}`} aria-hidden="true" />}
+      {edges.end && <span className={`pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 bg-gradient-to-l to-transparent ${focused ? "from-paper" : "from-ink"}`} aria-hidden="true" />}
       </div>
       {edges.overflow && !compact && (
         <StripArrow label={t("tabsScrollRight")} disabled={!edges.end} onClick={() => page(1)}>
@@ -473,7 +477,7 @@ export const Pane = React.forwardRef(function Pane(
           }`}
         >
           <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{String(index + 1).padStart(2, "0")}</span>
-          <span className="weight min-w-0 max-w-[40%] shrink-0 truncate text-[13px] tracking-[-0.01em]" style={{ "--w": focused ? 600 : 400 }}>{item.name}</span>
+          <span className={`weight truncate ${compact ? "min-w-[2.5rem] max-w-[32%] shrink" : "min-w-0 max-w-[40%] shrink-0"} text-[13px] tracking-[-0.01em]`} style={{ "--w": focused ? 600 : 400 }}>{item.name}</span>
           {field ? (
             <HeaderField
               t={t}
