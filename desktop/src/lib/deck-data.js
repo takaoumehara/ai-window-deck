@@ -43,6 +43,102 @@ function asUrl(line) {
   return null;
 }
 
+// Bare words that look like domains but are file names in prose ("index.html").
+const FILE_SUFFIX = /\.(?:html?|php|aspx?|jsx?|tsx?|mjs|cjs|json|ya?ml|toml|md|mdx|txt|csv|pdf|docx?|xlsx?|pptx?|png|jpe?g|gif|webp|svg|zip|py|rb|sh|css|scss|lock|log|exe|dmg)$/i;
+const LOCAL_HOST = /^(?:localhost|127(?:\.\d{1,3}){3}|10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})(?::\d+)?(?:[/?#]|$)/i;
+const IPV4 = /^\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?(?:[/?#]\S*)?$/;
+// Separators between URLs in pasted prose, lists and tables, also Japanese punctuation.
+const URL_BREAK = /[\s,;|<>"'`、。，；「」『』（）【】〈〉《》]+/;
+
+function trimToken(token) {
+  let out = token;
+  const scheme = out.search(/https?:\/\//i);
+  if (scheme > 0) out = out.slice(scheme);
+  // Japanese prose has no spaces: "詳しくはmoime.appへ".
+  else if (scheme < 0) out = out.replace(/^[^\x00-\x7f]+/, "").replace(/[^\x00-\x7f]+$/, "");
+  out = out.replace(/^[([{*•‣·-]+/, "");
+  for (;;) {
+    const last = out.at(-1);
+    if (!last) break;
+    if (/[.,:;!?'"\]}…]/.test(last)) out = out.slice(0, -1);
+    else if (last === ")" && (out.match(/\)/g) || []).length > (out.match(/\(/g) || []).length) out = out.slice(0, -1);
+    else break;
+  }
+  return out;
+}
+
+function tokenUrl(token) {
+  if (/^https?:\/\//i.test(token)) return token;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(token) && !/^[^\s/:@]+:\d/.test(token)) return null;
+  if (token.includes("@")) return null;
+  if (LOCAL_HOST.test(token)) return `http://${token}`;
+  if (IPV4.test(token)) return `http://${token}`;
+  if (!/^[^\s/:@]+\.[a-z]{2,}(?::\d+)?(?:[/?#]\S*)?$/i.test(token)) return null;
+  const host = token.split(/[/:?#]/)[0];
+  if (FILE_SUFFIX.test(host) && !/[/?#]/.test(token)) return null;
+  return `https://${token}`;
+}
+
+// Japanese paths read as Japanese, as in Chrome's address bar.
+function readable(href) {
+  try {
+    return decodeURI(href);
+  } catch {
+    return href;
+  }
+}
+
+/** One spelling per address: lower-case host, no trailing slash on a bare origin. */
+export function urlKey(url) {
+  try {
+    const parsed = new URL(url);
+    const href = parsed.href;
+    return parsed.pathname === "/" && !parsed.search && !parsed.hash ? href.replace(/\/$/, "") : href;
+  } catch {
+    return String(url).trim();
+  }
+}
+
+/**
+ * Every web address in pasted text, in order and without repeats: one per
+ * line, mixed into prose, separated by commas or spaces, Markdown links, and
+ * bare domains such as moime.app (which get https://).
+ */
+export function extractUrls(text) {
+  const source = String(text || "").replace(/\[[^\]]*\]\(([^)\s]+)\)/g, " $1 ");
+  const seen = new Set();
+  const urls = [];
+  for (const raw of source.split(URL_BREAK)) {
+    const candidate = tokenUrl(trimToken(raw.normalize("NFKC")));
+    if (!candidate) continue;
+    let parsed;
+    try {
+      parsed = new URL(candidate);
+    } catch {
+      continue;
+    }
+    if (!/^https?:$/.test(parsed.protocol) || !parsed.hostname || (!parsed.hostname.includes(".") && parsed.hostname !== "localhost")) continue;
+    const key = urlKey(parsed.href);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    urls.push(readable(key));
+  }
+  return urls;
+}
+
+/**
+ * Pasted URLs added to a window's list: `append` keeps the list and adds the
+ * new addresses at the end, `replace` swaps the whole list. Addresses already
+ * in the list are counted, not repeated.
+ */
+export function mergeUrls(current, pasted, mode = "append") {
+  const existing = current.map((url) => String(url).trim()).filter(Boolean);
+  if (mode === "replace") return { urls: [...pasted], added: pasted.length, duplicates: 0 };
+  const keys = new Set(existing.map((url) => urlKey(/^[a-z][a-z0-9+.-]*:/i.test(url) ? url : `https://${url}`)));
+  const fresh = pasted.filter((url) => !keys.has(urlKey(url)));
+  return { urls: [...existing, ...fresh], added: fresh.length, duplicates: pasted.length - fresh.length };
+}
+
 function splitLines(text) {
   return String(text || "").split(/\r?\n/).map((raw) => raw.trim().replace(LIST_MARKER, ""));
 }

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseExtensionExport, parsePastedList, urlList } from "../src/lib/deck-data.js";
+import { extractUrls, mergeUrls, parseExtensionExport, parsePastedList, urlKey, urlList } from "../src/lib/deck-data.js";
 
 test("imports an extension JSON backup with the active layout's windows first", () => {
   const backup = {
@@ -78,4 +78,44 @@ test("a pasted JSON backup is read like an imported file", () => {
   const { windows } = parsePastedList(JSON.stringify([{ id: "w1", name: "A", urls: "https://a.test" }, { id: "w2", name: "No URLs" }]));
   assert.deepEqual(windows.map((w) => w.id), ["w1"]);
   assert.deepEqual(parsePastedList("   ").windows, []);
+});
+
+test("URLs come out of any pasted text: lines, prose, commas, Markdown, bare domains", () => {
+  const text = [
+    "Look at https://claude.ai/code/session_011 and moime.app, also www.horn-tanz.at/.",
+    "- https://paywithpeppermint.com/",
+    "1. http://the-alphabet.co.uk/",
+    "[Duten](https://www.duten.com/en/) | README.md | e.g. v2.0 | node.js | 1.5",
+    "詳しくはmoime.appへ、https://ja.wikipedia.org/wiki/東京（日本）を参照。",
+    "mail me: a@b.com, mailto:x@y.z, localhost:5173/x 192.168.1.4:8080 (see https://en.wikipedia.org/wiki/Foo_(bar)).",
+    "https://MOIME.app https://claude.ai/code/session_011#top",
+  ].join("\n");
+  assert.deepEqual(extractUrls(text), [
+    "https://claude.ai/code/session_011",
+    "https://moime.app",
+    "https://www.horn-tanz.at",
+    "https://paywithpeppermint.com",
+    "http://the-alphabet.co.uk",
+    "https://www.duten.com/en/",
+    "https://ja.wikipedia.org/wiki/東京",
+    "http://localhost:5173/x",
+    "http://192.168.1.4:8080",
+    "https://en.wikipedia.org/wiki/Foo_(bar)",
+    "https://claude.ai/code/session_011#top",
+  ]);
+  assert.deepEqual(extractUrls("a.com,b.com c.com\tb.com"), ["https://a.com", "https://b.com", "https://c.com"]);
+  assert.deepEqual(extractUrls("no links here, just words. 3.14"), []);
+  assert.deepEqual(extractUrls(""), []);
+});
+
+test("pasted URLs append without repeats, or replace the list", () => {
+  assert.equal(urlKey("https://Example.com/"), "https://example.com");
+  assert.equal(urlKey("https://example.com/a/"), "https://example.com/a/");
+  const current = ["https://moime.app/", "claude.ai", ""];
+  assert.deepEqual(mergeUrls(current, ["https://moime.app", "https://claude.ai", "https://x.com"]), {
+    urls: ["https://moime.app/", "claude.ai", "https://x.com"],
+    added: 1,
+    duplicates: 2,
+  });
+  assert.deepEqual(mergeUrls(current, ["https://x.com", "https://y.com"], "replace"), { urls: ["https://x.com", "https://y.com"], added: 2, duplicates: 0 });
 });
