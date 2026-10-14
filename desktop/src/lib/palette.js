@@ -60,13 +60,14 @@ export function paletteEntries(catalog, { t, tEnglish, isMac, hasPane = true }) 
 }
 
 function scoreToken(token, { label, english, keywords }) {
+  // Word starts beat letters inside a word: "ai" means Ask AI, not "portrait".
   if (label.startsWith(token)) return 100;
   if (words(label).some((word) => word.startsWith(token))) return 80;
-  if (label.includes(token)) return 60;
-  if (words(english).some((word) => word.startsWith(token))) return 55;
-  if (english.includes(token)) return 50;
-  if (words(keywords).some((word) => word.startsWith(token))) return 45;
-  if (keywords.includes(token)) return 40;
+  if (words(english).some((word) => word.startsWith(token))) return 60;
+  if (words(keywords).some((word) => word.startsWith(token))) return 55;
+  if (label.includes(token)) return 50;
+  if (english.includes(token)) return 40;
+  if (keywords.includes(token)) return 30;
   if (token.length >= 2 && (isSubsequence(token, label) || isSubsequence(token, english))) return 15;
   return 0;
 }

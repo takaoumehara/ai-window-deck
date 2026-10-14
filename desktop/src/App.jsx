@@ -39,6 +39,7 @@ const LANGUAGE_NAMES = {
   es: "Spanish", fr: "French", de: "German", pt: "Portuguese",
 };
 const tEnglish = translator("en");
+const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window"]);
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
@@ -797,10 +798,14 @@ export function App() {
     }
     // ⌘K / F1 also switches from another sheet to the palette, and closes it again.
     if (command === "open-palette") {
-      if (!editor.open) setSheet((current) => (current === "palette" ? null : "palette"));
+      if (editor.open) return;
+      deck.focusShell();
+      setSheet((current) => (current === "palette" ? null : "palette"));
       return;
     }
     if (overlayOpen) return;
+    // The key may come from a page, which keeps the keyboard until the shell takes it back.
+    if (SHEET_COMMANDS.has(command)) deck.focusShell();
     const count = deckOrder.length;
     const current = currentLayout();
     const paneId = current.focusId;
