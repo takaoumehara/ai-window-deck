@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, Alert
 import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
 import { dropTarget } from "@desktop/lib/tabs";
+import { dropZone } from "@desktop/lib/arrangement";
 
 function HeaderButton({ label, shortcut, onClick, disabled, pressed, focused, children }) {
   const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
@@ -214,11 +215,33 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, onSelectTa
   );
 }
 
+export const PANE_DRAG_TYPE = "application/x-deck-pane";
+
+const EDGE = {
+  left: "left-0 top-0 bottom-0 w-1/4",
+  right: "right-0 top-0 bottom-0 w-1/4",
+  top: "left-0 right-0 top-0 h-1/4",
+  bottom: "left-0 right-0 bottom-0 h-1/4",
+};
+
+// Where the dragged pane will land: the whole pane (swap) or one edge (insert).
+function DropOverlay({ t, zone }) {
+  const swap = zone === "swap";
+  return (
+    <div className={`pointer-events-none absolute z-10 p-2 ${swap ? "inset-0" : EDGE[zone]}`} aria-hidden="true">
+      <div className="flex h-full w-full items-start justify-center rounded-block border-2 border-dashed border-paper bg-ink/70 pt-6">
+        <span className="register rounded-pill bg-paper px-2.5 py-1 uppercase text-ink">{t(swap ? "dropSwap" : "dropInsert")}</span>
+      </div>
+    </div>
+  );
+}
+
 export const Pane = React.forwardRef(function Pane(
   {
     t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
     onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onMoveTab,
+    paneDragging, dropHint, onPaneDragStart, onPaneDragEnd, onPaneDragOver, onPaneDrop,
   },
   bodyRef
 ) {
@@ -244,14 +267,33 @@ export const Pane = React.forwardRef(function Pane(
       style={{ left: `${rect.x * 100}%`, top: `${rect.y * 100}%`, width: `${rect.w * 100}%`, height: `${rect.h * 100}%`, zIndex: focused ? 1 : 0 }}
       aria-hidden={!rect.visible}
       data-pane={item.id}
+      onDragOver={(event) => {
+        if (!paneDragging || paneDragging === item.id || !event.dataTransfer.types.includes(PANE_DRAG_TYPE)) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        onPaneDragOver(event.currentTarget.getBoundingClientRect(), event.clientX, event.clientY);
+      }}
+      onDrop={(event) => {
+        if (!paneDragging || paneDragging === item.id) return;
+        event.preventDefault();
+        onPaneDrop(dropZone(event.currentTarget.getBoundingClientRect(), event.clientX, event.clientY));
+      }}
     >
       <section
         aria-label={item.name}
-        className={`ink-swap deck-pane-shell flex h-full w-full flex-col overflow-hidden border ${focused ? "is-focused border-paper" : "border-paper/10"}`}
+        className={`ink-swap deck-pane-shell relative flex h-full w-full flex-col overflow-hidden border ${paneDragging === item.id ? "opacity-50" : ""} ${focused ? "is-focused border-paper" : "border-paper/10"}`}
       >
         <header
           role="button"
           tabIndex={rect.visible ? 0 : -1}
+          draggable={rect.visible && !field}
+          onDragStart={(event) => {
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData(PANE_DRAG_TYPE, item.id);
+            event.dataTransfer.setData("text/plain", item.name);
+            onPaneDragStart();
+          }}
+          onDragEnd={onPaneDragEnd}
           onClick={onHeaderClick}
           onKeyDown={(event) => {
             if (event.target !== event.currentTarget) return;
@@ -262,7 +304,7 @@ export const Pane = React.forwardRef(function Pane(
           }}
           aria-pressed={enlarged}
           aria-label={`${item.name} — ${enlarged ? t("shrink") : t("enlarge")}`}
-          title={enlarged ? t("shrink") : t("enlarge")}
+          title={`${enlarged ? t("shrink") : t("enlarge")} · ${t("dragPaneHint")}`}
           className={`ink-swap weight-hover flex h-9 shrink-0 cursor-pointer select-none items-center gap-2.5 border-b pl-3 pr-2 ${
             focused ? "border-ink/15 bg-paper text-ink" : "border-paper/10 bg-ink text-paper hover:bg-paper/5"
           }`}
@@ -371,6 +413,7 @@ export const Pane = React.forwardRef(function Pane(
             </div>
           </div>
         )}
+        {dropHint && <DropOverlay t={t} zone={dropHint} />}
       </section>
     </div>
   );

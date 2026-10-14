@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Download, Keyboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Settings, Undo2 } from "lucide-react";
+import { Download, Keyboard, LayoutDashboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Settings, Undo2 } from "lucide-react";
 import { SHEET_MS } from "@desktop/components/ui/Sheet";
 import { IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
@@ -12,12 +12,13 @@ import { ShortcutsSheet } from "@desktop/components/ShortcutsSheet";
 import { CommandPalette } from "@desktop/components/CommandPalette";
 import { TipsSheet } from "@desktop/components/TipsSheet";
 import { ResizeHandles } from "@desktop/components/ResizeHandles";
+import { ArrangeSheet } from "@desktop/components/ArrangeSheet";
 import { deck, isElectron } from "@desktop/lib/bridge";
 import { ASK_AI_URLS, featureGuide, paletteEntries } from "@desktop/lib/palette";
 import commandCatalog from "../electron/commands.json";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, replaceLast, storePatchBetween, undo } from "@desktop/lib/history";
-import { arrangementHandles, resetLayout, resizeLayout, shapeStructure, spotlightHandle } from "@desktop/lib/arrangement";
+import { arrangementHandles, dropZone, insertAround, normalizeShape, resetLayout, resizeLayout, shapeStructure, spotlightHandle, swapItems } from "@desktop/lib/arrangement";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
 import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
@@ -45,7 +46,7 @@ const LANGUAGE_NAMES = {
   es: "Spanish", fr: "French", de: "German", pt: "Portuguese",
 };
 const tEnglish = translator("en");
-const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window"]);
+const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window", "arrange-open"]);
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
@@ -433,6 +434,54 @@ export function App() {
     transition(() => commitArrangement(next));
     showNotice(t("sizesResetMsg"), { undoable: true });
   }, [arrangement, commitArrangement, transition, showNotice, t]);
+  const setShape = useCallback((shape) => {
+    const next = normalizeShape(shape);
+    const current = arrangement ?? { shape: "auto" };
+    const { sizes, ...rest } = current;
+    if (normalizeShape(current.shape) === next && !sizes && mode === "grid") return;
+    transition(() => {
+      commitArrangement({ ...rest, shape: next });
+      if (mode !== "grid") setMode("grid");
+    });
+  }, [arrangement, mode, commitArrangement, transition]);
+
+  // Dragging a pane by its title bar: the pages freeze to snapshots so every
+  // pane, not only its title bar, can take the drop.
+  const [paneDrag, setPaneDrag] = useState(null);
+  const [dropHint, setDropHint] = useState(null);
+  const startPaneDrag = useCallback((id) => {
+    setPaneDrag(id);
+    freezeDeck();
+  }, [freezeDeck]);
+  const endPaneDrag = useCallback(() => {
+    setPaneDrag(null);
+    setDropHint(null);
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [thawDeck]);
+  const dropPane = useCallback((targetId, zone) => {
+    const draggedId = paneDrag;
+    setPaneDrag(null);
+    setDropHint(null);
+    if (!draggedId || draggedId === targetId) return;
+    const name = (id) => windows.find((item) => item.id === id)?.name || t("untitledWindow");
+    if (zone === "swap") {
+      setWindows((list) => swapItems(list, draggedId, targetId));
+      if (mode === "spotlight" && targetId === effectiveFocusId) setFocusedId(draggedId);
+      showNotice(t("paneSwappedMsg", { a: name(draggedId), b: name(targetId) }), { undoable: true });
+    } else {
+      setWindows((list) => insertAround(list, draggedId, targetId, zone === "right" || zone === "bottom"));
+      showNotice(t("paneMovedMsg", { name: name(draggedId) }), { undoable: true });
+    }
+    thawDeck(LAYOUT_ANIMATION_MS);
+  }, [paneDrag, windows, mode, effectiveFocusId, setWindows, showNotice, thawDeck, t]);
+
+  const movePane = useCallback((id, step) => {
+    const at = deckOrder.indexOf(id);
+    const neighbour = deckOrder[at + step];
+    if (at < 0 || !neighbour) return;
+    transition(() => setWindows((list) => swapItems(list, id, neighbour)));
+  }, [deckOrder, setWindows, transition]);
+
   const handleLabel = useCallback((handle) => {
     const name = (index) => deckPanes[index]?.name || t("untitledWindow");
     return handle.id === "spotlight" ? t("resizeSpotlight", { name: name(handle.before) }) : t("resizeBetween", { a: name(handle.before), b: name(handle.after) });
@@ -924,6 +973,14 @@ export function App() {
     } else if (command.startsWith("focus-tile-")) {
       const target = deckOrder[Number(command.slice("focus-tile-".length)) - 1];
       if (target) changeLayout({ focusId: target });
+    } else if (command === "arrange-open") {
+      setSheet("arrange");
+    } else if (command.startsWith("shape-")) {
+      setShape(command.slice("shape-".length));
+    } else if (command === "sizes-reset") {
+      resetSizes(current.mode === "spotlight" ? { id: "spotlight" } : null);
+    } else if (command === "pane-move-earlier" || command === "pane-move-later") {
+      if (paneId) movePane(paneId, command === "pane-move-earlier" ? -1 : 1);
     } else if (command === "toggle-sidebar") {
       changeLayout({ sidebarExpanded: !current.sidebarExpanded });
     } else if (command === "tab-new") {
@@ -988,7 +1045,7 @@ export function App() {
     } else if (command === "ask-ai-claude" || command === "ask-ai-chatgpt") {
       askAi(command === "ask-ai-claude" ? "claude" : "chatgpt");
     }
-  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi]);
+  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, setShape, resetSizes, movePane, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi]);
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
@@ -1135,6 +1192,10 @@ export function App() {
             ))}
           </div>
 
+          <IconButton onClick={() => setSheet("arrange")} aria-label={t("arrangeTitle")} title={t("arrangeTitle")}>
+            <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+          </IconButton>
+
           <button
             type="button"
             onClick={() => setSheet("palette")}
@@ -1242,6 +1303,15 @@ export function App() {
                     onFieldChange={changeField}
                     onFieldSubmit={submitField}
                     onFieldCancel={(options) => closeField(options)}
+                    paneDragging={paneDrag}
+                    dropHint={dropHint?.id === item.id ? dropHint.zone : null}
+                    onPaneDragStart={() => startPaneDrag(item.id)}
+                    onPaneDragEnd={endPaneDrag}
+                    onPaneDragOver={(box, x, y) => {
+                      const zone = dropZone(box, x, y);
+                      if (dropHint?.id !== item.id || dropHint.zone !== zone) setDropHint({ id: item.id, zone });
+                    }}
+                    onPaneDrop={(zone) => dropPane(item.id, zone)}
                   />
                 );
               })
@@ -1338,6 +1408,24 @@ export function App() {
           closeSheet();
           askAi("claude", question);
         }}
+      />
+
+      <ArrangeSheet
+        t={t}
+        open={sheet === "arrange"}
+        onClose={closeSheet}
+        count={deckPanes.length}
+        shape={normalizeShape(arrangement?.shape)}
+        onShape={setShape}
+        customSizes={Boolean(arrangement?.sizes || arrangement?.spotlight != null)}
+        onResetSizes={() => {
+          const next = resetLayout(resetLayout(arrangement, "grid"), "spotlight");
+          if (next && JSON.stringify(next) !== JSON.stringify(arrangement)) {
+            commitArrangement(next);
+            showNotice(t("sizesResetMsg"), { undoable: true });
+          }
+        }}
+        paletteKey={primaryLabel("K")}
       />
 
       <TipsSheet
