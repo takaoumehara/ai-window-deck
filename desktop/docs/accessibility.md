@@ -9,6 +9,15 @@
 
 **Not claimed conformant.** This pass measured every colour pair the app draws, fixed all failures, and walked the main flows with the keyboard on a Linux VM build of the same renderer. That evidence supports *no known AA failures in the app's own UI apart from the minor findings below*, but it is not a conformance claim. No screen-reader session ran: VoiceOver needs a real Mac, and the VM has no Orca. 200 % zoom of the shell and macOS "Increase contrast" / "Reduce motion" were also not exercised.
 
+## Changes in 0.2.7
+
+| Change | Criterion | Who it helps | How |
+| --- | --- | --- | --- |
+| Adding many URLs to one window meant one field per URL. | 2.1.1, 3.3.4 | Keyboard and motor-impaired users; anyone moving lists from notes or chat. | *Paste list* in Edit window is a labelled textarea with a live count of found and duplicate URLs (`aria-live="polite"`), an Append / Replace radio group and a button that names the result ("Add 5"). `⌘/Ctrl+Enter` applies. Multi-URL paste into one field splits into rows. Both show an inline *Undo*, and the sheet still only commits on Save. |
+| Tabs ran off the right edge of the pane with no way to reach them. | 2.1.1, 1.4.10, 2.4.7 | Keyboard users, users at small window sizes. | The strip scrolls; the active tab and focused tabs scroll into view. The list button (`aria-haspopup="listbox"`, `aria-expanded`, label "All tabs (12)") opens a search combobox over a listbox of every tab. Tabs carry `aria-posinset` / `aria-setsize`. The ‹ › arrows are mouse-only (`tabIndex=-1`) because the tabs themselves are reachable with Tab, `⌃Tab` and the list. Edge fades are overlays and never cover the active tab's text. |
+| Device choice was a 100-item `<select>` in the pane and 60 pills in Settings. | 2.4.6, 1.3.1, 3.3.2 | Screen-reader and keyboard users. | One combobox + grouped listbox (`role="group"` with a named header per maker), with ↑/↓, Home/End, PageUp/PageDown, Enter, Esc. Recently used devices are a group of their own. Estimated models say "estimate" in their name, not only in a tooltip. |
+| Native page views draw above HTML, so a dropdown over a pane would be hidden. | 1.3.2, 2.4.11 | Everyone. | While a pane popover is open, the deck swaps pages for snapshots (the same freeze sheets use), so the list is never obscured. |
+
 ## Changes in 0.2.6
 
 | Change | Criterion | Who it helps | How |
