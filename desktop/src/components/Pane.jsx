@@ -26,7 +26,7 @@ function HeaderButton({ label, shortcut, onClick, disabled, pressed, focused, ch
   );
 }
 
-// Address bar (⌘L / ⌘T) and find bar (⌘F) share the header's title slot.
+// Address bar (⌘L / ⌘T) and find bar (⌘F) take the tab strip's place in the header.
 function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel }) {
   const inputRef = useRef(null);
   const isFind = field.kind === "find";
@@ -86,6 +86,134 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
   );
 }
 
+function TabIcon({ meta, loading, ink }) {
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [meta?.favicon]);
+  if (loading) return <span className={`cie-loader cie-loader--xs shrink-0 ${ink ? "cie-loader--ink" : ""}`} aria-hidden="true" />;
+  if (meta?.favicon && !broken) {
+    return <img src={meta.favicon} alt="" draggable={false} onError={() => setBroken(true)} className="h-3.5 w-3.5 shrink-0 rounded-[3px] object-contain" />;
+  }
+  return <Globe className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden="true" />;
+}
+
+// Chrome-style strip on the bar's bottom edge (.deck-tab in index.css): drag a
+// tab or press ⇧←/→ on it to reorder, middle-click or × to close.
+function TabStrip({ t, name, urls, meta, activeTab, focused, compact, onSelectTab, onCloseTab, onNewTab, onMoveTab }) {
+  const [draggedTab, setDraggedTab] = useState(null);
+  const [tabGap, setTabGap] = useState(null);
+  const endTabDrag = () => {
+    setDraggedTab(null);
+    setTabGap(null);
+  };
+  const marker = `absolute bottom-1 top-1 z-10 w-0.5 rounded-pill ${focused ? "bg-ink" : "bg-paper"}`;
+  return (
+    <div
+      role="tablist"
+      aria-label={name}
+      className="deck-tabs flex min-w-0 flex-1 items-end"
+      onDragLeave={(event) => event.currentTarget === event.target && setTabGap(null)}
+    >
+      {urls.map((url, tabIndex) => {
+        const selected = tabIndex === activeTab;
+        const tabMeta = meta?.[tabIndex];
+        const host = hostLabel(tabMeta?.url || url);
+        const label = tabMeta?.title || host;
+        return (
+          <span
+            key={`${tabIndex}-${url}`}
+            draggable
+            onDragStart={(event) => {
+              event.stopPropagation();
+              event.dataTransfer.effectAllowed = "move";
+              event.dataTransfer.setData("text/plain", tabMeta?.url || url);
+              setDraggedTab(tabIndex);
+            }}
+            onDragOver={(event) => {
+              if (draggedTab == null) return;
+              event.preventDefault();
+              const box = event.currentTarget.getBoundingClientRect();
+              setTabGap(event.clientX < box.left + box.width / 2 ? tabIndex : tabIndex + 1);
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              if (draggedTab != null && tabGap != null) onMoveTab(draggedTab, dropTarget(draggedTab, tabGap));
+              endTabDrag();
+            }}
+            onDragEnd={endTabDrag}
+            className={`deck-tab group/tab flex min-w-0 cursor-grab items-center active:cursor-grabbing ${
+              compact ? "flex-none" : "w-44 min-w-[4.5rem] shrink"
+            } ${selected ? "is-active" : ""} ${draggedTab === tabIndex ? "opacity-40" : ""}`}
+          >
+            {tabIndex > 0 && !selected && tabIndex - 1 !== activeTab && <span className="deck-tab__sep" aria-hidden="true" />}
+            {draggedTab != null && tabGap === tabIndex && <span className={`${marker} -left-[2px]`} aria-hidden="true" />}
+            {draggedTab != null && tabGap === tabIndex + 1 && tabIndex === urls.length - 1 && <span className={`${marker} -right-[2px]`} aria-hidden="true" />}
+            <button
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-keyshortcuts="Shift+ArrowLeft Shift+ArrowRight"
+              onClick={(event) => {
+                event.stopPropagation();
+                onSelectTab(tabIndex);
+              }}
+              onKeyDown={(event) => {
+                if (!event.shiftKey || event.altKey || event.metaKey || event.ctrlKey) return;
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                event.preventDefault();
+                event.stopPropagation();
+                const to = tabIndex + (event.key === "ArrowLeft" ? -1 : 1);
+                if (to < 0 || to >= urls.length) return;
+                onMoveTab(tabIndex, to);
+                const strip = event.currentTarget.closest("[role=tablist]");
+                requestAnimationFrame(() => strip?.querySelectorAll("[role=tab]")[to]?.focus());
+              }}
+              onAuxClick={(event) => {
+                if (event.button !== 1) return;
+                event.stopPropagation();
+                onCloseTab(tabIndex);
+              }}
+              title={`${label}\n${tabMeta?.url || url}\n${t("tabReorderHint")}`}
+              aria-label={compact ? `${tabIndex + 1}. ${label}` : undefined}
+              className={`cie-tap deck-focus-ring flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-t-[7px] text-xs ${compact ? "px-2.5" : "pl-2.5 pr-1"}`}
+            >
+              {compact ? (
+                <span className="register tabular-nums">{tabIndex + 1}</span>
+              ) : (
+                <>
+                  <TabIcon meta={tabMeta} loading={tabMeta?.loading} ink={focused} />
+                  <span className={`min-w-0 truncate ${selected ? "font-medium" : ""}`}>{label}</span>
+                </>
+              )}
+            </button>
+            {!compact && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onCloseTab(tabIndex);
+                }}
+                aria-label={t("closeTab", { name: label })}
+                title={t("closeTab", { name: label })}
+                className="deck-tab__close deck-focus-ring mr-1.5 grid h-5 w-5 shrink-0 place-items-center rounded-pill transition-opacity duration-fast hover:bg-btn"
+              >
+                <X className="h-3 w-3" aria-hidden="true" />
+              </button>
+            )}
+          </span>
+        );
+      })}
+      {!compact && (
+        <span className="ml-1 self-center">
+          <HeaderButton label={t("newTab")} onClick={onNewTab}>
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+          </HeaderButton>
+        </span>
+      )}
+    </div>
+  );
+}
+
 export const Pane = React.forwardRef(function Pane(
   {
     t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
@@ -94,22 +222,15 @@ export const Pane = React.forwardRef(function Pane(
   },
   bodyRef
 ) {
-  const [draggedTab, setDraggedTab] = useState(null);
-  const [tabGap, setTabGap] = useState(null);
-  const endTabDrag = () => {
-    setDraggedTab(null);
-    setTabGap(null);
-  };
   const tabMeta = meta?.[activeTab];
-  const title = tabMeta?.title || item.name;
   const enlarged = focused && mode !== "grid";
   const zoom = tabMeta?.zoom ?? 1;
   const showTabs = urls.length > 1 || !compact;
   const pageBody = (
     <>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
-        <span className="cie-loader cie-loader--sm" aria-hidden="true" />
-        <span className="register truncate uppercase text-ink-mute">{hostLabel(urls[activeTab] || "")}</span>
+        <span className={`cie-loader cie-loader--sm ${focused ? "cie-loader--ink" : ""}`} aria-hidden="true" />
+        <span className={`register truncate uppercase ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{hostLabel(urls[activeTab] || "")}</span>
       </div>
       {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
     </>
@@ -126,7 +247,7 @@ export const Pane = React.forwardRef(function Pane(
     >
       <section
         aria-label={item.name}
-        className={`ink-swap deck-pane-shell flex h-full w-full flex-col overflow-hidden border bg-ink ${focused ? "border-paper" : "border-paper/10"}`}
+        className={`ink-swap deck-pane-shell flex h-full w-full flex-col overflow-hidden border ${focused ? "is-focused border-paper" : "border-paper/10"}`}
       >
         <header
           role="button"
@@ -142,7 +263,7 @@ export const Pane = React.forwardRef(function Pane(
           aria-pressed={enlarged}
           aria-label={`${item.name} — ${enlarged ? t("shrink") : t("enlarge")}`}
           title={enlarged ? t("shrink") : t("enlarge")}
-          className={`ink-swap weight-hover flex h-9 shrink-0 cursor-pointer select-none items-center gap-2.5 border-b px-3 ${
+          className={`ink-swap weight-hover flex h-9 shrink-0 cursor-pointer select-none items-center gap-2.5 border-b pl-3 pr-2 ${
             focused ? "border-ink/15 bg-paper text-ink" : "border-paper/10 bg-ink text-paper hover:bg-paper/5"
           }`}
         >
@@ -158,12 +279,23 @@ export const Pane = React.forwardRef(function Pane(
               onSubmit={onFieldSubmit}
               onCancel={onFieldCancel}
             />
+          ) : showTabs ? (
+            <TabStrip
+              t={t}
+              name={item.name}
+              urls={urls}
+              meta={meta}
+              activeTab={activeTab}
+              focused={focused}
+              compact={compact}
+              onSelectTab={onSelectTab}
+              onCloseTab={onCloseTab}
+              onNewTab={onNewTab}
+              onMoveTab={onMoveTab}
+            />
           ) : (
-            !compact && title && title !== item.name && (
-              <span className={`min-w-0 truncate text-xs ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{title}</span>
-            )
+            tabMeta?.loading && <span className={`cie-loader cie-loader--xs shrink-0 ${focused ? "cie-loader--ink" : ""}`} aria-hidden="true" />
           )}
-          {tabMeta?.loading && <span className={`cie-loader cie-loader--xs shrink-0 ${focused ? "cie-loader--ink" : ""}`} aria-hidden="true" />}
           {error && (
             <span title={`${t("loadFailed")}: ${error.description}`} className="flex shrink-0 items-center">
               <AlertTriangle className="h-3.5 w-3.5" role="img" aria-label={t("loadFailed")} />
@@ -184,109 +316,6 @@ export const Pane = React.forwardRef(function Pane(
               >
                 {Math.round(zoom * 100)}%
               </button>
-            )}
-            {showTabs && (
-              <div
-                role="tablist"
-                aria-label={item.name}
-                className="mr-1.5 flex items-center gap-1"
-                onDragLeave={(event) => event.currentTarget === event.target && setTabGap(null)}
-              >
-                {urls.length > 1 && urls.map((url, tabIndex) => {
-                  const selected = tabIndex === activeTab;
-                  const label = meta?.[tabIndex]?.title || hostLabel(meta?.[tabIndex]?.url || url);
-                  return (
-                    <span
-                      key={`${tabIndex}-${url}`}
-                      draggable
-                      onDragStart={(event) => {
-                        event.stopPropagation();
-                        event.dataTransfer.effectAllowed = "move";
-                        event.dataTransfer.setData("text/plain", meta?.[tabIndex]?.url || url);
-                        setDraggedTab(tabIndex);
-                      }}
-                      onDragOver={(event) => {
-                        if (draggedTab == null) return;
-                        event.preventDefault();
-                        const box = event.currentTarget.getBoundingClientRect();
-                        setTabGap(event.clientX < box.left + box.width / 2 ? tabIndex : tabIndex + 1);
-                      }}
-                      onDrop={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (draggedTab != null && tabGap != null) onMoveTab(draggedTab, dropTarget(draggedTab, tabGap));
-                        endTabDrag();
-                      }}
-                      onDragEnd={endTabDrag}
-                      className={`group/tab ink-swap relative flex max-w-[10rem] cursor-grab items-center rounded-pill border active:cursor-grabbing ${
-                        draggedTab === tabIndex ? "opacity-40" : ""
-                      } ${
-                        selected
-                          ? focused ? "border-ink bg-ink text-paper" : "border-paper bg-paper text-ink"
-                          : focused ? "border-ink-edge hover:border-ink" : "border-paper-edge text-ink-mute hover:border-paper hover:text-paper"
-                      }`}
-                    >
-                      {draggedTab != null && tabGap === tabIndex && (
-                        <span className={`absolute -left-[3px] bottom-0 top-0 w-0.5 rounded-pill ${focused ? "bg-ink" : "bg-paper"}`} aria-hidden="true" />
-                      )}
-                      {draggedTab != null && tabGap === tabIndex + 1 && tabIndex === urls.length - 1 && (
-                        <span className={`absolute -right-[3px] bottom-0 top-0 w-0.5 rounded-pill ${focused ? "bg-ink" : "bg-paper"}`} aria-hidden="true" />
-                      )}
-                      <button
-                        type="button"
-                        role="tab"
-                        aria-selected={selected}
-                        aria-keyshortcuts="Shift+ArrowLeft Shift+ArrowRight"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onSelectTab(tabIndex);
-                        }}
-                        onKeyDown={(event) => {
-                          if (!event.shiftKey || event.altKey || event.metaKey || event.ctrlKey) return;
-                          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-                          event.preventDefault();
-                          event.stopPropagation();
-                          const to = tabIndex + (event.key === "ArrowLeft" ? -1 : 1);
-                          if (to < 0 || to >= urls.length) return;
-                          onMoveTab(tabIndex, to);
-                          const strip = event.currentTarget.closest("[role=tablist]");
-                          requestAnimationFrame(() => strip?.querySelectorAll("[role=tab]")[to]?.focus());
-                        }}
-                        onAuxClick={(event) => {
-                          if (event.button !== 1) return;
-                          event.stopPropagation();
-                          onCloseTab(tabIndex);
-                        }}
-                        title={`${label}\n${meta?.[tabIndex]?.url || url}\n${t("tabReorderHint")}`}
-                        className={`register cie-tap min-w-0 truncate py-0.5 pl-2 ${compact ? "pr-2" : "pr-1"}`}
-                      >
-                        {compact ? tabIndex + 1 : hostLabel(meta?.[tabIndex]?.url || url)}
-                      </button>
-                      {!compact && (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onCloseTab(tabIndex);
-                          }}
-                          aria-label={t("closeTab", { name: label })}
-                          title={t("closeTab", { name: label })}
-                          className={`mr-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-pill transition-opacity duration-fast hover:bg-btn ${
-                            selected ? "opacity-70 hover:opacity-100" : "opacity-0 group-hover/tab:opacity-70 focus:opacity-100"
-                          }`}
-                        >
-                          <X className="h-2.5 w-2.5" aria-hidden="true" />
-                        </button>
-                      )}
-                    </span>
-                  );
-                })}
-                {!compact && (
-                  <HeaderButton label={t("newTab")} onClick={onNewTab}>
-                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-                  </HeaderButton>
-                )}
-              </div>
             )}
             {(!compact || device) && (
               <HeaderButton label={t(device ? "deviceExit" : "deviceEnter")} shortcut={keys?.device} pressed={Boolean(device)} focused={focused} onClick={onToggleDevice}>
@@ -336,7 +365,7 @@ export const Pane = React.forwardRef(function Pane(
             {pageBody}
           </DeviceStage>
         ) : (
-          <div className="deck-pane-page min-h-0 flex-1 bg-paper/5">
+          <div className="deck-pane-page min-h-0 flex-1">
             <div ref={bodyRef} className="relative h-full overflow-hidden">
               {pageBody}
             </div>

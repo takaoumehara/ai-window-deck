@@ -174,9 +174,79 @@ html, body, #root {
    stops one inner radius above the bottom edge and never crosses the curve. */
 :root {
   --deck-pane-r: 8px;
+  /* Page surface behind each pane's page: the active tab shares it, so the
+     tab reads as part of the page (Chrome-style). Measured by scripts/contrast.mjs. */
+  --deck-surface-ink: #1f1f1e;
+  --deck-surface-paper: #ffffff;
 }
 .deck-pane-shell {
   border-radius: var(--deck-pane-r);
+  --deck-surface: var(--deck-surface-ink);
+  --tab-fg: var(--cie-paper);
+  --tab-fg-mute: var(--cie-ink-mute);
+  --tab-edge: rgb(var(--cie-paper-rgb) / var(--deck-edge-alpha));
+  --tab-sep: rgb(var(--cie-paper-rgb) / 0.18);
+  --tab-hover: rgb(var(--cie-paper-rgb) / 0.07);
+  background: var(--deck-surface);
+}
+.deck-pane-shell.is-focused {
+  --deck-surface: var(--deck-surface-paper);
+  --tab-fg: var(--cie-ink);
+  --tab-fg-mute: var(--cie-paper-mute);
+  --tab-edge: rgb(var(--cie-ink-rgb) / var(--deck-edge-alpha));
+  --tab-sep: rgb(var(--cie-ink-rgb) / 0.18);
+  --tab-hover: rgb(var(--cie-ink-rgb) / 0.06);
+}
+
+/* Tabs sit on the bar's bottom edge and the active one covers the divider
+   (-1px), opening into the page. Inactive tabs are flat, split by short rules
+   that hide next to the active or hovered tab. */
+.deck-tabs {
+  align-self: flex-end;
+  height: 29px;
+  margin-bottom: -1px;
+}
+.deck-tab {
+  position: relative;
+  height: 100%;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  color: var(--tab-fg-mute);
+  transition:
+    background-color var(--cie-t-fast) var(--cie-ease-out),
+    color var(--cie-t-fast) var(--cie-ease-out);
+}
+.deck-tab:hover:not(.is-active) {
+  background: var(--tab-hover);
+  color: var(--tab-fg);
+}
+.deck-tab.is-active {
+  z-index: 1;
+  background: var(--deck-surface);
+  border-color: var(--tab-edge);
+  color: var(--tab-fg);
+}
+.deck-tab__sep {
+  position: absolute;
+  left: -1px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--tab-sep);
+  pointer-events: none;
+}
+.deck-tab:hover > .deck-tab__sep,
+.deck-tab:hover + .deck-tab > .deck-tab__sep {
+  opacity: 0;
+}
+.deck-tab__close {
+  opacity: 0;
+}
+.deck-tab.is-active .deck-tab__close,
+.deck-tab:hover .deck-tab__close,
+.deck-tab:focus-within .deck-tab__close {
+  opacity: 1;
 }
 .deck-pane-page {
   padding-bottom: calc(var(--deck-pane-r) - 1px);
@@ -243,6 +313,7 @@ html, body, #root {
 
 @media (prefers-reduced-motion: reduce) {
   .deck-pane,
+  .deck-tab,
   .ink-swap,
   .weight {
     transition: none !important;

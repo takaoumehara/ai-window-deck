@@ -16,7 +16,8 @@ export const PAIRS = [
   { use: "Sidebar hint text, set chips, rail hosts", fg: "ink-mute", bg: "ink", kind: "text" },
   { use: "Mono labels on the focused card / pane header", fg: "paper-mute", bg: "paper", kind: "text" },
   { use: "Pane header subtitle (unfocused)", fg: "ink-mute", bg: "ink", kind: "text" },
-  { use: "Pane placeholder host label (page not drawn yet)", fg: "ink-mute", bg: "ink > paper/5", kind: "text" },
+  { use: "Pane placeholder host label (page not drawn yet)", fg: "ink-mute", bg: "deck-surface-ink", kind: "text" },
+  { use: "Pane placeholder host label, focused pane", fg: "paper-mute", bg: "deck-surface-paper", kind: "text" },
   { use: "Hidden window card: name, number, hosts", fg: "ink-mute", bg: "ink", opacity: "hiddenOpacity", kind: "text" },
   { use: "Settings and dialog helper text", fg: "paper-mute", bg: "paper", kind: "text" },
   { use: "Text field placeholder (dialogs)", fg: "paper-mute", bg: "paper", kind: "text" },
@@ -25,10 +26,15 @@ export const PAIRS = [
   { use: "Layout chip text on button fill", fg: "paper", bg: "ink > btn", kind: "text" },
   { use: "Command palette row hint on paper", fg: "paper-mute", bg: "paper", kind: "text" },
   { use: "Command palette selected row hint", fg: "ink-mute", bg: "ink", kind: "text" },
-  { use: "Unselected tab pill text (unfocused pane)", fg: "ink-mute", bg: "ink", kind: "text" },
+  { use: "Inactive tab title (other panes)", fg: "ink-mute", bg: "ink", kind: "text" },
+  { use: "Inactive tab title, focused pane", fg: "paper-mute", bg: "paper", kind: "text" },
+  { use: "Active tab title (other panes)", fg: "paper", bg: "deck-surface-ink", kind: "text" },
+  { use: "Active tab title, focused pane", fg: "ink", bg: "deck-surface-paper", kind: "text" },
   { use: "Text field border (dialogs)", fg: "ink/edgeAlpha", bg: "paper", kind: "ui" },
   { use: "Choice pill border, unselected", fg: "ink/edgeAlpha", bg: "paper", kind: "ui" },
-  { use: "Tab / select / switcher pill border on ink", fg: "paper/edgeAlpha", bg: "ink", kind: "ui" },
+  { use: "Select / switcher pill border on ink", fg: "paper/edgeAlpha", bg: "ink", kind: "ui" },
+  { use: "Active tab outline against the bar (other panes)", fg: "paper/edgeAlpha", bg: "ink", kind: "ui" },
+  { use: "Active tab outline against the bar, focused pane", fg: "ink/edgeAlpha", bg: "paper", kind: "ui" },
   { use: "Key cap border", fg: "stroke", bg: "ink", kind: "ui" },
   { use: "Key cap border in sheets", fg: "ink/edgeAlpha", bg: "paper", kind: "ui" },
   { use: "Focus ring (currentColor) on ink", fg: "paper", bg: "ink", kind: "ui" },
@@ -49,7 +55,7 @@ const COMPONENT_DEFAULTS = {
 
 function resolveLayer(expr, tokens, values) {
   const [name, alpha] = expr.split("/");
-  const raw = name === "ink" ? tokens["--cie-ink"] : name === "paper" ? tokens["--cie-paper"] : tokens[`--cie-${name}`];
+  const raw = name === "ink" ? tokens["--cie-ink"] : name === "paper" ? tokens["--cie-paper"] : name.startsWith("deck-") ? tokens[`--${name}`] : tokens[`--cie-${name}`];
   if (!raw) throw new Error(`Unknown token ${name}`);
   const color = parseColor(raw);
   if (alpha == null) return color;
