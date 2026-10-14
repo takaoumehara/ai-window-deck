@@ -222,6 +222,7 @@ export function WindowEditor({ t, open, item, onClose, onSave, onPasteList }) {
                     move(index, index + (event.key === "ArrowUp" ? -1 : 1), [row.key, "field"]);
                   }}
                   placeholder="https://claude.ai"
+                  spellCheck={false}
                   className="font-mono text-xs"
                 />
                 {rows.length > 1 && (
