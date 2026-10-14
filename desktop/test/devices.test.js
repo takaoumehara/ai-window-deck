@@ -28,7 +28,7 @@ test("invalid devices are dropped and fields are normalized", () => {
   const ok = { id: "x-1", name: " X ", os: "android", width: 400.4, height: 800, dpr: 2.5, ua: "UA" };
   assert.deepEqual(normalizeDevice(ok), {
     id: "x-1", name: "X", os: "android", type: "phone", width: 400, height: 800, dpr: 2.5, ua: "UA",
-    cutout: "none", radius: 0, model: "", approx: false, hidden: false,
+    cutout: "none", radius: 0, maker: "", year: 0, model: "", approx: false, hidden: false,
   });
   assert.equal(normalizeDevice({ ...ok, os: "symbian" }), null);
   assert.equal(normalizeDevice({ ...ok, id: "Bad Id" }), null);
@@ -144,4 +144,82 @@ test("each window keeps its own device; Settings only seeds a window's first pre
   const saved = applyStorePatch(migrateStore(null), { put: [{ id: "s", windows: [item, other] }] });
   const reloaded = migrateStore(JSON.parse(JSON.stringify(saved)));
   assert.deepEqual(reloaded.sets[0].windows.map((entry) => entry.device), [item.device, other.device]);
+});
+
+test("the catalog covers the major models with sane sizes and matching user agents", async () => {
+  const { readFileSync: read } = await import("node:fs");
+  assert.equal(read(new URL("../electron/devices.json", import.meta.url), "utf8"), read(new URL("../../site/devices.json", import.meta.url), "utf8"));
+  const devices = bundled.devices;
+  assert.equal(new Set(devices.map((device) => device.id)).size, devices.length);
+  assert.equal(new Set(devices.map((device) => device.name)).size, devices.length);
+  for (const device of devices) {
+    const label = device.id;
+    assert.ok(device.maker, `${label} maker`);
+    assert.ok(device.year >= 2021 && device.year <= 2026, `${label} year`);
+    assert.ok(device.dpr >= 2 && device.dpr <= 4, `${label} dpr`);
+    assert.ok(device.width * device.dpr <= 3200 && device.height * device.dpr <= 3200, `${label} physical size`);
+    if (device.type === "phone") assert.ok(device.width >= 340 && device.width <= 460 && device.height >= 640 && device.height <= 1010, `${label} phone size`);
+    if (device.type === "foldable") assert.ok(device.width >= 340 && device.width <= 860 && device.height >= 670 && device.height <= 1010, `${label} foldable size`);
+    if (device.type === "tablet") assert.ok(Math.min(device.width, device.height) >= 740 && Math.max(device.width, device.height) <= 1400, `${label} tablet size`);
+    if (device.os === "ios") assert.match(device.ua, /^Mozilla\/5\.0 \(iPhone; CPU iPhone OS \d+_\d+ like Mac OS X\).* Version\/\d+\.\d Mobile\/15E148 Safari\/604\.1$/, label);
+    if (device.os === "ipados") assert.match(device.ua, /^Mozilla\/5\.0 \(Macintosh; Intel Mac OS X 10_15_7\)/, label);
+    if (device.os === "android") {
+      assert.ok(device.model, `${label} model`);
+      assert.match(device.ua, /\(Linux; Android 10; K\).*Chrome\/\{chrome\}\.0\.0\.0/, label);
+      assert.equal(/ Mobile Safari\//.test(device.ua), device.type !== "tablet", `${label} mobile token`);
+    }
+  }
+  const ids = new Set(devices.map((device) => device.id));
+  const need = [
+    "iphone-13-mini", "iphone-13", "iphone-13-pro", "iphone-13-pro-max", "iphone-14", "iphone-14-plus", "iphone-14-pro", "iphone-14-pro-max",
+    "iphone-15", "iphone-15-plus", "iphone-15-pro", "iphone-15-pro-max", "iphone-16", "iphone-16-plus", "iphone-16-pro", "iphone-16-pro-max",
+    "iphone-16e", "iphone-17", "iphone-air", "iphone-17-pro", "iphone-17-pro-max", "iphone-17e", "iphone-18-pro", "iphone-18-pro-max",
+    "iphone-duo-open", "iphone-duo-closed", "iphone-se",
+    "pixel-7", "pixel-7a", "pixel-7-pro", "pixel-8", "pixel-8a", "pixel-8-pro", "pixel-9", "pixel-9a", "pixel-9-pro", "pixel-9-pro-xl",
+    "pixel-10", "pixel-10a", "pixel-10-pro", "pixel-10-pro-xl", "pixel-fold-open", "pixel-9-pro-fold-open", "pixel-10-pro-fold-open",
+    "galaxy-s22", "galaxy-s22-plus", "galaxy-s22-ultra", "galaxy-s23", "galaxy-s23-plus", "galaxy-s23-ultra", "galaxy-s24", "galaxy-s24-plus", "galaxy-s24-ultra",
+    "galaxy-s25", "galaxy-s25-plus", "galaxy-s25-ultra", "galaxy-s26", "galaxy-s26-plus", "galaxy-s26-ultra",
+    "galaxy-z-fold-open", "galaxy-z-fold-cover", "galaxy-z-flip7", "galaxy-a56",
+    "xperia-1-vii", "xperia-10-vii", "aquos-sense9", "aquos-r9", "oppo-reno13-a", "redmi-note-14-pro",
+    "ipad-mini", "ipad-air-11", "ipad-pro-13", "galaxy-tab-s11",
+  ];
+  for (const id of need) assert.ok(ids.has(id), id);
+  const counts = {};
+  for (const device of devices) counts[device.maker] = (counts[device.maker] ?? 0) + 1;
+  assert.ok(counts.Apple >= 30 && counts.Google >= 15 && counts.Samsung >= 25, JSON.stringify(counts));
+  assert.ok(devices.filter((device) => device.approx).length <= devices.length / 4);
+  assert.equal(devices[0].os, "ios");
+  assert.equal(devices[0].type, "phone");
+});
+
+test("the switcher groups by maker, puts recent devices first and searches loosely", async () => {
+  const { groupDevices, matchesDevice, nextComparisonDevice, pushRecent, RECENT_GROUP } = await import("../src/lib/device-catalog.js");
+  const devices = bundled.devices;
+  const groups = groupDevices(devices);
+  assert.deepEqual(groups.map((group) => group.key), ["iphone", "ipad", "google", "samsung", "sony", "sharp", "oppo", "xiaomi"]);
+  assert.equal(groups.reduce((sum, group) => sum + group.devices.length, 0), devices.length);
+  assert.equal(groups.find((group) => group.key === "samsung").devices.find((device) => device.type === "tablet").id, "galaxy-tab-s11");
+
+  const recent = pushRecent(pushRecent(pushRecent([], "pixel-9"), "iphone-se"), "pixel-9");
+  assert.deepEqual(recent, ["pixel-9", "iphone-se"]);
+  assert.deepEqual(pushRecent(["a", "b", "c", "d", "e"], "f"), ["f", "a", "b", "c", "d"]);
+  const withRecent = groupDevices(devices, { recent: [...recent, "gone"] });
+  assert.equal(withRecent[0].key, RECENT_GROUP);
+  assert.deepEqual(withRecent[0].devices.map((device) => device.id), ["pixel-9", "iphone-se"]);
+  assert.notEqual(groupDevices(devices, { query: "pixel", recent })[0].key, RECENT_GROUP);
+
+  const ids = (query) => devices.filter((device) => matchesDevice(device, query)).map((device) => device.id);
+  assert.ok(ids("390").includes("iphone-17e") && ids("390").includes("iphone-13"));
+  assert.ok(ids("iphone 15").every((id) => id.startsWith("iphone-15")));
+  assert.deepEqual(ids("galaxy s24 ultra"), ["galaxy-s24-ultra"]);
+  assert.ok(ids("fold").includes("iphone-duo-open") && ids("fold").includes("pixel-fold-open") && ids("fold").includes("galaxy-z-flip7"));
+  assert.ok(ids("アイフォン").length >= 27 && ids("タブレット").includes("pixel-tablet"));
+  assert.ok(ids("ＡＱＵＯＳ").includes("aquos-sense9"));
+  assert.deepEqual(ids("402x874").sort(), ["iphone-16-pro", "iphone-17", "iphone-17-pro", "iphone-18-pro"]);
+
+  const next = nextComparisonDevice(devices, "iphone-18-pro", []);
+  assert.equal(next.id, "pixel-10-pro-xl");
+  assert.equal(nextComparisonDevice(devices, "iphone-18-pro", ["pixel-10-pro-xl"]).id, "pixel-10-pro");
+  assert.equal(nextComparisonDevice(devices, "pixel-10-pro-xl", []).id, "galaxy-s26-ultra");
+  assert.equal(nextComparisonDevice(devices, "ipad-pro-13", []).type, "tablet");
 });

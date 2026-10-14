@@ -23,6 +23,7 @@ import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from 
 import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
+import { nextComparisonDevice, pushRecent } from "@desktop/lib/device-catalog";
 
 // --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
 const LAYOUT_ANIMATION_MS = 420;
@@ -36,6 +37,7 @@ const MIN_PANE_PX = 180;
 // Arrow-key steps on one divider within this long undo as a single step.
 const RESIZE_BURST_MS = 1200;
 const DEFAULT_DEVICE = "iphone-17-pro";
+const RECENT_DEVICES_KEY = "deck:recentDevices";
 const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
 const UNDO_NOTICE_MS = 6000;
@@ -79,6 +81,25 @@ export function App() {
   const [lang, setLang] = useState("ja");
   const [defaultMode, setDefaultMode] = useState("grid");
   const [defaultDevice, setDefaultDevice] = useState(DEFAULT_DEVICE);
+  const [recentDevices, setRecentDevices] = useState(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(RECENT_DEVICES_KEY));
+      return Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : [];
+    } catch {
+      return [];
+    }
+  });
+  const rememberDevice = useCallback((id) => {
+    setRecentDevices((list) => {
+      const next = pushRecent(list, id);
+      try {
+        window.localStorage.setItem(RECENT_DEVICES_KEY, JSON.stringify(next));
+      } catch {
+        // Private storage off: the list just isn't kept.
+      }
+      return next;
+    });
+  }, []);
   const [catalog, setCatalog] = useState(null);
   const [activeTabs, setActiveTabs] = useState({});
   const [paneMeta, setPaneMeta] = useState({});
@@ -629,9 +650,7 @@ export function App() {
     if (!item?.device || !devices.length) return;
     const tab = activeTabs[id] ?? 0;
     const url = paneMeta[id]?.[tab]?.url || urlList(item)[tab];
-    const at = devices.findIndex((device) => device.id === item.device.id);
-    const used = new Set(windows.filter((entry) => entry.device).map((entry) => entry.device.id));
-    const next = [...devices.slice(at + 1), ...devices.slice(0, at + 1)].find((device) => !used.has(device.id)) ?? devices[(at + 1) % devices.length];
+    const next = nextComparisonDevice(devices, item.device.id, windows.filter((entry) => entry.device).map((entry) => entry.device.id));
     const created = { id: `win-${Date.now()}`, name: next.name, urls: [url], visible: true, device: { id: next.id, landscape: false } };
     transition(() => {
       setWindows((list) => {
@@ -1288,10 +1307,14 @@ export function App() {
                     found={found[item.id]}
                     device={paneDevices[item.id]}
                     devices={devices}
+                    recentDevices={recentDevices}
                     onPopover={setPopover}
                     keys={paneKeys}
                     onToggleDevice={() => toggleDevice(item.id)}
-                    onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
+                    onDeviceChange={(deviceId) => {
+                      rememberDevice(deviceId);
+                      setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }));
+                    }}
                     onRotateDevice={() => setPaneDevice(item.id, (current) => ({ ...current, landscape: !current?.landscape }))}
                     onAddDevice={() => addDevicePane(item.id)}
                     onHeaderClick={() => spotlightPane(item.id)}
@@ -1366,7 +1389,11 @@ export function App() {
         devices={devices}
         devicesUpdated={catalog?.updated || ""}
         defaultDevice={findDevice(devices, defaultDevice)?.id ?? defaultDevice}
-        onDefaultDevice={setDefaultDevice}
+        onDefaultDevice={(id) => {
+          setDefaultDevice(id);
+          rememberDevice(id);
+        }}
+        recentDevices={recentDevices}
         appVersion={appVersion}
         keys={{ sets: keyLabel("S") }}
         onPasteList={() => setSheet("paste")}

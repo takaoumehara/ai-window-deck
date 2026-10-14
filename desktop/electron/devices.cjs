@@ -3,7 +3,9 @@
 // (devices.json beside this file) for offline use and keeps the last one it
 // fetched in its user data.
 //   { version, updated, devices: [{ id, name, os, type, width, height, dpr,
-//     ua, cutout?, radius?, model?, approx?, hidden? }] }
+//     ua, maker?, year?, cutout?, radius?, model?, approx?, hidden? }] }
+// The switcher groups by maker; `approx` sizes come from announced panel
+// resolutions instead of a measured browser and are labelled as estimates.
 // width and height are the portrait viewport in CSS pixels. "{chrome}" in a
 // user agent stands for the Chromium major version the app runs.
 
@@ -31,6 +33,8 @@ function normalizeDevice(raw) {
     ua,
     cutout: CUTOUTS.has(raw.cutout) ? raw.cutout : "none",
     radius: inRange(raw.radius, 0, 120) ? raw.radius : 0,
+    maker: typeof raw.maker === "string" ? raw.maker.trim().slice(0, 30) : "",
+    year: Number.isInteger(raw.year) && raw.year >= 2007 && raw.year <= 2100 ? raw.year : 0,
     model: typeof raw.model === "string" ? raw.model.slice(0, 60) : "",
     approx: raw.approx === true,
     hidden: raw.hidden === true,
