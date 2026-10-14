@@ -32,6 +32,7 @@ contextBridge.exposeInMainWorld("deck", {
   onPaneFocused: subscribe("pane:focused"),
   onPaneState: subscribe("pane:state"),
   onPaneError: subscribe("pane:error"),
+  onPaneChromeAction: subscribe("pane:chrome-action"),
   devices: () => ipcRenderer.invoke("devices:list"),
   onDevicesChanged: subscribe("devices:changed"),
   checkForUpdates: () => ipcRenderer.send("update:check"),

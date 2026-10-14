@@ -160,7 +160,10 @@ export default {
   devicePortrait: "縦向きにする",
   deviceLandscape: "横向きにする",
   deviceAddAnother: "このページを別の機種でも並べて表示",
-  settingsDevice: "モバイル表示",
-  settingsDeviceHint: "ペインのタイトルバーにあるスマホのボタンで切り替えたときの機種です。実際のモバイル用レイアウトで表示されます（Chrome のデバイスモード相当。Safari そのものではありません）。",
+  settingsDevice: "切り替えに出す機種",
+  settingsDeviceHint: "タブは最初デスクトップです。ここで選んだ機種だけが、各ペインの切り替えスイッチに並びます。タブをその機種にするとタブ名が機種名になり、開いたあともそのタブの機種は変えられます。スマホでは、スクロールするとアドレスバーが引っ込み、スクロールバーは触れているあいだだけ出て消えます。描画は Safari ではなく Chrome です。",
+  settingsDeviceStart: "スマホボタンで開く機種",
+  deviceDesktop: "デスクトップ",
+  deviceOpenTabs: "このページを選んだ機種のタブでも開く",
   deviceCatalogInfo: "{count} 機種 · {date} 更新",
 };

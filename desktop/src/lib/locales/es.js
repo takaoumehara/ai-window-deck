@@ -160,7 +160,10 @@ export default {
   devicePortrait: "Girar a vertical",
   deviceLandscape: "Girar a horizontal",
   deviceAddAnother: "Mostrar también esta página en otro dispositivo",
-  settingsDevice: "Vista móvil",
-  settingsDeviceHint: "El dispositivo al que cambia un panel con el botón del teléfono de su barra de título. Las páginas muestran su diseño móvil real (como el modo dispositivo de Chrome, no Safari en sí).",
+  settingsDevice: "Dispositivos del conmutador",
+  settingsDeviceHint: "Las pestañas se abren en el escritorio. Los dispositivos que elijas aquí forman el conmutador de cada panel. Si una pestaña usa uno de ellos, su nombre pasa a ser el del dispositivo, y puedes cambiarlo después de abrirla. En un teléfono, la barra de direcciones se desliza al desplazar y la barra de scroll aparece un momento y se desvanece. Las páginas las dibuja Chrome, no Safari.",
+  settingsDeviceStart: "El botón del teléfono abre",
+  deviceDesktop: "Escritorio",
+  deviceOpenTabs: "Abrir esta página en pestañas de los otros dispositivos",
   deviceCatalogInfo: "{count} dispositivos · actualizado {date}",
 };

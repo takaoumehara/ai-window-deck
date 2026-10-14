@@ -13,7 +13,9 @@ import { deck, isElectron } from "@desktop/lib/bridge";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
-import { addressToUrl, insertTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
+import {
+  addressToUrl, deviceSwitchTarget, deviceTabsToOpen, insertTab, removeTab, resolvePreviewDevices, stepZoom, tabDevicesOf, tabForNumber, withTabDevice, withUrls,
+} from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice } from "@desktop/lib/device-frame";
 
@@ -60,6 +62,7 @@ export function App() {
   const [lang, setLang] = useState("ja");
   const [defaultMode, setDefaultMode] = useState("grid");
   const [defaultDevice, setDefaultDevice] = useState(DEFAULT_DEVICE);
+  const [previewDevices, setPreviewDevices] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const [activeTabs, setActiveTabs] = useState({});
   const [paneMeta, setPaneMeta] = useState({});
@@ -132,6 +135,7 @@ export function App() {
       setSidebarExpanded(settings.sidebarOpen !== false);
       setDefaultMode(startMode);
       if (settings.defaultDevice) setDefaultDevice(settings.defaultDevice);
+      if (Array.isArray(settings.previewDevices)) setPreviewDevices(settings.previewDevices);
       setCatalog(devices);
       setLang(language);
       setLoaded(true);
@@ -165,8 +169,10 @@ export function App() {
 
   useEffect(() => {
     if (!loaded) return;
-    deck.applyStore({ settings: { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice } });
-  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice]);
+    const settings = { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice };
+    if (Array.isArray(previewDevices)) settings.previewDevices = previewDevices;
+    deck.applyStore({ settings });
+  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice, previewDevices]);
 
   // Another deck window changed the store. This window's own set stays as it
   // is here (only its name can change elsewhere), so an edit still on its way
@@ -182,6 +188,7 @@ export function App() {
         if (store.settings?.lang) setLang(store.settings.lang);
         if (store.settings?.defaultMode) setDefaultMode(store.settings.defaultMode);
         if (store.settings?.defaultDevice) setDefaultDevice(store.settings.defaultDevice);
+        if (Array.isArray(store.settings?.previewDevices)) setPreviewDevices(store.settings.previewDevices);
       }),
       deck.onDevicesChanged(setCatalog),
       deck.onOpenSets((ids) => {
@@ -206,11 +213,17 @@ export function App() {
   );
   const deckOrder = useMemo(() => deckPanes.map((item) => item.id), [deckPanes]);
   const devices = useMemo(() => catalog?.devices ?? [], [catalog]);
+  const switchDevices = useMemo(() => resolvePreviewDevices(devices, previewDevices), [devices, previewDevices]);
   const paneDevices = useMemo(() => {
     const map = {};
-    for (const item of deckPanes) map[item.id] = item.device ? findDevice(devices, item.device.id, defaultDevice) : null;
+    for (const item of deckPanes) {
+      const specs = tabDevicesOf(item);
+      const index = Math.min(activeTabs[item.id] ?? 0, Math.max(0, specs.length - 1));
+      const spec = specs[index];
+      map[item.id] = spec ? findDevice(devices, spec.id, defaultDevice) : null;
+    }
     return map;
-  }, [deckPanes, devices, defaultDevice]);
+  }, [deckPanes, devices, defaultDevice, activeTabs]);
   const focusIndex = Math.max(0, deckOrder.indexOf(focusedId));
   const effectiveFocusId = deckOrder[focusIndex] ?? null;
   const rects = useMemo(
@@ -336,18 +349,25 @@ export function App() {
   useLayoutEffect(() => {
     if (!loaded) return;
     const bounds = new Map(measure().map(({ id, bounds: box }) => [id, box]));
+    const chromeLabels = { address: t("addressLabel"), reload: t("reload"), back: t("back"), forward: t("forward") };
     deck.syncPanes(
-      deckPanes.map((item, index) => ({
-        id: item.id,
-        urls: urlList(item),
-        activeTab: activeTabs[item.id] ?? 0,
-        visible: rects[index]?.visible ?? false,
-        bounds: bounds.get(item.id),
-        device: deviceForPane(paneDevices[item.id], item.device?.landscape),
-      }))
+      deckPanes.map((item, index) => {
+        const specs = tabDevicesOf(item);
+        const active = activeTabs[item.id] ?? 0;
+        return {
+          id: item.id,
+          urls: urlList(item),
+          activeTab: active,
+          visible: rects[index]?.visible ?? false,
+          bounds: bounds.get(item.id),
+          device: deviceForPane(paneDevices[item.id], specs[active]?.landscape),
+          tabDevices: specs.map((spec) => (spec ? deviceForPane(findDevice(devices, spec.id, defaultDevice), spec.landscape) : null)),
+          chromeLabels,
+        };
+      })
     );
     return followLayout();
-  }, [loaded, deckPanes, paneDevices, activeTabs, rects, sidebarExpanded, measure, followLayout]);
+  }, [loaded, deckPanes, paneDevices, activeTabs, rects, sidebarExpanded, devices, defaultDevice, measure, followLayout, t]);
 
   useEffect(() => {
     const element = deckRef.current;
@@ -407,32 +427,59 @@ export function App() {
     setActiveTabs((tabs) => ({ ...tabs, [paneId]: tabIndex }));
   }, []);
 
-  // Mobile preview is part of a window, so undo covers it like any other edit.
-  const setPaneDevice = useCallback((id, update) => {
+  // A tab's device is part of its window, so undo covers it like any other edit.
+  const setTabDevice = useCallback((id, update) => {
     transition(() => {
       setWindows((list) => list.map((item) => {
         if (item.id !== id) return item;
-        const next = update(item.device ?? null);
-        if (next) return { ...item, device: next };
-        const { device, ...rest } = item;
-        return rest;
+        const index = activeTabs[id] ?? 0;
+        const current = tabDevicesOf(item)[index] ?? null;
+        return withTabDevice(item, index, update(current));
       }));
     });
-  }, [transition, setWindows]);
+  }, [transition, setWindows, activeTabs]);
 
   const toggleDevice = useCallback((id) => {
-    setPaneDevice(id, (current) => (current ? null : { id: findDevice(devices, defaultDevice)?.id ?? defaultDevice, landscape: false }));
-  }, [setPaneDevice, devices, defaultDevice]);
+    setTabDevice(id, (current) => (current ? null : { id: findDevice(devices, defaultDevice)?.id ?? defaultDevice, landscape: false }));
+  }, [setTabDevice, devices, defaultDevice]);
+
+  const switchDevice = useCallback((id, deviceId) => {
+    const item = windows.find((entry) => entry.id === id);
+    if (!item) return;
+    const urls = urlList(item);
+    const index = Math.min(activeTabs[id] ?? 0, Math.max(0, urls.length - 1));
+    const target = deviceSwitchTarget(urls, tabDevicesOf(item), index, deviceId);
+    if (target.type === "select") {
+      setActiveTab(id, target.index);
+      return;
+    }
+    if (target.type === "keep") return;
+    setTabDevice(id, (current) => (deviceId ? { id: deviceId, landscape: Boolean(current?.landscape) } : null));
+  }, [windows, activeTabs, setActiveTab, setTabDevice]);
+
+  const openDeviceTabs = useCallback((id) => {
+    const item = windows.find((entry) => entry.id === id);
+    if (!item) return;
+    const urls = urlList(item);
+    const index = Math.min(activeTabs[id] ?? 0, Math.max(0, urls.length - 1));
+    const additions = deviceTabsToOpen(urls, tabDevicesOf(item), index, switchDevices.map((device) => device.id));
+    if (!additions.length) return;
+    setWindows((list) => list.map((entry) => {
+      if (entry.id !== id) return entry;
+      return additions.reduce((acc, addition, offset) => insertTab(acc, index + 1 + offset, addition.url, addition.device), entry);
+    }));
+  }, [windows, activeTabs, switchDevices, setWindows]);
 
   const addDevicePane = useCallback((id) => {
     const item = windows.find((entry) => entry.id === id);
-    if (!item?.device || !devices.length) return;
     const tab = activeTabs[id] ?? 0;
+    const spec = item ? tabDevicesOf(item)[tab] : null;
+    if (!spec || !devices.length) return;
     const url = paneMeta[id]?.[tab]?.url || urlList(item)[tab];
-    const at = devices.findIndex((device) => device.id === item.device.id);
-    const used = new Set(windows.filter((entry) => entry.device).map((entry) => entry.device.id));
+    const at = devices.findIndex((device) => device.id === spec.id);
+    const used = new Set(windows.flatMap((entry) => tabDevicesOf(entry).map((candidate) => candidate?.id).filter(Boolean)));
     const next = [...devices.slice(at + 1), ...devices.slice(0, at + 1)].find((device) => !used.has(device.id)) ?? devices[(at + 1) % devices.length];
-    const created = { id: `win-${Date.now()}`, name: next.name, urls: [url], visible: true, device: { id: next.id, landscape: false } };
+    const created = { id: `win-${Date.now()}`, name: next.name, urls: [url], visible: true, tabDevices: [{ id: next.id, landscape: false }] };
     transition(() => {
       setWindows((list) => {
         const index = list.findIndex((entry) => entry.id === id);
@@ -474,7 +521,7 @@ export function App() {
       showNotice(t("paneClosedMsg", { name: item.name || t("untitledWindow"), key: primaryLabel("⇧T") }), { undoable: true });
       return;
     }
-    remember({ kind: "tab", paneId, index: tabIndex, url: urls[tabIndex] });
+    remember({ kind: "tab", paneId, index: tabIndex, url: urls[tabIndex], device: tabDevicesOf(item)[tabIndex] });
     const closedTitle = paneMeta[paneId]?.[tabIndex]?.title || hostLabel(urls[tabIndex]);
     showNotice(t("tabClosedMsg", { name: closedTitle }), { undoable: true });
     setWindows((list) => list.map((entry) => (entry.id === paneId ? removeTab(entry, tabIndex) : entry)));
@@ -505,7 +552,7 @@ export function App() {
       }
       const count = urlList(item).length;
       const index = Math.min(entry.index, count);
-      setWindows((list) => list.map((candidate) => (candidate.id === item.id ? insertTab(candidate, index, entry.url) : candidate)));
+      setWindows((list) => list.map((candidate) => (candidate.id === item.id ? insertTab(candidate, index, entry.url, entry.device) : candidate)));
       setActiveTab(item.id, index);
       if (item.visible === false) setVisible(item.id, true);
       else focusPane(item.id);
@@ -762,6 +809,8 @@ export function App() {
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
+  const openFieldRef = useRef(openField);
+  openFieldRef.current = openField;
   const focusPaneRef = useRef(focusPane);
   focusPaneRef.current = focusPane;
 
@@ -777,6 +826,9 @@ export function App() {
         setPaneErrors((errors) => ({ ...errors, [paneId]: { tabIndex, description, url } }));
       }),
       deck.onFound(({ paneId, active, matches }) => setFound((list) => ({ ...list, [paneId]: { active, matches } }))),
+      deck.onPaneChromeAction(({ paneId, action, url }) => {
+        if (action === "address") openFieldRef.current(paneId, "address", url || "");
+      }),
     ];
     return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
   }, []);
@@ -800,7 +852,7 @@ export function App() {
 
   const saveWindow = ({ id, name, urls }) => {
     if (id) {
-      setWindows((list) => list.map((item) => (item.id === id ? { ...item, name, urls } : item)));
+      setWindows((list) => list.map((item) => (item.id === id ? withUrls({ ...item, name }, urls) : item)));
     } else {
       const created = { id: `win-${Date.now()}`, name, urls, visible: true };
       setWindows((list) => [...list, created]);
@@ -959,10 +1011,13 @@ export function App() {
                     found={found[item.id]}
                     device={paneDevices[item.id]}
                     devices={devices}
+                    switchDevices={switchDevices}
                     onToggleDevice={() => toggleDevice(item.id)}
-                    onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
-                    onRotateDevice={() => setPaneDevice(item.id, (current) => ({ ...current, landscape: !current?.landscape }))}
+                    onDeviceChange={(deviceId) => setTabDevice(item.id, (current) => ({ id: deviceId, landscape: Boolean(current?.landscape) }))}
+                    onRotateDevice={() => setTabDevice(item.id, (current) => (current ? { ...current, landscape: !current.landscape } : current))}
                     onAddDevice={() => addDevicePane(item.id)}
+                    onSwitchDevice={(deviceId) => switchDevice(item.id, deviceId)}
+                    onOpenDeviceTabs={() => openDeviceTabs(item.id)}
                     onHeaderClick={() => spotlightPane(item.id)}
                     onSelectTab={(tabIndex) => {
                       setActiveTab(item.id, tabIndex);
@@ -1014,6 +1069,11 @@ export function App() {
         modeOptions={MODE_OPTIONS}
         devices={devices}
         devicesUpdated={catalog?.updated || ""}
+        previewIds={switchDevices.map((device) => device.id)}
+        onPreviewDevices={(ids) => {
+          setPreviewDevices(ids);
+          if (ids.length && !ids.includes(defaultDevice)) setDefaultDevice(ids[0]);
+        }}
         defaultDevice={findDevice(devices, defaultDevice)?.id ?? defaultDevice}
         onDefaultDevice={setDefaultDevice}
         appVersion={appVersion}

@@ -47,6 +47,7 @@ const browserStandIn = {
   onPaneFocused: noSubscribe,
   onPaneState: noSubscribe,
   onPaneError: noSubscribe,
+  onPaneChromeAction: noSubscribe,
   devices: async () => bundledDevices,
   onDevicesChanged: noSubscribe,
   checkForUpdates: noop,

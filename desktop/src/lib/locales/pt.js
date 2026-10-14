@@ -160,7 +160,10 @@ export default {
   devicePortrait: "Girar para retrato",
   deviceLandscape: "Girar para paisagem",
   deviceAddAnother: "Mostrar esta página também em outro dispositivo",
-  settingsDevice: "Visualização móvel",
-  settingsDeviceHint: "O dispositivo para o qual um painel muda com o botão de celular na barra de título. As páginas mostram o layout móvel real (como o modo de dispositivo do Chrome, não o Safari em si).",
+  settingsDevice: "Dispositivos do seletor",
+  settingsDeviceHint: "As abas abrem no desktop. Os dispositivos escolhidos aqui formam o seletor de cada painel. Uma aba definida para um deles passa a mostrar o nome do dispositivo, e você ainda pode mudá-lo depois de aberta. No telefone, a barra de endereço desliza ao rolar e a barra de rolagem aparece e some. As páginas são desenhadas pelo Chrome, não pelo Safari.",
+  settingsDeviceStart: "O botão do telefone abre",
+  deviceDesktop: "Desktop",
+  deviceOpenTabs: "Abrir esta página também em abas dos outros dispositivos",
   deviceCatalogInfo: "{count} dispositivos · atualizado em {date}",
 };

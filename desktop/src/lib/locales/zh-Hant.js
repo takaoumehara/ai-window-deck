@@ -160,7 +160,10 @@ export default {
   devicePortrait: "旋轉為直向",
   deviceLandscape: "旋轉為橫向",
   deviceAddAnother: "也在其他機型上並排顯示此頁面",
-  settingsDevice: "行動裝置預覽",
-  settingsDeviceHint: "按下窗格標題列中的手機按鈕時切換到的機型。頁面會以實際的行動版版面顯示（相當於 Chrome 的裝置模式，並非 Safari 本身）。",
+  settingsDevice: "切換列上的機型",
+  settingsDeviceHint: "分頁預設是桌面檢視。在這裡勾選的機型會出現在每個窗格的切換列上。把某個分頁設為其中一款機型後，分頁名稱會變成機型名稱，開啟之後仍可更改。在手機上，網址列會隨著捲動滑走，捲軸只在滑動時出現然後淡出。頁面仍由 Chrome 繪製，而不是 Safari。",
+  settingsDeviceStart: "手機按鈕開啟的機型",
+  deviceDesktop: "桌面",
+  deviceOpenTabs: "也用其他機型的分頁開啟此頁面",
   deviceCatalogInfo: "{count} 款機型 · {date} 更新",
 };
