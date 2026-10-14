@@ -119,3 +119,29 @@ test("panes get the device fields the main process emulates, or nothing", () => 
   assert.equal(findDevice(bundled.devices, "gone", "also-gone").id, bundled.devices[0].id);
   assert.equal(findDevice([], "x"), null);
 });
+
+test("each window keeps its own device; Settings only seeds a window's first preview", async () => {
+  const { togglePaneDevice, paneDeviceOf } = await import("../src/lib/device-frame.js");
+  const { applyStorePatch, migrateStore } = require("../electron/store.cjs");
+  const devices = bundled.devices;
+  const [first, second, third] = devices;
+  let item = { id: "w", name: "W", urls: "https://example.com" };
+  item = togglePaneDevice(item, first.id);
+  assert.deepEqual(item.device, { id: first.id, landscape: false });
+  item = { ...item, device: { id: second.id, landscape: true } };
+  item = togglePaneDevice(item, third.id);
+  assert.equal(item.device, undefined);
+  assert.deepEqual(item.lastDevice, { id: second.id, landscape: true });
+  item = togglePaneDevice(item, third.id);
+  assert.deepEqual(item.device, { id: second.id, landscape: true });
+  assert.equal(item.lastDevice, undefined);
+
+  assert.equal(paneDeviceOf(devices, item).id, second.id);
+  assert.equal(paneDeviceOf(devices, { device: { id: "gone" } }).id, first.id);
+  assert.equal(paneDeviceOf(devices, { lastDevice: { id: second.id } }), null);
+
+  const other = { id: "v", name: "V", urls: "https://example.org", device: { id: third.id, landscape: false } };
+  const saved = applyStorePatch(migrateStore(null), { put: [{ id: "s", windows: [item, other] }] });
+  const reloaded = migrateStore(JSON.parse(JSON.stringify(saved)));
+  assert.deepEqual(reloaded.sets[0].windows.map((entry) => entry.device), [item.device, other.device]);
+});

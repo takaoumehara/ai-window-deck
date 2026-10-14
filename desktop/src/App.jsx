@@ -15,7 +15,7 @@ import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "
 import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
 import { addressToUrl, insertTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
-import { deviceForPane, findDevice } from "@desktop/lib/device-frame";
+import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
 
 // --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
 const LAYOUT_ANIMATION_MS = 420;
@@ -208,9 +208,9 @@ export function App() {
   const devices = useMemo(() => catalog?.devices ?? [], [catalog]);
   const paneDevices = useMemo(() => {
     const map = {};
-    for (const item of deckPanes) map[item.id] = item.device ? findDevice(devices, item.device.id, defaultDevice) : null;
+    for (const item of deckPanes) map[item.id] = paneDeviceOf(devices, item);
     return map;
-  }, [deckPanes, devices, defaultDevice]);
+  }, [deckPanes, devices]);
   const focusIndex = Math.max(0, deckOrder.indexOf(focusedId));
   const effectiveFocusId = deckOrder[focusIndex] ?? null;
   const rects = useMemo(
@@ -421,8 +421,11 @@ export function App() {
   }, [transition, setWindows]);
 
   const toggleDevice = useCallback((id) => {
-    setPaneDevice(id, (current) => (current ? null : { id: findDevice(devices, defaultDevice)?.id ?? defaultDevice, landscape: false }));
-  }, [setPaneDevice, devices, defaultDevice]);
+    const fallback = findDevice(devices, defaultDevice)?.id ?? defaultDevice;
+    transition(() => {
+      setWindows((list) => list.map((item) => (item.id === id ? togglePaneDevice(item, fallback) : item)));
+    });
+  }, [transition, setWindows, devices, defaultDevice]);
 
   const addDevicePane = useCallback((id) => {
     const item = windows.find((entry) => entry.id === id);

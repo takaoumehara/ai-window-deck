@@ -44,6 +44,25 @@ export function findDevice(devices, id, fallbackId) {
   return devices.find((device) => device.id === id) ?? devices.find((device) => device.id === fallbackId) ?? devices[0] ?? null;
 }
 
+/**
+ * Turns a window's mobile preview on or off. The device and orientation are
+ * the window's own: turning the preview off keeps them as `lastDevice`, and
+ * turning it on again brings them back. Only a window that has never been
+ * in the preview starts on `defaultId` (the Settings choice).
+ */
+export function togglePaneDevice(item, defaultId) {
+  const { device, lastDevice, ...rest } = item;
+  if (device) return { ...rest, lastDevice: device };
+  return { ...rest, device: lastDevice ?? { id: defaultId, landscape: false } };
+}
+
+// The catalog entry a window shows. A model missing from the catalog falls
+// back to the catalog's first device, never to the Settings choice, so
+// changing Settings can't change a window that is already in the preview.
+export function paneDeviceOf(devices, item) {
+  return item?.device ? findDevice(devices, item.device.id) : null;
+}
+
 // What the main process needs to emulate a pane's device.
 export function deviceForPane(device, landscape) {
   if (!device) return null;

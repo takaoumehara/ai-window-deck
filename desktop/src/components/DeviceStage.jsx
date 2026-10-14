@@ -77,15 +77,18 @@ export const DeviceStage = React.forwardRef(function DeviceStage(
   ];
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-ink text-paper">
-      <div className="flex h-8 shrink-0 items-center gap-2 border-b border-paper/10 px-2" onClick={(event) => event.stopPropagation()}>
-        <label className="deck-focus-within relative flex min-w-0 items-center gap-1.5 rounded-pill border border-paper-edge py-0.5 pl-2 pr-6 transition-colors duration-fast hover:border-paper">
+      <div className="flex h-9 shrink-0 items-center gap-2 border-b border-paper/10 px-2" onClick={(event) => event.stopPropagation()}>
+        <label
+          title={t("deviceModelHint")}
+          className="deck-focus-within relative flex min-w-0 items-center gap-1.5 rounded-pill border border-paper-edge py-0.5 pl-2 pr-6 transition-colors duration-fast hover:border-paper"
+        >
           <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span className="register shrink-0 uppercase text-ink-mute">{t("deviceModel")}</span>
           <select
             value={device.id}
             onChange={(event) => onChange(event.target.value)}
-            aria-label={t("deviceModel")}
-            title={t("deviceModel")}
-            className="min-w-0 cursor-pointer appearance-none truncate bg-transparent text-xs outline-none"
+            aria-label={t("deviceModelHint")}
+            className="min-w-0 cursor-pointer appearance-none truncate bg-transparent text-[13px] outline-none"
           >
             {groups.map(([os, label]) => {
               const list = devices.filter((candidate) => candidate.os === os);
