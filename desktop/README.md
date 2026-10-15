@@ -24,7 +24,8 @@ and a click or a shortcut enlarges it or puts it back.
 - **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, set changes, pane sizes, shapes and rearranging) without a limit. Switching between Grid, Spotlight and Fill isn't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
-- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to Google…* starts it directly.
+- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to → Google / GitHub / Vercel* (also in the palette and Settings) opens that sign-in in a window of its own and reloads the matching panes when it's done. Sign-in popups ("Continue with GitHub" and the like) open as small windows in front of the deck and report back to the page that opened them.
+- **Passkeys don't work inside the app** (Electron has no passkey support: no Touch ID, iCloud Keychain or phone sign-in), so a page that asks for one waits forever. The deck now says so in the title bar. On GitHub, sign in with your password and pick *More options* → authenticator app, GitHub Mobile or SMS for the second step. Password manager extensions don't run in the app either; copy from the 1Password or Passwords app.
 - **Mobile preview**: the phone button in a pane's title bar shows the page as a phone or tablet does, in a device frame. The bar under the title switches the model from a list grouped by maker (iPhone, iPad, Pixel, Galaxy, Xperia, AQUOS, OPPO, Xiaomi, Android tablets) with a search box (name, maker, year, `390x844`, "fold", "tablet", …) and the last five devices used at the top; Settings uses the same list. It also rotates the device, and adds another pane with the same page on the next device, so several devices sit side by side. Each window keeps its own device and orientation, also while the preview is off, and undo covers them. Settings only picks the first device for a window that has never been previewed; changing it never touches existing windows. `⌘⇧M` toggles the preview on the focused pane.
 
 | Shortcut | Action |
@@ -159,6 +160,20 @@ applies an update signed by the same Developer ID, so every release must be sign
   Firefox identity and remembers what worked. A watcher on the `SID` cookie reloads other Google
   panes after sign-in or sign-out. Signing in in Safari or Chrome can't help: their cookies live in
   another browser's store, which the app can't read.
+- Popups (`electron/popups.cjs`): a `window.open` with size features, a blank `window.open()`,
+  or one that goes to a sign-in or OAuth page (GitHub, Vercel, Google, Apple, Microsoft, Auth0,
+  Okta, Clerk, any `/oauth/authorize`…) opens a real child window of the deck window on the same
+  session, so `window.opener` and `postMessage` work and the popup can close itself. Other
+  `target=_blank` links load in the pane. When a popup has been through a sign-in page and reached
+  the opener's site, closing it reloads the opener if the opener didn't move by itself.
+- *File → Sign in to → GitHub / Vercel* opens the provider's login in its own window. Google's
+  pages inside it go to the Google window and come back. The window closes once it reaches the
+  provider's own pages signed in (GitHub: the `logged_in` cookie), then pages on that site reload,
+  and a pane that was waiting on its login page (another app's "Continue with GitHub") carries on.
+- Passkeys: Electron 38 has no WebAuthn prompt and no platform authenticator (Touch ID, iCloud
+  Keychain, phone), so `navigator.credentials.get()` just stays pending. The pane preload notices a
+  passkey request (autofill requests excepted, and never on Google's sign-in pages) and the deck
+  says to pick another method. The request itself is left alone, since a USB security key may answer.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it
   (`electron/store.cjs`, which also migrates older files): windows send patches of the sets
   they changed, and the others get the result. Undo history (`src/lib/history.js`) lives in
@@ -167,5 +182,6 @@ applies an update signed by the same Developer ID, so every release must be sign
 ## Known limits of the prototype
 
 - Sites with bot checks (Cloudflare and others) may challenge the panes the same way they challenge any new browser.
+- No passkeys (Touch ID, iCloud Keychain, phone) and no password manager extensions; see *How it works*.
 - Panes share one login session; separate sessions per pane (for example, two accounts on the same service) are not built yet.
 - No Windows build in CI yet; `npm run dist:win` works locally but is unsigned.
