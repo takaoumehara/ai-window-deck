@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "updated": "2026-10-15",
+  "generic": {
+    "working": [
+      "button[aria-label^='Stop' i]:not([disabled])",
+      "button[data-testid*='stop' i]:not([disabled])",
+      "button[title^='Stop' i]:not([disabled])"
+    ],
+    "error": [
+      { "selector": "[role='alert']", "text": "(something went wrong|an error occurred|network error|failed to|try again|rate limit|usage limit)" }
+    ],
+    "input": [
+      "textarea:not([disabled]):not([readonly])",
+      "[contenteditable='true'][role='textbox']",
+      "div[contenteditable='true']"
+    ],
+    "submit": [
+      "button[aria-label^='Send' i]:not([disabled])",
+      "button[data-testid*='send' i]:not([disabled])",
+      "button[aria-label^='Submit' i]:not([disabled])",
+      "button[type='submit']:not([disabled])"
+    ]
+  },
+  "sites": [
+    {
+      "id": "claude",
+      "name": "Claude",
+      "hosts": ["claude.ai"],
+      "working": [
+        "button[aria-label='Stop response']",
+        "[data-is-streaming='true']"
+      ],
+      "needsYou": [
+        { "selector": "button", "text": "^(allow|allow once|allow always|always allow|allow for this chat|approve|approve once)$" }
+      ],
+      "input": [
+        "div.ProseMirror[contenteditable='true']",
+        "[data-testid='chat-input'] [contenteditable='true']",
+        "fieldset [contenteditable='true']"
+      ],
+      "submit": [
+        "button[aria-label='Send message']:not([disabled])",
+        "button[aria-label='Send Message']:not([disabled])"
+      ]
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "hosts": ["chatgpt.com"],
+      "paths": ["/codex"],
+      "activity": true,
+      "working": [
+        { "selector": "[role='status'], [aria-live] , span, div", "text": "^(working|thinking|running|starting)(…|\\.\\.\\.)?$", "limit": 600 }
+      ],
+      "needsYou": [
+        { "selector": "button", "text": "^(approve|allow|run command|apply)$" }
+      ],
+      "input": ["#prompt-textarea", "textarea:not([disabled])", "div[contenteditable='true']"],
+      "submit": ["button[data-testid='send-button']:not([disabled])", "button[aria-label^='Code' i]:not([disabled])"]
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "hosts": ["chatgpt.com", "chat.openai.com"],
+      "working": [
+        "button[data-testid='stop-button']",
+        "button[aria-label='Stop streaming']"
+      ],
+      "needsYou": [
+        { "selector": "button", "text": "^(approve|confirm|allow|take over)$" }
+      ],
+      "error": [
+        { "selector": ".text-token-text-error, [role='alert']", "text": "(something went wrong|error|network|try again|limit)" }
+      ],
+      "input": ["#prompt-textarea", "div.ProseMirror[contenteditable='true']", "textarea[name='prompt-textarea']"],
+      "submit": ["button[data-testid='send-button']:not([disabled])", "#composer-submit-button:not([disabled])"]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "hosts": ["gemini.google.com"],
+      "working": [
+        "button[aria-label='Stop response']",
+        "button.stop:not([disabled])"
+      ],
+      "input": ["rich-textarea .ql-editor[contenteditable='true']", "div.ql-editor[contenteditable='true']"],
+      "submit": ["button[aria-label='Send message']:not([disabled])", "button.send-button:not([disabled])"]
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "hosts": ["perplexity.ai", "www.perplexity.ai"],
+      "working": [
+        "button[data-testid='stop-generating-response-button']",
+        "button[aria-label='Stop generating response' i]"
+      ],
+      "input": ["#ask-input", "textarea:not([disabled])", "div[contenteditable='true']"],
+      "submit": ["button[data-testid='submit-button']:not([disabled])", "button[aria-label='Submit']:not([disabled])"]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "hosts": ["cursor.com", "www.cursor.com"],
+      "paths": ["/agents"],
+      "activity": true,
+      "working": [
+        { "selector": "[role='status'], span, div", "text": "^(running|working|thinking|generating)(…|\\.\\.\\.)?$", "limit": 600 }
+      ],
+      "needsYou": [
+        { "selector": "button", "text": "^(approve|accept|run|allow)$" }
+      ]
+    },
+    {
+      "id": "v0",
+      "name": "v0",
+      "hosts": ["v0.dev", "v0.app"],
+      "working": [],
+      "input": ["textarea:not([disabled])"]
+    },
+    { "id": "grok", "name": "Grok", "hosts": ["grok.com"] },
+    { "id": "deepseek", "name": "DeepSeek", "hosts": ["chat.deepseek.com"] },
+    { "id": "copilot", "name": "Copilot", "hosts": ["copilot.microsoft.com"] },
+    { "id": "mistral", "name": "Le Chat", "hosts": ["chat.mistral.ai"] },
+    { "id": "lovable", "name": "Lovable", "hosts": ["lovable.dev"] },
+    { "id": "bolt", "name": "Bolt", "hosts": ["bolt.new"] },
+    { "id": "notebooklm", "name": "NotebookLM", "hosts": ["notebooklm.google.com"] }
+  ]
+}
