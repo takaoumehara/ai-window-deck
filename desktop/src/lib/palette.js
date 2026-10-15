@@ -107,6 +107,7 @@ export function featureGuide(entries, { language, groupLabel, question = "" }) {
     "Ideas: each registered window is a pane with its own web page; a window can have several URLs, shown as tabs in the pane's title bar.",
     "Layouts: Grid (all panes), Spotlight (one large pane, the others on a rail) and Fill (one pane covers the deck). Clicking a pane's title bar enlarges it.",
     "Sets are named decks of windows. All panes share one login. Mobile preview shows a pane as a phone or tablet; each window keeps its own device.",
+    "AI status: panes showing an AI site (Claude, ChatGPT, Gemini, Perplexity, Cursor, v0…) get a Working / Done / Needs you / Error badge, with a notification when one finishes while you look elsewhere. ⌘J goes to the next one that needs you. \"Send to several AIs\" types one prompt into several AI panes.",
     "⌘K (or the \"Find a feature\" button in the top bar) opens a searchable list of every action.",
     "",
     "Commands:",

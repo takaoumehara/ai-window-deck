@@ -1,9 +1,10 @@
 import React from "react";
 import { ChevronRight, ClipboardPaste, Keyboard, Layers, LogIn, Upload } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
-import { Button, Choices } from "@desktop/components/ui/controls";
+import { Button, CheckRow, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
 import { DeviceList, deviceLabel } from "@desktop/components/DevicePicker";
+import aiCatalog from "../../electron/ai-sites.json";
 
 function Section({ title, children }) {
   return (
@@ -34,7 +35,7 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
 
 export function SettingsSheet({
   t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, recentDevices, appVersion, keys,
-  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates, onSignIn,
+  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates, onSignIn, ai, onAi,
 }) {
   const currentDevice = devices.find((device) => device.id === defaultDevice);
   return (
@@ -84,6 +85,31 @@ export function SettingsSheet({
             </span>
           </Section>
         )}
+
+        <Section title={t("settingsAi")}>
+          <p className="text-xs leading-5 text-paper-mute">{t("settingsAiNote")}</p>
+          <div className="flex flex-col">
+            <CheckRow checked={ai.enabled} onChange={(enabled) => onAi({ ...ai, enabled })} title={t("settingsAiEnabled")} />
+            <CheckRow checked={ai.notify} disabled={!ai.enabled} onChange={(notify) => onAi({ ...ai, notify })} title={t("settingsAiNotify")} />
+            <CheckRow checked={ai.sound} disabled={!ai.enabled || !ai.notify} onChange={(sound) => onAi({ ...ai, sound })} title={t("settingsAiSound")} />
+          </div>
+          <fieldset disabled={!ai.enabled} className="flex flex-col gap-1.5 disabled:opacity-40">
+            <legend className="register mb-1.5 uppercase text-paper-mute">{t("settingsAiSites")}</legend>
+            <div className="grid grid-cols-3 gap-x-3 gap-y-1">
+              {aiCatalog.sites.map((site) => (
+                <label key={site.id} className="flex cursor-pointer items-center gap-2 py-1 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={!ai.off.includes(site.id)}
+                    onChange={(event) => onAi({ ...ai, off: event.target.checked ? ai.off.filter((id) => id !== site.id) : [...ai.off, site.id] })}
+                    className="deck-focus-ring h-4 w-4 shrink-0 accent-ink"
+                  />
+                  <span className="truncate">{site.name}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </Section>
 
         <Section title={t("settingsSignIn")}>
           <p className="text-xs leading-5 text-paper-mute">{t("settingsSignInNote")}</p>

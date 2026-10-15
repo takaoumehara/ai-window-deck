@@ -1,5 +1,5 @@
 {
-  "groups": ["help", "mobile", "page", "layout", "tabs", "windows"],
+  "groups": ["help", "ai", "mobile", "page", "layout", "tabs", "windows"],
   "commands": [
     { "id": "open-palette", "group": "help", "accelerator": "CmdOrCtrl+K", "label": "paletteTitle", "keywords": "kwPalette", "palette": false },
     { "id": "show-tips", "group": "help", "label": "cmdTips", "keywords": "kwTips" },
@@ -11,6 +11,9 @@
     { "id": "signin-github", "group": "help", "label": "cmdGitHubSignIn", "keywords": "kwGitHub" },
     { "id": "signin-vercel", "group": "help", "label": "cmdVercelSignIn", "keywords": "kwVercel" },
     { "id": "check-updates", "group": "help", "label": "checkUpdates", "keywords": "kwUpdate" },
+
+    { "id": "ai-next", "group": "ai", "accelerator": "CmdOrCtrl+J", "label": "cmdAiNext", "keywords": "kwAi" },
+    { "id": "ai-broadcast", "group": "ai", "label": "cmdBroadcast", "keywords": "kwBroadcast" },
 
     { "id": "device-toggle", "group": "mobile", "accelerator": "CmdOrCtrl+Shift+M", "label": "cmdDevice", "keywords": "kwMobile", "pane": true },
     { "id": "device-pick", "group": "mobile", "label": "cmdDevicePick", "keywords": "kwMobile", "pane": true },

@@ -42,6 +42,26 @@ export const Field = React.forwardRef(function Field({ className = "", ...props 
   );
 });
 
+// Checkbox row for a sheet (paper ground).
+export function CheckRow({ checked, onChange, title, hint, disabled = false, children }) {
+  return (
+    <label className={`flex cursor-pointer items-start gap-3 border-t border-ink/10 py-2.5 ${disabled ? "pointer-events-none opacity-40" : ""}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+        className="deck-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-ink"
+      />
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm">{title}</span>
+        {hint && <span className="text-xs leading-5 text-paper-mute">{hint}</span>}
+      </span>
+      {children}
+    </label>
+  );
+}
+
 // Pill radio group for a sheet (paper ground).
 export function Choices({ label, options, value, onChange, columns = "grid-cols-3" }) {
   return (

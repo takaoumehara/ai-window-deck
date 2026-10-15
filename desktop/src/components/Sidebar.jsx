@@ -2,6 +2,7 @@ import React from "react";
 import { Plus, Minus, Eye, EyeOff, PanelLeftOpen, ChevronsUpDown } from "lucide-react";
 import { IconButton } from "@desktop/components/ui/controls";
 import { urlList, hostLabel } from "@desktop/lib/deck-data";
+import { AiBadge } from "@desktop/components/AiBadge";
 
 function initials(name) {
   const words = String(name || "").trim().split(/\s+/).filter(Boolean);
@@ -117,7 +118,7 @@ function SetSwitcher({ t, sets, currentSetId, openElsewhere, setLabel, onSwitchS
   );
 }
 
-function RailTile({ t, item, order, focused, favicon, onClick, onDoubleClick }) {
+function RailTile({ t, item, order, focused, favicon, ai, onClick, onDoubleClick }) {
   const inDeck = order >= 0;
   const urls = urlList(item);
   const name = item.name || t("untitledWindow");
@@ -145,6 +146,7 @@ function RailTile({ t, item, order, focused, favicon, onClick, onDoubleClick }) 
             <Favicon favicon={favicon} url={urls[0]} name={name} />
           </span>
           <span className={`register leading-none ${mute}`}>{inDeck ? String(order + 1).padStart(2, "0") : "—"}</span>
+          {ai && <AiBadge t={t} status={ai.status} site={ai.site} iconOnly className="ml-auto" />}
         </span>
         <span className="weight truncate text-xs leading-tight" style={{ "--w": focused ? 600 : 500 }}>{name}</span>
         {hosts.map((host) => (
@@ -157,7 +159,7 @@ function RailTile({ t, item, order, focused, favicon, onClick, onDoubleClick }) 
 }
 
 // Collapsed sidebar: one small card per window, so panes stay one click away.
-function SidebarRail({ t, windows, deckOrder, focusedId, favicons, switcher, onAdd, onEdit, onFocus, onReveal, onToggleVisible, onExpand, expandLabel }) {
+function SidebarRail({ t, windows, deckOrder, focusedId, favicons, aiStatuses = {}, switcher, onAdd, onEdit, onFocus, onReveal, onToggleVisible, onExpand, expandLabel }) {
   return (
     <nav className="flex h-full w-36 flex-col gap-3 py-4 pl-3 pr-2" aria-label={t("windowsHeader")}>
       <SetSwitcher t={t} {...switcher} compact />
@@ -172,6 +174,7 @@ function SidebarRail({ t, windows, deckOrder, focusedId, favicons, switcher, onA
                 order={order}
                 focused={item.id === focusedId && order >= 0}
                 favicon={favicons[item.id]}
+                ai={order >= 0 ? aiStatuses[item.id] : null}
                 onClick={() => (order >= 0 ? onFocus(item.id) : onReveal(item.id))}
                 onDoubleClick={() => onEdit(item)}
               />
@@ -206,7 +209,7 @@ export function Sidebar({ collapsed, favicons = {}, onReveal, onExpand, expandLa
   );
 }
 
-function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onMove }) {
+function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses = {}, switcher, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onMove }) {
   const [dragging, setDragging] = React.useState(null);
   const [dropIndex, setDropIndex] = React.useState(null);
   const endDrag = () => {
@@ -298,6 +301,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, switcher, on
                   <span className="weight min-w-0 flex-1 truncate text-sm" style={{ "--w": focused ? 600 : inDeck ? 500 : 400 }}>
                     {name}
                   </span>
+                  {inDeck && aiStatuses[item.id] && <AiBadge t={t} status={aiStatuses[item.id].status} site={aiStatuses[item.id].site} className="shrink-0" />}
                   <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>
                     {inDeck ? String(order + 1).padStart(2, "0") : "—"}
                   </span>

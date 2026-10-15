@@ -28,6 +28,7 @@ const PRIMARY_CODES = {
   KeyN: "new-window",
   Comma: "open-settings",
   KeyK: "open-palette",
+  KeyJ: "ai-next",
 };
 for (let n = 1; n <= 9; n += 1) PRIMARY_CODES[`Digit${n}`] = `tab-${n}`;
 

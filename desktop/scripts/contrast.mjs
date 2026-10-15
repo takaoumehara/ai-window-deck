@@ -39,6 +39,9 @@ export const PAIRS = [
   { use: "Key cap border in sheets", fg: "ink/edgeAlpha", bg: "paper", kind: "ui" },
   { use: "Focus ring (currentColor) on ink", fg: "paper", bg: "ink", kind: "ui" },
   { use: "Focus ring (currentColor) on paper", fg: "ink", bg: "paper", kind: "ui" },
+  { use: "AI status badge: Needs you", fg: "ink", bg: "deck-ai-wait", kind: "text" },
+  { use: "AI status badge: Done", fg: "ink", bg: "deck-ai-done", kind: "text" },
+  { use: "AI status badge: Error", fg: "ink", bg: "deck-ai-error", kind: "text" },
   { use: "Disabled back / forward icon (exempt, reported)", fg: "paper", bg: "ink", opacity: "disabledOpacity", kind: "exempt" },
 ];
 

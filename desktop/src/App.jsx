@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Download, Keyboard, LayoutDashboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Settings, Undo2 } from "lucide-react";
+import { Download, Keyboard, LayoutDashboard, LayoutGrid, Maximize2, PanelLeft, Expand, Search, Send, Settings, Undo2 } from "lucide-react";
 import { SHEET_MS } from "@desktop/components/ui/Sheet";
 import { IconButton } from "@desktop/components/ui/controls";
 import { Pane } from "@desktop/components/Pane";
@@ -13,6 +13,8 @@ import { CommandPalette } from "@desktop/components/CommandPalette";
 import { TipsSheet } from "@desktop/components/TipsSheet";
 import { ResizeHandles } from "@desktop/components/ResizeHandles";
 import { ArrangeSheet } from "@desktop/components/ArrangeSheet";
+import { BroadcastSheet } from "@desktop/components/BroadcastSheet";
+import { AiBadge } from "@desktop/components/AiBadge";
 import { deck, isElectron } from "@desktop/lib/bridge";
 import { ASK_AI_URLS, featureGuide, paletteEntries } from "@desktop/lib/palette";
 import commandCatalog from "../electron/commands.json";
@@ -24,6 +26,7 @@ import { addressToUrl, indexAfterMove, insertTab, metaByUrl, moveTab, removeTab,
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
 import { nextComparisonDevice, pushRecent } from "@desktop/lib/device-catalog";
+import { AI_DEFAULTS, aiSettingsOf, broadcastTargets, nextAttention, summarize } from "@desktop/lib/ai-summary";
 
 // --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
 const LAYOUT_ANIMATION_MS = 420;
@@ -42,14 +45,15 @@ const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
 const UNDO_NOTICE_MS = 6000;
 const PASSKEY_NOTICE_MS = 12000;
+const BROADCAST_FAILED_NOTICE_MS = 9000;
 const ASK_AI_WINDOW = "win-ask-ai";
-const GROUP_LABELS = { help: "groupHelp", mobile: "groupMobile", page: "groupPage", layout: "groupLayout", tabs: "groupTabs", windows: "groupWindows" };
+const GROUP_LABELS = { help: "groupHelp", ai: "groupAi", mobile: "groupMobile", page: "groupPage", layout: "groupLayout", tabs: "groupTabs", windows: "groupWindows" };
 const LANGUAGE_NAMES = {
   ja: "Japanese", en: "English", "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ko: "Korean",
   es: "Spanish", fr: "French", de: "German", pt: "Portuguese",
 };
 const tEnglish = translator("en");
-const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window", "arrange-open"]);
+const SHEET_COMMANDS = new Set(["sets-open", "open-settings", "open-shortcuts", "paste-list", "show-tips", "edit-window", "add-window", "arrange-open", "ai-broadcast"]);
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
@@ -112,6 +116,8 @@ export function App() {
   const [snapshots, setSnapshots] = useState({});
   const [field, setField] = useState(null);
   const [found, setFound] = useState({});
+  const [aiPrefs, setAiPrefs] = useState(AI_DEFAULTS);
+  const [aiState, setAiState] = useState({ statuses: {}, sites: {} });
 
   const deckRef = useRef(null);
   const bodyRefs = useRef(new Map());
@@ -179,6 +185,7 @@ export function App() {
       setSidebarExpanded(settings.sidebarOpen !== false);
       setDefaultMode(startMode);
       if (settings.defaultDevice) setDefaultDevice(settings.defaultDevice);
+      setAiPrefs(aiSettingsOf(settings.ai));
       if (!settings.tipsSeen) setSheet("tips");
       setCatalog(devices);
       setLang(language);
@@ -213,8 +220,8 @@ export function App() {
 
   useEffect(() => {
     if (!loaded) return;
-    deck.applyStore({ settings: { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice } });
-  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice]);
+    deck.applyStore({ settings: { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice, ai: aiPrefs } });
+  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice, aiPrefs]);
 
   // Another deck window changed the store. This window's own set stays as it
   // is here (only its name can change elsewhere), so an edit still on its way
@@ -230,6 +237,10 @@ export function App() {
         if (store.settings?.lang) setLang(store.settings.lang);
         if (store.settings?.defaultMode) setDefaultMode(store.settings.defaultMode);
         if (store.settings?.defaultDevice) setDefaultDevice(store.settings.defaultDevice);
+        if (store.settings?.ai) {
+          const next = aiSettingsOf(store.settings.ai);
+          setAiPrefs((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+        }
       }),
       deck.onDevicesChanged(setCatalog),
       deck.onOpenSets((ids) => {
@@ -590,6 +601,18 @@ export function App() {
   }, [effectiveFocusId, mode, focusedTabUrl]);
 
   const focusPane = useCallback((id) => changeLayout({ focusId: id }), [changeLayout]);
+
+  // The main process clears a pane's Done once the user is looking at it.
+  useEffect(() => {
+    if (loaded) deck.setFocusedPane(effectiveFocusId);
+  }, [loaded, effectiveFocusId]);
+
+  const aiStatuses = aiPrefs.enabled ? aiState.statuses : {};
+  const goToAi = useCallback((paneId) => {
+    const tab = aiState.statuses[paneId]?.tab;
+    if (tab != null) setActiveTabs((tabs) => (tabs[paneId] === tab ? tabs : { ...tabs, [paneId]: tab }));
+    focusPane(paneId);
+  }, [aiState, focusPane]);
 
   const spotlightPane = useCallback((id) => {
     const current = currentLayout();
@@ -1075,13 +1098,34 @@ export function App() {
       deck.openWindow();
     } else if (command === "ask-ai-claude" || command === "ask-ai-chatgpt") {
       askAi(command === "ask-ai-claude" ? "claude" : "chatgpt");
+    } else if (command === "ai-next") {
+      const next = nextAttention(deckOrder, aiStatuses, paneId);
+      if (next) goToAi(next);
+      else if (aiStatuses[paneId] && aiStatuses[paneId].status !== "working") goToAi(paneId);
+      else showNotice(t("aiNothingMsg"));
+    } else if (command === "ai-broadcast") {
+      setSheet("broadcast");
     }
-  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, setShape, resetSizes, movePane, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi]);
+  }, [overlayOpen, editor.open, deckOrder, windows, activeTabs, paneMeta, changeLayout, setShape, resetSizes, movePane, openField, closeTab, reopenTab, setActiveTab, moveTabTo, zoomPane, stepHistory, switchSet, importBackup, toggleDevice, pickDevice, addDevicePane, setPaneDevice, hideWindow, askAi, aiStatuses, goToAi, showNotice, t]);
 
   const runCommandRef = useRef(runCommand);
   runCommandRef.current = runCommand;
   const focusPaneRef = useRef(focusPane);
   focusPaneRef.current = focusPane;
+  const aiNotifyRef = useRef(null);
+  aiNotifyRef.current = ({ paneId, status, site }) => {
+    if (!aiPrefs.enabled || !aiPrefs.notify || typeof Notification === "undefined") return;
+    const name = windows.find((item) => item.id === paneId)?.name || t("untitledWindow");
+    const notification = new Notification(t(status === "needs-you" ? "aiNotifyNeedsYou" : "aiNotifyDone", { site: site || name }), {
+      body: t("aiNotifyBody", { name }),
+      silent: !aiPrefs.sound,
+      tag: `deck-ai-${paneId}`,
+    });
+    notification.onclick = () => {
+      deck.showWindow();
+      goToAi(paneId);
+    };
+  };
 
   useEffect(() => {
     const unsubscribers = [
@@ -1095,6 +1139,10 @@ export function App() {
         setPaneErrors((errors) => ({ ...errors, [paneId]: { tabIndex, description, url } }));
       }),
       deck.onFound(({ paneId, active, matches }) => setFound((list) => ({ ...list, [paneId]: { active, matches } }))),
+      deck.onAiStatus(({ statuses, sites, notify }) => {
+        setAiState({ statuses: statuses ?? {}, sites: sites ?? {} });
+        if (notify) aiNotifyRef.current?.(notify);
+      }),
     ];
     return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
   }, []);
@@ -1156,9 +1204,34 @@ export function App() {
     [t, isMac, effectiveFocusId]
   );
 
+  const closeSheet = () => setSheet(null);
+  const broadcastPanes = broadcastTargets(deckOrder, aiPrefs.enabled ? aiState.sites : {}).map((id) => ({
+    id,
+    name: windows.find((item) => item.id === id)?.name || t("untitledWindow"),
+    site: aiState.sites[id].name,
+  }));
+
+  const broadcast = async ({ paneIds, text, submit, compare }) => {
+    closeSheet();
+    if (compare) {
+      changeLayout({ mode: "grid" });
+      setShape("columns");
+    }
+    const results = await deck.broadcast(paneIds, text, submit);
+    const failed = results.filter((result) => !result.ok).map((result) => windows.find((item) => item.id === result.paneId)?.name || t("untitledWindow"));
+    const done = t(submit ? "broadcastSent" : "broadcastInserted", { ok: results.length - failed.length, total: paneIds.length });
+    showNotice(failed.length ? `${done} · ${t("broadcastFailed", { names: failed.join(", ") })}` : done, { ms: failed.length ? BROADCAST_FAILED_NOTICE_MS : undefined });
+  };
+
+  const aiCounts = summarize(Object.values(aiStatuses));
+  const aiTop = ["needs-you", "error", "done", "working"].find((status) => aiCounts[status]);
+  const aiSummary = [["needs-you", "aiCountNeedsYou"], ["error", "aiCountError"], ["done", "aiCountDone"], ["working", "aiCountWorking"]]
+    .filter(([status]) => aiCounts[status])
+    .map(([status, key]) => t(key, { n: aiCounts[status] }))
+    .join(" · ");
+
   if (!loaded) return <div className="h-full bg-ink" aria-busy="true" />;
 
-  const closeSheet = () => setSheet(null);
   const focusedName = effectiveFocusId ? windows.find((item) => item.id === effectiveFocusId)?.name || t("untitledWindow") : "";
 
   return (
@@ -1194,6 +1267,23 @@ export function App() {
         </div>
 
         <div className="app-no-drag ml-auto flex items-center gap-2">
+          {aiTop && (
+            <button
+              type="button"
+              onClick={() => runCommand("ai-next")}
+              aria-keyshortcuts={isMac ? "Meta+J" : "Control+J"}
+              title={t("aiJumpHint", { key: primaryLabel("J") })}
+              className="cie-chip ink-swap"
+            >
+              <AiBadge t={t} status={aiTop} iconOnly />
+              <span className="truncate">{aiSummary}</span>
+            </button>
+          )}
+          {broadcastPanes.length > 0 && (
+            <IconButton onClick={() => setSheet("broadcast")} aria-label={t("broadcastTitle")} title={t("broadcastTitle")}>
+              <Send className="h-4 w-4" aria-hidden="true" />
+            </IconButton>
+          )}
           {updateReady && (
             <button
               type="button"
@@ -1263,6 +1353,7 @@ export function App() {
           deckOrder={deckOrder}
           focusedId={effectiveFocusId}
           favicons={favicons}
+          aiStatuses={aiStatuses}
           switcher={{
             sets,
             currentSetId: setId,
@@ -1308,6 +1399,7 @@ export function App() {
                     rect={rect}
                     mode={mode}
                     focused={item.id === effectiveFocusId}
+                    ai={aiStatuses[item.id]}
                     compact={rect.w * deckSize.width < COMPACT_PANE_PX}
                     activeTab={activeTabs[item.id] ?? 0}
                     meta={paneMeta[item.id]}
@@ -1422,7 +1514,11 @@ export function App() {
           if (provider === "google") deck.googleSignIn();
           else deck.signIn(provider);
         }}
+        ai={aiPrefs}
+        onAi={setAiPrefs}
       />
+
+      <BroadcastSheet t={t} open={sheet === "broadcast"} panes={broadcastPanes} onClose={closeSheet} onSubmit={broadcast} />
 
       <SetsSheet
         t={t}

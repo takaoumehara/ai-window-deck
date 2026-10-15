@@ -178,6 +178,43 @@ html, body, #root {
      tab reads as part of the page (Chrome-style). Measured by scripts/contrast.mjs. */
   --deck-surface-ink: #1f1f1e;
   --deck-surface-paper: #ffffff;
+  /* AI status fills, always with ink text and an icon, so colour is never the
+     only cue. Measured by scripts/contrast.mjs. */
+  --deck-ai-wait: #f2b33d;
+  --deck-ai-done: #5bd28f;
+  --deck-ai-error: #ff7b6b;
+}
+.deck-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 7px 0 5px;
+  border-radius: var(--cie-r-pill);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--cie-ink);
+}
+.deck-ai-badge--working {
+  color: inherit;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+.deck-ai-badge--needs-you {
+  background: var(--deck-ai-wait);
+}
+.deck-ai-badge--done {
+  background: var(--deck-ai-done);
+}
+.deck-ai-badge--error {
+  background: var(--deck-ai-error);
+}
+.deck-ai-badge--icon {
+  width: 20px;
+  padding: 0;
+  justify-content: center;
 }
 .deck-pane-shell {
   border-radius: var(--deck-pane-r);

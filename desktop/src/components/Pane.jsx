@@ -5,6 +5,7 @@ import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
 import { dropTarget } from "@desktop/lib/tabs";
 import { dropZone } from "@desktop/lib/arrangement";
+import { AiBadge } from "@desktop/components/AiBadge";
 
 function HeaderButton({ label, shortcut, onClick, disabled, pressed, focused, children }) {
   const pressedTone = focused ? "bg-ink text-paper hover:bg-ink/85" : "bg-paper text-ink hover:bg-paper/85";
@@ -376,7 +377,7 @@ function DropOverlay({ t, zone }) {
 
 export const Pane = React.forwardRef(function Pane(
   {
-    t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
+    t, item, urls, index, rect, focused, ai, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
     onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onMoveTab,
     paneDragging, dropHint, onPaneDragStart, onPaneDragEnd, onPaneDragOver, onPaneDrop, recentDevices, onPopover,
@@ -478,6 +479,7 @@ export const Pane = React.forwardRef(function Pane(
         >
           <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{String(index + 1).padStart(2, "0")}</span>
           <span className={`weight truncate ${compact ? "min-w-[2.5rem] max-w-[32%] shrink" : "min-w-0 max-w-[40%] shrink-0"} text-[13px] tracking-[-0.01em]`} style={{ "--w": focused ? 600 : 400 }}>{item.name}</span>
+          {ai && <AiBadge t={t} status={ai.status} site={ai.site} iconOnly={compact} className="shrink-0" />}
           {field ? (
             <HeaderField
               t={t}

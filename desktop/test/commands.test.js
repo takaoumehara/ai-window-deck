@@ -50,6 +50,8 @@ test("sets, new deck window and settings have their own keys", () => {
   assert.equal(matchCommand(key("KeyS", { alt: true }), "darwin"), "sets-open");
   assert.equal(matchCommand(key("KeyN", { meta: true }), "darwin"), "new-window");
   assert.equal(matchCommand(key("Comma", { control: true }), "linux"), "open-settings");
+  assert.equal(matchCommand(key("KeyJ", { meta: true }), "darwin"), "ai-next");
+  assert.equal(matchCommand(key("KeyJ", { control: true }), "win32"), "ai-next");
 });
 
 test("undo keys are never taken from pages", () => {

@@ -39,8 +39,11 @@ test("search matches the UI language, English and synonyms, and needs every word
   assert.ok(ids(searchPalette(ja, "並べ替え")).includes("tab-move-left"));
   assert.ok(ids(searchPalette(ja, "グーグル")).includes("signin-google"));
   assert.deepEqual(searchPalette(ja, "スマホ 回転").map((entry) => entry.id)[0], "device-rotate");
-  assert.ok(["ask-ai-claude", "ask-ai-chatgpt"].includes(searchPalette(ja, "AI")[0]?.id));
-  assert.equal(searchPalette(entriesIn("en"), "ai")[0]?.id, "ask-ai-claude");
+  const aiCommands = ["ask-ai-claude", "ask-ai-chatgpt", "ai-next", "ai-broadcast"];
+  assert.deepEqual(new Set(ids(searchPalette(ja, "AI")).slice(0, 4)), new Set(aiCommands));
+  assert.deepEqual(new Set(ids(searchPalette(entriesIn("en"), "ai")).slice(0, 4)), new Set(aiCommands));
+  assert.equal(searchPalette(ja, "通知")[0]?.id, "ai-next");
+  assert.equal(searchPalette(ja, "一斉送信")[0]?.id, "ai-broadcast");
   assert.deepEqual(searchPalette(ja, "zzzz"), []);
   assert.equal(searchPalette(ja, "  ").length, ja.length);
 });

@@ -620,7 +620,8 @@ function watchAi(target, paneId, view) {
     const { enabled, off } = aiSettings();
     const found = ai.siteFor(contents.getURL());
     const site = found && enabled && !off.has(found.id) ? found : null;
-    if (!fresh && site?.id === view.ai.site?.id) return;
+    const changed = site?.id !== view.ai.site?.id;
+    if (!fresh && !changed) return;
     view.ai.site = site;
     if (site) {
       contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: ai.monitorScript(ai.rulesFor(site)) }]).catch(() => {});
@@ -628,6 +629,7 @@ function watchAi(target, paneId, view) {
       if (!fresh) contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: "globalThis.__deckAiMonitor?.stop()" }]).catch(() => {});
       setReading(target, paneId, view, null);
     }
+    if (changed) publishAi(target);
   };
   view.restartAi = () => start(true);
   contents.on("did-finish-load", () => start(true));
@@ -671,14 +673,28 @@ function aiStatuses(target) {
   return statuses;
 }
 
+// The AI site on each pane's shown tab, so Send to several AIs can list panes
+// that are idle too.
+function aiSites(target) {
+  const sites = {};
+  for (const [paneId, pane] of target.panes) {
+    const site = pane.views.get(pane.activeTab)?.ai?.site;
+    if (site) sites[paneId] = { id: site.id, name: site.name };
+  }
+  return sites;
+}
+
 function publishAi(target, notify = null) {
   const statuses = aiStatuses(target);
-  const key = JSON.stringify(statuses);
+  const sites = aiSites(target);
+  const key = JSON.stringify([statuses, sites]);
   if (!notify && key === target.aiKey) return;
   target.aiKey = key;
-  sendTo(target, "ai:status", { statuses, notify });
+  sendTo(target, "ai:status", { statuses, sites, notify });
   let waiting = 0;
-  for (const candidate of shells.values()) waiting += ai.summarize(Object.values(aiStatuses(candidate)))["needs-you"];
+  for (const candidate of shells.values()) {
+    waiting += Object.values(aiStatuses(candidate)).filter((entry) => entry.status === "needs-you").length;
+  }
   app.setBadgeCount?.(waiting);
 }
 
@@ -988,6 +1004,9 @@ function buildMenu() {
         command("focus-previous", "Previous pane"),
         command("tab-next", "Next tab"),
         command("tab-previous", "Previous tab"),
+        { type: "separator" },
+        command("ai-next", "Next AI That Needs You"),
+        command("ai-broadcast", "Send to Several AIs…"),
         { type: "separator" },
         command("toggle-sidebar", "Expand / collapse sidebar"),
       ],
