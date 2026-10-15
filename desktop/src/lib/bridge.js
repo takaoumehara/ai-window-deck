@@ -57,6 +57,10 @@ const browserStandIn = {
   signIn: noop,
   onSignIn: noSubscribe,
   onPasskey: noSubscribe,
+  onAiStatus: noSubscribe,
+  setFocusedPane: noop,
+  showWindow: noop,
+  broadcast: async () => [],
 };
 
 export const deck = typeof window !== "undefined" && window.deck ? window.deck : browserStandIn;

@@ -31,6 +31,10 @@ if (!/^accounts\.google\.|^accounts\.youtube\.com$/.test(location.hostname)) con
   },
 });
 
+// The AI status monitor (ai-status.cjs) is injected into this world by the
+// main process and reports through here.
+globalThis.__deckAiReport = (status) => ipcRenderer.send("ai:reading", status);
+
 let lastPasskeyNotice = 0;
 window.addEventListener("deck-passkey-request", () => {
   if (Date.now() - lastPasskeyNotice < 15000) return;

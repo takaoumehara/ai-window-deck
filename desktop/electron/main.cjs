@@ -12,6 +12,7 @@ const {
 } = require("./identity.cjs");
 const google = require("./google-signin.cjs");
 const popups = require("./popups.cjs");
+const ai = require("./ai-status.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -597,6 +598,90 @@ function watchPopups(target, contents) {
   });
 }
 
+// AI status (ai-status.cjs). A recognised page runs a monitor in the preload's
+// isolated world, out of the page's reach, which reports its settled reading;
+// here the reading becomes the pane's status, Done and Error are cleared once
+// the user is looking at the pane, and every deck window hears about its panes.
+const ISOLATED_WORLD = 999;
+const pageOwners = new Map();
+
+function aiSettings() {
+  const settings = store?.settings?.ai ?? {};
+  return { enabled: settings.enabled !== false, off: new Set(settings.off ?? []) };
+}
+
+function watchAi(target, paneId, view) {
+  const contents = view.webContents;
+  pageOwners.set(contents.id, { target, paneId, view });
+  contents.once("destroyed", () => pageOwners.delete(contents.id));
+  view.ai = { site: null, reading: null, status: null, workingSince: 0 };
+  const start = (fresh) => {
+    if (contents.isDestroyed()) return;
+    const { enabled, off } = aiSettings();
+    const found = ai.siteFor(contents.getURL());
+    const site = found && enabled && !off.has(found.id) ? found : null;
+    if (!fresh && site?.id === view.ai.site?.id) return;
+    view.ai.site = site;
+    if (site) {
+      contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: ai.monitorScript(ai.rulesFor(site)) }]).catch(() => {});
+    } else {
+      if (!fresh) contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: "globalThis.__deckAiMonitor?.stop()" }]).catch(() => {});
+      setReading(target, paneId, view, null);
+    }
+  };
+  view.restartAi = () => start(true);
+  contents.on("did-finish-load", () => start(true));
+  contents.on("did-navigate-in-page", (_event, _url, isMainFrame) => isMainFrame && start(false));
+}
+
+function paneSeen(target, paneId, view) {
+  const pane = target.panes.get(paneId);
+  return Boolean(pane?.visible) && target.focusedPaneId === paneId && pane.views.get(pane.activeTab) === view
+    && !target.win.isDestroyed() && target.win.isFocused() && !target.win.isMinimized();
+}
+
+function setReading(target, paneId, view, reading) {
+  const entry = view.ai;
+  if (!entry) return;
+  const now = Date.now();
+  const previous = entry.status;
+  const seen = paneSeen(target, paneId, view);
+  entry.reading = reading;
+  entry.status = ai.nextStatus(previous, reading, { seen, workedMs: previous === "working" ? now - entry.workingSince : 0 });
+  if (entry.status === "working" && previous !== "working") entry.workingSince = now;
+  if (entry.status === previous) return;
+  const notify = !seen && (entry.status === "done" || entry.status === "needs-you") ? { paneId, status: entry.status, site: entry.site?.name ?? "" } : null;
+  publishAi(target, notify);
+}
+
+// Looking at a pane clears its Done and Error.
+function markSeen(target, paneId) {
+  const pane = target?.panes.get(paneId);
+  const view = pane?.views.get(pane.activeTab);
+  if (!view?.ai || !paneSeen(target, paneId, view)) return;
+  setReading(target, paneId, view, view.ai.reading);
+}
+
+function aiStatuses(target) {
+  const statuses = {};
+  for (const [paneId, pane] of target.panes) {
+    const best = ai.paneStatus([...pane.views].map(([tab, view]) => (view.ai?.status ? { status: view.ai.status, site: view.ai.site?.name ?? "", tab } : null)));
+    if (best) statuses[paneId] = best;
+  }
+  return statuses;
+}
+
+function publishAi(target, notify = null) {
+  const statuses = aiStatuses(target);
+  const key = JSON.stringify(statuses);
+  if (!notify && key === target.aiKey) return;
+  target.aiKey = key;
+  sendTo(target, "ai:status", { statuses, notify });
+  let waiting = 0;
+  for (const candidate of shells.values()) waiting += ai.summarize(Object.values(aiStatuses(candidate)))["needs-you"];
+  app.setBadgeCount?.(waiting);
+}
+
 function createTabView(target, paneId, url) {
   const view = new WebContentsView({
     webPreferences: {
@@ -613,6 +698,7 @@ function createTabView(target, paneId, url) {
 
   contents.setWindowOpenHandler(popupHandler(target, contents, (link) => contents.loadURL(link).catch(() => {})));
   watchPopups(target, contents);
+  watchAi(target, paneId, view);
   // Once the user has clicked or typed in this page, its way into Google's
   // sign-in goes to the sign-in window. A page that redirects there by itself
   // as the deck starts (a saved accounts.google.com tab) doesn't pop one up.
@@ -803,6 +889,8 @@ function syncPanes(target, nextPanes) {
     for (const view of pane.views.values()) destroyView(target, view);
     panes.delete(paneId);
   }
+  markSeen(target, target.focusedPaneId);
+  publishAi(target);
 }
 
 function activeContents(target, paneId) {
@@ -973,6 +1061,7 @@ function createShellWindow({ setId = null, frame = { ...DEFAULT_SIZE } } = {}) {
   });
   win.on("focus", () => {
     lastFocusedShell = target;
+    markSeen(target, target.focusedPaneId);
   });
   win.webContents.on("focus", () => {
     target.focused = win.webContents;
@@ -1045,10 +1134,51 @@ ipcMain.handle("store:load", (event) => {
   return { store, setId: target?.setId ?? null, openSetIds: openSetIds(target) };
 });
 ipcMain.handle("store:apply", (event, patch) => {
+  const aiBefore = JSON.stringify(store?.settings?.ai ?? null);
   store = applyStorePatch(store, patch);
   const sender = shellOf(event.sender);
   for (const target of shells.values()) if (target !== sender) sendTo(target, "store:changed", store);
+  if (JSON.stringify(store?.settings?.ai ?? null) !== aiBefore) {
+    for (const target of shells.values()) for (const pane of target.panes.values()) for (const view of pane.views.values()) view.restartAi?.();
+  }
   return writeStore(store);
+});
+ipcMain.on("ai:reading", (event, reading) => {
+  const owner = pageOwners.get(event.sender.id);
+  if (!owner || !(reading === null || ["working", "needs-you", "error", "idle"].includes(reading))) return;
+  if (!owner.view.ai?.site) return;
+  setReading(owner.target, owner.paneId, owner.view, reading);
+});
+ipcMain.on("panes:focused-id", (event, paneId) => {
+  const target = shellOf(event.sender);
+  if (!target) return;
+  target.focusedPaneId = paneId ?? null;
+  markSeen(target, target.focusedPaneId);
+});
+ipcMain.on("shell:show", (event) => {
+  const target = shellOf(event.sender);
+  if (!target || target.win.isDestroyed()) return;
+  if (target.win.isMinimized()) target.win.restore();
+  target.win.show();
+  target.win.focus();
+});
+// Send to several AIs: the prompt goes into each pane's prompt box through
+// its site's rules (ai-status.cjs insertPrompt), and Send is pressed only when
+// the user asked for it.
+ipcMain.handle("ai:broadcast", async (event, { paneIds, text, submit }) => {
+  const target = shellOf(event.sender);
+  if (!target || typeof text !== "string" || !text.trim()) return [];
+  return Promise.all((paneIds ?? []).map(async (paneId) => {
+    const contents = activeContents(target, paneId);
+    const site = contents && ai.siteFor(contents.getURL());
+    if (!site) return { paneId, ok: false, reason: "not-ai" };
+    try {
+      const result = await contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: ai.insertScript(ai.rulesFor(site), text, Boolean(submit)) }], true);
+      return { paneId, ...(result ?? { ok: false, reason: "failed" }) };
+    } catch {
+      return { paneId, ok: false, reason: "failed" };
+    }
+  }));
 });
 // Each set shows in at most one deck window; asking for one that is already
 // open brings that window forward instead.
