@@ -20,7 +20,7 @@
 ## 実装境界
 
 - `background.js` がウィンドウの座標計算、履歴、Chromeコマンドを担当する。
-- `src/components/SpotlightConfig.jsx` が設定の選択、カスタム値、ショートカット変更の入口を担当する。
+- `src/components/FocusViewConfig.jsx` が設定の選択、カスタム値、ショートカット変更の入口を担当する。
 - `src/App.jsx` と `src/components/WorkspaceCanvas.jsx` がキャンバス座標をバックグラウンドへ渡す。
 - 履歴は `chrome.storage.session` に保存し、Service Worker の休止をまたいで復帰先を保つ。
 

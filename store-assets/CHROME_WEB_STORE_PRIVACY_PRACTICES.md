@@ -26,7 +26,7 @@ Used only when the extension opens a saved window set: the tabs opened in each n
 **storage**
 
 ```text
-Used to save the user's window library (names and URLs they enter), canvas layouts, spotlight/display/language preferences, and the position of the extension's own settings windows in chrome.storage.sync; temporary undo state uses chrome.storage.session. Chrome may sync this between the user's own browsers if Chrome Sync is on. Nothing is sent to the developer or third parties.
+Used to save the user's window library (names and URLs they enter), canvas layouts, Focus view/display/language preferences, and the position of the extension's own settings windows in chrome.storage.sync; temporary undo state uses chrome.storage.session. Chrome may sync this between the user's own browsers if Chrome Sync is on. Nothing is sent to the developer or third parties.
 ```
 
 **system.display**

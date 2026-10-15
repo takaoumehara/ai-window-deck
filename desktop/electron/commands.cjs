@@ -1,7 +1,7 @@
 // Matched on KeyboardEvent.code so they still fire on macOS, where Option turns
 // letters into other characters (Option+X types "≈").
 const ALT_CODES = {
-  KeyX: "toggle-spotlight",
+  KeyX: "toggle-focus-view",
   KeyZ: "restore-home",
   KeyA: "restore-home",
   KeyQ: "toggle-fullscreen",
@@ -42,7 +42,7 @@ const PRIMARY_KEYS = { "[": "page-back", "]": "page-forward" };
 const PRIMARY_SHIFT_KEYS = { "{": "tab-previous", "}": "tab-next", "[": "tab-previous", "]": "tab-next" };
 
 const COMMAND_ACCELERATORS = {
-  "toggle-spotlight": "Alt+X",
+  "toggle-focus-view": "Alt+X",
   "restore-home": "Alt+Z",
   "toggle-fullscreen": "Alt+Q",
   "focus-next": "Alt+Tab",

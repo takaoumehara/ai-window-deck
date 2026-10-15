@@ -12,7 +12,7 @@ import { ShortcutsSheet } from "@desktop/components/ShortcutsSheet";
 import { deck, isElectron } from "@desktop/lib/bridge";
 import { DEFAULT_WINDOWS, hostLabel, parseExtensionExport, urlList } from "@desktop/lib/deck-data";
 import { EMPTY_HISTORY, diffSets, record, redo, storePatchBetween, undo } from "@desktop/lib/history";
-import { computePaneRects, cycleIndex, layoutMoves, nextModeForSpotlight } from "@desktop/lib/pane-layout";
+import { computePaneRects, cycleIndex, layoutMoves, nextModeForFocusView } from "@desktop/lib/pane-layout";
 import { addressToUrl, insertTab, removeTab, stepZoom, tabForNumber } from "@desktop/lib/tabs";
 import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice } from "@desktop/lib/device-frame";
@@ -31,7 +31,7 @@ const UNDO_NOTICE_MS = 6000;
 
 const MODE_OPTIONS = [
   { id: "grid", icon: LayoutGrid, label: "modeGrid" },
-  { id: "spotlight", icon: Maximize2, label: "modeSpotlight" },
+  { id: "focusView", icon: Maximize2, label: "modeFocusView" },
   { id: "fill", icon: Expand, label: "modeFill" },
 ];
 
@@ -372,9 +372,9 @@ export function App() {
 
   const focusPane = useCallback((id) => changeLayout({ focusId: id }), [changeLayout]);
 
-  const spotlightPane = useCallback((id) => {
+  const focusViewPane = useCallback((id) => {
     const current = currentLayout();
-    changeLayout({ focusId: id, mode: nextModeForSpotlight(current.mode, { targetIsFocused: id === current.focusId }) });
+    changeLayout({ focusId: id, mode: nextModeForFocusView(current.mode, { targetIsFocused: id === current.focusId }) });
   }, [changeLayout]);
 
   const fillPane = useCallback((id) => {
@@ -710,8 +710,8 @@ export function App() {
     const activeTab = paneId ? activeTabs[paneId] ?? 0 : 0;
     const currentIndex = Math.max(0, deckOrder.indexOf(paneId));
 
-    if (command === "toggle-spotlight") {
-      if (count) changeLayout({ mode: nextModeForSpotlight(current.mode) });
+    if (command === "toggle-focus-view") {
+      if (count) changeLayout({ mode: nextModeForFocusView(current.mode) });
     } else if (command === "restore-home") {
       changeLayout({ mode: "grid" });
     } else if (command === "toggle-fullscreen") {
@@ -963,7 +963,7 @@ export function App() {
                     onDeviceChange={(deviceId) => setPaneDevice(item.id, (current) => ({ ...current, id: deviceId }))}
                     onRotateDevice={() => setPaneDevice(item.id, (current) => ({ ...current, landscape: !current?.landscape }))}
                     onAddDevice={() => addDevicePane(item.id)}
-                    onHeaderClick={() => spotlightPane(item.id)}
+                    onHeaderClick={() => focusViewPane(item.id)}
                     onSelectTab={(tabIndex) => {
                       setActiveTab(item.id, tabIndex);
                       focusPane(item.id);
@@ -974,7 +974,7 @@ export function App() {
                       openField(item.id, "new");
                     }}
                     onNavigate={(action) => deck.navigate(item.id, action)}
-                    onSpotlight={() => spotlightPane(item.id)}
+                    onFocusView={() => focusViewPane(item.id)}
                     onFill={() => fillPane(item.id)}
                     onHide={() => hideWindow(item.id)}
                     onResetZoom={() => zoomPane(item.id, 0)}

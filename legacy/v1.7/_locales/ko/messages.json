@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "클라우드 Claude Code와 Codex용 창 관리자. 여러 프로젝트를 동시에, 헷갈림 없이."
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "확대/복원"
   },
   "cmdHome": {

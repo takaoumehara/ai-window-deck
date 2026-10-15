@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "Fenstermanager für Claude Code in der Cloud und Codex — mehrere Projekte gleichzeitig, ohne Chaos."
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "Vergrößern / Zurück"
   },
   "cmdHome": {

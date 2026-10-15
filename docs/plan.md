@@ -2,7 +2,7 @@
 
 > Written by: superforge-dev · Last updated: 2026-08-07
 > Status: in progress
-> Upstream: docs/superpowers/specs/2026-08-07-spotlight-retile-design.md
+> Upstream: docs/superpowers/specs/2026-08-07-focus-view-retile-design.md
 
 **Goal:** キャンバス配置を起動済みウィンドウへ適用し、拡大サイズ・配置方法・ショートカット変更導線を提供する。
 
@@ -34,11 +34,11 @@
 ### Task 2: 拡大設定UIとショートカット導線
 
 **Files:**
-- Modify: `src/components/SpotlightConfig.jsx`
+- Modify: `src/components/FocusViewConfig.jsx`
 - Modify: `src/hooks/useExtensionState.js`
 - Modify: `src/lib/i18n.js`
 
-**Proof:** `npm run build` が終了コード0。すべての選択値が `spotlightSize` / `spotlightAnchor` / カスタム寸法として同期ストレージへ保存される。
+**Proof:** `npm run build` が終了コード0。すべての選択値が `focusViewSize` / `focusViewAnchor` / カスタム寸法として同期ストレージへ保存される。
 
 - [x] サイズ候補に縦横半分、横半分・縦いっぱい、縦横3/4、画面いっぱい、縦だけいっぱい、カスタムを実装する。
 - [x] カスタム選択時だけ幅・高さ（20〜100%）を表示し保存する。
@@ -55,7 +55,7 @@
 **Proof:** `npm test && npm run build` が終了コード0。拡大履歴が最初のタイル位置を保持し、手動リサイズ後でも `restore-home` がスタック先頭へ戻す実装になっている。
 
 - [x] `Option+X` と `Option+Z` の説明を実装どおりに整え、履歴の復帰先を明確化する。
-- [x] デザイン仕様とスタイルガイドへSpotlight設定コンポーネントを追加する。
+- [x] デザイン仕様とスタイルガイドへFocusView設定コンポーネントを追加する。
 - [x] 全テストと本番ビルドを実行する。
 
 ## Progress log

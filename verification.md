@@ -143,7 +143,7 @@ custom/keep   -> got {"left":0,"top":30,"width":1536,"height":1128}      PASS  r
 custom/center -> got {"left":512,"top":171,"width":1536,"height":1128}   PASS  restore PASS
 corner clamp  -> {"left":1280,"top":735,"width":1280,"height":705} PASS (stays on screen)
 
-all spotlight modes pass
+all Focus view modes pass
 ```
 
 `corner clamp` は、画面の右下隅にあるウィンドウを広げても画面外へはみ出さないこと
@@ -230,7 +230,7 @@ size=full  -> custom hidden: true  | anchor hidden: true
 size=custom-> custom hidden: false | anchor hidden: false
 size=half  -> custom hidden: true  | anchor hidden: false
 
-storage: {"language":"ja","spotlightAnchor":"center","spotlightSize":"half"}
+storage: {"language":"ja","focusViewAnchor":"center","focusViewSize":"half"}
 after reload, language select = ja | size = half | anchor = center
 
 tabs after clicking "change shortcuts": [".../popup.html","chrome://extensions/shortcuts"]
@@ -246,7 +246,7 @@ Chrome が返す表記は macOS が `⌃⇧Space`、Windows/Linux/ChromeOS が
 （`keys.js`）。実測で確認した Chrome の戻り値:
 
 ```
-[{"name":"toggle-spotlight","shortcut":"⌃⇧Space"},
+[{"name":"toggle-focus-view","shortcut":"⌃⇧Space"},
  {"name":"tile-windows","shortcut":"⌃⇧8"},
  {"name":"focus-next","shortcut":"⌃⇧→"},
  {"name":"_execute_action","shortcut":""}]
@@ -285,7 +285,7 @@ v0.1.0 では以下が不足しており、すべて修正した。
 **キーボード操作** — 全コントロールが Tab で到達でき、フォーカスリングが出る。
 
 ```
-focusable controls: ["spotlight","tile","next","columns",
+focusable controls: ["focusView","tile","next","columns",
                      "input[size]"x4,"input[anchor]"x2,
                      "attention","language","editShortcuts"]
 focus ring on #tile: {"outlineStyle":"solid","outlineWidth":"2px","outlineColor":"rgb(91,79,208)"}
@@ -428,7 +428,7 @@ prev comes back to where it started    PASS 1851531201 -> 1851531205 -> 18515312
 
 == commands registered ==
 [{"name":"focus-next","shortcut":"⌃⇧→"},{"name":"focus-previous","shortcut":"⌃⇧←"},
- {"name":"tile-windows","shortcut":"⌃⇧8"},{"name":"toggle-spotlight","shortcut":"⌃⇧Space"},
+ {"name":"tile-windows","shortcut":"⌃⇧8"},{"name":"toggle-focus-view","shortcut":"⌃⇧Space"},
  {"name":"undo-layout","shortcut":""}]
 focus-previous exists                  PASS
 undo-layout exists (no default key)    PASS
@@ -524,7 +524,7 @@ $ node /tmp/awd-height-repro.mjs <dir>     # 修正後
 [2] maximized window: leaves maximized PASS / height fills PASS 1410 /
                       width is the window width, not the screen PASS 820
 [3] second press    : returns to maximized PASS
-[4] mode changed while spotlighted: half applied PASS / press restores PASS
+[4] mode changed while focusViewed: half applied PASS / press restores PASS
 all height-mode scenarios pass
 ```
 
@@ -536,7 +536,7 @@ Chrome が `MacCtrl+Z` `MacCtrl+C` `MacCtrl+Space` を受け付けることを�
 すると全ページから奪ってしまうため）。
 
 ```
-[{"name":"toggle-spotlight","shortcut":"⌃Space"},
+[{"name":"toggle-focus-view","shortcut":"⌃Space"},
  {"name":"focus-previous","shortcut":"⌃Z"},
  {"name":"focus-next","shortcut":"⌃C"},
  {"name":"tile-windows","shortcut":"⌃⇧8"},
@@ -939,7 +939,7 @@ the same key returns it / to exactly the tiled size and place   PASS
 the enlarge key leaves full screen / lands back on the tiled square PASS
 ```
 
-全画面は spotlight と同じ記憶を共有しているため、どちらのキーで戻しても
+全画面は Focus view と同じ記憶を共有しているため、どちらのキーで戻しても
 8分割の1枠にそのまま帰る。既定キーは付けていない（Chrome の上限4つが埋まっており、
 `⌘F`/`Ctrl+F` はページ内検索を奪うため推奨しない旨を README に明記）。
 
@@ -1074,7 +1074,7 @@ the whole chain walks back home
 macOS 側は全て `MacCtrl`（= Control）。
 
 ```
-toggle-spotlight   {'default': 'Alt+Shift+Space', 'mac': 'MacCtrl+Space'}
+toggle-focus-view   {'default': 'Alt+Shift+Space', 'mac': 'MacCtrl+Space'}
 tile-windows       {'default': 'Alt+Shift+8',     'mac': 'MacCtrl+Shift+8'}
 focus-next         {'default': 'Alt+Shift+Right', 'mac': 'MacCtrl+C'}
 focus-previous     {'default': 'Alt+Shift+Left',  'mac': 'MacCtrl+Z'}
@@ -1124,7 +1124,7 @@ $ node /tmp/awd-rotate.mjs <dir>
 全画面から「元に戻す」でタイルへ直行                                 PASS
 タイル番号のコマンドが8つある                                       PASS
 既定キーは4つ、すべて Option 系                                     PASS
-  ["restore-home=⌥Z","tile-windows=⌥A","toggle-fullscreen=⌥V","toggle-spotlight=⌥X"]
+  ["restore-home=⌥Z","tile-windows=⌥A","toggle-fullscreen=⌥V","toggle-focus-view=⌥X"]
 ```
 
 段を積む実装（v1.3.1）はそのまま土台に使い、最上段が全画面のときだけ
@@ -1352,7 +1352,7 @@ $ node /tmp/awd-rotate.mjs <dir>
 全画面から「元に戻す」でもタイルへ                    PASS
 
 -- 既定キー --
-  ["restore-home=⌥Z","tile-windows=⌥A","toggle-fullscreen=⌥Q","toggle-spotlight=⌥X"]
+  ["restore-home=⌥Z","tile-windows=⌥A","toggle-fullscreen=⌥Q","toggle-focus-view=⌥X"]
 既定キーは4つ                                        PASS 4
 全画面 = ⌥Q（実際に登録されている）                  PASS ⌥Q
 ⌥V はもう使っていない                                PASS
@@ -1397,7 +1397,7 @@ deck.html (ja): 138 text runs — WCAG 1.4.3 AA all pass
   lowest 5.17 on 'いまの画面を大きく' (13px)
 ```
 
-8言語174キー、未翻訳ゼロを維持。書き換えたのは `act_spotlight` `cmd_spotlight`
+8言語174キー、未翻訳ゼロを維持。書き換えたのは `act_focusView` `cmd_focusView`
 （ja/en のみ3段を明記していた）と `help_rotate`（全8言語）。
 
 ### 未確認のまま残ること

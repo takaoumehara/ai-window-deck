@@ -609,7 +609,7 @@ function buildMenu() {
       submenu: [
         command("sets-open", "Sets…"),
         { type: "separator" },
-        command("toggle-spotlight", "Spotlight"),
+        command("toggle-focus-view", "Focus view"),
         command("restore-home", "Back to grid"),
         command("toggle-fullscreen", "Fill the deck"),
         { type: "separator" },

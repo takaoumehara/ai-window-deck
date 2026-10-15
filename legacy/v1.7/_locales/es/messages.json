@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "Gestor de ventanas para Claude Code en la nube y Codex: varios proyectos a la vez, sin confusión."
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "Ampliar / restaurar"
   },
   "cmdHome": {

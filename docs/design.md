@@ -34,13 +34,13 @@ stable scan line. Text below 11px is not used in the product UI.
 3. **Library Tray**: Window card repository with multi-select drag & drop support.
 4. **Append-mode Bulk Ingest**: Safe text ingestion that appends cards without overwriting existing data.
 5. **Active Windows Manager**: Real-time list of opened browser windows with single and bulk close CTAs.
-6. **Spotlight Configuration**: A compact operational settings surface with six target sizes, two placement strategies, conditional width/height controls, and a direct link to Chrome's shortcut editor. It uses the existing Cobalt selection state, preserves keyboard focus visibility, and keeps the irreversible restore action visually secondary.
+6. **Focus view configuration**: A compact operational settings surface with six target sizes, two placement strategies, conditional width/height controls, and a direct link to Chrome's shortcut editor. It uses the existing Cobalt selection state, preserves keyboard focus visibility, and keeps the irreversible restore action visually secondary.
 7. **Targeted Canvas Drop**: Empty slots are the only droppable targets. Their Cobalt highlight changes drag-and-drop from an ambiguous append action into a stable replacement action that preserves the existing grid.
-8. **Display-ratio Spotlight Preview**: A compact live diagram preserves the selected monitor's aspect ratio and the canvas' current split. The active tile transitions to its selected size and anchor; reduced-motion users receive the same final state without animation.
-9. **Quiet operational hierarchy**: Cobalt is reserved for the active action, active selection, and the live Spotlight target. The remaining commands use the raised surface so the page can be scanned without every control competing for attention.
+8. **Display-ratio Focus view preview**: A compact live diagram preserves the selected monitor's aspect ratio and the canvas' current split. The active tile transitions to its selected size and anchor; reduced-motion users receive the same final state without animation.
+9. **Quiet operational hierarchy**: Cobalt is reserved for the active action, active selection, and the live Focus view target. The remaining commands use the raised surface so the page can be scanned without every control competing for attention.
 10. **Focus and status treatment**: Interactive elements share a visible two-pixel Cobalt focus ring; command feedback uses a polite live region. A skip link moves keyboard users straight to the current workspace.
 
-## Spotlight interaction contract
+## Focus view interaction contract
 
 - `Option+X` alternates between the configured size and the immediately previous size.
 - `Option+Z` restores the first tile position and size recorded before the window was enlarged, even after manual resizing while enlarged.

@@ -21,7 +21,7 @@ Claude Code on the web and Codex run the heavy work on remote machines, so I can
 So I built AI Window Deck, a free Chrome extension:
 
 → Save each window once: a name and the URLs that open as its tabs
-→ Arrange them on a canvas (grid, columns, one large window, or freeform)
+→ Arrange them on a canvas (grid, columns, single large window, or freeform)
 → Launch: every window opens tiled on the display you choose, tabs grouped
 → Alt+X enlarges the window you're working in. Press it again and it snaps back to its tile
 

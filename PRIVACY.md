@@ -14,7 +14,7 @@ AI Window Deck is a Chrome extension that opens user-configured sets of Chrome w
 
 The extension handles only the information its features need:
 
-- **Your window sets and preferences.** This covers the window names and URLs you enter, canvas layouts and layout presets, configuration profile names, spotlight and display settings, your language choice, and the positions of the extension's own settings and controller windows. They are stored so the extension can reopen and arrange your windows.
+- **Your window sets and preferences.** This covers the window names and URLs you enter, canvas layouts and layout presets, configuration profile names, Focus view and display settings, your language choice, and the positions of the extension's own settings and controller windows. They are stored so the extension can reopen and arrange your windows.
 - **Current Chrome window and tab metadata.** To arrange windows, list open windows, group tabs, and focus or close a window when you ask, the extension reads:
   - window position, size and state;
   - the title and URL of each window's active tab;
@@ -33,7 +33,7 @@ Information is used only to provide the extension's single purpose: creating, sa
 ## Storage and retention
 
 - Window sets and preferences are stored in `chrome.storage.sync`. If Chrome Sync is turned on, Chrome may sync them between browsers signed in to the same Google Account. That syncing is done by Chrome, under your Google Account settings, and not by the developer.
-- Temporary state is stored in `chrome.storage.session` and cleared when the browser session ends. This includes undo history, the windows the deck opened, and the sizes to restore after a spotlight.
+- Temporary state is stored in `chrome.storage.session` and cleared when the browser session ends. This includes undo history, the windows the deck opened, and the sizes to restore after Focus view.
 - When you choose *Backup*, a JSON file is downloaded to your computer. It stays under your control and is not uploaded anywhere.
 
 ## Sharing and sale

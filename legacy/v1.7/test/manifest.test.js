@@ -17,7 +17,7 @@ test("only real, used permissions are requested", () => {
 
 test("every __MSG_ key the manifest uses exists in every locale, within store limits", () => {
   const keys = [...new Set([...JSON.stringify(manifest).matchAll(/__MSG_(\w+)__/g)].map((m) => m[1]))];
-  assert.ok(keys.includes("cmdSpotlight"), "command descriptions are localized");
+  assert.ok(keys.includes("cmdFocusView"), "command descriptions are localized");
   for (const locale of locales) {
     const messages = JSON.parse(read(`_locales/${locale}/messages.json`));
     for (const key of keys) assert.ok(messages[key]?.message, `${locale} is missing ${key}`);

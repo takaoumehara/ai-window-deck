@@ -197,6 +197,8 @@ window.AWD_I18N = {
     "reg.placeBody": "新しいウィンドウをキャンバスに自動配置するかどうかを、ページの中で選べます。",
     "reg.moreTitle": "その他の Ko-fi",
     "reg.moreBody": "「その他」画面に Ko-fi へのリンクがあります。",
+    "reg.focusTitle": "フォーカス表示",
+    "reg.focusBody": "Alt+X で選んだウィンドウを大きく表示し、Alt+Z で元に戻します。大きな1枚のレイアウトは「大きな1枚」という名前になりました。",
     "support.title": "開発を応援する",
     "support.body": "AI Window Deck が日々の作業に役立ったら、Ko-fi で開発を応援できます。",
     "inst.storeLink": "Chrome に追加 ↗",

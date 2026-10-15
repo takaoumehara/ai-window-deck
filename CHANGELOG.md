@@ -19,7 +19,7 @@ Built from the 1.11.0 store package with `tools/patch-v1.11.2-inline-register.mj
 - Vercel serves `site/` as a static site (root `vercel.json`), instead of building the repository with Vite.
 
 ### Changed
-- The enlarge command is named **Focus view** (日本語: フォーカス表示) in the panel, the shortcut list and the store listing. The layout preset described as “Focus (one large window)” is **Single large window** (日本語: 大きな1枚).
+- The enlarge command is named **Focus view** (日本語: フォーカス表示) in the panel, the shortcut list and the store listing. The layout preset described as “Focus (one large window)” is **Single large window** (日本語: 大きな1枚). Internally the Chrome command id is now `toggle-focus-view` and the enlarge settings are stored under `focusView*` keys, so a custom Alt+X shortcut and a saved enlarge size return to their defaults once after updating.
 - The register button is now **Register URLs + Window**, and it opens inside the page instead of a modal dialog. The view you came from stays in place and keyboard focus returns to the button when the panel closes. The small dock window keeps the dialog.
 - A new window starts at a choice between *One by one* and *Bulk (paste text)*. The bulk card shows a short animation of copying a list of sites from a chat and pasting it; with reduced motion it shows a still version. `Escape` in a form goes back to the choice first.
 - After a bulk save, the choice to place the new windows on the canvas automatically or keep them in the library is shown in the page too.
@@ -48,7 +48,7 @@ The first release of the React panel. It replaces the earlier `deck.html` panel 
 
 ### Added
 - React + Tailwind settings panel with a layout canvas: drag saved windows onto a 12 × 12 grid and resize from any edge. Layouts include Auto, Vertical, Horizontal, Grid, Focus and Freeform. The canvas has undo/redo and multiple layout presets.
-- Spotlight settings: enlarge size (half, tall, three quarters, full height, full screen, custom) and where the window grows from. A preview shows the result.
+- Focus view settings: enlarge size (half, tall, three quarters, full height, full screen, custom) and where the window grows from. A preview shows the result.
 - Window library with bulk text entry and `.txt` import/export, and JSON backup/restore.
 - Floating controller and large-window modes for the panel.
 - Panel translations for all eight locales: de, es, fr, ko, pt-BR, zh-CN, alongside en and ja.
@@ -103,7 +103,7 @@ The first release of the React panel. It replaces the earlier `deck.html` panel 
 ## [1.4.0] - 2026-08-01
 
 ### Added
-- First packaged release: open and tile saved sets of Chrome windows, spotlight the active window, and use keyboard shortcuts to re-tile, undo, go to the next or previous window, focus windows 1–8 and toggle full screen.
+- First packaged release: open and tile saved sets of Chrome windows, enlarge the active window (Focus view), and use keyboard shortcuts to re-tile, undo, go to the next or previous window, focus windows 1–8 and toggle full screen.
 - Tab groups for the windows the deck opens, multi-display support, a compact window list, and the display identification flash.
 - UI in English, Japanese, German, Spanish, French, Korean, Brazilian Portuguese and Simplified Chinese.
 

@@ -49,10 +49,10 @@ test("undo restores content but keeps the set's current layout", () => {
   const before = [set("s1", [win("a"), win("b")])];
   const after = [set("s1", [win("a")])];
   const history = record(EMPTY_HISTORY, diffSets(before, after));
-  const moved = [{ ...after[0], mode: "spotlight", focusedId: "a" }];
+  const moved = [{ ...after[0], mode: "focusView", focusedId: "a" }];
   const { sets } = undo(history, moved);
   assert.deepEqual(sets[0].windows.map((w) => w.id), ["a", "b"]);
-  assert.equal(sets[0].mode, "spotlight");
+  assert.equal(sets[0].mode, "focusView");
 });
 
 test("undo leaves sets it did not touch alone, even if they changed since", () => {

@@ -2,7 +2,7 @@
 
 > Written by: superforge-a11y · Last updated: 2026-08-07  
 > Target: WCAG 2.2 AA · Platform: Chrome extension web UI · Standard: none stated  
-> Surfaces: popup, full-page settings, floating controller; Arrange, Windows, Profiles, modal, empty-canvas, Spotlight preview states.
+> Surfaces: popup, full-page settings, floating controller; Arrange, Windows, Profiles, modal, empty-canvas, Focus view preview states.
 
 ## Verdict
 
@@ -33,7 +33,7 @@
 | 3. Screen reader | Reasoned | Landmark, heading, label, `aria-pressed`, `aria-expanded`, live-region, and native-element markup were reviewed. VoiceOver/NVDA listening was not run. |
 | 4. Zoom & reflow | Reasoned | Layout uses responsive grid/flex patterns and no global horizontal overflow; 400% zoom and text-spacing bookmarklet were not run. |
 | 5. Colour & contrast | Measured / partial | Token pairs below were measured. Alpha-composited hover/selected states still need rendered verification. |
-| 6. Motion & time | Partial | Spotlight preview respects `prefers-reduced-motion`; no timers, autoplay media, or flashing animation were found in the reviewed UI. OS-level preference was not exercised. |
+| 6. Motion & time | Partial | Focus view preview respects `prefers-reduced-motion`; no timers, autoplay media, or flashing animation were found in the reviewed UI. OS-level preference was not exercised. |
 | 7. Forms & errors | Reasoned | Visible labels exist in the registration flow; invalid submission/error announcements require a runtime walkthrough. |
 
 ## Contrast evidence
@@ -106,7 +106,7 @@ Results are source-reasoned unless explicitly called `measured`; `not present` m
 
 ## What is already right
 
-- Spotlight animation has an explicit reduced-motion fallback.
+- Focus view animation has an explicit reduced-motion fallback.
 - Cobalt selection is paired with text/state/icon changes, not colour alone.
 - Shortcut changes route users to Chrome's configurable shortcut screen rather than requiring a fixed character shortcut.
 - The original-tile restore language and UI remain explicit about restoring the initially launched tile position and size.

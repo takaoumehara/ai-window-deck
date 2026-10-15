@@ -50,7 +50,7 @@ test("the layout preset is Single large window, and the shortcut is Focus view",
   assert.match(bundle, /layoutFocus:"Single large window"/);
   assert.match(bundle, /layoutFocus:"大きな1枚"/);
   assert.doesNotMatch(bundle, /layoutFocus:"Focus"/);
-  assert.equal(manifest.commands["toggle-spotlight"].description, "__MSG_cmdFocusView__");
+  assert.equal(manifest.commands["toggle-focus-view"].description, "__MSG_cmdFocusView__");
 });
 
 test("the pre-1.11 pages and React source live under legacy/, not in the package root", () => {

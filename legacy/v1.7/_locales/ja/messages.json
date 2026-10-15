@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "クラウドのClaude CodeとCodex向けウィンドウマネージャ。複数プロジェクトを同時に、迷わず運用。"
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "大きく／タイルに戻す"
   },
   "cmdHome": {

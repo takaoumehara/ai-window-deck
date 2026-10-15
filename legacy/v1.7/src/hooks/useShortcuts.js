@@ -5,7 +5,7 @@ const isMac = typeof navigator !== "undefined"
   && /mac/i.test(navigator.userAgentData?.platform || navigator.platform || "");
 
 const DEFAULT_SHORTCUTS = {
-  "toggle-spotlight": isMac ? "⌥ X" : "Alt+X",
+  "toggle-focus-view": isMac ? "⌥ X" : "Alt+X",
   "restore-home": isMac ? "⌥ Z" : "Alt+Z",
 };
 

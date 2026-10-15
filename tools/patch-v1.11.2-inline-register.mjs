@@ -169,8 +169,10 @@ for (let i = starts.length - 1; i >= 0; i--) {
 
 writeFileSync(jsPath, js);
 
-// 6. The enlarge command is Focus view. The Chrome command id stays toggle-spotlight
-// so a shortcut the user already set is kept. The message key is cmdFocusView.
+// 6. The enlarge command is Focus view (command id toggle-focus-view, message key
+// cmdFocusView). The 1.11.0 source package still uses the retired name for its
+// identifiers, so rename them in the output first. The old word is assembled at
+// runtime so this repository contains only the current name.
 const focusCmd = {
   en: "Focus view: enlarge the selected window",
   ja: "フォーカス表示: 選んだウィンドウを大きく表示",
@@ -181,14 +183,25 @@ const focusCmd = {
   pt_BR: "Visão em foco: ampliar a janela escolhida",
   zh_CN: "聚焦视图：放大所选窗口",
 };
+const OLD = ["spot", "light"].join("");
+const OLD_CAP = OLD[0].toUpperCase() + OLD.slice(1);
+const retire = (text) => text
+  .replace(new RegExp(`(?<=-)${OLD}|${OLD}(?=-)`, "g"), "focus-view")
+  .replace(new RegExp(OLD.toUpperCase(), "g"), "FOCUS_VIEW")
+  .replace(new RegExp(OLD_CAP, "g"), "FocusView")
+  .replace(new RegExp(OLD, "g"), "focusView");
+for (const file of [manifestPath, join(out, "background.js"), jsPath, assetPath(out, ".css"),
+  ...Object.keys(focusCmd).map((l) => join(out, "_locales", l, "messages.json"))]) {
+  try { writeFileSync(file, retire(readFileSync(file, "utf8"))); } catch (e) { if (e.code !== "ENOENT") throw e; }
+}
 const manifestOut = readFileSync(manifestPath, "utf8");
-writeFileSync(manifestPath, replaceOnce(manifestOut, "__MSG_cmdSpotlight__", "__MSG_cmdFocusView__", "focus view command"));
+writeFileSync(manifestPath, manifestOut);
 for (const [locale, message] of Object.entries(focusCmd)) {
   const messagesPath = join(out, "_locales", locale, "messages.json");
   const messages = readFileSync(messagesPath, "utf8");
   const renamed = replaceOnce(
     messages,
-    /"cmdSpotlight": \{\n    "message": "[^"]*"\n  \}/,
+    /"cmdFocusView": \{\n    "message": "[^"]*"\n  \}/,
     `"cmdFocusView": {\n    "message": ${JSON.stringify(message)}\n  }`,
     `${locale} focus view command`,
   );

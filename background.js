@@ -2,10 +2,10 @@ const DEFAULTS = {
   columns: 4,
   rows: 2,
   gap: 8,
-  spotlightSize: "full",   // full | height | tall | half | custom
-  spotlightWidth: 70,      // percent of the work area, custom only
-  spotlightHeight: 90,
-  spotlightAnchor: "keep", // keep | center
+  focusViewSize: "full",   // full | height | tall | half | custom
+  focusViewWidth: 70,      // percent of the work area, custom only
+  focusViewHeight: 90,
+  focusViewAnchor: "keep", // keep | center
   language: "auto",
   // Saved arrangements. Each is { name, columns, rows, slots: [{name, urls}] }.
   presets: [],
@@ -43,28 +43,28 @@ async function settings() {
     const merged = { ...DEFAULTS, ...stored };
     
     console.log('[AI Window Deck] Settings loaded:', {
-      spotlightSize: merged.spotlightSize,
-      spotlightWidth: merged.spotlightWidth,
-      spotlightHeight: merged.spotlightHeight,
-      spotlightAnchor: merged.spotlightAnchor,
+      focusViewSize: merged.focusViewSize,
+      focusViewWidth: merged.focusViewWidth,
+      focusViewHeight: merged.focusViewHeight,
+      focusViewAnchor: merged.focusViewAnchor,
       targetDisplays: merged.targetDisplays,
       fromStorage: {
-        spotlightSize: stored.spotlightSize,
-        spotlightWidth: stored.spotlightWidth,
-        spotlightHeight: stored.spotlightHeight,
-        spotlightAnchor: stored.spotlightAnchor,
+        focusViewSize: stored.focusViewSize,
+        focusViewWidth: stored.focusViewWidth,
+        focusViewHeight: stored.focusViewHeight,
+        focusViewAnchor: stored.focusViewAnchor,
       }
     });
     
-    // Validate spotlight settings
-    if (merged.spotlightSize && !['full', 'height', 'tall', 'half', 'threeFourths', 'custom'].includes(merged.spotlightSize)) {
-      console.warn('[AI Window Deck] Invalid spotlightSize:', merged.spotlightSize, '- resetting to "full"');
-      merged.spotlightSize = 'full';
+    // Validate focusView settings
+    if (merged.focusViewSize && !['full', 'height', 'tall', 'half', 'threeFourths', 'custom'].includes(merged.focusViewSize)) {
+      console.warn('[AI Window Deck] Invalid focusViewSize:', merged.focusViewSize, '- resetting to "full"');
+      merged.focusViewSize = 'full';
     }
     
-    if (merged.spotlightAnchor && !['keep', 'center'].includes(merged.spotlightAnchor)) {
-      console.warn('[AI Window Deck] Invalid spotlightAnchor:', merged.spotlightAnchor, '- resetting to "keep"');
-      merged.spotlightAnchor = 'keep';
+    if (merged.focusViewAnchor && !['keep', 'center'].includes(merged.focusViewAnchor)) {
+      console.warn('[AI Window Deck] Invalid focusViewAnchor:', merged.focusViewAnchor, '- resetting to "keep"');
+      merged.focusViewAnchor = 'keep';
     }
     
     return merged;
@@ -149,7 +149,7 @@ function inReadingOrder(windows) {
 // floating controller) is "showing the Deck" and is left alone by Arrange,
 // Retile, focus cycling and the window list. A window where the Deck tab sits
 // in the background is a normal window again. Commands that act on "the
-// current window" (Spotlight, Restore, Full screen, Next/Previous) act on the
+// current window" (FocusView, Restore, Full screen, Next/Previous) act on the
 // window the user was last working in, exactly as they did from the popup.
 const isOwnPage = (tab) => (tab?.url || tab?.pendingUrl || "").startsWith(chrome.runtime.getURL(""));
 
@@ -480,36 +480,36 @@ async function launchDeck(options = {}) {
   return { ok: true, opened: created.length };
 }
 
-// ---- spotlight --------------------------------------------------------
+// ---- focusView --------------------------------------------------------
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 // Grows the window around its own centre so it stays where the eye expects it,
 // then pulls it back inside the work area.
-function spotlightBounds(workArea, window, config) {
-  console.log('[AI Window Deck] spotlightBounds called with:', {
+function focusViewBounds(workArea, window, config) {
+  console.log('[AI Window Deck] focusViewBounds called with:', {
     workArea,
     windowState: { left: window.left, top: window.top, width: window.width, height: window.height },
     config: {
-      spotlightSize: config.spotlightSize,
-      spotlightWidth: config.spotlightWidth,
-      spotlightHeight: config.spotlightHeight,
-      spotlightAnchor: config.spotlightAnchor,
+      focusViewSize: config.focusViewSize,
+      focusViewWidth: config.focusViewWidth,
+      focusViewHeight: config.focusViewHeight,
+      focusViewAnchor: config.focusViewAnchor,
     }
   });
   
   let width;
   let height;
-  if (config.spotlightSize === "height") {
+  if (config.focusViewSize === "height") {
     width = window.width ?? workArea.width;   // leave the width exactly as it is
     height = workArea.height;
     console.log('[AI Window Deck] Using "height" mode: keeping width', width, 'setting height to', height);
   } else {
-    const preset = PRESETS[config.spotlightSize];
-    const [percentW, percentH] = preset ?? [config.spotlightWidth, config.spotlightHeight];
+    const preset = PRESETS[config.focusViewSize];
+    const [percentW, percentH] = preset ?? [config.focusViewWidth, config.focusViewHeight];
     
     console.log('[AI Window Deck] Size calculation:', {
-      spotlightSize: config.spotlightSize,
+      focusViewSize: config.focusViewSize,
       foundPreset: !!preset,
       percentW,
       percentH,
@@ -525,7 +525,7 @@ function spotlightBounds(workArea, window, config) {
 
   console.log('[AI Window Deck] Calculated dimensions:', { width, height });
 
-  if (config.spotlightAnchor === "center") {
+  if (config.focusViewAnchor === "center") {
     const bounds = {
       left: workArea.left + Math.round((workArea.width - width) / 2),
       top: workArea.top + Math.round((workArea.height - height) / 2),
@@ -609,7 +609,7 @@ const snapshotGeometry = (window) => ({
 // A window opened by that layout then enlarges the way the layout says, inside
 // the layout's own launch display. A window that belongs to no layout follows
 // `focusOutside` when step ③ set it; otherwise, like a layout without `focus`,
-// it keeps the shared behaviour above (spotlightSize & co., an OS maximize by
+// it keeps the shared behaviour above (focusViewSize & co., an OS maximize by
 // default), so nothing changes for anyone who never opens step ③.
 // Mirrored for the preview in src/lib/focus-view.js.
 
@@ -855,7 +855,7 @@ async function restoreOthers(windowId) {
   await chrome.windows.update(windowId, { focused: true }).catch(() => {});
 }
 
-async function toggleSpotlight() {
+async function toggleFocusView() {
   let window = await workingWindow();
   if (!window) return { ok: false, reason: "empty" };
   const config = await settings();
@@ -887,7 +887,7 @@ async function toggleSpotlight() {
   await pushUndo([window]);
   const previous = snapshotGeometry(window);
 
-  if (config.spotlightSize === "full") {
+  if (config.focusViewSize === "full") {
     await stepInto(window, saved, stack, previous, null, "maximized");
     await chrome.windows.update(window.id, { state: "maximized", focused: true });
     return { ok: true, restored: false };
@@ -899,18 +899,18 @@ async function toggleSpotlight() {
     await chrome.windows.update(window.id, { state: "normal" });
     window = await chrome.windows.get(window.id);
   }
-  const spotlight = spotlightBounds((await displayFor(window)).workArea, window, config);
-  console.log('[AI Window Deck] Applying spotlight bounds:', spotlight, 'with config:', {
-    size: config.spotlightSize,
-    width: config.spotlightWidth,
-    height: config.spotlightHeight,
-    anchor: config.spotlightAnchor,
+  const focusView = focusViewBounds((await displayFor(window)).workArea, window, config);
+  console.log('[AI Window Deck] Applying focusView bounds:', focusView, 'with config:', {
+    size: config.focusViewSize,
+    width: config.focusViewWidth,
+    height: config.focusViewHeight,
+    anchor: config.focusViewAnchor,
   });
-  await stepInto(window, saved, stack, previous, spotlight, null);
-  await chrome.windows.update(window.id, { ...spotlight, focused: true });
+  await stepInto(window, saved, stack, previous, focusView, null);
+  await chrome.windows.update(window.id, { ...focusView, focused: true });
   // The OS can nudge a window straight after a resize; one repeat makes it stick.
   await new Promise((resolve) => setTimeout(resolve, 250));
-  await chrome.windows.update(window.id, spotlight);
+  await chrome.windows.update(window.id, focusView);
   await noteLanded(window.id, saved, stack);
   return { ok: true, restored: false };
 }
@@ -1041,7 +1041,7 @@ const focusPrevious = () => step(-1);
 
 const ACTIONS = {
   tile: tileWindows,
-  spotlight: toggleSpotlight,
+  focusView: toggleFocusView,
   next: focusNext,
   prev: focusPrevious,
   launch: launchDeck,
@@ -1051,7 +1051,7 @@ const ACTIONS = {
 };
 
 const COMMANDS = {
-  "toggle-spotlight": toggleSpotlight,
+  "toggle-focus-view": toggleFocusView,
   "tile-windows": () => tileWindows({ deckOnly: true }),
   "focus-next": focusNext,
   "focus-previous": focusPrevious,

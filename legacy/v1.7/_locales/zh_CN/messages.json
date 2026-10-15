@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "面向云端 Claude Code 与 Codex 的窗口管理器——同时运行多个项目，不再混乱。"
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "放大/还原"
   },
   "cmdHome": {

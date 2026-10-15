@@ -9,7 +9,7 @@ export function ShortcutsSheet({ t, open, onClose, isMac }) {
     {
       title: "kbGroupDeck",
       rows: [
-        ["kbSpotlight", [alt("X")]],
+        ["kbFocusView", [alt("X")]],
         ["kbHome", [alt("Z")]],
         ["kbFill", [alt("Q")]],
         ["kbFocus", [alt("1"), "–", alt("8")]],

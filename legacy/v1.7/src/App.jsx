@@ -8,7 +8,7 @@ import { RegisterModal } from "@/components/RegisterModal";
 import { WindowsTab } from "@/components/WindowsTab";
 import { ConfigProfileManager } from "@/components/ConfigProfileManager";
 import { DangerZone } from "@/components/DangerZone";
-import { SpotlightConfig } from "@/components/SpotlightConfig";
+import { FocusViewConfig } from "@/components/FocusViewConfig";
 import { BulkPlacementChoice } from "@/components/BulkPlacementChoice";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useExtensionState } from "@/hooks/useExtensionState";
@@ -492,8 +492,8 @@ export function App() {
         {/* Command Bar */}
         <CommandBar lang={lang} onAction={handleCommandAction} />
 
-        {/* Spotlight Configuration (Enlarge Size & Anchor Settings) */}
-        <SpotlightConfig
+        {/* FocusView Configuration (Enlarge Size & Anchor Settings) */}
+        <FocusViewConfig
           lang={lang}
           state={state}
           updateState={updateState}
