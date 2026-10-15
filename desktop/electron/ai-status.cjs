@@ -126,27 +126,6 @@ function paneStatus(list) {
   return best;
 }
 
-/** Counts for the top bar and the dock badge. */
-function summarize(statuses) {
-  const counts = { working: 0, "needs-you": 0, done: 0, error: 0 };
-  for (const entry of statuses) if (entry?.status && entry.status in counts) counts[entry.status] += 1;
-  return counts;
-}
-
-/**
- * Pane ids in deck order to jump to with ⌘J: those that need you first, then
- * errors, then finished ones, starting after the current pane and wrapping.
- */
-function nextAttention(order, statuses, current) {
-  const start = order.indexOf(current);
-  const rotated = start < 0 ? order : [...order.slice(start + 1), ...order.slice(0, start + 1)];
-  for (const status of ["needs-you", "error", "done"]) {
-    const found = rotated.find((id) => statuses[id]?.status === status && id !== current);
-    if (found) return found;
-  }
-  return rotated.find((id) => statuses[id]?.status && id !== current && statuses[id].status !== "working") ?? null;
-}
-
 /**
  * Puts `text` in the page's prompt box the way typing would, so React and
  * ProseMirror editors see it, and presses Send only when asked. Resolves to
@@ -293,6 +272,6 @@ function insertScript(rules, text, submit) {
 const draftScript = () => `(${hasDraft})(document);`;
 
 module.exports = {
-  catalog, STATUSES, MIN_WORK_MS, siteFor, rulesFor, probePage, settleStatus, nextStatus, paneStatus, summarize, nextAttention,
+  catalog, STATUSES, MIN_WORK_MS, siteFor, rulesFor, probePage, settleStatus, nextStatus, paneStatus,
   insertPrompt, hasDraft, monitorScript, insertScript, draftScript,
 };

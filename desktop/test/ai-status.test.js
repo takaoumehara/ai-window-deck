@@ -93,17 +93,9 @@ test("pane status: Done after work, kept until seen; Error only after work", () 
   assert.equal(ai.nextStatus("done", null), "done", "navigating away keeps the news until seen");
 });
 
-test("pane summary, counts and the jump order", () => {
+test("a pane shows the status of the tab that most needs attention", () => {
   assert.deepEqual(ai.paneStatus([{ status: "working" }, { status: "done", tab: 2 }, null]), { status: "done", tab: 2 });
   assert.equal(ai.paneStatus([null, { status: null }]), null);
-  const statuses = { a: { status: "working" }, b: { status: "done" }, c: { status: "needs-you" }, d: null, e: { status: "needs-you" } };
-  assert.deepEqual(ai.summarize(Object.values(statuses)), { working: 1, "needs-you": 2, done: 1, error: 0 });
-  const order = ["a", "b", "c", "d", "e"];
-  assert.equal(ai.nextAttention(order, statuses, "a"), "c");
-  assert.equal(ai.nextAttention(order, statuses, "c"), "e");
-  assert.equal(ai.nextAttention(order, statuses, "e"), "c");
-  assert.equal(ai.nextAttention(order, { a: { status: "working" } }, "b"), null, "Working panes are not jumped to");
-  assert.equal(ai.nextAttention(order, { b: { status: "done" } }, null), "b");
 });
 
 test("prompts go into textareas and editors; Send is pressed only when asked", async () => {
