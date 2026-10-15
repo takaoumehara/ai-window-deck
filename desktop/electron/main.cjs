@@ -883,6 +883,7 @@ function syncPanes(target, nextPanes) {
     if (!pane) {
       pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, device: null, views: new Map(), sleeping: new Map() };
       panes.set(next.id, pane);
+      sendTo(target, "pane:sleep", { paneId: next.id, tabs: [], waking: [] });
     }
     // A new device (or leaving the preview) reloads the pages, so servers
     // that pick a layout by user agent send the right one; rotating doesn't.
@@ -931,6 +932,7 @@ function syncPanes(target, nextPanes) {
     if (seen.has(paneId)) continue;
     for (const view of pane.views.values()) destroyView(target, view);
     panes.delete(paneId);
+    sendTo(target, "pane:sleep", { paneId, tabs: [], waking: [] });
   }
   markSeen(target, target.focusedPaneId);
   publishAi(target);
