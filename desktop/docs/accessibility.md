@@ -1,6 +1,6 @@
 # Accessibility — AI Window Deck for Mac (desktop app)
 
-> Last updated: 2026-10-14 · Version 0.2.7  
+> Last updated: 2026-10-15 · Version 0.3.0  
 > Target: WCAG 2.2 AA · Platform: Electron 38 desktop app (Chromium renderer), macOS first, Windows/Linux builds share the code  
 > Surfaces: top bar, sidebar (expanded and rail), panes (title bar, tabs, address/find field, mobile preview stage), dividers between panes, pane drag and drop, sheets (Settings, Shortcuts, Sets, Edit window, Paste a list, Find a feature palette, Tips, Arrange panes), Google sign-in window  
 > Out of scope: the third-party web pages shown inside panes (ChatGPT, Claude, Gmail…). Their accessibility belongs to those sites.
@@ -8,6 +8,16 @@
 ## Verdict
 
 **Not claimed conformant.** This pass measured every colour pair the app draws, fixed all failures, and walked the main flows with the keyboard on a Linux VM build of the same renderer. That evidence supports *no known AA failures in the app's own UI apart from the minor findings below*, but it is not a conformance claim. No screen-reader session ran: VoiceOver needs a real Mac, and the VM has no Orca. 200 % zoom of the shell and macOS "Increase contrast" / "Reduce motion" were also not exercised.
+
+## Changes in 0.3.0
+
+| Change | Criterion | Who it helps | How |
+| --- | --- | --- | --- |
+| AI status badges on pane headers, sidebar cards and the top bar. | 1.4.1, 1.4.3, 2.3.3 | Colour-blind and low-vision users; anyone watching several AIs. | Each state is an icon, a word ("Working", "Needs you", "Done", "Error") and a fill, never colour alone. Text is ink on the fill at 7.78:1 or more (pairs below). The Working spinner stops under `prefers-reduced-motion`. Icon-only badges in narrow panes and the rail keep the word as an `sr-only` label and a `title`. |
+| Desktop notifications when an AI finishes or needs you. | 2.2.4, 1.4.2 | Users who step away; users who find sounds distracting. | Only for panes you aren't looking at. Notifications and sound are separate switches in Settings, and sound is off by default. Clicking a notification focuses that pane. ⌘J and the palette reach the same panes without a pointer. |
+| Settings gained checkboxes for AI status and pane sleep. | 1.3.1, 4.1.2, 3.3.2 | Screen-reader and keyboard users. | Native checkboxes with visible labels (`CheckRow`). The per-site list and the sleep minutes are each a `fieldset` with a `legend`. |
+| Send to several AIs. | 3.3.4, 3.2.2 | Everyone, especially users with cognitive or motor impairments. | Text is only typed in unless "Also press Send in each AI" is ticked (off by default), so nothing is submitted by surprise. Failures name the pane in the notice. `⌘/Ctrl+Enter` runs it from the textarea. |
+| Pane sleep. | 4.1.3, 1.1.1 | Screen-reader users; everyone. | A sleeping tab shows a moon (`role="img"` with a label and title), and kept-awake panes a cup. Waking shows the last snapshot and a "Waking…" pill with `role="status"`. A page never sleeps while it holds unsent text, plays media, is in a sign-in, or has an AI working or waiting. |
 
 ## Changes in 0.2.7
 
@@ -58,7 +68,7 @@
 
 | Pass | Result | Evidence and limit |
 | --- | --- | --- |
-| 1. Automated | Executed | `npm test` (90 tests, including WCAG maths and every audited pair ≥ its threshold) and `node scripts/contrast.mjs --check`. No axe/Lighthouse run: the shell is not a web page reachable by those tools without extra wiring. |
+| 1. Automated | Executed | `npm test` (119 tests, including WCAG maths and every audited pair ≥ its threshold) and `node scripts/contrast.mjs --check`. No axe/Lighthouse run: the shell is not a web page reachable by those tools without extra wiring. |
 | 2. Keyboard | Executed on VM (Linux build, same renderer) | ⌘K (Ctrl+K on Linux) from a focused page → focus in the search field. Tab cycles inside the palette only. Esc closes and returns focus to the opener with a visible ring. Edit window: name field focused on open; move buttons keep focus on the moved row. ⇧→ on a tab moves it and keeps focus. Alt+←/→ (Linux) and Ctrl+[ step history. **Not run on macOS:** ⌘←/→, two-finger swipe and the app-command path. |
 | 3. Screen reader | Not assessable here | Markup reviewed: names on icon buttons, `aria-pressed`, combobox/listbox roles, live regions for notices, moves and result counts. A VoiceOver + this app pass on a Mac is still required. Check rotor headings in sheets, palette option announcement, and the live region on URL moves. |
 | 4. Zoom & reflow | Partial | Only a sheet's body scrolls; its head and actions stay visible. Checked down to the minimum window size (886 × 591). The shell has no zoom shortcut of its own (⌘+ zooms the page). macOS display scaling not tested. |
@@ -96,7 +106,7 @@
 
 19 pairs, 7 failing. The script listed 18 then; the key cap border in sheets (ink at alpha 0.3) was measured separately with the same functions.
 
-### After (0.2.6)
+### After (0.3.0)
 
 | Use | Foreground | Background | Ratio | Needs | Result |
 | --- | --- | --- | --- | --- | --- |
@@ -126,11 +136,14 @@
 | Key cap border in sheets | `#7f7f7d` | `#f3f2ee` | 3.60:1 | 3:1 | pass |
 | Focus ring (currentColor) on ink | `#f3f2ee` | `#0b0b0b` | 17.57:1 | 3:1 | pass |
 | Focus ring (currentColor) on paper | `#0b0b0b` | `#f3f2ee` | 17.57:1 | 3:1 | pass |
+| AI status badge: Needs you | `#0b0b0b` | `#f2b33d` | 10.58:1 | 4.5:1 | pass |
+| AI status badge: Done | `#0b0b0b` | `#5bd28f` | 10.37:1 | 4.5:1 | pass |
+| AI status badge: Error | `#0b0b0b` | `#ff7b6b` | 7.78:1 | 4.5:1 | pass |
 | Disabled back / forward icon (exempt, reported) | `#686766` | `#0b0b0b` | 3.50:1 | — | exempt |
 
-27 pairs, 0 failing
+30 pairs, 0 failing
 
-0.2.5 had 21 pairs, all passing. 0.2.6 adds the Chrome-style tab pairs and the placeholder on the page surface (now `#1f1f1e`, or white in the focused pane).
+0.2.5 had 21 pairs, all passing. 0.2.6 adds the Chrome-style tab pairs and the placeholder on the page surface (now `#1f1f1e`, or white in the focused pane). 0.3.0 adds the three filled AI status badges; Working uses the regular pill colours.
 
 ## Criterion notes
 

@@ -22,7 +22,10 @@ and a click or a shortcut enlarges it or puts it back.
 - **Paste a list into one window**: *Edit window → Paste list* takes any text (one URL per line, URLs inside sentences, comma or space separated, bare domains like `moime.app`), shows how many URLs it found and how many are already there, and appends them or replaces the list. Pasting several URLs into a single URL field splits them into rows. Both have an *Undo* button, and saving is one deck undo step.
 - **Import from extension** (in Settings) reads the JSON backup from *Profiles & Backup* or the `.txt` window list. Windows on the backup's active layout start visible; the rest of the library comes in hidden.
 - **Undo** reverts deck edits (adding, editing, hiding, deleting, reordering windows, closing tabs, set changes, pane sizes, shapes and rearranging) without a limit. Switching between Grid, Spotlight and Fill isn't recorded. Hiding, deleting and closing also put an *Undo* button in the title bar.
-- **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, paste and import, updates.
+- **AI status**: panes showing an AI site (Claude and Claude Code, ChatGPT and Codex, Gemini, Perplexity, Cursor agents, v0, Grok, DeepSeek, Copilot, Le Chat, Lovable, Bolt, NotebookLM) get a badge in the title bar and on the sidebar card: *Working*, *Done*, *Needs you* (a permission or approval prompt) or *Error*, each with its own icon and word, not just a colour. The top bar sums them up ("1 needs you · 2 working"); clicking it, or `⌘J`, goes to the next pane that needs you, then errors, then finished ones. When an AI you aren't looking at finishes or needs you, a notification says so (click it to go there; sound is off unless you turn it on), and the Dock badge counts the panes that need you. *Done* clears once you look at the pane. A page the deck doesn't recognise shows nothing rather than a guess.
+- **Send to several AIs** (the paper-plane button in the top bar, or the palette): one prompt, typed into the prompt box of each AI pane you tick. Send is pressed only if you tick *Also press Send*; otherwise the text is just typed in for you to check. *Then show the panes side by side* switches to Grid in one row. Panes it couldn't type into are named in the title bar.
+- **Sleeping panes**: a page that has been out of sight (a background tab, a pane hidden by Fill, a minimized window) and untouched for 30 minutes is closed to save memory. Its tab keeps a moon mark; showing it again reopens the page at the same address and scroll position, under a snapshot until it has loaded. Pages never sleep while on screen, while an AI in them is working, waiting or has unseen news, while they play sound or video, with text you haven't sent, during a sign-in or with a sign-in popup open, or when the pane is set to *Keep Pane Awake* (palette or Deck menu; a cup mark on its card). Settings turns it off or changes the time (10, 30, 60 or 120 minutes). Sites that scroll inside their own panel (most chat apps) reopen at their usual position.
+- **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, AI status (on/off, notifications, sound, per site), sleeping panes, sign-in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
 - Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to → Google / GitHub / Vercel* (also in the palette and Settings) opens that sign-in in a window of its own and reloads the matching panes when it's done. Sign-in popups ("Continue with GitHub" and the like) open as small windows in front of the deck and report back to the page that opened them.
 - **Passkeys don't work inside the app** (Electron has no passkey support: no Touch ID, iCloud Keychain or phone sign-in), so a page that asks for one waits forever. The deck now says so in the title bar. On GitHub, sign in with your password and pick *More options* → authenticator app, GitHub Mobile or SMS for the second step. Password manager extensions don't run in the app either; copy from the 1Password or Passwords app.
@@ -41,6 +44,7 @@ and a click or a shortcut enlarges it or puts it back.
 | `⌘[` / `⌘]`, `⌘←` / `⌘→` (`Ctrl+[` / `Ctrl+]`, `Alt+←` / `Alt+→`) | Back / forward in the focused pane |
 | `⌘⇧M` / `Ctrl+Shift+M` | Mobile preview on / off for the focused pane |
 | `⌃Tab` / `⌃⇧Tab` | Next / previous tab in the focused pane |
+| `⌘J` / `Ctrl+J` | Go to the next AI that needs you (then errors, then finished ones) |
 | `⌥S` / `Alt+S` | Sets |
 | `⌘⌥1`–`⌘⌥9` / `Ctrl+Shift+1`–`9` | Switch to set 1–9 |
 | `⌘N` / `Ctrl+N` | New deck window |
@@ -174,6 +178,20 @@ applies an update signed by the same Developer ID, so every release must be sign
   Keychain, phone), so `navigator.credentials.get()` just stays pending. The pane preload notices a
   passkey request (autofill requests excepted, and never on Google's sign-in pages) and the deck
   says to pick another method. The request itself is left alone, since a USB security key may answer.
+- AI status (`electron/ai-status.cjs`, site rules in `electron/ai-sites.json`): for a recognised
+  site the main process injects a small monitor into the pane preload's isolated world, where the
+  page's own scripts can't reach it. It reads the page (a visible Stop button, a permission prompt,
+  an error alert, the title, and for agent pages sustained DOM activity), waits for the reading to
+  settle, and reports Working / Needs you / Error / idle; the main process turns that into the
+  pane's status (Done = it was working at least 1.5 s and stopped while you weren't looking).
+  Unknown pages and unclear readings give no status. Adding a site is a JSON entry; HTML fixtures
+  in `test/fixtures/ai/` check the rules. Send to several AIs uses the same rules to find the
+  prompt box and types with `insertText` (or the native value setter plus an input event), so
+  React and ProseMirror editors see it.
+- Pane sleep (`electron/pane-sleep.cjs`): every 30 s the main process looks at pages that aren't on
+  screen. One idle past the limit is asked (in the isolated world) whether it plays media or holds
+  unsent text; if not, the deck keeps its URL, scroll position and a snapshot, and closes it. The tab
+  reopens it when shown. The same rules decide everything, and `test/pane-sleep.test.js` covers them.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it
   (`electron/store.cjs`, which also migrates older files): windows send patches of the sets
   they changed, and the others get the result. Undo history (`src/lib/history.js`) lives in
@@ -183,5 +201,6 @@ applies an update signed by the same Developer ID, so every release must be sign
 
 - Sites with bot checks (Cloudflare and others) may challenge the panes the same way they challenge any new browser.
 - No passkeys (Touch ID, iCloud Keychain, phone) and no password manager extensions; see *How it works*.
+- AI status reads each site's page, so a site redesign can hide a state until its rules are updated (it then shows no badge, never a wrong one). Notifications need macOS permission for the app.
 - Panes share one login session; separate sessions per pane (for example, two accounts on the same service) are not built yet.
 - No Windows build in CI yet; `npm run dist:win` works locally but is unsigned.
