@@ -626,13 +626,21 @@ function watchAi(target, paneId, view) {
     if (site) {
       contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: ai.monitorScript(ai.rulesFor(site)) }]).catch(() => {});
     } else {
-      if (!fresh) contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: "globalThis.__deckAiMonitor?.stop()" }]).catch(() => {});
-      setReading(target, paneId, view, null);
+      contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: "globalThis.__deckAiMonitor?.stop()" }]).catch(() => {});
+      view.ai.reading = null;
+      view.ai.status = null;
     }
     if (changed) publishAi(target);
   };
   view.restartAi = () => start(true);
-  contents.on("did-finish-load", () => start(true));
+  // A new document starts with no status: a reload mid-answer is not "Done",
+  // and a permission prompt from the old page no longer waits.
+  contents.on("did-finish-load", () => {
+    view.ai.reading = null;
+    view.ai.status = null;
+    start(true);
+    publishAi(target);
+  });
   contents.on("did-navigate-in-page", (_event, _url, isMainFrame) => isMainFrame && start(false));
 }
 

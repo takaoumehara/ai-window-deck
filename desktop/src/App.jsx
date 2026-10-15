@@ -1266,14 +1266,14 @@ export function App() {
           )}
         </div>
 
-        <div className="app-no-drag ml-auto flex items-center gap-2">
+        <div className="app-no-drag ml-auto flex shrink-0 items-center gap-2">
           {aiTop && (
             <button
               type="button"
               onClick={() => runCommand("ai-next")}
               aria-keyshortcuts={isMac ? "Meta+J" : "Control+J"}
               title={t("aiJumpHint", { key: primaryLabel("J") })}
-              className="cie-chip ink-swap"
+              className="cie-chip ink-swap max-w-[18rem]"
             >
               <AiBadge t={t} status={aiTop} iconOnly />
               <span className="truncate">{aiSummary}</span>

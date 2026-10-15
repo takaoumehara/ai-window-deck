@@ -301,7 +301,6 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses =
                   <span className="weight min-w-0 flex-1 truncate text-sm" style={{ "--w": focused ? 600 : inDeck ? 500 : 400 }}>
                     {name}
                   </span>
-                  {inDeck && aiStatuses[item.id] && <AiBadge t={t} status={aiStatuses[item.id].status} site={aiStatuses[item.id].site} className="shrink-0" />}
                   <span className={`register shrink-0 ${focused ? "text-paper-mute" : "text-ink-mute"}`}>
                     {inDeck ? String(order + 1).padStart(2, "0") : "—"}
                   </span>
@@ -320,13 +319,16 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses =
                     <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
                 </div>
-                <div className="flex flex-col gap-0.5 pl-7">
-                  {urls.slice(0, 2).map((url, urlIndex) => (
-                    <span key={urlIndex} className={`register truncate ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{hostLabel(url)}</span>
-                  ))}
-                  {urls.length > 2 && (
-                    <span className={`register ${focused ? "text-paper-mute" : "text-ink-mute"}`}>+{urls.length - 2} {t("urlsCount")}</span>
-                  )}
+                <div className="flex items-start gap-2 pl-7">
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    {urls.slice(0, 2).map((url, urlIndex) => (
+                      <span key={urlIndex} className={`register truncate ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{hostLabel(url)}</span>
+                    ))}
+                    {urls.length > 2 && (
+                      <span className={`register ${focused ? "text-paper-mute" : "text-ink-mute"}`}>+{urls.length - 2} {t("urlsCount")}</span>
+                    )}
+                  </div>
+                  {inDeck && aiStatuses[item.id] && <AiBadge t={t} status={aiStatuses[item.id].status} site={aiStatuses[item.id].site} className="shrink-0" />}
                 </div>
               </div>
             </li>

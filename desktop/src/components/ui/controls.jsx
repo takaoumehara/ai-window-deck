@@ -51,7 +51,7 @@ export function CheckRow({ checked, onChange, title, hint, disabled = false, chi
         checked={checked}
         disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
-        className="deck-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-ink"
+        className="deck-focus-ring mt-0.5 h-4 w-4 shrink-0 accent-ink [color-scheme:light]"
       />
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-sm">{title}</span>

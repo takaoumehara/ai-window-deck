@@ -102,7 +102,7 @@ export function SettingsSheet({
                     type="checkbox"
                     checked={!ai.off.includes(site.id)}
                     onChange={(event) => onAi({ ...ai, off: event.target.checked ? ai.off.filter((id) => id !== site.id) : [...ai.off, site.id] })}
-                    className="deck-focus-ring h-4 w-4 shrink-0 accent-ink"
+                    className="deck-focus-ring h-4 w-4 shrink-0 accent-ink [color-scheme:light]"
                   />
                   <span className="truncate">{site.name}</span>
                 </label>
