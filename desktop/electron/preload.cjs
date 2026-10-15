@@ -43,6 +43,7 @@ contextBridge.exposeInMainWorld("deck", {
   onSignIn: subscribe("signin:status"),
   onPasskey: subscribe("pane:passkey"),
   onAiStatus: subscribe("ai:status"),
+  onPaneSleep: subscribe("pane:sleep"),
   setFocusedPane: (paneId) => ipcRenderer.send("panes:focused-id", paneId ?? null),
   showWindow: () => ipcRenderer.send("shell:show"),
   broadcast: (paneIds, text, submit) => ipcRenderer.invoke("ai:broadcast", { paneIds, text, submit }),

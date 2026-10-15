@@ -3,8 +3,7 @@
 // rules are deliberately conservative: anything that could lose work or news
 // keeps the page awake.
 
-const SLEEP_DEFAULTS = { enabled: true, minutes: 30 };
-const SLEEP_MINUTES = [10, 30, 60, 120];
+const { choices: SLEEP_MINUTES, ...SLEEP_DEFAULTS } = require("./pane-sleep.json");
 
 function sleepSettingsOf(saved) {
   const value = saved && typeof saved === "object" ? saved : {};

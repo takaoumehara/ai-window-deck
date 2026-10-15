@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Smartphone } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCw, Maximize2, Minimize2, Expand, X, AlertTriangle, Plus, Search, Globe, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Smartphone, Moon } from "lucide-react";
 import { SearchList } from "@desktop/components/ui/SearchList";
 import { DeviceStage } from "@desktop/components/DeviceStage";
 import { hostLabel } from "@desktop/lib/deck-data";
@@ -104,7 +104,7 @@ function TabIcon({ meta, loading, ink }) {
 // to a minimum width, then the strip scrolls sideways (a vertical wheel scrolls
 // it too) with faded edges and arrows; the active tab is kept in view. Narrow
 // panes show only the active tab. The list button opens every tab with search.
-function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, menuButtonRef, onToggleMenu, onSelectTab, onCloseTab, onNewTab, onMoveTab }) {
+function TabStrip({ t, name, urls, meta, sleeping = [], activeTab, focused, compact, menuOpen, menuButtonRef, onToggleMenu, onSelectTab, onCloseTab, onNewTab, onMoveTab }) {
   const [draggedTab, setDraggedTab] = useState(null);
   const [tabGap, setTabGap] = useState(null);
   const [edges, setEdges] = useState({ overflow: false, start: false, end: false });
@@ -181,6 +181,7 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
           const tabMeta = meta?.[tabIndex];
           const host = hostLabel(tabMeta?.url || url);
           const label = tabMeta?.title || host;
+          const asleep = sleeping.includes(tabIndex) && !selected;
           return (
             <span
               key={`${tabIndex}-${url}`}
@@ -238,11 +239,17 @@ function TabStrip({ t, name, urls, meta, activeTab, focused, compact, menuOpen, 
                   event.stopPropagation();
                   onCloseTab(tabIndex);
                 }}
-                title={`${label}\n${tabMeta?.url || url}\n${t("tabReorderHint")}`}
+                title={`${label}${asleep ? ` · ${t("sleepingLabel")}` : ""}\n${tabMeta?.url || url}\n${t("tabReorderHint")}`}
                 className={`cie-tap deck-focus-ring flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-t-[7px] pl-2.5 text-xs ${compact ? "pr-2.5" : "pr-1"}`}
               >
                 <TabIcon meta={tabMeta} loading={tabMeta?.loading} ink={focused} />
                 <span className={`min-w-0 truncate ${selected ? "font-medium" : ""}`}>{label}</span>
+                {asleep && (
+                  <>
+                    <Moon className="h-3 w-3 shrink-0 opacity-70" aria-hidden="true" />
+                    <span className="sr-only">{t("sleepingLabel")}</span>
+                  </>
+                )}
               </button>
               {!compact && <button
                 type="button"
@@ -377,7 +384,7 @@ function DropOverlay({ t, zone }) {
 
 export const Pane = React.forwardRef(function Pane(
   {
-    t, item, urls, index, rect, focused, ai, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
+    t, item, urls, index, rect, focused, ai, sleep, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices, keys,
     onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
     onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice, onMoveTab,
     paneDragging, dropHint, onPaneDragStart, onPaneDragEnd, onPaneDragOver, onPaneDrop, recentDevices, onPopover,
@@ -416,6 +423,7 @@ export const Pane = React.forwardRef(function Pane(
   const enlarged = focused && mode !== "grid";
   const zoom = tabMeta?.zoom ?? 1;
   const showTabs = urls.length > 1 || !compact;
+  const waking = sleep?.waking?.find((entry) => entry.tab === activeTab);
   const pageBody = (
     <>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-center">
@@ -423,6 +431,15 @@ export const Pane = React.forwardRef(function Pane(
         <span className={`register truncate uppercase ${focused ? "text-paper-mute" : "text-ink-mute"}`}>{hostLabel(urls[activeTab] || "")}</span>
       </div>
       {snapshot && <img src={snapshot.src} alt="" draggable={false} className="pane-snapshot" style={{ width: `${snapshot.width}px` }} />}
+      {waking && (
+        <>
+          {waking.snapshot && <img src={waking.snapshot} alt="" draggable={false} className="pane-sleep-snapshot" />}
+          <span className="register absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-pill bg-ink px-3 py-1 uppercase text-paper" role="status">
+            <Moon className="h-3 w-3" aria-hidden="true" />
+            {t("wakingLabel")}
+          </span>
+        </>
+      )}
     </>
   );
 
@@ -496,6 +513,7 @@ export const Pane = React.forwardRef(function Pane(
               name={item.name}
               urls={urls}
               meta={meta}
+              sleeping={sleep?.tabs}
               activeTab={activeTab}
               focused={focused}
               compact={compact}

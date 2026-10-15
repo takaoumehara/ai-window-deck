@@ -27,6 +27,7 @@ import { resolveLanguage, translator } from "@desktop/lib/strings";
 import { deviceForPane, findDevice, paneDeviceOf, togglePaneDevice } from "@desktop/lib/device-frame";
 import { nextComparisonDevice, pushRecent } from "@desktop/lib/device-catalog";
 import { AI_DEFAULTS, aiSettingsOf, broadcastTargets, nextAttention, summarize } from "@desktop/lib/ai-summary";
+import { sleepPrefsOf } from "@desktop/lib/pane-sleep";
 
 // --cie-t-move (360ms) for the .deck-pane transition, plus a few frames of slack.
 const LAYOUT_ANIMATION_MS = 420;
@@ -118,6 +119,8 @@ export function App() {
   const [found, setFound] = useState({});
   const [aiPrefs, setAiPrefs] = useState(AI_DEFAULTS);
   const [aiState, setAiState] = useState({ statuses: {}, sites: {} });
+  const [sleepPrefs, setSleepPrefs] = useState(() => sleepPrefsOf(null));
+  const [paneSleep, setPaneSleep] = useState({});
 
   const deckRef = useRef(null);
   const bodyRefs = useRef(new Map());
@@ -186,6 +189,7 @@ export function App() {
       setDefaultMode(startMode);
       if (settings.defaultDevice) setDefaultDevice(settings.defaultDevice);
       setAiPrefs(aiSettingsOf(settings.ai));
+      setSleepPrefs(sleepPrefsOf(settings.sleep));
       if (!settings.tipsSeen) setSheet("tips");
       setCatalog(devices);
       setLang(language);
@@ -220,8 +224,8 @@ export function App() {
 
   useEffect(() => {
     if (!loaded) return;
-    deck.applyStore({ settings: { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice, ai: aiPrefs } });
-  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice, aiPrefs]);
+    deck.applyStore({ settings: { lang, sidebarOpen: sidebarExpanded, defaultMode, defaultDevice, ai: aiPrefs, sleep: sleepPrefs } });
+  }, [loaded, lang, sidebarExpanded, defaultMode, defaultDevice, aiPrefs, sleepPrefs]);
 
   // Another deck window changed the store. This window's own set stays as it
   // is here (only its name can change elsewhere), so an edit still on its way
@@ -240,6 +244,10 @@ export function App() {
         if (store.settings?.ai) {
           const next = aiSettingsOf(store.settings.ai);
           setAiPrefs((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+        }
+        if (store.settings?.sleep) {
+          const next = sleepPrefsOf(store.settings.sleep);
+          setSleepPrefs((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
         }
       }),
       deck.onDevicesChanged(setCatalog),
@@ -572,6 +580,7 @@ export function App() {
         urls: urlList(item),
         activeTab: activeTabs[item.id] ?? 0,
         visible: rects[index]?.visible ?? false,
+        keepAwake: Boolean(item.keepAwake),
         bounds: bounds.get(item.id),
         device: deviceForPane(paneDevices[item.id], item.device?.landscape),
       }))
@@ -1082,6 +1091,11 @@ export function App() {
       else setPaneDevice(paneId, (device) => ({ ...device, landscape: !device?.landscape }));
     } else if (command === "hide-pane") {
       if (paneId) hideWindow(paneId);
+    } else if (command === "pane-keep-awake") {
+      if (!focusedItem) return;
+      const keepAwake = !focusedItem.keepAwake;
+      setWindows((list) => list.map((item) => (item.id === paneId ? { ...item, keepAwake } : item)));
+      showNotice(t(keepAwake ? "keepAwakeOnMsg" : "keepAwakeOffMsg", { name: focusedItem.name || t("untitledWindow") }));
     } else if (command === "edit-window") {
       if (focusedItem) setEditor({ open: true, item: focusedItem });
     } else if (command === "add-window") {
@@ -1139,6 +1153,7 @@ export function App() {
         setPaneErrors((errors) => ({ ...errors, [paneId]: { tabIndex, description, url } }));
       }),
       deck.onFound(({ paneId, active, matches }) => setFound((list) => ({ ...list, [paneId]: { active, matches } }))),
+      deck.onPaneSleep(({ paneId, tabs, waking }) => setPaneSleep((all) => ({ ...all, [paneId]: { tabs, waking } }))),
       deck.onAiStatus(({ statuses, sites, notify }) => {
         setAiState({ statuses: statuses ?? {}, sites: sites ?? {} });
         if (notify) aiNotifyRef.current?.(notify);
@@ -1354,6 +1369,7 @@ export function App() {
           focusedId={effectiveFocusId}
           favicons={favicons}
           aiStatuses={aiStatuses}
+          sleeping={Object.fromEntries(deckPanes.map((item) => [item.id, Boolean(paneSleep[item.id]?.tabs.includes(activeTabs[item.id] ?? 0))]))}
           switcher={{
             sets,
             currentSetId: setId,
@@ -1400,6 +1416,7 @@ export function App() {
                     mode={mode}
                     focused={item.id === effectiveFocusId}
                     ai={aiStatuses[item.id]}
+                    sleep={paneSleep[item.id]}
                     compact={rect.w * deckSize.width < COMPACT_PANE_PX}
                     activeTab={activeTabs[item.id] ?? 0}
                     meta={paneMeta[item.id]}
@@ -1516,6 +1533,8 @@ export function App() {
         }}
         ai={aiPrefs}
         onAi={setAiPrefs}
+        sleep={sleepPrefs}
+        onSleep={setSleepPrefs}
       />
 
       <BroadcastSheet t={t} open={sheet === "broadcast"} panes={broadcastPanes} onClose={closeSheet} onSubmit={broadcast} />

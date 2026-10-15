@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, Minus, Eye, EyeOff, PanelLeftOpen, ChevronsUpDown } from "lucide-react";
+import { Plus, Minus, Eye, EyeOff, PanelLeftOpen, ChevronsUpDown, Moon, Coffee } from "lucide-react";
 import { IconButton } from "@desktop/components/ui/controls";
 import { urlList, hostLabel } from "@desktop/lib/deck-data";
 import { AiBadge } from "@desktop/components/AiBadge";
@@ -118,6 +118,25 @@ function SetSwitcher({ t, sets, currentSetId, openElsewhere, setLabel, onSwitchS
   );
 }
 
+// Small marks on a card: the pane's page is asleep, or the pane never sleeps.
+function PaneMarks({ t, keepAwake, asleep, focused }) {
+  if (!keepAwake && !asleep) return null;
+  return (
+    <span className={`flex shrink-0 items-center gap-1 self-center ${focused ? "text-paper-mute" : "text-ink-mute"}`}>
+      {asleep && (
+        <span role="img" aria-label={t("sleepingLabel")} title={t("sleepingLabel")}>
+          <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+        </span>
+      )}
+      {keepAwake && (
+        <span role="img" aria-label={t("keepAwakeLabel")} title={t("keepAwakeLabel")}>
+          <Coffee className="h-3.5 w-3.5" aria-hidden="true" />
+        </span>
+      )}
+    </span>
+  );
+}
+
 function RailTile({ t, item, order, focused, favicon, ai, onClick, onDoubleClick }) {
   const inDeck = order >= 0;
   const urls = urlList(item);
@@ -209,7 +228,7 @@ export function Sidebar({ collapsed, favicons = {}, onReveal, onExpand, expandLa
   );
 }
 
-function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses = {}, switcher, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onMove }) {
+function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses = {}, sleeping = {}, switcher, onAdd, onEdit, onDelete, onToggleVisible, onFocus, onMove }) {
   const [dragging, setDragging] = React.useState(null);
   const [dropIndex, setDropIndex] = React.useState(null);
   const endDrag = () => {
@@ -328,6 +347,7 @@ function SidebarPanel({ t, windows, deckOrder, focusedId, favicons, aiStatuses =
                       <span className={`register ${focused ? "text-paper-mute" : "text-ink-mute"}`}>+{urls.length - 2} {t("urlsCount")}</span>
                     )}
                   </div>
+                  <PaneMarks t={t} keepAwake={item.keepAwake} asleep={inDeck && sleeping[item.id]} focused={focused} />
                   {inDeck && aiStatuses[item.id] && <AiBadge t={t} status={aiStatuses[item.id].status} site={aiStatuses[item.id].site} className="shrink-0" />}
                 </div>
               </div>

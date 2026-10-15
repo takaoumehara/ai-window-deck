@@ -66,3 +66,10 @@ test("sleeping tabs follow their URL when tabs move, and are dropped with it", (
   assert.deepEqual([...closed].map(([tab, value]) => [tab, value.name]), [[1, "c"]]);
   assert.equal(sleep.regroupSleeping(sleeping, ["a", "b", "c"], ["a", "b", "c"], new Set([0, 2])).size, 0, "a live page wins its tab");
 });
+
+test("the shell reads sleep settings the same way as the main process", async () => {
+  const { sleepPrefsOf } = await import("../src/lib/pane-sleep.js");
+  for (const saved of [undefined, null, { enabled: false }, { enabled: true, minutes: 120 }, { minutes: 45 }, { enabled: 1 }]) {
+    assert.deepEqual(sleepPrefsOf(saved), sleep.sleepSettingsOf(saved));
+  }
+});

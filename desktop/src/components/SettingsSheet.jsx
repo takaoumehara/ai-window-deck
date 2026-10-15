@@ -5,6 +5,7 @@ import { Button, CheckRow, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
 import { DeviceList, deviceLabel } from "@desktop/components/DevicePicker";
 import aiCatalog from "../../electron/ai-sites.json";
+import { SLEEP_MINUTES } from "@desktop/lib/pane-sleep";
 
 function Section({ title, children }) {
   return (
@@ -35,7 +36,7 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
 
 export function SettingsSheet({
   t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, recentDevices, appVersion, keys,
-  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates, onSignIn, ai, onAi,
+  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates, onSignIn, ai, onAi, sleep, onSleep,
 }) {
   const currentDevice = devices.find((device) => device.id === defaultDevice);
   return (
@@ -108,6 +109,23 @@ export function SettingsSheet({
                 </label>
               ))}
             </div>
+          </fieldset>
+        </Section>
+
+        <Section title={t("settingsSleep")}>
+          <p className="text-xs leading-5 text-paper-mute">{t("settingsSleepNote")}</p>
+          <div className="flex flex-col">
+            <CheckRow checked={sleep.enabled} onChange={(enabled) => onSleep({ ...sleep, enabled })} title={t("settingsSleepEnabled")} />
+          </div>
+          <fieldset disabled={!sleep.enabled} className="flex flex-col gap-1.5 disabled:opacity-40">
+            <legend className="register mb-1.5 uppercase text-paper-mute">{t("settingsSleepAfter")}</legend>
+            <Choices
+              label={t("settingsSleepAfter")}
+              columns="grid-cols-4"
+              options={SLEEP_MINUTES.map((n) => ({ value: n, label: t("sleepMinutes", { n }) }))}
+              value={sleep.minutes}
+              onChange={(minutes) => onSleep({ ...sleep, minutes })}
+            />
           </fieldset>
         </Section>
 

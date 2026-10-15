@@ -58,6 +58,7 @@ const browserStandIn = {
   onSignIn: noSubscribe,
   onPasskey: noSubscribe,
   onAiStatus: noSubscribe,
+  onPaneSleep: noSubscribe,
   setFocusedPane: noop,
   showWindow: noop,
   broadcast: async () => [],

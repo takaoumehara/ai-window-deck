@@ -13,6 +13,7 @@ const {
 const google = require("./google-signin.cjs");
 const popups = require("./popups.cjs");
 const ai = require("./ai-status.cjs");
+const paneSleep = require("./pane-sleep.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -575,9 +576,19 @@ function popupHandler(target, contents, loadInPlace) {
 // (the OAuth callback), it has done its job. When it closes, an opener that is
 // still on the page that opened it reloads, so it shows the new session even
 // if it missed the popup's message.
+// Pages with a popup open (an OAuth window, say) never sleep.
+const popupOpeners = new Map();
+
 function watchPopups(target, contents) {
   contents.on("did-create-window", (child, { url: link }) => {
     const popup = child.webContents;
+    const openerId = contents.id;
+    popupOpeners.set(openerId, (popupOpeners.get(openerId) ?? 0) + 1);
+    child.once("closed", () => {
+      const left = (popupOpeners.get(openerId) ?? 1) - 1;
+      if (left > 0) popupOpeners.set(openerId, left);
+      else popupOpeners.delete(openerId);
+    });
     const openerUrl = contents.getURL();
     const visited = [link];
     if (google.isSignInFlow(link)) {
@@ -741,7 +752,9 @@ function createTabView(target, paneId, url) {
   const settle = () => setTimeout(() => {
     settling = false;
   }, FOCUS_SETTLE_MS);
+  view.lastActive = Date.now();
   contents.on("input-event", (_event, input) => {
+    view.lastActive = Date.now();
     if (input.type === "mouseDown") view.focusRequested = true;
     if (/^(mouseDown|rawKeyDown|keyDown|touchStart)$/.test(input.type)) view.interacted = true;
   });
@@ -846,7 +859,8 @@ function applyPane(target, paneId) {
   const { x, y, width, height, radius = 0 } = pane.bounds;
   const showable = pane.visible && !target.overlayOpen && !target.transitioning && width > 1 && height > 1;
   for (const [tabIndex, view] of pane.views) {
-    const shown = showable && tabIndex === pane.activeTab;
+    if (pane.visible && tabIndex === pane.activeTab) view.lastActive = Date.now();
+    const shown = showable && tabIndex === pane.activeTab && !view.waking;
     view.setVisible(shown);
     view.shown = shown;
     if (!shown) continue;
@@ -867,7 +881,7 @@ function syncPanes(target, nextPanes) {
     seen.add(next.id);
     let pane = panes.get(next.id);
     if (!pane) {
-      pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, device: null, views: new Map() };
+      pane = { urls: [], activeTab: 0, bounds: { x: 0, y: 0, width: 0, height: 0 }, visible: false, device: null, views: new Map(), sleeping: new Map() };
       panes.set(next.id, pane);
     }
     // A new device (or leaving the preview) reloads the pages, so servers
@@ -890,15 +904,20 @@ function syncPanes(target, nextPanes) {
     });
     for (const leftovers of pool.values()) leftovers.forEach((view) => destroyView(target, view));
     const moved = [...views].some(([tabIndex, view]) => pane.views.get(tabIndex) !== view);
+    const sleepingBefore = [...pane.sleeping.keys()].join();
+    pane.sleeping = paneSleep.regroupSleeping(pane.sleeping, pane.urls, next.urls, new Set(views.keys()));
     pane.views = views;
     pane.urls = next.urls;
     pane.activeTab = Math.min(next.activeTab ?? 0, Math.max(0, next.urls.length - 1));
     pane.visible = next.visible;
+    pane.keepAwake = Boolean(next.keepAwake);
     if (next.bounds) pane.bounds = next.bounds;
     const url = pane.urls[pane.activeTab];
     if (url && !pane.views.has(pane.activeTab)) {
-      pane.views.set(pane.activeTab, createTabView(target, next.id, url));
+      if (!pane.sleeping.has(pane.activeTab)) pane.views.set(pane.activeTab, createTabView(target, next.id, url));
+      else if (pane.visible && !target.win.isMinimized()) pane.views.set(pane.activeTab, wakeTab(target, next.id, pane, pane.activeTab));
     }
+    if ([...pane.sleeping.keys()].join() !== sleepingBefore) sendSleep(target, next.id);
     if (moved) for (const view of pane.views.values()) view.report?.();
     if (deviceChanged) {
       for (const view of pane.views.values()) {
@@ -915,6 +934,128 @@ function syncPanes(target, nextPanes) {
   }
   markSeen(target, target.focusedPaneId);
   publishAi(target);
+}
+
+// Pane sleep (pane-sleep.cjs). A page that has been out of sight and untouched
+// for the chosen time is closed; its tab keeps the address, scroll position
+// and a snapshot, and the page reopens when the tab is shown again, under the
+// snapshot until it has loaded.
+const SLEEP_MINUTE_MS = Number(process.env.DECK_SLEEP_MINUTE_MS) || 60_000;
+const SLEEP_SWEEP_MS = Math.max(500, Math.min(30_000, SLEEP_MINUTE_MS / 2));
+const WAKE_TIMEOUT_MS = 10_000;
+const SNAPSHOT_MAX_WIDTH = 960;
+
+function sendSleep(target, paneId) {
+  const pane = target.panes.get(paneId);
+  if (!pane) return;
+  const waking = [...pane.views].filter(([, view]) => view.waking).map(([tab, view]) => ({ tab, snapshot: view.wakeSnapshot ?? null }));
+  sendTo(target, "pane:sleep", { paneId, tabs: [...pane.sleeping.keys()], waking });
+}
+
+function sleepState(target, pane, tabIndex, view, now, limitMs) {
+  const contents = view.webContents;
+  const url = contents.getURL();
+  return {
+    keepAwake: pane.keepAwake,
+    displayed: pane.visible && tabIndex === pane.activeTab && !target.win.isMinimized() && target.win.isVisible(),
+    idleMs: now - (view.lastActive ?? now),
+    limitMs,
+    aiStatus: view.ai?.status ?? null,
+    audible: contents.isCurrentlyAudible(),
+    authPage: popups.isAuthUrl(url) || google.isSignInPage(url),
+    popupOpen: popupOpeners.has(contents.id),
+    loading: contents.isLoading(),
+    url,
+  };
+}
+
+async function sleepView(target, paneId, tabIndex, view, limitMs) {
+  const contents = view.webContents;
+  const current = () => {
+    const pane = target.panes.get(paneId);
+    return !target.win.isDestroyed() && !contents.isDestroyed() && pane?.views.get(tabIndex) === view ? pane : null;
+  };
+  const page = await contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: paneSleep.reportScript(ai.hasDraft) }]).catch(() => null);
+  let pane = current();
+  if (!pane || paneSleep.sleepBlocker(sleepState(target, pane, tabIndex, view, Date.now(), limitMs), page)) return;
+  let snapshot = null;
+  try {
+    const image = await contents.capturePage(undefined, { stayHidden: true });
+    if (!image.isEmpty()) {
+      const scaled = image.getSize().width > SNAPSHOT_MAX_WIDTH ? image.resize({ width: SNAPSHOT_MAX_WIDTH }) : image;
+      snapshot = `data:image/jpeg;base64,${scaled.toJPEG(70).toString("base64")}`;
+    }
+  } catch {
+    // No snapshot: the pane shows its loading placeholder while it wakes.
+  }
+  pane = current();
+  if (!pane || paneSleep.sleepBlocker(sleepState(target, pane, tabIndex, view, Date.now(), limitMs), page)) return;
+  pane.sleeping.set(tabIndex, { url: contents.getURL(), scrollX: page.scrollX, scrollY: page.scrollY, snapshot });
+  pane.views.delete(tabIndex);
+  destroyView(target, view);
+  sendSleep(target, paneId);
+  publishAi(target);
+}
+
+function wakeTab(target, paneId, pane, tabIndex) {
+  const record = pane.sleeping.get(tabIndex);
+  pane.sleeping.delete(tabIndex);
+  const view = createTabView(target, paneId, record.url);
+  view.waking = true;
+  view.wakeSnapshot = record.snapshot;
+  const contents = view.webContents;
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    if (contents.isDestroyed()) return;
+    view.waking = false;
+    view.wakeSnapshot = null;
+    applyPane(target, paneId);
+    sendSleep(target, paneId);
+  };
+  const timer = setTimeout(finish, WAKE_TIMEOUT_MS);
+  contents.once("did-finish-load", () => {
+    if (record.scrollX || record.scrollY) {
+      contents.executeJavaScriptInIsolatedWorld(ISOLATED_WORLD, [{ code: paneSleep.restoreScrollScript(record.scrollX, record.scrollY) }]).catch(() => {});
+    }
+    setTimeout(finish, 120);
+  });
+  contents.once("did-fail-load", (_event, code, _description, _url, isMainFrame) => isMainFrame && code !== -3 && finish());
+  contents.once("destroyed", () => clearTimeout(timer));
+  setImmediate(() => sendSleep(target, paneId));
+  return view;
+}
+
+// A window coming back from the Dock wakes the pages it shows.
+function wakeShown(target) {
+  for (const [paneId, pane] of target.panes) {
+    if (!pane.visible || pane.views.has(pane.activeTab) || !pane.sleeping.has(pane.activeTab)) continue;
+    pane.views.set(pane.activeTab, wakeTab(target, paneId, pane, pane.activeTab));
+    applyPane(target, paneId);
+    sendSleep(target, paneId);
+  }
+}
+
+function sleepSweep() {
+  const settings = paneSleep.sleepSettingsOf(store?.settings?.sleep);
+  if (!settings.enabled) return;
+  const limitMs = settings.minutes * SLEEP_MINUTE_MS;
+  const now = Date.now();
+  for (const target of shells.values()) {
+    if (target.win.isDestroyed()) continue;
+    for (const [paneId, pane] of target.panes) {
+      for (const [tabIndex, view] of pane.views) {
+        if (view.sleepPending || view.waking || view.webContents.isDestroyed()) continue;
+        if (paneSleep.sleepBlocker(sleepState(target, pane, tabIndex, view, now, limitMs), { media: false, draft: false })) continue;
+        view.sleepPending = true;
+        sleepView(target, paneId, tabIndex, view, limitMs).catch(() => {}).finally(() => {
+          view.sleepPending = false;
+        });
+      }
+    }
+  }
 }
 
 function activeContents(target, paneId) {
@@ -1007,6 +1148,7 @@ function buildMenu() {
         command("arrange-open", "Arrange Panes…"),
         command("pane-move-earlier", "Move Pane Earlier"),
         command("pane-move-later", "Move Pane Later"),
+        command("pane-keep-awake", "Keep Pane Awake"),
         { type: "separator" },
         command("focus-next", "Next pane"),
         command("focus-previous", "Previous pane"),
@@ -1090,6 +1232,8 @@ function createShellWindow({ setId = null, frame = { ...DEFAULT_SIZE } } = {}) {
     lastFocusedShell = target;
     markSeen(target, target.focusedPaneId);
   });
+  win.on("restore", () => wakeShown(target));
+  win.on("show", () => wakeShown(target));
   win.webContents.on("focus", () => {
     target.focused = win.webContents;
   });
@@ -1382,6 +1526,7 @@ app.whenReady().then(async () => {
   store = migrateStore(await readStore());
   buildMenu();
   restoreWindows();
+  setInterval(sleepSweep, SLEEP_SWEEP_MS);
   updater = createUpdater((state) => {
     lastUpdateState = state;
     broadcast("update:state", state);

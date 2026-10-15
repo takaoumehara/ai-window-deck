@@ -37,6 +37,7 @@
     { "id": "focus-previous", "group": "layout", "accelerator": "Alt+Shift+Tab", "label": "cmdFocusPrevious", "keywords": "kwFocus" },
     { "id": "toggle-sidebar", "group": "layout", "accelerator": "Alt+B", "label": "kbSidebar", "keywords": "kwSidebar" },
     { "id": "hide-pane", "group": "layout", "label": "hide", "keywords": "kwHide", "pane": true },
+    { "id": "pane-keep-awake", "group": "layout", "label": "cmdKeepAwake", "keywords": "kwKeepAwake", "pane": true },
     { "id": "arrange-open", "group": "layout", "label": "arrangeTitle", "keywords": "kwArrange" },
     { "id": "shape-auto", "group": "layout", "label": "cmdShapeAuto", "keywords": "kwArrange" },
     { "id": "shape-columns", "group": "layout", "label": "cmdShapeColumns", "keywords": "kwArrange" },
