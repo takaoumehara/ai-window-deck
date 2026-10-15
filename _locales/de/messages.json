@@ -5,8 +5,8 @@
   "extDescription": {
     "message": "Ordnet KI-Fenster in Kacheln an, vergrößert eins per Kürzel und wechselt schnell zwischen ihnen."
   },
-  "cmdSpotlight": {
-    "message": "Vergrößern / Zurück"
+  "cmdFocusView": {
+    "message": "Fokusansicht: gewähltes Fenster vergrößern"
   },
   "cmdHome": {
     "message": "Zurück an den Platz im Layout"

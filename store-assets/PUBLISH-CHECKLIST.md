@@ -31,7 +31,7 @@ The store listing graphics are uploaded separately from the package, so a new ZI
 | Small promo tile (440 × 280) | `listing/promo-small.png` |
 | Marquee promo tile (1400 × 560) | `listing/promo-marquee.png` |
 
-Listing text, including "What's new in 1.11.2": `listing/en/description.txt` and `listing/ja/description.txt`. The short description is the manifest's `extDescription`; Chrome fills it in from the package. Other locales: `LOCALIZED-PRODUCT-DETAILS.md` (pre-1.11 text; add the register feature when you update them).
+Listing text, including "What's new in 1.11.2": `listing/<locale>/description.txt` for en, ja, de, es, fr, ko, pt_BR and zh_CN. The same text is collected in `LOCALIZED-PRODUCT-DETAILS.md`. The short description is the manifest's `extDescription`; Chrome fills it in from the package.
 
 Regenerate the graphics in this order:
 

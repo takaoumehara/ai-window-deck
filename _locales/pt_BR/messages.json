@@ -5,8 +5,8 @@
   "extDescription": {
     "message": "Organiza janelas de IA em grade, amplia uma com um atalho e alterna rapidamente entre elas."
   },
-  "cmdSpotlight": {
-    "message": "Ampliar / restaurar"
+  "cmdFocusView": {
+    "message": "Visão em foco: ampliar a janela escolhida"
   },
   "cmdHome": {
     "message": "Voltar ao seu espaço no layout"

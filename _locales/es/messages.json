@@ -5,8 +5,8 @@
   "extDescription": {
     "message": "Organiza tus ventanas de IA en cuadrícula, amplía una con un atajo y cambia rápidamente entre ventanas."
   },
-  "cmdSpotlight": {
-    "message": "Ampliar / restaurar"
+  "cmdFocusView": {
+    "message": "Vista de enfoque: ampliar la ventana elegida"
   },
   "cmdHome": {
     "message": "Volver a su casilla del diseño"

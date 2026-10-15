@@ -53,9 +53,9 @@ Website: <https://ai-window-deck.vercel.app/>
 
 - **URLs + Fenster registrieren.** Jedes gespeicherte Fenster hat einen Namen und eine oder mehrere URLs, die als Tabs geöffnet werden. Fügen Sie Fenster einzeln hinzu oder fügen Sie eine Liste von Websites ein: Jeder durch eine Leerzeile getrennte Block wird zu einem Fenster. Zeilen, die Aufmerksamkeit brauchen, werden rot markiert, mit einem Link zur Zeile und der Schaltfläche **Korrigieren**. Sie können auch eine `.txt`-Datei importieren und exportieren.
 - **Adressen und lokale Dateien.** `github.com` wird als `https://github.com` gespeichert; `localhost` und lokale Adressen erhalten `http://`. Lokale Pfade wie `/Users/me/My Site/index.html` oder `C:\docs\notes.html` öffnen sich als `file://`-Tabs, sobald *Zugriff auf Datei-URLs zulassen* für die Erweiterung aktiviert ist. Mehrere URLs in einer Zeile werden jeweils zu einem Tab.
-- **Layout-Arbeitsfläche.** Ziehen Sie Fenster auf eine 12 × 12 große Arbeitsfläche und ändern Sie ihre Größe an jeder Kante. Zur Auswahl stehen die Layouts Automatisch, Vertikal, Horizontal, Raster, Fokus (ein großes Fenster) und Frei. Die Arbeitsfläche unterstützt Rückgängig und Wiederholen, und Sie können mehrere Layout-Vorlagen (A, B, …) anlegen.
+- **Layout-Arbeitsfläche.** Ziehen Sie Fenster auf eine 12 × 12 große Arbeitsfläche und ändern Sie ihre Größe an jeder Kante. Zur Auswahl stehen die Layouts Automatisch, Vertikal, Horizontal, Raster, Ein großes Fenster und Frei. Die Arbeitsfläche unterstützt Rückgängig und Wiederholen, und Sie können mehrere Layout-Vorlagen (A, B, …) anlegen.
 - **Öffnen und neu anordnen.** Ein Klick öffnet alle Fenster des Layouts und kachelt sie auf dem oder den ausgewählten Bildschirmen, wobei die Tabs jedes Fensters gruppiert werden. *Neu anordnen* bringt bereits geöffnete Fenster wieder an ihren Platz.
-- **Spotlight.** `Alt+X` vergrößert das aktive Fenster: auf die Hälfte, hochkant, drei Viertel, volle Höhe, Vollbild oder eine benutzerdefinierte Größe. Sie legen fest, ob es von seiner aktuellen Position oder von der Bildschirmmitte aus wächst. Drücken Sie erneut `Alt+X` oder `Alt+Z`, um es wieder in seine Kachel zurückzusetzen.
+- **Fokusansicht.** `Alt+X` vergrößert das gewählte Fenster: ganzer Bildschirm, etwa 80 %, Hälfte, volle Höhe oder eine eigene Größe. Sie legen fest, ob es an Ort und Stelle oder von der Bildschirmmitte aus wächst. Drücken Sie erneut `Alt+X` oder `Alt+Z`, um es wieder in seine Kachel zurückzusetzen.
 - **Zwischen Fenstern wechseln.** Wechseln Sie zum vorherigen oder nächsten Fenster, holen Sie Fenster 1–8 in den Vordergrund, machen Sie die letzte Anordnung rückgängig und schalten Sie den Vollbildmodus ein oder aus.
 - **Mehrere Bildschirme.** Wählen Sie, auf welchem Monitor oder welchen Monitoren das Deck geöffnet wird.
 - **Schwebende Steuerung und großes Fenster.** Lassen Sie eine kompakte Steuerung geöffnet oder öffnen Sie die Einstellungen in einem eigenen Fenster.
@@ -92,7 +92,7 @@ Das Stammverzeichnis des Repositorys ist das 1.11.2-Erweiterungspaket selbst, es
 3. **Registrieren Sie Fenster** mit **URLs + Fenster registrieren**: Wählen Sie *Einzeln* (ein Name sowie eine oder mehrere URLs) oder *Gesammelt (Text einfügen)*.
 4. **Ziehen Sie Fenster auf die Arbeitsfläche.** Legen Sie die gewünschte Anzahl an Fenstern fest, wählen Sie ein Layout und ändern Sie die Größe der Kacheln an ihren Kanten.
 5. Klicken Sie auf **Öffnen**. Jedes Fenster wird in einem eigenen Chrome-Fenster geöffnet und entsprechend der Arbeitsfläche gekachelt.
-6. Nutzen Sie während der Arbeit die Tastenkombinationen für Spotlight und Navigation.
+6. Nutzen Sie während der Arbeit die Tastenkombinationen für die Fokusansicht und die Navigation.
 
 Tipps:
 
@@ -104,7 +104,7 @@ Tipps:
 
 | Befehl | Standard |
 | --- | --- |
-| Spotlight: aktives Fenster vergrößern / zurück in seine Kachel | `Alt+X` |
+| Fokusansicht: Alt+X vergrößert das gewählte Fenster | `Alt+X` |
 | Fenster in die ursprüngliche Kachel zurücksetzen | `Alt+Z` |
 | Deck-Fenster anordnen (neu kacheln) | `Alt+A` |
 | Vollbild / zurück | `Alt+Q` |

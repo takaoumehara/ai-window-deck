@@ -37,7 +37,7 @@
       "suggested_key": {
         "default": "Alt+X"
       },
-      "description": "__MSG_cmdSpotlight__"
+      "description": "__MSG_cmdFocusView__"
     },
     "restore-home": {
       "suggested_key": {

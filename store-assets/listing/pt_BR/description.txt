@@ -1,0 +1,57 @@
+AI Window Deck 1.11.2 — Chrome Web Store listing text (Português do Brasil)
+
+==============================
+Short description (91/132)
+==============================
+This is the manifest's extDescription. Chrome fills it in from the package; it is not typed in the dashboard.
+
+Organiza janelas de IA em grade, amplia uma com um atalho e alterna rapidamente entre elas.
+
+==============================
+Detailed description
+==============================
+
+O AI Window Deck é o gerenciador de janelas para o Claude Code na nuvem e o Codex. Toque vários projetos ao mesmo tempo sem se perder: salve os sites que você usa juntos, organize-os em um quadro e abra todos de uma vez como janelas do Chrome lado a lado. Seu perfil do Chrome, logins, gerenciador de senhas e outras extensões continuam exatamente como estão.
+
+Monte um deck para o Projeto A, o Projeto B e o Projeto C: pesquisa, rascunho, revisão ou qualquer trabalho em que o Claude Code, o Codex e as referências precisem ficar visíveis ao mesmo tempo. Quando uma janela precisar de toda a sua atenção, pressione Alt+X para ampliá-la. Pressione de novo e todas as janelas voltam ao seu espaço.
+
+Principais recursos
+
+• Registrar URLs + janela: adicione janelas dentro da página, uma por vez ou em lote. Cole uma mensagem com seus sites e cada bloco separado por uma linha em branco vira uma janela. As linhas que precisam de atenção ficam vermelhas, com um botão Corrigir. Você também pode importar e exportar um arquivo .txt.
+• Endereços inteligentes: digite github.com e ele é salvo como https://github.com (localhost e endereços locais recebem http://). Arquivos locais como /Users/me/My Site/index.html ou C:\docs\notes.html abrem como abas file://. Várias URLs na mesma linha viram cada uma uma aba.
+• Quadro de layout: arraste janelas para o quadro e redimensione-as por qualquer borda. Escolha Auto, Vertical, Horizontal, Grade, Uma janela grande ou Livre. Desfaça, refaça e mantenha vários layouts predefinidos.
+• Abertura com um clique: abra todas as janelas do layout, lado a lado na tela que você escolher, com as abas agrupadas por nome. Reorganizar devolve ao lugar as janelas já abertas.
+• Visão em foco: Alt+X amplia a janela escolhida para preencher a tela, cerca de 80%, metade, altura total ou um tamanho personalizado, no lugar ou centralizada. Alt+Z devolve ao espaço uma janela cujo tamanho você mudou à mão.
+• Ir de uma janela a outra: janela anterior e próxima, focar as janelas 1–8, desfazer a última organização e alternar a tela cheia. Todos os atalhos podem ser alterados no Chrome.
+• Várias telas: escolha em qual monitor ou monitores o deck será aberto.
+• Controle flutuante: mantenha um controle compacto aberto ao lado do seu trabalho.
+• Backup: faça backup ou restaure todas as janelas, layouts e configurações em um arquivo JSON.
+• 8 idiomas: inglês, japonês, alemão, espanhol, francês, coreano, português do Brasil e chinês simplificado.
+
+Privacidade
+
+Não há conta, servidor, análises de uso nem código remoto. O AI Window Deck nunca lê o conteúdo das páginas. Ele lê apenas a posição das janelas e os títulos e URLs das abas abertas, para listar e organizar suas janelas. As configurações são salvas no armazenamento de extensões do Chrome, e o Chrome pode sincronizá-las entre seus próprios dispositivos se a sincronização do Chrome estiver ativada. Nada é enviado ao desenvolvedor nem a terceiros.
+
+Gratuito e de código aberto (MIT). Apoie o desenvolvimento no Ko-fi: https://ko-fi.com/G2G71VP1DF
+Código-fonte e suporte: https://github.com/takaoumehara/ai-window-deck
+
+==============================
+Novidades da 1.11.2
+==============================
+
+• "Registrar URLs + janela" agora abre dentro da página, e não em uma caixa de diálogo. Escolha uma por vez ou colagem em lote; o cartão do lote mostra uma animação curta de colar uma lista de sites.
+• A importação em lote marca em vermelho as linhas com problema e lista cada um com um link para a linha, um botão Corrigir e "Corrigir tudo o que der".
+• Endereços sem https:// são completados; localhost e endereços locais recebem http://.
+• Arquivos locais funcionam, inclusive caminhos com espaços, caminhos C:\ e URLs file:///.
+• Várias URLs na mesma linha viram cada uma uma aba. Linhas como "Memo:" continuam nomes de janela, e um bloco sem nome se chama "Janela N".
+• Depois de salvar em lote, escolha na página se as novas janelas são colocadas automaticamente no quadro.
+• A vista Mais tem um link para o Ko-fi.
+
+==============================
+Screenshots (store-assets/listing/en/, 1280 × 800)
+==============================
+01-register.png      Registrar URLs + janela: uma por vez ou colar uma lista
+02-bulk-paste.png    Linhas vermelhas, com Corrigir
+03-layout.png        Organizar no quadro
+04-focus-view.png    Alt+X: uma janela fica grande
+05-launch.png        Abrir

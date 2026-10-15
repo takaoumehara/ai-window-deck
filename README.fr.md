@@ -53,9 +53,9 @@ Site web: <https://ai-window-deck.vercel.app/>
 
 - **Enregistrer URL + fenêtre.** Chaque fenêtre enregistrée possède un nom et une ou plusieurs URL, qui s'ouvrent sous forme d'onglets. Ajoutez les fenêtres une par une, ou collez une liste de sites : chaque bloc séparé par une ligne vide devient une fenêtre. Les lignes à revoir sont marquées en rouge, avec un lien vers la ligne et un bouton **Corriger**. Vous pouvez aussi importer et exporter un fichier `.txt`.
 - **Adresses et fichiers locaux.** `github.com` est enregistré comme `https://github.com` ; `localhost` et les adresses locales reçoivent `http://`. Les chemins locaux comme `/Users/me/My Site/index.html` ou `C:\docs\notes.html` s'ouvrent en onglets `file://` dès que *Autoriser l'accès aux URL de fichier* est activé pour l'extension. Plusieurs URL sur une ligne deviennent chacune un onglet.
-- **Canevas de disposition.** Faites glisser des fenêtres sur un canevas de 12 × 12 et redimensionnez-les depuis n'importe quel bord. Les dispositions disponibles sont Auto, Vertical, Horizontal, Grille, Focus (une grande fenêtre) et Libre. Le canevas permet d'annuler et de rétablir, et vous pouvez conserver plusieurs préréglages de disposition (A, B, …).
+- **Canevas de disposition.** Faites glisser des fenêtres sur un canevas de 12 × 12 et redimensionnez-les depuis n'importe quel bord. Les dispositions disponibles sont Auto, Vertical, Horizontal, Grille, Grande fenêtre et Libre. Le canevas permet d'annuler et de rétablir, et vous pouvez conserver plusieurs préréglages de disposition (A, B, …).
 - **Ouverture et réorganisation.** Un clic ouvre toutes les fenêtres de la disposition et les place en mosaïque sur le ou les écrans choisis, avec leurs onglets regroupés. *Réorganiser* remet à leur place les fenêtres déjà ouvertes.
-- **Spotlight.** `Alt+X` agrandit la fenêtre active : moitié, en hauteur, trois quarts, pleine hauteur, plein écran ou taille personnalisée. Vous choisissez si elle s'agrandit depuis sa position actuelle ou depuis le centre de l'écran. Appuyez de nouveau sur `Alt+X`, ou sur `Alt+Z`, pour la remettre dans sa vignette.
+- **Vue focus.** `Alt+X` agrandit la fenêtre choisie : plein écran, environ 80 %, moitié, pleine hauteur ou taille personnalisée. Vous choisissez si elle s'agrandit sur place ou depuis le centre de l'écran. Appuyez de nouveau sur `Alt+X`, ou sur `Alt+Z`, pour la remettre dans sa vignette.
 - **Navigation entre les fenêtres.** Passez à la fenêtre précédente ou suivante, affichez la fenêtre 1 à 8, annulez la dernière organisation et basculez en plein écran.
 - **Plusieurs écrans.** Choisissez le ou les moniteurs sur lesquels le deck s'ouvre.
 - **Contrôleur flottant et grande fenêtre.** Gardez un contrôleur compact ouvert, ou ouvrez les paramètres dans une fenêtre dédiée.
@@ -92,7 +92,7 @@ La racine du dépôt est le paquet de l'extension 1.11.2 lui-même : il n'y a ri
 3. **Enregistrez des fenêtres** avec **Enregistrer URL + fenêtre** : choisissez *Une par une* (un nom, ainsi qu'une ou plusieurs URL) ou *En bloc (coller du texte)*.
 4. **Faites glisser les fenêtres sur le canevas.** Indiquez le nombre de fenêtres souhaité, choisissez une disposition et redimensionnez les vignettes depuis leurs bords.
 5. Cliquez sur **Ouvrir**. Chaque fenêtre s'ouvre dans sa propre fenêtre Chrome, disposée en mosaïque conformément au canevas.
-6. Utilisez les raccourcis Spotlight et de navigation pendant votre travail.
+6. Utilisez la vue focus et les raccourcis de navigation pendant votre travail.
 
 Astuces :
 
@@ -104,7 +104,7 @@ Astuces :
 
 | Commande | Par défaut |
 | --- | --- |
-| Spotlight : agrandir la fenêtre active / la remettre dans sa vignette | `Alt+X` |
+| Vue focus : Alt+X agrandit la fenêtre choisie | `Alt+X` |
 | Remettre la fenêtre dans sa vignette d'origine | `Alt+Z` |
 | Organiser (remettre en mosaïque) les fenêtres du deck | `Alt+A` |
 | Plein écran / retour | `Alt+Q` |

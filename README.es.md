@@ -53,9 +53,9 @@ Sitio web: <https://ai-window-deck.vercel.app/>
 
 - **Registrar URL + ventana.** Cada ventana guardada tiene un nombre y una o varias URL, que se abren como pestañas. Añade ventanas una a una o pega una lista de sitios: cada bloque separado por una línea en blanco se convierte en una ventana. Las líneas que necesitan atención se marcan en rojo, con un enlace a la línea y un botón **Corregir**. También puedes importar y exportar un archivo `.txt`.
 - **Direcciones y archivos locales.** `github.com` se guarda como `https://github.com`; `localhost` y las direcciones locales reciben `http://`. Las rutas locales como `/Users/me/My Site/index.html` o `C:\docs\notes.html` se abren como pestañas `file://` cuando *Permitir el acceso a las URL de archivo* está activado para la extensión. Varias URL en una línea se convierten cada una en una pestaña.
-- **Lienzo de diseño.** Arrastra ventanas a un lienzo de 12 × 12 y cambia su tamaño desde cualquier borde. Los diseños disponibles son Auto, Vertical, Horizontal, Cuadrícula, Enfoque (una ventana grande) y Libre. El lienzo permite deshacer y rehacer, y puedes guardar varios diseños predefinidos (A, B, …).
+- **Lienzo de diseño.** Arrastra ventanas a un lienzo de 12 × 12 y cambia su tamaño desde cualquier borde. Los diseños disponibles son Auto, Vertical, Horizontal, Cuadrícula, Una ventana grande y Libre. El lienzo permite deshacer y rehacer, y puedes guardar varios diseños predefinidos (A, B, …).
 - **Abrir y reorganizar.** Con un clic se abren todas las ventanas del diseño y se colocan en mosaico en la(s) pantalla(s) que elegiste, con sus pestañas agrupadas. *Reorganizar cuadrícula* devuelve a su sitio las ventanas que ya abriste.
-- **Spotlight.** `Alt+X` amplía la ventana activa: mitad, alto completo con mitad de ancho, tres cuartos, solo alto completo, pantalla completa o un tamaño personalizado. Tú decides si se amplía desde su posición actual o desde el centro de la pantalla. Pulsa `Alt+X` de nuevo, o `Alt+Z`, para devolverla a su posición en el mosaico.
+- **Vista de enfoque.** `Alt+X` amplía la ventana elegida: pantalla completa, unos 80 %, mitad, alto completo o un tamaño personalizado. Tú decides si se amplía desde donde está o desde el centro de la pantalla. Pulsa `Alt+X` de nuevo, o `Alt+Z`, para devolverla a su posición en el mosaico.
 - **Moverse entre ventanas.** Ve a la ventana anterior o siguiente, enfoca las ventanas 1–8, deshaz la última organización y activa o desactiva la pantalla completa.
 - **Varias pantallas.** Elige en qué monitor o monitores se abre el deck.
 - **Controlador flotante y ventana grande.** Mantén abierto un controlador compacto o abre la configuración en una ventana propia.
@@ -92,7 +92,7 @@ La raíz del repositorio es el propio paquete de la extensión 1.11.2, así que 
 3. **Registra ventanas** con **Registrar URL + ventana**: elige *Una a una* (un nombre y una o varias URL) o *En bloque (pegar texto)*.
 4. **Arrastra ventanas al lienzo.** Indica cuántas ventanas quieres, elige un diseño y cambia el tamaño de los mosaicos desde sus bordes.
 5. Haz clic en **Abrir**. Cada ventana se abre en su propia ventana de Chrome, en mosaico según el lienzo.
-6. Usa los atajos de Spotlight y de navegación mientras trabajas.
+6. Usa la vista de enfoque y los atajos de navegación mientras trabajas.
 
 Consejos:
 
@@ -104,7 +104,7 @@ Consejos:
 
 | Comando | Predeterminado |
 | --- | --- |
-| Spotlight: ampliar la ventana activa / devolverla a su mosaico | `Alt+X` |
+| Vista de enfoque: Alt+X amplía la ventana elegida | `Alt+X` |
 | Devolver la ventana al mosaico en el que empezó | `Alt+Z` |
 | Organizar (reorganizar en mosaico) las ventanas del deck | `Alt+A` |
 | Pantalla completa / volver | `Alt+Q` |

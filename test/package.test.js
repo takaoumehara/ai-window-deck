@@ -44,6 +44,15 @@ test("the package script zips exactly the shipped files and builds nothing", () 
   assert.doesNotMatch(script, /npm run build|vite|build-i18n/);
 });
 
+test("the layout preset is Single large window, and the shortcut is Focus view", () => {
+  const assets = fs.readdirSync(new URL("dist/assets", root));
+  const bundle = read(assets.filter((name) => name.endsWith(".js")).map((name) => `dist/assets/${name}`)[0]);
+  assert.match(bundle, /layoutFocus:"Single large window"/);
+  assert.match(bundle, /layoutFocus:"大きな1枚"/);
+  assert.doesNotMatch(bundle, /layoutFocus:"Focus"/);
+  assert.equal(manifest.commands["toggle-spotlight"].description, "__MSG_cmdFocusView__");
+});
+
 test("the pre-1.11 pages and React source live under legacy/, not in the package root", () => {
   for (const path of ["deck.html", "dock.html", "index.html", "src", "vite.config.js", "strings.js"]) {
     assert.equal(fs.existsSync(new URL(path, root)), false, path);

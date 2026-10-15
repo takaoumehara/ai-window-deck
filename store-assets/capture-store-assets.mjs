@@ -37,7 +37,7 @@ const SAMPLES = {
 const CAPTIONS = {
   en: [
     ["Lay out your AI windows on a canvas", "Drag saved windows onto the canvas, then launch them all at once, tiled."],
-    ["Spotlight one window, then snap back", "Alt+X enlarges the active window. Alt+Z puts it back in its tile."],
+    ["Focus view: one window gets big, then snaps back", "Alt+X enlarges the selected window. Alt+Z puts it back in its tile."],
     ["A library of windows and URL sets", "Each window opens one or more tabs. Edit, reuse, and jump to what's open now."],
     ["Register one at a time, or in bulk", "Paste names and URLs as text, or import and export a .txt file."],
     ["One click from the toolbar", "8 languages. No account, no servers, no tracking. Your settings stay in Chrome."],

@@ -53,9 +53,9 @@ Site: <https://ai-window-deck.vercel.app/>
 
 - **Registrar URLs + janela.** Cada janela salva tem um nome e uma ou mais URLs, que abrem como abas. Adicione janelas uma por uma ou cole uma lista de sites: cada bloco separado por uma linha em branco vira uma janela. As linhas que precisam de atenção ficam em vermelho, com um link para a linha e um botão **Corrigir**. Você também pode importar e exportar um arquivo `.txt`.
 - **Endereços e arquivos locais.** `github.com` é salvo como `https://github.com`; `localhost` e endereços locais recebem `http://`. Caminhos locais como `/Users/me/My Site/index.html` ou `C:\docs\notes.html` abrem como abas `file://` quando *Permitir acesso aos URLs de arquivo* está ativado para a extensão. Várias URLs em uma linha viram uma aba cada.
-- **Quadro de layout.** Arraste janelas para um quadro de 12 × 12 e redimensione-as por qualquer borda. Os layouts disponíveis são Auto, Vertical, Horizontal, Grade, Foco (uma janela grande) e Livre. O quadro tem desfazer e refazer, e você pode manter vários layouts predefinidos (A, B, …).
+- **Quadro de layout.** Arraste janelas para um quadro de 12 × 12 e redimensione-as por qualquer borda. Os layouts disponíveis são Auto, Vertical, Horizontal, Grade, Uma janela grande e Livre. O quadro tem desfazer e refazer, e você pode manter vários layouts predefinidos (A, B, …).
 - **Abrir e reorganizar.** Um clique abre todas as janelas do layout e as distribui lado a lado na(s) tela(s) escolhida(s), com as abas agrupadas. *Reorganizar grade* coloca de volta no lugar as janelas que você já abriu.
-- **Spotlight.** `Alt+X` amplia a janela ativa: metade, altura total com metade da largura, três quartos, só altura total, tela cheia ou um tamanho personalizado. Você escolhe se ela cresce a partir de onde está ou a partir do centro da tela. Pressione `Alt+X` de novo, ou `Alt+Z`, para devolvê-la à sua posição na grade.
+- **Visão em foco.** `Alt+X` amplia a janela escolhida: tela cheia, cerca de 80%, metade, altura total ou um tamanho personalizado. Você escolhe se ela cresce no lugar ou a partir do centro da tela. Pressione `Alt+X` de novo, ou `Alt+Z`, para devolvê-la à sua posição na grade.
 - **Navegar entre janelas.** Vá para a janela anterior ou a próxima, coloque o foco nas janelas 1–8, desfaça a última organização e alterne a tela cheia.
 - **Várias telas.** Escolha em qual monitor ou monitores o deck será aberto.
 - **Controle flutuante e janela grande.** Mantenha um controle compacto aberto ou abra as configurações em uma janela própria.
@@ -92,7 +92,7 @@ A raiz do repositório é o próprio pacote da extensão 1.11.2, então não há
 3. **Registre janelas** com **Registrar URLs + janela**: escolha *Uma por uma* (um nome e uma ou mais URLs) ou *Em lote (colar texto)*.
 4. **Arraste janelas para o quadro.** Defina quantas janelas você quer, escolha um layout e redimensione os espaços pelas bordas.
 5. Clique em **Abrir**. Cada janela abre em sua própria janela do Chrome, distribuída conforme o quadro.
-6. Use os atalhos do Spotlight e de navegação enquanto trabalha.
+6. Use a visão em foco e os atalhos de navegação enquanto trabalha.
 
 Dicas:
 
@@ -104,7 +104,7 @@ Dicas:
 
 | Comando | Padrão |
 | --- | --- |
-| Spotlight: ampliar a janela ativa / voltar ao seu espaço | `Alt+X` |
+| Visão em foco: Alt+X amplia a janela escolhida | `Alt+X` |
 | Devolver a janela ao espaço onde ela começou | `Alt+Z` |
 | Organizar (reorganizar lado a lado) as janelas do deck | `Alt+A` |
 | Tela cheia / voltar | `Alt+Q` |
