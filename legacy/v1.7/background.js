@@ -2,10 +2,10 @@ const DEFAULTS = {
   columns: 4,
   rows: 2,
   gap: 8,
-  spotlightSize: "full",   // full | height | tall | half | custom
-  spotlightWidth: 70,      // percent of the work area, custom only
-  spotlightHeight: 90,
-  spotlightAnchor: "keep", // keep | center
+  focusViewSize: "full",   // full | height | tall | half | custom
+  focusViewWidth: 70,      // percent of the work area, custom only
+  focusViewHeight: 90,
+  focusViewAnchor: "keep", // keep | center
   language: "auto",
   // Saved arrangements. Each is { name, columns, rows, slots: [{name, urls}] }.
   presets: [],
@@ -328,28 +328,28 @@ async function launchDeck(options = {}) {
   return { ok: true, opened: created.length };
 }
 
-// ---- spotlight --------------------------------------------------------
+// ---- focusView --------------------------------------------------------
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 // Grows the window around its own centre so it stays where the eye expects it,
 // then pulls it back inside the work area.
-function spotlightBounds(workArea, window, config) {
+function focusViewBounds(workArea, window, config) {
   let width;
   let height;
-  if (config.spotlightSize === "height") {
+  if (config.focusViewSize === "height") {
     width = window.width ?? workArea.width;   // leave the width exactly as it is
     height = workArea.height;
   } else {
-    const [percentW, percentH] = PRESETS[config.spotlightSize]
-      ?? [config.spotlightWidth, config.spotlightHeight];
+    const [percentW, percentH] = PRESETS[config.focusViewSize]
+      ?? [config.focusViewWidth, config.focusViewHeight];
     width = Math.round(workArea.width * clamp(percentW, 20, 100) / 100);
     height = Math.round(workArea.height * clamp(percentH, 20, 100) / 100);
   }
   width = Math.min(width, workArea.width);
   height = Math.min(height, workArea.height);
 
-  if (config.spotlightAnchor === "center") {
+  if (config.focusViewAnchor === "center") {
     return {
       left: workArea.left + Math.round((workArea.width - width) / 2),
       top: workArea.top + Math.round((workArea.height - height) / 2),
@@ -406,7 +406,7 @@ const snapshotGeometry = (window) => ({
   state: window.state,
 });
 
-async function toggleSpotlight() {
+async function toggleFocusView() {
   let window = await chrome.windows.getLastFocused();
   const config = await settings();
   const { saved, stack } = await geometry(window.id);
@@ -429,7 +429,7 @@ async function toggleSpotlight() {
   await pushUndo([window]);
   const previous = snapshotGeometry(window);
 
-  if (config.spotlightSize === "full") {
+  if (config.focusViewSize === "full") {
     await stepInto(window, saved, stack, previous, null, "maximized");
     await chrome.windows.update(window.id, { state: "maximized", focused: true });
     return { ok: true, restored: false };
@@ -441,12 +441,12 @@ async function toggleSpotlight() {
     await chrome.windows.update(window.id, { state: "normal" });
     window = await chrome.windows.get(window.id);
   }
-  const spotlight = spotlightBounds((await displayFor(window)).workArea, window, config);
-  await stepInto(window, saved, stack, previous, spotlight, null);
-  await chrome.windows.update(window.id, { ...spotlight, focused: true });
+  const focusView = focusViewBounds((await displayFor(window)).workArea, window, config);
+  await stepInto(window, saved, stack, previous, focusView, null);
+  await chrome.windows.update(window.id, { ...focusView, focused: true });
   // The OS can nudge a window straight after a resize; one repeat makes it stick.
   await new Promise((resolve) => setTimeout(resolve, 250));
-  await chrome.windows.update(window.id, spotlight);
+  await chrome.windows.update(window.id, focusView);
   return { ok: true, restored: false };
 }
 
@@ -520,7 +520,7 @@ const focusPrevious = () => step(-1);
 
 const ACTIONS = {
   tile: tileWindows,
-  spotlight: toggleSpotlight,
+  focusView: toggleFocusView,
   next: focusNext,
   prev: focusPrevious,
   launch: launchDeck,
@@ -530,7 +530,7 @@ const ACTIONS = {
 };
 
 const COMMANDS = {
-  "toggle-spotlight": toggleSpotlight,
+  "toggle-focus-view": toggleFocusView,
   "tile-windows": () => tileWindows({ deckOnly: true }),
   "focus-next": focusNext,
   "focus-previous": focusPrevious,

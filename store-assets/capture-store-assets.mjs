@@ -51,7 +51,7 @@ const CAPTIONS = {
   ],
 };
 
-const NAMES = ["01-arrange", "02-spotlight", "03-window-library", "04-register", "05-popup"];
+const NAMES = ["01-arrange", "02-focus-view", "03-window-library", "04-register", "05-popup"];
 const W = 1280, H = 800, BAND = 120;
 
 function seed(locale) {
@@ -127,7 +127,7 @@ try {
     await pause(300);
     await frame(composer, await ui.screenshot(), captions[0], join(dir, `${NAMES[0]}.png`));
 
-    // 02 commands + spotlight settings.
+    // 02 commands + focusView settings.
     await open();
     await frame(composer, await ui.screenshot(), captions[1], join(dir, `${NAMES[1]}.png`));
 

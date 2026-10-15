@@ -1,5 +1,5 @@
 /* mac.html: the app demo in the hero and the two drawings in "Mac or Chrome".
-   Pane geometry follows desktop/src/lib/pane-layout.js (grid, a 72% spotlight
+   Pane geometry follows desktop/src/lib/pane-layout.js (grid, a 72% focusView
    with a rail, fill). Motion uses cie's expo curve and stops for reduced motion. */
 (function () {
   'use strict';
@@ -8,7 +8,7 @@
   var isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
   var MOVE_MS = 560;
   var KEY_PRESS_MS = 330;
-  var SPOTLIGHT_SHARE = 0.72;
+  var FOCUS_VIEW_SHARE = 0.72;
   var uid = 0;
 
   function t(key) { return window.awd ? window.awd.t(key) : key; }
@@ -50,7 +50,7 @@
       }
       return boxes;
     }
-    var mainW = (area.w - gap) * SPOTLIGHT_SHARE;
+    var mainW = (area.w - gap) * FOCUS_VIEW_SHARE;
     var railX = area.x + mainW + gap;
     var railW = area.w - mainW - gap;
     var others = count - 1;
@@ -112,7 +112,7 @@
   ];
   var MODES = [
     { id: 'grid', key: 'mac.demo.grid', w: 74 },
-    { id: 'spotlight', key: 'mac.demo.spotlight', w: 96 },
+    { id: 'focusView', key: 'mac.demo.focusView', w: 96 },
     { id: 'fill', key: 'mac.demo.fill', w: 58 }
   ];
 
@@ -244,8 +244,8 @@
   /* ---------- Hero demo ---------- */
   var STEPS = [
     { mode: 'grid', focus: 0, hold: 1700, phase: 'mac.demo.phase.grid' },
-    { mode: 'spotlight', focus: 0, key: 'X', hold: 2600, phase: 'mac.demo.phase.spotlight', caption: 'mac.demo.cap.spotlight' },
-    { mode: 'spotlight', focus: 2, click: true, hold: 2600, phase: 'mac.demo.phase.click', caption: 'mac.demo.cap.click' },
+    { mode: 'focusView', focus: 0, key: 'X', hold: 2600, phase: 'mac.demo.phase.focusView', caption: 'mac.demo.cap.focusView' },
+    { mode: 'focusView', focus: 2, click: true, hold: 2600, phase: 'mac.demo.phase.click', caption: 'mac.demo.cap.click' },
     { mode: 'fill', focus: 2, key: 'Q', hold: 2300, phase: 'mac.demo.phase.fill', caption: 'mac.demo.cap.fill' },
     { mode: 'grid', focus: 2, key: 'Z', hold: 2100, phase: 'mac.demo.phase.grid', caption: 'mac.demo.cap.grid' }
   ];
@@ -264,7 +264,7 @@
     var pause = root.querySelector('.stage-pause');
     var app = AppWindow(root.querySelector('[data-demo-stage]'));
     var stills = [];
-    [['grid', 0, 'mac.demo.phase.grid'], ['spotlight', 0, 'mac.demo.phase.spotlight'], ['fill', 0, 'mac.demo.phase.fill']].forEach(function (s) {
+    [['grid', 0, 'mac.demo.phase.grid'], ['focusView', 0, 'mac.demo.phase.focusView'], ['fill', 0, 'mac.demo.phase.fill']].forEach(function (s) {
       var fig = document.createElement('figure');
       var holder = document.createElement('div');
       var caption = document.createElement('figcaption');
@@ -443,8 +443,8 @@
       var label2 = el('text', { class: 'cmp-label', x: 240, y: 196, 'text-anchor': 'middle' }, svg2);
       var frames2 = [
         { mode: 'grid', focus: 0, hold: 1700, label: 'mac.cmp.app.f1' },
-        { mode: 'spotlight', focus: 0, hold: 2000, label: 'mac.cmp.app.f2' },
-        { mode: 'spotlight', focus: 2, hold: 2000, label: 'mac.cmp.app.f3' },
+        { mode: 'focusView', focus: 0, hold: 2000, label: 'mac.cmp.app.f2' },
+        { mode: 'focusView', focus: 2, hold: 2000, label: 'mac.cmp.app.f3' },
         { mode: 'grid', focus: 2, hold: 1700, label: 'mac.cmp.app.f1' }
       ];
       var current2 = frames2[0];

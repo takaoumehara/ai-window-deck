@@ -67,7 +67,7 @@ Curious how others here handle many sessions at once. Separate Chrome profiles? 
 **Title**
 
 ```text
-I made a Chrome extension that saves a set of windows and opens them all tiled with one click (Alt+X to spotlight one)
+I made a Chrome extension that saves a set of windows and opens them all tiled with one click (Alt+X enlarges one in Focus view)
 ```
 
 **Body**
@@ -157,7 +157,7 @@ https://github.com/takaoumehara/ai-window-deck
 **Title**
 
 ```text
-Running several Codex cloud tasks at once? I built a Chrome extension to tile and spotlight the windows
+Running several Codex cloud tasks at once? I built a Chrome extension to tile and enlarge the windows
 ```
 
 本文は r/ClaudeAI 版の「Claude Code on the web」を「Codex」に、「claude.ai」を「chatgpt.com」に置き換えて使います。

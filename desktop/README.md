@@ -5,9 +5,9 @@ windows inside **one** window: each window is a pane with its own live web page,
 and a click or a shortcut enlarges it or puts it back.
 
 - **Grid**: every visible window in a grid, using the extension's layout math (`src/lib/layout-model.js`).
-- **Spotlight**: the focused pane takes most of the window; the rest stay live on a side rail.
+- **Focus view**: the focused pane takes most of the window; the rest stay live on a side rail.
 - **Fill**: the focused pane covers the deck; the others keep running in the background.
-- Click a pane's title bar to spotlight it, and click it again to go back to the grid. Clicking a pane on the rail swaps it in.
+- Click a pane's title bar to open it in Focus view, and click it again to go back to the grid. Clicking a pane on the rail swaps it in.
 - Windows with several URLs get tabs in the pane's title bar.
 - **Sets** are named decks, each with its own windows, layout and focus. Switch them from the sidebar (or the collapsed rail), and manage them in *Deck → Sets…*.
 - **New Deck Window** (`⌘N`) opens another window showing a set that isn't open yet, for example on a second display. A set is open in one window at a time; picking one that is open elsewhere brings that window forward. Open windows and their sets come back on relaunch.
@@ -21,10 +21,10 @@ and a click or a shortcut enlarges it or puts it back.
 
 | Shortcut | Action |
 | --- | --- |
-| `⌥X` / `Alt+X` | Spotlight the focused pane / back to grid |
+| `⌥X` / `Alt+X` | Focus view for the focused pane / back to grid |
 | `⌥Z` / `Alt+Z` (also `⌥A`) | Back to grid |
 | `⌥Q` / `Alt+Q` | Fill the deck / back to grid |
-| `⌥1`–`⌥8` | Focus pane 1–8 (it becomes the large pane in Spotlight and Fill) |
+| `⌥1`–`⌥8` | Focus pane 1–8 (it becomes the large pane in Focus view and Fill) |
 | `⌥]` / `⌥[` | Next / previous pane |
 | `⌥B` | Show / hide the sidebar |
 | `⌘R` / `Ctrl+R` | Reload the focused pane |

@@ -99,7 +99,7 @@ Paste the answer into AI Window Deck. Each block becomes a window, and its URLs 
 **B-3 EN** — 添付: `site/assets/img/05-focus-enlarge.png`
 
 ```text
-Two ways to spotlight a window:
+Two ways to enlarge a window (Focus view):
 
 Grow in place: it expands from where it sits, so your eyes don't move
 Center: it jumps to the middle of the screen

@@ -5,7 +5,7 @@
   "extDescription": {
     "message": "Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused."
   },
-  "cmdSpotlight": {
+  "cmdFocusView": {
     "message": "Enlarge / back to the tile"
   },
   "cmdHome": {

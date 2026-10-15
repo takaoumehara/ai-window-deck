@@ -33,5 +33,5 @@ test("zoom walks Chrome-like steps", () => {
 test("focus changes in grid don't count as a layout move", () => {
   assert.equal(layoutMoves(4, { mode: "grid", focusIndex: 0 }, { mode: "grid", focusIndex: 2 }), false);
   assert.equal(layoutMoves(4, { mode: "grid", focusIndex: 0 }, { mode: "fill", focusIndex: 0 }), true);
-  assert.equal(layoutMoves(4, { mode: "spotlight", focusIndex: 0 }, { mode: "spotlight", focusIndex: 1 }), true);
+  assert.equal(layoutMoves(4, { mode: "focusView", focusIndex: 0 }, { mode: "focusView", focusIndex: 1 }), true);
 });

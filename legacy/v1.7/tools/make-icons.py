@@ -2,7 +2,7 @@
 """Render the AI Window Deck icon set.
 
 The mark is the product in one glyph: a 2x2 deck of windows with the
-top-left pane spotlighted. Drawn at 8x and downsampled so the small sizes
+top-left pane focusViewed. Drawn at 8x and downsampled so the small sizes
 keep clean edges.
 
     python3 tools/make-icons.py

@@ -15,13 +15,13 @@ export function CommandBar({ lang, onAction }) {
         <Button
           variant="hero"
           size="lg"
-          onClick={() => onAction("spotlight")}
+          onClick={() => onAction("focusView")}
           className="h-[58px] justify-start gap-3 px-5 text-[15px]"
         >
           <Maximize className="w-5 h-5 text-white" />
           <div className="flex items-center gap-2">
-            <span>{t("spotlight")}</span>
-            <span className="key-cap">{shortcuts["toggle-spotlight"]}</span>
+            <span>{t("focusView")}</span>
+            <span className="key-cap">{shortcuts["toggle-focus-view"]}</span>
           </div>
         </Button>
 

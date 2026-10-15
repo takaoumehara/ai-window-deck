@@ -36,7 +36,7 @@ test("held keys repeat only for tab cycling and zoom", () => {
 });
 
 test("existing Option shortcuts still match", () => {
-  assert.equal(matchCommand(key("KeyX", { alt: true }), "darwin"), "toggle-spotlight");
+  assert.equal(matchCommand(key("KeyX", { alt: true }), "darwin"), "toggle-focus-view");
   assert.equal(matchCommand(key("Digit2", { alt: true }), "darwin"), "focus-tile-2");
   assert.equal(matchCommand(key("KeyR", { meta: true }), "darwin"), "reload-pane");
   assert.equal(matchCommand(key("KeyA"), "darwin"), null);

@@ -125,12 +125,12 @@ body.mode-dock, body.mode-dock #root {
   scrollbar-width: none;
 }
 
-.spotlight-preview-target {
+.focus-view-preview-target {
   transition: left 360ms cubic-bezier(0.2, 0.8, 0.2, 1), top 360ms cubic-bezier(0.2, 0.8, 0.2, 1), width 360ms cubic-bezier(0.2, 0.8, 0.2, 1), height 360ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 160ms linear;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spotlight-preview-target {
+  .focus-view-preview-target {
     transition: none;
   }
 }

@@ -2,7 +2,7 @@
 // names only the sets one edit touched, with their content before and after.
 // Undoing in one deck window therefore never rolls back what another window
 // did to its own set in the meantime. Layout (mode, focus, active tabs) is not
-// content, so focusing or spotlighting a pane never lands in history.
+// content, so focusing or enlarging a pane never lands in history.
 
 export const EMPTY_HISTORY = Object.freeze({ past: [], future: [] });
 

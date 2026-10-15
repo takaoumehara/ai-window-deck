@@ -88,7 +88,7 @@ function HeaderField({ t, field, focused, found, onChange, onSubmit, onCancel })
 export const Pane = React.forwardRef(function Pane(
   {
     t, item, urls, index, rect, focused, mode, compact, activeTab, meta, error, snapshot, field, found, device, devices,
-    onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onSpotlight, onFill, onHide, onResetZoom,
+    onHeaderClick, onSelectTab, onCloseTab, onNewTab, onNavigate, onFocusView, onFill, onHide, onResetZoom,
     onFieldChange, onFieldSubmit, onFieldCancel, onToggleDevice, onDeviceChange, onRotateDevice, onAddDevice,
   },
   bodyRef
@@ -252,7 +252,7 @@ export const Pane = React.forwardRef(function Pane(
                 </HeaderButton>
               </>
             )}
-            <HeaderButton label={enlarged ? t("shrink") : t("enlarge")} onClick={onSpotlight}>
+            <HeaderButton label={enlarged ? t("shrink") : t("enlarge")} onClick={onFocusView}>
               {enlarged ? <Minimize2 className="h-3.5 w-3.5" aria-hidden="true" /> : <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />}
             </HeaderButton>
             {!compact && (

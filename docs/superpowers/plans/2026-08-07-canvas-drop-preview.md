@@ -1,10 +1,10 @@
-# Canvas Drop & Spotlight Preview Implementation Plan
+# Canvas Drop & Focus view Preview Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** デッキ起動済みウィンドウだけを安全に再整列し、空きキャンバス枠への置換ドロップと画面比率に沿った拡大プレビューを提供する。
 
-**Architecture:** `background.js` はデッキ起動時のウィンドウIDをセッションに記録し、そのIDだけを再整列する。React側は空きスロットを明示的なドロップターゲットにし、Spotlightプレビューは現在のキャンバスセルを選択ディスプレイ比率の縮小画面に再現する。
+**Architecture:** `background.js` はデッキ起動時のウィンドウIDをセッションに記録し、そのIDだけを再整列する。React側は空きスロットを明示的なドロップターゲットにし、FocusViewプレビューは現在のキャンバスセルを選択ディスプレイ比率の縮小画面に再現する。
 
 **Tech Stack:** Manifest V3, Chrome Windows/Tab Groups APIs, React 18, Vite, Tailwind CSS, Node test runner
 
@@ -42,11 +42,11 @@
 - [x] キャンバス背景へのドロップによる追加を削除し、説明通知を表示する。
 - [x] ハイライト状態をドラッグ終了・ドロップ時に確実に解除する。
 
-### Task 3: 表示比率を反映したSpotlightプレビュー
+### Task 3: 表示比率を反映したFocusViewプレビュー
 
 **Files:**
-- Create: `src/components/SpotlightPreview.jsx`
-- Modify: `src/components/SpotlightConfig.jsx`
+- Create: `src/components/FocusViewPreview.jsx`
+- Modify: `src/components/FocusViewConfig.jsx`
 - Modify: `src/App.jsx`
 - Modify: `src/index.css`
 - Modify: `src/lib/i18n.js`

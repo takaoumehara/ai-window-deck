@@ -81,7 +81,7 @@ Output: command exited with code 0 and produced no output.
 
 ## Derived conclusions
 
-- Grade C, based on the production build: the React component graph compiles with the new Spotlight configuration and retile action wiring.
+- Grade C, based on the production build: the React component graph compiles with the new Focus view configuration and retile action wiring.
 - Grade C, based on the Node syntax check: the packaged service-worker source parses after accepting the canvas-layout message.
 - Grade A, based on `test/background.test.js`: a Deck-only retile updates only a window ID stored as a Deck launch; an extension settings window and an unrelated website window are not updated.
 
@@ -90,7 +90,7 @@ Output: command exited with code 0 and produced no output.
 - Chromeの拡張機能を再読み込みして、Deckから起動済みの実ウィンドウだけをキャンバス配置へ再整列する操作。
 - `Option+X` での拡大／直前サイズの交互切替、手動リサイズ後の `Option+Z` 復元。
 - 空きキャンバス枠が青くハイライトした状態でのドロップ置換と、背景へのドロップが分割を増やさないこと。
-- 選択ディスプレイの実アスペクト比に沿ったSpotlightプレビューのアニメーション。
+- 選択ディスプレイの実アスペクト比に沿ったFocusViewプレビューのアニメーション。
 - `chrome://extensions/shortcuts` でのショートカット変更と、変更後の表示反映。
 - 実ディスプレイ複数台での配置と、macOSのグローバルショートカット競合。
 

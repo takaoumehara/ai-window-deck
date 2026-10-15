@@ -1,10 +1,10 @@
 const DEFAULTS = {
   columns: 4,
   rows: 2,
-  spotlightSize: "full",
-  spotlightWidth: 70,
-  spotlightHeight: 90,
-  spotlightAnchor: "keep",
+  focusViewSize: "full",
+  focusViewWidth: 70,
+  focusViewHeight: 90,
+  focusViewAnchor: "keep",
   language: "auto",
   presets: [],
   activePreset: 0,
@@ -51,7 +51,7 @@ function shapeDiagram(layout) {
 }
 
 const COMMAND_LABELS = {
-  "toggle-spotlight": "cmd_spotlight",
+  "toggle-focus-view": "cmd_focusView",
   "restore-home": "cmd_home",
   "tile-windows": "cmd_tile",
   "focus-next": "cmd_next",
@@ -520,7 +520,7 @@ function paintSizes() {
     button.type = "button";
     button.className = "size";
     button.setAttribute("role", "radio");
-    button.setAttribute("aria-checked", String(state.spotlightSize === key));
+    button.setAttribute("aria-checked", String(state.focusViewSize === key));
     const screen = document.createElement("span");
     screen.className = "size-screen";
     const win = document.createElement("i");
@@ -533,8 +533,8 @@ function paintSizes() {
     label.textContent = t(`size_${key}`);
     button.append(screen, label);
     button.addEventListener("click", async () => {
-      state = { ...state, spotlightSize: key };
-      await save({ spotlightSize: key });
+      state = { ...state, focusViewSize: key };
+      await save({ focusViewSize: key });
       paintSizes();
       paintResize();
       say("saved");
@@ -544,17 +544,17 @@ function paintSizes() {
 }
 
 function paintResize() {
-  const anchorInput = document.querySelector(`input[name=anchor][value="${state.spotlightAnchor}"]`);
+  const anchorInput = document.querySelector(`input[name=anchor][value="${state.focusViewAnchor}"]`);
   if (anchorInput) {
     anchorInput.setAttribute("checked", "checked");
     anchorInput.checked = true;
   }
-  const spW = $("#spotlightWidth"); if (spW) spW.value = state.spotlightWidth;
-  const wVal = $("#widthValue"); if (wVal) wVal.value = `${state.spotlightWidth}%`;
-  const spH = $("#spotlightHeight"); if (spH) spH.value = state.spotlightHeight;
-  const hVal = $("#heightValue"); if (hVal) hVal.value = `${state.spotlightHeight}%`;
-  const cSize = $("#customSize"); if (cSize) cSize.hidden = state.spotlightSize !== "custom";
-  const aCard = $("#anchorCard"); if (aCard) aCard.hidden = state.spotlightSize === "full";
+  const spW = $("#focusViewWidth"); if (spW) spW.value = state.focusViewWidth;
+  const wVal = $("#widthValue"); if (wVal) wVal.value = `${state.focusViewWidth}%`;
+  const spH = $("#focusViewHeight"); if (spH) spH.value = state.focusViewHeight;
+  const hVal = $("#heightValue"); if (hVal) hVal.value = `${state.focusViewHeight}%`;
+  const cSize = $("#customSize"); if (cSize) cSize.hidden = state.focusViewSize !== "custom";
+  const aCard = $("#anchorCard"); if (aCard) aCard.hidden = state.focusViewSize === "full";
 }
 
 // The same page is the toolbar popup and the full-page options screen. In a
@@ -566,7 +566,7 @@ async function markSurface() {
 }
 
 const INLINE_KEYS = {
-  spotlight: "toggle-spotlight",
+  focusView: "toggle-focus-view",
   home: "restore-home",
   prev: "focus-previous",
   next: "focus-next",
@@ -753,9 +753,9 @@ $("#presetDelete")?.addEventListener("click", async () => {
   await render();
 });
 
-for (const [id, key] of [["spotlightWidth", "spotlightWidth"], ["spotlightHeight", "spotlightHeight"]]) {
+for (const [id, key] of [["focusViewWidth", "focusViewWidth"], ["focusViewHeight", "focusViewHeight"]]) {
   const input = $(`#${id}`);
-  const output = id === "spotlightWidth" ? $("#widthValue") : $("#heightValue");
+  const output = id === "focusViewWidth" ? $("#widthValue") : $("#heightValue");
   input?.addEventListener("input", () => { if (output) output.value = `${input.value}%`; });
   input?.addEventListener("change", async () => {
     state = { ...state, [key]: Number(input.value) };
@@ -766,16 +766,16 @@ for (const [id, key] of [["spotlightWidth", "spotlightWidth"], ["spotlightHeight
 
 document.querySelectorAll("input[name=size]").forEach((radio) => {
   radio.addEventListener("change", async () => {
-    state = { ...state, spotlightSize: radio.value };
-    await save({ spotlightSize: radio.value });
+    state = { ...state, focusViewSize: radio.value };
+    await save({ focusViewSize: radio.value });
     paintResize();
     say("saved");
   });
 });
 document.querySelectorAll("input[name=anchor]").forEach((radio) => {
   radio.addEventListener("change", async () => {
-    state = { ...state, spotlightAnchor: radio.value };
-    await save({ spotlightAnchor: radio.value });
+    state = { ...state, focusViewAnchor: radio.value };
+    await save({ focusViewAnchor: radio.value });
     say("saved");
   });
 });
@@ -801,7 +801,7 @@ const launch = async () => {
 };
 for (const id of ["launch", "launch2"]) $(`#${id}`)?.addEventListener("click", launch);
 for (const id of ["retile", "retile2"]) $(`#${id}`)?.addEventListener("click", () => send("tile"));
-$("#spotlight")?.addEventListener("click", () => send("spotlight"));
+$("#focusView")?.addEventListener("click", () => send("focusView"));
 $("#prev")?.addEventListener("click", () => send("prev"));
 $("#home")?.addEventListener("click", () => send("home"));
 $("#fullscreenWindow")?.addEventListener("click", () => send("fullscreen"));

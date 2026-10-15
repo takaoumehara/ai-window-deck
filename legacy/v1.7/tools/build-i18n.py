@@ -21,7 +21,7 @@ DEFAULT_LOCALE = "en"
 
 # manifest.json "commands" descriptions -> __MSG_<name>__ keys in _locales.
 COMMAND_MESSAGES = {
-    "cmdSpotlight": "cmd_spotlight",
+    "cmdFocusView": "cmd_focusView",
     "cmdHome": "cmd_home",
     "cmdTile": "cmd_tile",
     "cmdFullscreen": "cmd_fullscreen",

@@ -28,11 +28,11 @@
       <p class="help" id="help_actions" data-i18n="help_actions" hidden></p>
 
       <div class="deck-actions-container">
-        <!-- Primary Commands (Hero 2x Height Row: Spotlight & Tile Restore) -->
+        <!-- Primary Commands (Hero 2x Height Row: Focus view & Tile Restore) -->
         <div class="deck-actions-primary">
-          <button id="spotlight" class="cmd-hero primary">
+          <button id="focusView" class="cmd-hero primary">
             <span class="glyph" aria-hidden="true">◫</span>
-            <span class="stack"><b data-i18n="act_spotlight"></b><small class="keys" id="spotlightKeys"></small></span>
+            <span class="stack"><b data-i18n="act_focusView"></b><small class="keys" id="focusViewKeys"></small></span>
           </button>
           <button id="home" class="cmd-hero primary-alt">
             <span class="glyph" aria-hidden="true">⌂</span>
@@ -162,14 +162,14 @@
 
         <section id="panel-resize" role="tabpanel" aria-labelledby="tab-resize" hidden>
           <div class="card">
-            <h2><span data-i18n="spotlight_size"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_size">i</button></h2>
+            <h2><span data-i18n="focusView_size"></span><button type="button" class="info" data-i18n-label="help_label" aria-expanded="false" aria-controls="help_size">i</button></h2>
             <p class="help" id="help_size" data-i18n="help_size" hidden></p>
-            <div class="sizes" id="sizes" role="radiogroup" data-i18n-label="spotlight_size"></div>
+            <div class="sizes" id="sizes" role="radiogroup" data-i18n-label="focusView_size"></div>
             <div id="customSize" hidden>
-              <label class="row" for="spotlightWidth"><span data-i18n="width"></span><output id="widthValue">70%</output></label>
-              <input id="spotlightWidth" type="range" min="20" max="100" step="5" value="70">
-              <label class="row" for="spotlightHeight"><span data-i18n="height"></span><output id="heightValue">90%</output></label>
-              <input id="spotlightHeight" type="range" min="20" max="100" step="5" value="90">
+              <label class="row" for="focusViewWidth"><span data-i18n="width"></span><output id="widthValue">70%</output></label>
+              <input id="focusViewWidth" type="range" min="20" max="100" step="5" value="70">
+              <label class="row" for="focusViewHeight"><span data-i18n="height"></span><output id="heightValue">90%</output></label>
+              <input id="focusViewHeight" type="range" min="20" max="100" step="5" value="90">
             </div>
           </div>
 

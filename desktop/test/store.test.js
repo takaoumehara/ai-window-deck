@@ -8,11 +8,11 @@ test("a version 1 store becomes one set that keeps its windows and layout", () =
   const v1 = {
     version: 1,
     windows: [{ id: "w1", name: "Claude", urls: "https://claude.ai", visible: true }],
-    settings: { mode: "spotlight", focusedId: "w1", sidebarOpen: false, activeTabs: { w1: 0 }, lang: "en" },
+    settings: { mode: "focusView", focusedId: "w1", sidebarOpen: false, activeTabs: { w1: 0 }, lang: "en" },
   };
   const store = migrateStore(v1);
   assert.equal(store.version, STORE_VERSION);
-  assert.deepEqual(store.sets, [{ id: "set-main", name: "", windows: v1.windows, mode: "spotlight", focusedId: "w1", activeTabs: { w1: 0 } }]);
+  assert.deepEqual(store.sets, [{ id: "set-main", name: "", windows: v1.windows, mode: "focusView", focusedId: "w1", activeTabs: { w1: 0 } }]);
   assert.deepEqual(store.settings, { sidebarOpen: false, lang: "en" });
 });
 
