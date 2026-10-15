@@ -41,6 +41,7 @@ const RECENT_DEVICES_KEY = "deck:recentDevices";
 const CLOSED_TABS_KEPT = 25;
 const NOTICE_MS = 3200;
 const UNDO_NOTICE_MS = 6000;
+const PASSKEY_NOTICE_MS = 12000;
 const ASK_AI_WINDOW = "win-ask-ai";
 const GROUP_LABELS = { help: "groupHelp", mobile: "groupMobile", page: "groupPage", layout: "groupLayout", tabs: "groupTabs", windows: "groupWindows" };
 const LANGUAGE_NAMES = {
@@ -274,10 +275,10 @@ export function App() {
   );
 
   const noticeTimer = useRef(0);
-  const showNotice = useCallback((message, { undoable = false } = {}) => {
+  const showNotice = useCallback((message, { undoable = false, ms } = {}) => {
     setNotice({ message, undoable, id: Date.now() });
     window.clearTimeout(noticeTimer.current);
-    noticeTimer.current = window.setTimeout(() => setNotice(null), undoable ? UNDO_NOTICE_MS : NOTICE_MS);
+    noticeTimer.current = window.setTimeout(() => setNotice(null), ms ?? (undoable ? UNDO_NOTICE_MS : NOTICE_MS));
   }, []);
 
   const measure = useCallback(() => {
@@ -1068,6 +1069,8 @@ export function App() {
       deck.checkForUpdates();
     } else if (command === "signin-google") {
       deck.googleSignIn();
+    } else if (command === "signin-github" || command === "signin-vercel") {
+      deck.signIn(command.slice("signin-".length));
     } else if (command === "new-window") {
       deck.openWindow();
     } else if (command === "ask-ai-claude" || command === "ask-ai-chatgpt") {
@@ -1112,6 +1115,13 @@ export function App() {
     else if (status === "signed-out") showNotice(t("googleSignedOutMsg"));
     else if (status === "rejected") showNotice(t("googleRejectedMsg"));
   }), [t, showNotice]);
+
+  useEffect(() => deck.onSignIn(({ provider, status, reloaded }) => {
+    const name = provider === "vercel" ? "Vercel" : "GitHub";
+    showNotice(t(status === "already" ? "signInAlreadyMsg" : "signInDoneMsg", { name, count: reloaded ?? 0 }));
+  }), [t, showNotice]);
+
+  useEffect(() => deck.onPasskey(({ host }) => showNotice(t("passkeyMsg", { host }), { ms: PASSKEY_NOTICE_MS })), [t, showNotice]);
 
   const favicons = useMemo(() => {
     const icons = {};
@@ -1406,6 +1416,11 @@ export function App() {
         onCheckUpdates={() => {
           closeSheet();
           deck.checkForUpdates();
+        }}
+        onSignIn={(provider) => {
+          closeSheet();
+          if (provider === "google") deck.googleSignIn();
+          else deck.signIn(provider);
         }}
       />
 

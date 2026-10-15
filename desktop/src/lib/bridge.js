@@ -54,6 +54,9 @@ const browserStandIn = {
   onUpdateState: noSubscribe,
   onGoogleSignIn: noSubscribe,
   googleSignIn: noop,
+  signIn: noop,
+  onSignIn: noSubscribe,
+  onPasskey: noSubscribe,
 };
 
 export const deck = typeof window !== "undefined" && window.deck ? window.deck : browserStandIn;

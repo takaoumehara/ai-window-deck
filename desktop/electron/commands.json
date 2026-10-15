@@ -8,6 +8,8 @@
     { "id": "ask-ai-chatgpt", "group": "help", "label": "cmdAskChatgpt", "keywords": "kwAskAi" },
     { "id": "open-settings", "group": "help", "accelerator": "CmdOrCtrl+,", "label": "settings", "keywords": "kwSettings" },
     { "id": "signin-google", "group": "help", "label": "cmdGoogleSignIn", "keywords": "kwGoogle" },
+    { "id": "signin-github", "group": "help", "label": "cmdGitHubSignIn", "keywords": "kwGitHub" },
+    { "id": "signin-vercel", "group": "help", "label": "cmdVercelSignIn", "keywords": "kwVercel" },
     { "id": "check-updates", "group": "help", "label": "checkUpdates", "keywords": "kwUpdate" },
 
     { "id": "device-toggle", "group": "mobile", "accelerator": "CmdOrCtrl+Shift+M", "label": "cmdDevice", "keywords": "kwMobile", "pane": true },

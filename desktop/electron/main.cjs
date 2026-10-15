@@ -11,6 +11,7 @@ const {
   desktopIdentity, deviceIdentity, isSignInPage, signInVariant, clientHintHeaders, acceptedHints, withIdentity, acceptLanguages,
 } = require("./identity.cjs");
 const google = require("./google-signin.cjs");
+const popups = require("./popups.cjs");
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -21,6 +22,8 @@ const PARTITION = "persist:deck";
 const isMac = process.platform === "darwin";
 // Native window and view backgrounds can't read CSS variables; this mirrors --cie-ink.
 const CIE_INK = "#0b0b0b";
+// After a sign-in popup closes, how long its opener gets to react by itself.
+const POPUP_SETTLE_MS = 1500;
 
 let store = null;
 let quitting = false;
@@ -180,11 +183,13 @@ function signInIdentity(strategy) {
   return signInVariant(browser);
 }
 
-function openSignInWindow(target, paneId, url, strategy = store.settings?.googleSignIn) {
+// `into` is another sign-in window that handed Google's pages over and takes
+// the result back; without it the result loads in the pane.
+function openSignInWindow(target, paneId, url, strategy = store.settings?.googleSignIn, into = null) {
   if (!google.SIGN_IN_STRATEGIES.includes(strategy)) strategy = google.SIGN_IN_STRATEGIES[0];
   const open = signInWindow && !signInWindow.win.isDestroyed() ? signInWindow : null;
   if (open && open.strategy === strategy) {
-    Object.assign(open, { target, paneId, startUrl: url });
+    Object.assign(open, { target, paneId, startUrl: url, into });
     open.win.loadURL(url).catch(() => {});
     open.win.show();
     open.win.focus();
@@ -211,7 +216,7 @@ function openSignInWindow(target, paneId, url, strategy = store.settings?.google
     creatingSignInWindow = false;
   }
   const contents = win.webContents;
-  const state = { win, target, paneId, strategy, startUrl: url, done: false, replaced: false };
+  const state = { win, target, paneId, strategy, startUrl: url, into, done: false, replaced: false };
   signInWindow = state;
   identities.set(contents.id, identity);
   contents.setUserAgent(identity.userAgent);
@@ -229,7 +234,7 @@ function openSignInWindow(target, paneId, url, strategy = store.settings?.google
   contents.on("did-navigate", (_event, next) => {
     if (!google.isRejected(next)) return;
     const following = google.nextStrategy(state.strategy);
-    if (following) openSignInWindow(state.target, state.paneId, state.startUrl, following);
+    if (following) openSignInWindow(state.target, state.paneId, state.startUrl, following, state.into);
     else sendTo(state.target, "google:signin", { status: "rejected" });
   });
   contents.setWindowOpenHandler(({ url: link }) => {
@@ -248,9 +253,95 @@ function finishSignIn(state, next) {
     store = applyStorePatch(store, { settings: { googleSignIn: state.strategy } });
     writeStore(store);
   }
-  const contents = activeContents(state.target, state.paneId);
+  const into = state.into && !state.into.isDestroyed() ? state.into : null;
+  const contents = into ?? activeContents(state.target, state.paneId);
   if (contents && !contents.isDestroyed()) contents.loadURL(next).catch(() => {});
-  if (state.target && !state.target.win.isDestroyed()) state.target.win.focus();
+  if (into) BrowserWindow.fromWebContents(into)?.focus();
+  else if (state.target && !state.target.win.isDestroyed()) state.target.win.focus();
+}
+
+// File → Sign in to GitHub / Vercel: the provider's sign-in in a window of its
+// own on the deck's session (popups.cjs lists the pages it passes through).
+// Google's pages inside it move to the Google window and come back. When the
+// window reaches the provider's own pages, it closes and the provider's panes
+// reload.
+const providerWindows = new Map();
+
+function openProviderSignIn(target, id) {
+  const provider = popups.signInProvider(id);
+  if (!provider) return;
+  const open = providerWindows.get(id);
+  if (open && !open.isDestroyed()) {
+    open.show();
+    open.focus();
+    return;
+  }
+  const parent = target && !target.win.isDestroyed() ? target.win : undefined;
+  const win = new BrowserWindow({
+    width: 520,
+    height: 760,
+    parent,
+    title: provider.name,
+    backgroundColor: "#ffffff",
+    autoHideMenuBar: true,
+    webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true, preload: path.join(__dirname, "pane-preload.cjs") },
+  });
+  providerWindows.set(id, win);
+  const contents = win.webContents;
+  let sawSignIn = false;
+  let finished = false;
+  const signedIn = async () => {
+    if (!provider.cookie) return true;
+    const { url: cookieUrl, name, value } = provider.cookie;
+    const list = await contents.session.cookies.get({ url: cookieUrl, name }).catch(() => []);
+    return list.some((cookie) => cookie.value === value);
+  };
+  const check = async (next) => {
+    if (finished || !/^https?:/i.test(next || "")) return;
+    if (!popups.providerFinished(provider, next)) {
+      sawSignIn = true;
+      return;
+    }
+    if (!(await signedIn()) || finished || win.isDestroyed()) return;
+    finished = true;
+    const reloaded = reloadProviderPages(provider);
+    sendTo(target, "signin:status", { provider: id, status: sawSignIn ? "signed-in" : "already", reloaded });
+    win.close();
+  };
+  const toGoogleWindow = (event) => {
+    if (event.isMainFrame === false || !google.isSignInPage(event.url)) return;
+    event.preventDefault();
+    openSignInWindow(target, null, event.url, undefined, contents);
+  };
+  contents.on("will-navigate", toGoogleWindow);
+  contents.on("will-redirect", toGoogleWindow);
+  contents.on("did-navigate", (_event, next) => check(next));
+  contents.on("did-navigate-in-page", (_event, next, isMainFrame) => isMainFrame && check(next));
+  contents.setWindowOpenHandler(popupHandler(target, contents, (link) => contents.loadURL(link).catch(() => {})));
+  watchPopups(target, contents);
+  win.on("closed", () => {
+    if (providerWindows.get(id) === win) providerWindows.delete(id);
+  });
+  contents.loadURL(provider.start).catch(() => {});
+}
+
+function reloadProviderPages(provider) {
+  let reloaded = 0;
+  for (const target of shells.values()) {
+    for (const pane of target.panes.values()) {
+      for (const view of pane.views.values()) {
+        const contents = view.webContents;
+        if (contents.isDestroyed() || contents.isLoading()) continue;
+        const url = contents.getURL();
+        // A sign-in page may be the result of a form post; a fresh GET doesn't send it again.
+        if (popups.waitsOnProvider(provider, url)) contents.loadURL(url).catch(() => {});
+        else if (popups.providerFinished(provider, url)) contents.reload();
+        else continue;
+        reloaded += 1;
+      }
+    }
+  }
+  return reloaded;
 }
 
 // The SID cookie on .google.com appears when an account signs in and goes
@@ -454,6 +545,58 @@ function tabIndexOf(target, paneId, view) {
   return -1;
 }
 
+// New windows from a page (popups.cjs decides): sign-in and other popups that
+// talk to their opener become real windows on the same session, in front of
+// the deck window, with window.opener intact; plain links load in place.
+function popupHandler(target, contents, loadInPlace) {
+  return ({ url: link, disposition, features }) => {
+    const kind = popups.classifyPopup({ url: link, disposition });
+    if (kind === "window") {
+      const parent = target && !target.win.isDestroyed() ? target.win : undefined;
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          ...popups.popupSize(features, parent ? parent.getBounds() : undefined),
+          parent,
+          backgroundColor: "#ffffff",
+          autoHideMenuBar: true,
+          webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true, preload: path.join(__dirname, "pane-preload.cjs") },
+        },
+      };
+    }
+    if (kind === "pane") loadInPlace(link);
+    else shell.openExternal(link).catch(() => {});
+    return { action: "deny" };
+  };
+}
+
+// Once a popup has been through a sign-in page and reached the opener's site
+// (the OAuth callback), it has done its job. When it closes, an opener that is
+// still on the page that opened it reloads, so it shows the new session even
+// if it missed the popup's message.
+function watchPopups(target, contents) {
+  contents.on("did-create-window", (child, { url: link }) => {
+    const popup = child.webContents;
+    const openerUrl = contents.getURL();
+    const visited = [link];
+    if (google.isSignInFlow(link)) {
+      signInPopups.add(popup.id);
+      applyIdentity(popup, identityFor(popup, link));
+    }
+    popup.setWindowOpenHandler(popupHandler(target, popup, (next) => popup.loadURL(next).catch(() => {})));
+    watchPopups(target, popup);
+    popup.on("did-navigate", (_event, next) => visited.push(next));
+    popup.on("did-redirect-navigation", (details) => details.isMainFrame && visited.push(details.url));
+    child.once("closed", () => {
+      if (!popups.popupCompleted(visited, openerUrl)) return;
+      setTimeout(() => {
+        if (contents.isDestroyed() || contents.isLoading() || contents.getURL() !== openerUrl) return;
+        contents.reload();
+      }, POPUP_SETTLE_MS);
+    });
+  });
+}
+
 function createTabView(target, paneId, url) {
   const view = new WebContentsView({
     webPreferences: {
@@ -468,27 +611,8 @@ function createTabView(target, paneId, url) {
   interceptCommands(contents, target);
   const send = (channel, payload) => sendTo(target, channel, payload);
 
-  contents.setWindowOpenHandler(({ url: link, disposition }) => {
-    // Popups that ask for a window (OAuth sign-in) open as real windows on the
-    // same session; plain "open in new tab" links stay inside the pane.
-    if (disposition === "new-window") {
-      return {
-        action: "allow",
-        overrideBrowserWindowOptions: {
-          backgroundColor: CIE_INK,
-          webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true },
-        },
-      };
-    }
-    if (/^https?:/i.test(link)) contents.loadURL(link);
-    else shell.openExternal(link);
-    return { action: "deny" };
-  });
-  contents.on("did-create-window", (child, { url: link }) => {
-    if (!google.isSignInFlow(link)) return;
-    signInPopups.add(child.webContents.id);
-    applyIdentity(child.webContents, identityFor(child.webContents, link));
-  });
+  contents.setWindowOpenHandler(popupHandler(target, contents, (link) => contents.loadURL(link).catch(() => {})));
+  watchPopups(target, contents);
   // Once the user has clicked or typed in this page, its way into Google's
   // sign-in goes to the sign-in window. A page that redirects there by itself
   // as the deck starts (a saved accounts.google.com tab) doesn't pop one up.
@@ -726,7 +850,14 @@ function buildMenu() {
         { type: "separator" },
         command("paste-list", "Paste a List of URLs…", null),
         command("import-backup", "Import from Extension…", null),
-        command("signin-google", "Sign in to Google…"),
+        {
+          label: "Sign in to",
+          submenu: [
+            command("signin-google", "Google…"),
+            command("signin-github", "GitHub…"),
+            command("signin-vercel", "Vercel…"),
+          ],
+        },
         { type: "separator" },
         command("tab-close", "Close Tab"),
         { label: "Close Window", accelerator: "CmdOrCtrl+Shift+W", role: "close" },
@@ -944,6 +1075,14 @@ ipcMain.handle("app:info", () => ({ platform: process.platform, locale: app.getL
 ipcMain.on("update:check", () => updater?.check(true));
 ipcMain.on("google:signin", (event) => {
   openSignInWindow(shellOf(event.sender) ?? focusedShell(), null, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.google.com%2F");
+});
+ipcMain.on("signin:open", (event, provider) => openProviderSignIn(shellOf(event.sender) ?? focusedShell(), provider));
+// A page asked for a passkey or security key (pane-preload.cjs). Electron
+// shows no prompt for those, so the deck says what to do instead.
+ipcMain.on("pane:passkey", (event) => {
+  const showsPage = (candidate) => [...candidate.panes.values()].some((pane) => [...pane.views.values()].some((view) => view.webContents === event.sender));
+  const owner = [...shells.values()].find(showsPage) ?? focusedShell();
+  sendTo(owner, "pane:passkey", { host: originOf(event.sender.getURL())?.replace(/^https?:\/\//, "") ?? "" });
 });
 ipcMain.on("update:install", () => updater?.install());
 

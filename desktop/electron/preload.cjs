@@ -39,4 +39,7 @@ contextBridge.exposeInMainWorld("deck", {
   onUpdateState: subscribe("update:state"),
   onGoogleSignIn: subscribe("google:signin"),
   googleSignIn: () => ipcRenderer.send("google:signin"),
+  signIn: (provider) => ipcRenderer.send("signin:open", provider),
+  onSignIn: subscribe("signin:status"),
+  onPasskey: subscribe("pane:passkey"),
 });

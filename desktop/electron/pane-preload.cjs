@@ -1,7 +1,42 @@
 // Runs in an isolated world inside each page view; the page itself gets no API.
 // Chrome handles the mouse's back / forward buttons in the browser UI, which
 // Electron doesn't have, so they are forwarded to the main process here.
-const { ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
+
+// Electron has no passkey (Touch ID, iCloud Keychain, phone) prompt: a page's
+// navigator.credentials request for one waits silently. The request goes
+// ahead untouched (a USB security key may still answer it); the page tells
+// this preload, which asks the deck to explain. Autofill requests
+// (mediation "conditional") ask nothing of the user and are left alone.
+// Google's sign-in inspects the browser's own functions, so its pages keep
+// them untouched.
+if (!/^accounts\.google\.|^accounts\.youtube\.com$/.test(location.hostname)) contextBridge.executeInMainWorld({
+  func: () => {
+    const container = globalThis.CredentialsContainer?.prototype;
+    if (!container) return;
+    for (const name of ["get", "create"]) {
+      const original = container[name];
+      if (typeof original !== "function") continue;
+      Object.defineProperty(container, name, {
+        configurable: true,
+        writable: true,
+        value: {
+          [name](options) {
+            if (options?.publicKey && options.mediation !== "conditional") window.dispatchEvent(new Event("deck-passkey-request"));
+            return original.apply(this, arguments);
+          },
+        }[name],
+      });
+    }
+  },
+});
+
+let lastPasskeyNotice = 0;
+window.addEventListener("deck-passkey-request", () => {
+  if (Date.now() - lastPasskeyNotice < 15000) return;
+  lastPasskeyNotice = Date.now();
+  ipcRenderer.send("pane:passkey");
+});
 
 window.addEventListener(
   "mouseup",

@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronRight, ClipboardPaste, Keyboard, Layers, Upload } from "lucide-react";
+import { ChevronRight, ClipboardPaste, Keyboard, Layers, LogIn, Upload } from "lucide-react";
 import { Sheet } from "@desktop/components/ui/Sheet";
 import { Button, Choices } from "@desktop/components/ui/controls";
 import { LANGUAGES } from "@desktop/lib/strings";
@@ -34,7 +34,7 @@ function ActionRow({ icon: Icon, title, hint, keyLabel, onClick }) {
 
 export function SettingsSheet({
   t, open, onClose, lang, onLang, defaultMode, onDefaultMode, modeOptions, devices, devicesUpdated, defaultDevice, onDefaultDevice, recentDevices, appVersion, keys,
-  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates,
+  onPasteList, onImport, onManageSets, onShortcuts, onCheckUpdates, onSignIn,
 }) {
   const currentDevice = devices.find((device) => device.id === defaultDevice);
   return (
@@ -87,6 +87,12 @@ export function SettingsSheet({
 
         <Section title={t("settingsSignIn")}>
           <p className="text-xs leading-5 text-paper-mute">{t("settingsSignInNote")}</p>
+          <div className="flex flex-col">
+            {[["google", "cmdGoogleSignIn"], ["github", "cmdGitHubSignIn"], ["vercel", "cmdVercelSignIn"]].map(([provider, label]) => (
+              <ActionRow key={provider} icon={LogIn} title={t(label)} hint={t("signInWindowHint")} onClick={() => onSignIn(provider)} />
+            ))}
+          </div>
+          <p className="text-xs leading-5 text-paper-mute">{t("settingsPasskeyNote")}</p>
         </Section>
 
         <Section title={t("settingsData")}>
