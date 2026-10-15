@@ -169,6 +169,32 @@ for (let i = starts.length - 1; i >= 0; i--) {
 
 writeFileSync(jsPath, js);
 
+// 6. The enlarge command is Focus view. The Chrome command id stays toggle-spotlight
+// so a shortcut the user already set is kept. The message key is cmdFocusView.
+const focusCmd = {
+  en: "Focus view: enlarge the selected window",
+  ja: "フォーカス表示: 選んだウィンドウを大きく表示",
+  de: "Fokusansicht: gewähltes Fenster vergrößern",
+  es: "Vista de enfoque: ampliar la ventana elegida",
+  fr: "Vue focus : agrandir la fenêtre choisie",
+  ko: "포커스 보기: 선택한 창을 크게 표시",
+  pt_BR: "Visão em foco: ampliar a janela escolhida",
+  zh_CN: "聚焦视图：放大所选窗口",
+};
+const manifestOut = readFileSync(manifestPath, "utf8");
+writeFileSync(manifestPath, replaceOnce(manifestOut, "__MSG_cmdSpotlight__", "__MSG_cmdFocusView__", "focus view command"));
+for (const [locale, message] of Object.entries(focusCmd)) {
+  const messagesPath = join(out, "_locales", locale, "messages.json");
+  const messages = readFileSync(messagesPath, "utf8");
+  const renamed = replaceOnce(
+    messages,
+    /"cmdSpotlight": \{\n    "message": "[^"]*"\n  \}/,
+    `"cmdFocusView": {\n    "message": ${JSON.stringify(message)}\n  }`,
+    `${locale} focus view command`,
+  );
+  writeFileSync(messagesPath, renamed);
+}
+
 const cssPath = assetPath(out, ".css");
 const css = readFileSync(cssPath, "utf8");
 writeFileSync(cssPath, `${css.trimEnd()}\n${read("inline-register.css")}`);

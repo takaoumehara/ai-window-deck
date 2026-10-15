@@ -34,6 +34,8 @@ test("every locale gets the same strings", () => {
     for (const k of keys) assert.ok(strings[l][k].trim(), `${l}.${k}`);
   }
   assert.equal(strings.en.regTitleAdd, "Register URLs + Window");
+  assert.equal(strings.en.layoutFocus, "Single large window");
+  assert.equal(strings.ja.layoutFocus, "大きな1枚");
   for (const l of locales) assert.match(strings[l].moreSupportLink, /Ko-fi/, l);
 });
 

@@ -5,8 +5,8 @@
   "extDescription": {
     "message": "Tile AI workspaces, bring one into focus with a shortcut, and switch between them quickly."
   },
-  "cmdSpotlight": {
-    "message": "Enlarge / back to the tile"
+  "cmdFocusView": {
+    "message": "Focus view: enlarge the selected window"
   },
   "cmdHome": {
     "message": "Back to its tile in the layout"

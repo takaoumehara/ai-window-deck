@@ -1,0 +1,57 @@
+AI Window Deck 1.11.2 — Chrome Web Store listing text (Español)
+
+==============================
+Short description (103/132)
+==============================
+This is the manifest's extDescription. Chrome fills it in from the package; it is not typed in the dashboard.
+
+Organiza tus ventanas de IA en cuadrícula, amplía una con un atajo y cambia rápidamente entre ventanas.
+
+==============================
+Detailed description
+==============================
+
+AI Window Deck es el gestor de ventanas para Claude Code en la nube y Codex. Lleva varios proyectos a la vez sin perderte: guarda los sitios que usas juntos, colócalos en un lienzo y ábrelos todos de una vez como ventanas de Chrome en mosaico. Tu perfil de Chrome, tus sesiones iniciadas, tu gestor de contraseñas y tus demás extensiones siguen exactamente como están.
+
+Crea un deck para el Proyecto A, el Proyecto B y el Proyecto C: investigación, redacción, revisión o cualquier trabajo en el que Claude Code, Codex y las referencias deban seguir visibles al mismo tiempo. Cuando una ventana necesite toda tu atención, pulsa Alt+X para ampliarla. Púlsalo otra vez y todas las ventanas vuelven a su mosaico.
+
+Funciones principales
+
+• Registrar URLs + ventana: añade ventanas dentro de la página, de una en una o en lote. Pega un mensaje con tus sitios y cada bloque separado por una línea en blanco se convierte en una ventana. Las líneas que hay que revisar se ponen en rojo, con un botón Corregir. También puedes importar y exportar un archivo .txt.
+• Direcciones inteligentes: escribe github.com y se guarda como https://github.com (localhost y las direcciones locales reciben http://). Los archivos locales, como /Users/me/My Site/index.html o C:\docs\notes.html, se abren como pestañas file://. Varias URL en una misma línea se convierten cada una en una pestaña.
+• Lienzo de diseño: arrastra ventanas al lienzo y cambia su tamaño desde cualquier borde. Elige Auto, Vertical, Horizontal, Cuadrícula, Una ventana grande o Libre. Deshaz, rehaz y conserva varios diseños predefinidos.
+• Apertura con un clic: abre todas las ventanas del diseño, en mosaico en la pantalla que elijas, con las pestañas agrupadas por nombre. Reorganizar devuelve a su sitio las ventanas ya abiertas.
+• Vista de enfoque: Alt+X amplía la ventana elegida a toda la pantalla, a un 80 % aproximadamente, a la mitad, a todo el alto o a un tamaño personalizado, desde donde está o centrada. Alt+Z devuelve a su mosaico una ventana cuyo tamaño cambiaste a mano.
+• Moverse entre ventanas: ventana anterior y siguiente, enfocar las ventanas 1–8, deshacer la última organización y activar la pantalla completa. Todos los atajos se pueden cambiar en Chrome.
+• Varias pantallas: elige en qué monitor o monitores se abre el deck.
+• Controlador flotante: mantén un controlador compacto abierto junto a tu trabajo.
+• Copia de seguridad: haz una copia de seguridad de todas las ventanas, diseños y ajustes en un archivo JSON, o restáuralos.
+• 8 idiomas: inglés, japonés, alemán, español, francés, coreano, portugués de Brasil y chino simplificado.
+
+Privacidad
+
+No hay cuentas, servidores, analíticas ni código remoto. AI Window Deck nunca lee el contenido de las páginas. Solo lee la posición de las ventanas y los títulos y las URL de las pestañas abiertas, para mostrar y organizar tus ventanas. La configuración se guarda en el almacenamiento de extensiones de Chrome, y Chrome puede sincronizarla entre tus propios dispositivos si tienes activada la sincronización de Chrome. No se envía nada al desarrollador ni a terceros.
+
+Gratis y de código abierto (MIT). Apoya el desarrollo en Ko-fi: https://ko-fi.com/G2G71VP1DF
+Código fuente y soporte: https://github.com/takaoumehara/ai-window-deck
+
+==============================
+Novedades de 1.11.2
+==============================
+
+• «Registrar URLs + ventana» ahora se abre dentro de la página, no en un cuadro de diálogo. Elige de una en una o pegado en lote; la tarjeta del lote muestra una animación breve de pegar una lista de sitios.
+• La importación en lote marca en rojo las líneas con problemas y enumera cada uno con un enlace a su línea, un botón Corregir y «Corregir todo lo corregible».
+• Las direcciones sin https:// se completan; localhost y las direcciones locales reciben http://.
+• Los archivos locales funcionan, incluidos los caminos con espacios, los caminos C:\ y las URL file:///.
+• Varias URL en una misma línea se convierten cada una en una pestaña. Las líneas como «Memo:» siguen siendo nombres de ventana, y un bloque sin nombre se llama «Ventana N».
+• Después de guardar en lote, elige en la página si las ventanas nuevas se colocan solas en el lienzo.
+• La vista Más enlaza a Ko-fi.
+
+==============================
+Screenshots (store-assets/listing/en/, 1280 × 800)
+==============================
+01-register.png      Registrar URLs + ventana: de una en una o pegar una lista
+02-bulk-paste.png    Líneas rojas, con Corregir
+03-layout.png        Colocar en el lienzo
+04-focus-view.png    Alt+X: una ventana se hace grande
+05-launch.png        Abrir

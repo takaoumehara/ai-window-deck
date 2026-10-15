@@ -1,0 +1,57 @@
+AI Window Deck 1.11.2 — Chrome Web Store listing text (Deutsch)
+
+==============================
+Short description (96/132)
+==============================
+This is the manifest's extDescription. Chrome fills it in from the package; it is not typed in the dashboard.
+
+Ordnet KI-Fenster in Kacheln an, vergrößert eins per Kürzel und wechselt schnell zwischen ihnen.
+
+==============================
+Detailed description
+==============================
+
+AI Window Deck ist der Fenstermanager für Claude Code in der Cloud und Codex. Mehrere Projekte gleichzeitig, ohne den Überblick zu verlieren: Speichern Sie die Websites, die Sie gemeinsam nutzen, ordnen Sie sie auf einer Arbeitsfläche an und öffnen Sie alle auf einmal als gekachelte Chrome-Fenster. Ihr Chrome-Profil, Ihre Anmeldungen, Ihr Passwortmanager und Ihre anderen Erweiterungen bleiben genau so, wie sie sind.
+
+Legen Sie ein Deck für Projekt A, Projekt B und Projekt C an: Recherche, Entwürfe, Überprüfung oder jede Arbeit, bei der Claude Code, Codex und Referenzen gleichzeitig sichtbar bleiben sollen. Wenn ein Fenster Ihre volle Aufmerksamkeit braucht, vergrößern Sie es mit Alt+X. Drücken Sie noch einmal, und jedes Fenster kehrt in seine Kachel zurück.
+
+Wichtigste Funktionen
+
+• URLs + Fenster registrieren: Fenster direkt auf der Seite hinzufügen, einzeln oder gesammelt. Fügen Sie eine Nachricht mit Ihren Websites ein; jeder durch eine Leerzeile getrennte Block wird ein Fenster. Zeilen, die Aufmerksamkeit brauchen, werden rot, mit einer Schaltfläche zum Korrigieren. Sie können auch eine .txt-Datei importieren und exportieren.
+• Clevere Adressen: github.com wird als https://github.com gespeichert (localhost und lokale Adressen erhalten http://). Lokale Dateien wie /Users/me/My Site/index.html oder C:\docs\notes.html öffnen sich als file://-Tabs. Mehrere URLs in einer Zeile werden jeweils ein Tab.
+• Layout-Arbeitsfläche: Ziehen Sie Fenster auf die Arbeitsfläche und ändern Sie die Größe an jeder Kante. Wählen Sie Automatisch, Vertikal, Horizontal, Raster, Ein großes Fenster oder Frei. Rückgängig, Wiederholen und mehrere Layout-Vorlagen.
+• Öffnen mit einem Klick: Öffnen Sie jedes Fenster des Layouts, gekachelt auf dem Bildschirm Ihrer Wahl, mit nach Namen gruppierten Tabs. Neu anordnen setzt gestartete Fenster zurück an ihren Platz.
+• Fokusansicht: Alt+X vergrößert das gewählte Fenster auf den ganzen Bildschirm, etwa 80 %, die Hälfte, die volle Höhe oder eine eigene Größe, an Ort und Stelle oder zentriert. Alt+Z setzt ein von Hand geändertes Fenster in seine Kachel zurück.
+• Zwischen Fenstern wechseln: vorheriges und nächstes Fenster, Fenster 1–8, letzte Anordnung rückgängig, Vollbild. Jede Tastenkombination lässt sich in Chrome ändern.
+• Mehrere Bildschirme: Wählen Sie, auf welchem Monitor oder welchen Monitoren das Deck geöffnet wird.
+• Schwebende Steuerung: Lassen Sie eine kompakte Steuerung neben Ihrer Arbeit geöffnet.
+• Sicherung: Sichern oder stellen Sie alle Fenster, Layouts und Einstellungen als JSON-Datei wieder her.
+• 8 Sprachen: Englisch, Japanisch, Deutsch, Spanisch, Französisch, Koreanisch, brasilianisches Portugiesisch und vereinfachtes Chinesisch.
+
+Datenschutz
+
+Es gibt kein Konto, keinen Server, keine Analysen und keinen Remote-Code. AI Window Deck liest niemals Seiteninhalte. Es liest nur Fensterpositionen sowie Titel und URLs geöffneter Tabs, um Ihre Fenster aufzulisten und anzuordnen. Einstellungen werden im Erweiterungsspeicher von Chrome gespeichert, und Chrome kann sie zwischen Ihren eigenen Geräten synchronisieren, wenn die Chrome-Synchronisierung aktiv ist. Nichts wird an den Entwickler oder an Dritte gesendet.
+
+Kostenlos und Open Source (MIT). Unterstützen Sie die Entwicklung auf Ko-fi: https://ko-fi.com/G2G71VP1DF
+Quellcode und Support: https://github.com/takaoumehara/ai-window-deck
+
+==============================
+Neu in 1.11.2
+==============================
+
+• „URLs + Fenster registrieren“ öffnet sich jetzt auf der Seite statt in einem Dialog. Wählen Sie einzeln oder gesammeltes Einfügen; die Karte für das gesammelte Einfügen zeigt eine kurze Animation einer eingefügten Websiteliste.
+• Der Sammelimport markiert problematische Zeilen rot und listet jedes Problem mit einem Link zur Zeile, einer Schaltfläche zum Korrigieren und „Alles Korrigierbare korrigieren“.
+• Adressen ohne https:// werden ergänzt; localhost und lokale Adressen erhalten http://.
+• Lokale Dateien funktionieren, auch Pfade mit Leerzeichen, C:\-Pfade und file:///-URLs.
+• Mehrere URLs in einer Zeile werden jeweils ein Tab. Zeilen wie „Memo:“ bleiben Fensternamen, und ein Block ohne Namen heißt „Fenster N“.
+• Nach dem gesammelten Speichern wählen Sie auf der Seite, ob die neuen Fenster automatisch auf der Arbeitsfläche platziert werden.
+• Die Ansicht „Mehr“ verlinkt auf Ko-fi.
+
+==============================
+Screenshots (store-assets/listing/en/, 1280 × 800)
+==============================
+01-register.png      URLs + Fenster registrieren: einzeln oder eine Liste einfügen
+02-bulk-paste.png    Rote Zeilen, mit Korrigieren
+03-layout.png        Auf der Arbeitsfläche anordnen
+04-focus-view.png    Alt+X: ein Fenster wird groß
+05-launch.png        Starten

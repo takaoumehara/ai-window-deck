@@ -19,6 +19,7 @@ Built from the 1.11.0 store package with `tools/patch-v1.11.2-inline-register.mj
 - Vercel serves `site/` as a static site (root `vercel.json`), instead of building the repository with Vite.
 
 ### Changed
+- The enlarge command is named **Focus view** (日本語: フォーカス表示) in the panel, the shortcut list and the store listing. The layout preset described as “Focus (one large window)” is **Single large window** (日本語: 大きな1枚).
 - The register button is now **Register URLs + Window**, and it opens inside the page instead of a modal dialog. The view you came from stays in place and keyboard focus returns to the button when the panel closes. The small dock window keeps the dialog.
 - A new window starts at a choice between *One by one* and *Bulk (paste text)*. The bulk card shows a short animation of copying a list of sites from a chat and pasting it; with reduced motion it shows a still version. `Escape` in a form goes back to the choice first.
 - After a bulk save, the choice to place the new windows on the canvas automatically or keep them in the library is shown in the page too.

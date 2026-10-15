@@ -5,8 +5,8 @@
   "extDescription": {
     "message": "AIの作業ウィンドウを整列し、ショートカットで一つを大きくして、すばやく切り替えます。"
   },
-  "cmdSpotlight": {
-    "message": "大きく／タイルに戻す"
+  "cmdFocusView": {
+    "message": "フォーカス表示: 選んだウィンドウを大きく表示"
   },
   "cmdHome": {
     "message": "レイアウトの位置に戻す"

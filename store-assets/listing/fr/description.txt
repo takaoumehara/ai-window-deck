@@ -1,0 +1,57 @@
+AI Window Deck 1.11.2 — Chrome Web Store listing text (Français)
+
+==============================
+Short description (113/132)
+==============================
+This is the manifest's extDescription. Chrome fills it in from the package; it is not typed in the dashboard.
+
+Organise vos fenêtres IA en grille, agrandit l'une via un raccourci et permet de basculer rapidement entre elles.
+
+==============================
+Detailed description
+==============================
+
+AI Window Deck est le gestionnaire de fenêtres pour Claude Code dans le cloud et Codex. Menez plusieurs projets de front sans vous y perdre : enregistrez les sites que vous utilisez ensemble, disposez-les sur un canevas et ouvrez-les tous d'un coup sous forme de fenêtres Chrome en mosaïque. Votre profil Chrome, vos connexions, votre gestionnaire de mots de passe et vos autres extensions restent exactement tels quels.
+
+Créez un deck pour le projet A, le projet B et le projet C : recherche, rédaction, relecture, ou tout travail où Claude Code, Codex et les références doivent rester visibles en même temps. Lorsqu'une fenêtre demande toute votre attention, appuyez sur Alt+X pour l'agrandir. Appuyez de nouveau et chaque fenêtre retrouve sa vignette.
+
+Fonctionnalités principales
+
+• Enregistrer des URL + une fenêtre : ajoutez des fenêtres directement dans la page, une par une ou en lot. Collez un message qui liste vos sites : chaque bloc séparé par une ligne vide devient une fenêtre. Les lignes à corriger passent au rouge, avec un bouton Corriger. Vous pouvez aussi importer et exporter un fichier .txt.
+• Adresses intelligentes : tapez github.com et l'adresse est enregistrée comme https://github.com (localhost et les adresses locales reçoivent http://). Les fichiers locaux tels que /Users/me/My Site/index.html ou C:\docs\notes.html s'ouvrent comme des onglets file://. Plusieurs URL sur une même ligne deviennent chacune un onglet.
+• Canevas de disposition : faites glisser les fenêtres sur le canevas et redimensionnez-les depuis n'importe quel bord. Choisissez Auto, Vertical, Horizontal, Grille, Grande fenêtre ou Libre. Annulez, rétablissez et conservez plusieurs préréglages.
+• Ouverture en un clic : ouvrez toutes les fenêtres de la disposition, en mosaïque sur l'écran de votre choix, avec les onglets regroupés par nom. Réorganiser remet à leur place les fenêtres déjà ouvertes.
+• Vue focus : Alt+X agrandit la fenêtre choisie pour remplir l'écran, à environ 80 %, à moitié, en pleine hauteur ou à une taille personnalisée, sur place ou centrée. Alt+Z remet dans sa vignette une fenêtre dont vous avez changé la taille à la main.
+• Passer d'une fenêtre à l'autre : fenêtre précédente et suivante, fenêtres 1 à 8, annulation de la dernière organisation, plein écran. Chaque raccourci peut être modifié dans Chrome.
+• Plusieurs écrans : choisissez le ou les moniteurs sur lesquels le deck s'ouvre.
+• Contrôleur flottant : gardez un contrôleur compact ouvert à côté de votre travail.
+• Sauvegarde : sauvegardez ou restaurez toutes les fenêtres, dispositions et réglages dans un fichier JSON.
+• 8 langues : anglais, japonais, allemand, espagnol, français, coréen, portugais du Brésil et chinois simplifié.
+
+Confidentialité
+
+Aucun compte, aucun serveur, aucun outil d'analyse ni aucun code distant. AI Window Deck ne lit jamais le contenu des pages. Il lit uniquement la position des fenêtres ainsi que les titres et URL des onglets ouverts, afin de lister et d'organiser vos fenêtres. Les paramètres sont enregistrés dans l'espace de stockage des extensions de Chrome, et Chrome peut les synchroniser entre vos propres appareils si la synchronisation Chrome est activée. Rien n'est envoyé au développeur ni à des tiers.
+
+Gratuit et open source (MIT). Soutenez le développement sur Ko-fi : https://ko-fi.com/G2G71VP1DF
+Code source et assistance : https://github.com/takaoumehara/ai-window-deck
+
+==============================
+Nouveautés de 1.11.2
+==============================
+
+• « Enregistrer des URL + une fenêtre » s'ouvre maintenant dans la page, et non plus dans une boîte de dialogue. Choisissez une par une ou le collage en lot ; la carte du lot montre une courte animation de collage d'une liste de sites.
+• L'import en lot marque en rouge les lignes à corriger et liste chaque problème avec un lien vers sa ligne, un bouton Corriger et « Tout corriger ».
+• Les adresses sans https:// sont complétées ; localhost et les adresses locales reçoivent http://.
+• Les fichiers locaux fonctionnent, y compris les chemins avec des espaces, les chemins C:\ et les URL file:///.
+• Plusieurs URL sur une même ligne deviennent chacune un onglet. Les lignes comme « Memo : » restent des noms de fenêtre, et un bloc sans nom s'appelle « Fenêtre N ».
+• Après un enregistrement en lot, choisissez dans la page si les nouvelles fenêtres sont placées automatiquement sur le canevas.
+• La vue Plus renvoie vers Ko-fi.
+
+==============================
+Screenshots (store-assets/listing/en/, 1280 × 800)
+==============================
+01-register.png      Enregistrer des URL + une fenêtre : une par une, ou coller une liste
+02-bulk-paste.png    Lignes rouges, avec Corriger
+03-layout.png        Disposer sur le canevas
+04-focus-view.png    Alt+X : une fenêtre s'agrandit
+05-launch.png        Ouvrir

@@ -8,7 +8,7 @@
 
 Window manager for Claude Code in the cloud and Codex — run multiple projects at once without getting confused.
 
-A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and spotlight one of them with a single shortcut.
+A Chrome extension for people who work with several AI tools and references side by side. Save the windows you use together, lay them out on a canvas, open them all at once as tiled Chrome windows, and bring one into Focus view with a single shortcut.
 
 Your Chrome profile, sign-ins, password manager and other extensions stay as they are. AI Window Deck only arranges ordinary Chrome windows.
 
@@ -53,9 +53,9 @@ Website: <https://ai-window-deck.vercel.app/>
 
 - **Register URLs + Window.** Each saved window has a name and one or more URLs, which open as tabs. Add windows one by one, or paste a list of sites: each block separated by a blank line becomes a window. Lines that need attention turn red, with a link to the line and a **Fix** button. You can also import and export a `.txt` file.
 - **Addresses and local files.** `github.com` is saved as `https://github.com`; `localhost` and local addresses get `http://`. Local paths such as `/Users/me/My Site/index.html` or `C:\docs\notes.html` open as `file://` tabs once *Allow access to file URLs* is on for the extension. Several URLs on one line each become a tab.
-- **Layout canvas.** Drag windows onto a 12 × 12 canvas and resize them from any edge. Layouts include Auto, Vertical, Horizontal, Grid, Focus (one large window) and Freeform. The canvas has undo and redo, and you can keep several layout presets (A, B, …).
+- **Layout canvas.** Drag windows onto a 12 × 12 canvas and resize them from any edge. Layouts include Auto, Vertical, Horizontal, Grid, Single large window and Freeform. The canvas has undo and redo, and you can keep several layout presets (A, B, …).
 - **Launch and re-tile.** One click opens every window in the layout and tiles it on the display(s) you chose, with its tabs grouped. *Retile* moves windows you already launched back into place.
-- **Spotlight.** `Alt+X` enlarges the active window: half, tall, three quarters, full height, full screen or a custom size. You choose whether it grows from where it is or from the screen centre. Press `Alt+X` again, or `Alt+Z`, to put it back in its tile.
+- **Focus view.** `Alt+X` enlarges the selected window: fill the display, about 80%, half, full height or a custom size. You choose whether it grows in place or from the centre. Press `Alt+X` again, or `Alt+Z`, to put it back in its tile.
 - **Move between windows.** Go to the previous or next window, focus window 1–8, undo the last arrangement, and toggle full screen.
 - **Multiple displays.** Choose which monitor or monitors the deck opens on.
 - **Floating controller and large window.** Keep a compact controller open, or open the settings in a window of their own.
@@ -92,7 +92,7 @@ The repository root is the 1.11.2 extension package itself, so there is nothing 
 3. **Register windows** with **Register URLs + Window**: choose *One by one* (a name, plus one or more URLs) or *Bulk (paste text)*.
 4. **Drag windows onto the canvas.** Set how many windows you want, pick a layout, and resize tiles from their edges.
 5. Click **Launch**. Each window opens in its own Chrome window, tiled to match the canvas.
-6. Use the spotlight and navigation shortcuts while you work.
+6. Use Focus view and the navigation shortcuts while you work.
 
 Tips:
 
@@ -104,7 +104,7 @@ Tips:
 
 | Command | Default |
 | --- | --- |
-| Spotlight: enlarge the active window / back to its tile | `Alt+X` |
+| Focus view: Alt+X enlarges the selected window | `Alt+X` |
 | Put the window back in the tile it started from | `Alt+Z` |
 | Arrange (re-tile) the deck windows | `Alt+A` |
 | Full screen / back | `Alt+Q` |

@@ -19,9 +19,9 @@ Key features
 
 • Register URLs + Window: add windows right in the page, one by one or in bulk. Paste a message that lists your sites, and each block separated by a blank line becomes a window. Lines that need attention turn red, with a Fix button. You can also import and export a .txt file.
 • Smart addresses: type github.com and it is saved as https://github.com (localhost and local addresses get http://). Local files such as /Users/me/My Site/index.html or C:\docs\notes.html open as file:// tabs. Several URLs on one line each become a tab.
-• Layout canvas: drag windows onto the canvas and resize them from any edge. Choose Auto, Vertical, Horizontal, Grid, Focus (one large window) or Freeform. Undo, redo, and keep several layout presets.
+• Layout canvas: drag windows onto the canvas and resize them from any edge. Choose Auto, Vertical, Horizontal, Grid, Single large window or Freeform. Undo, redo, and keep several layout presets.
 • One-click launch: open every window in the layout, tiled on the display you choose, with its tabs grouped by name. Retile moves launched windows back into place.
-• Focus view: Alt+X enlarges the active window to fill the display, about 80%, half, full height or a custom size, growing in place or centred. Alt+Z puts a window you resized by hand back into its tile.
+• Focus view: Alt+X enlarges the selected window to fill the display, about 80%, half, full height or a custom size, growing in place or centred. Alt+Z puts a window you resized by hand back into its tile.
 • Move between windows: previous and next window, focus window 1–8, undo the last arrangement, toggle full screen. Every shortcut can be changed in Chrome.
 • Multiple displays: choose which monitor or monitors the deck opens on.
 • Floating controller: keep a compact controller open next to your work.
