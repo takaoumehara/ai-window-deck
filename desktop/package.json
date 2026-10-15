@@ -2,7 +2,7 @@
   "name": "ai-window-deck-desktop",
   "productName": "AI Window Deck",
   "private": true,
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "AI Window Deck as a desktop app: registered windows split inside one window.",
   "author": "Takao Umehara",
   "license": "MIT",
