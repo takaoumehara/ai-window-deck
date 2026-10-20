@@ -135,18 +135,29 @@ function setUpBrowserIdentity() {
 function applyIdentity(contents, identity) {
   if (contents.isDestroyed() || identities.get(contents.id) === identity) return;
   identities.set(contents.id, identity);
-  contents.setUserAgent(identity.userAgent);
-  try {
-    if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
-    contents.debugger.sendCommand("Emulation.setUserAgentOverride", {
-      userAgent: identity.userAgent,
-      acceptLanguage: languages,
-      platform: identity.platform,
-      ...(identity.metadata ? { userAgentMetadata: identity.metadata } : {}),
-    }).catch(() => {});
-  } catch {
-    // Already debugged elsewhere; the session-wide identity still applies.
-  }
+  // setUserAgent and the DevTools override must not run inside
+  // did-start-navigation / did-redirect-navigation. On Electron 38.8.6 that
+  // callback is still inside WebContentsImpl::DidRedirectNavigation; changing
+  // the page there frees the NavigationRequest, and the next read of it
+  // segfaults the whole app (0.3.0 crash 8AA53F26, PC in
+  // DidRedirectNavigation). Gmail and Vercel's "Continue with Google" both
+  // redirect to accounts.google.com, which is when this identity changes.
+  // The header map above is updated now, so the next request already carries it.
+  setImmediate(() => {
+    if (contents.isDestroyed() || identities.get(contents.id) !== identity) return;
+    try {
+      contents.setUserAgent(identity.userAgent);
+      if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
+      contents.debugger.sendCommand("Emulation.setUserAgentOverride", {
+        userAgent: identity.userAgent,
+        acceptLanguage: languages,
+        platform: identity.platform,
+        ...(identity.metadata ? { userAgentMetadata: identity.metadata } : {}),
+      }).catch(() => {});
+    } catch {
+      // Already debugged elsewhere; the session-wide identity still applies.
+    }
+  });
 }
 
 // Popups opened for a Google sign-in keep the sign-in identity for their

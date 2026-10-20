@@ -22,6 +22,14 @@ test("FedCM is disabled before any window exists", () => {
   assert.ok(flags > 0 && flags < ready);
 });
 
+test("the DevTools identity override waits until the redirect callback has returned", () => {
+  const fn = main.slice(main.indexOf("function applyIdentity"), main.indexOf("const signInPopups"));
+  const deferred = fn.indexOf("setImmediate");
+  assert.ok(deferred > 0);
+  assert.ok(fn.indexOf("contents.setUserAgent") > deferred);
+  assert.ok(fn.indexOf("debugger.attach") > deferred);
+});
+
 test("a Google sign-in window is not created inside a navigation, and no window is parented to the deck", () => {
   assert.match(main, /function scheduleSignInWindow\(target, paneId, url, strategy, into = null\)/);
   assert.match(main, /event\.preventDefault\(\);\s*scheduleSignInWindow\(target, paneId, event\.url\);/);
