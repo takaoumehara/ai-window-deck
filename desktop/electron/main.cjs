@@ -14,6 +14,10 @@ const google = require("./google-signin.cjs");
 const popups = require("./popups.cjs");
 const ai = require("./ai-status.cjs");
 const paneSleep = require("./pane-sleep.cjs");
+const { applyChromiumFlags } = require("./crash-guards.cjs");
+
+// Before any window exists. Chromium reads these flags as the app starts.
+applyChromiumFlags(app.commandLine);
 
 const DEV_URL = process.env.DECK_DEV_URL;
 const SITE_URL = "https://ai-window-deck.vercel.app/mac";
@@ -205,10 +209,11 @@ function openSignInWindow(target, paneId, url, strategy = store.settings?.google
   creatingSignInWindow = true;
   let win;
   try {
+    // Not a child of the deck window. Parenting a window onto one that hosts
+    // WebContentsViews segfaults the app while a navigation is in flight.
     win = new BrowserWindow({
       width: 500,
       height: 720,
-      parent: target && !target.win.isDestroyed() ? target.win : undefined,
       title: "Google",
       backgroundColor: "#ffffff",
       autoHideMenuBar: true,
@@ -236,7 +241,7 @@ function openSignInWindow(target, paneId, url, strategy = store.settings?.google
   contents.on("did-navigate", (_event, next) => {
     if (!google.isRejected(next)) return;
     const following = google.nextStrategy(state.strategy);
-    if (following) openSignInWindow(state.target, state.paneId, state.startUrl, following, state.into);
+    if (following) scheduleSignInWindow(state.target, state.paneId, state.startUrl, following, state.into);
     else sendTo(state.target, "google:signin", { status: "rejected" });
   });
   contents.setWindowOpenHandler(({ url: link }) => {
@@ -248,6 +253,18 @@ function openSignInWindow(target, paneId, url, strategy = store.settings?.google
     if (signInWindow === state) signInWindow = null;
   });
   contents.loadURL(url).catch(() => {});
+}
+
+// A BrowserWindow created inside will-navigate or will-redirect runs while
+// Chromium is still on that navigation. Parenting it to the deck window
+// segfaults the app. Cancel the navigation first; open the window on the
+// next turn, with no parent.
+function scheduleSignInWindow(target, paneId, url, strategy, into = null) {
+  setImmediate(() => {
+    if (target?.win?.isDestroyed()) return;
+    const back = into && !into.isDestroyed() ? into : null;
+    openSignInWindow(target, paneId, url, strategy, back);
+  });
 }
 
 function finishSignIn(state, next) {
@@ -278,11 +295,9 @@ function openProviderSignIn(target, id) {
     open.focus();
     return;
   }
-  const parent = target && !target.win.isDestroyed() ? target.win : undefined;
   const win = new BrowserWindow({
     width: 520,
     height: 760,
-    parent,
     title: provider.name,
     backgroundColor: "#ffffff",
     autoHideMenuBar: true,
@@ -313,7 +328,7 @@ function openProviderSignIn(target, id) {
   const toGoogleWindow = (event) => {
     if (event.isMainFrame === false || !google.isSignInPage(event.url)) return;
     event.preventDefault();
-    openSignInWindow(target, null, event.url, undefined, contents);
+    scheduleSignInWindow(target, null, event.url, undefined, contents);
   };
   contents.on("will-navigate", toGoogleWindow);
   contents.on("will-redirect", toGoogleWindow);
@@ -554,12 +569,11 @@ function popupHandler(target, contents, loadInPlace) {
   return ({ url: link, disposition, features }) => {
     const kind = popups.classifyPopup({ url: link, disposition });
     if (kind === "window") {
-      const parent = target && !target.win.isDestroyed() ? target.win : undefined;
+      const deck = target && !target.win.isDestroyed() ? target.win : null;
       return {
         action: "allow",
         overrideBrowserWindowOptions: {
-          ...popups.popupSize(features, parent ? parent.getBounds() : undefined),
-          parent,
+          ...popups.popupSize(features, deck ? deck.getBounds() : undefined),
           backgroundColor: "#ffffff",
           autoHideMenuBar: true,
           webPreferences: { partition: PARTITION, sandbox: true, contextIsolation: true, preload: path.join(__dirname, "pane-preload.cjs") },
@@ -740,7 +754,7 @@ function createTabView(target, paneId, url) {
   const toSignInWindow = (event) => {
     if (!event.isMainFrame || !view.interacted || !google.isSignInPage(event.url)) return;
     event.preventDefault();
-    openSignInWindow(target, paneId, event.url);
+    scheduleSignInWindow(target, paneId, event.url);
   };
   contents.on("will-navigate", toSignInWindow);
   contents.on("will-redirect", toSignInWindow);

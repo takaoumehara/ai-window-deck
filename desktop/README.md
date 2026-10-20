@@ -27,7 +27,7 @@ and a click or a shortcut enlarges it or puts it back.
 - **Sleeping panes**: a page that has been out of sight (a background tab, a pane hidden by Fill, a minimized window) and untouched for 30 minutes is closed to save memory. Its tab keeps a moon mark; showing it again reopens the page at the same address and scroll position, under a snapshot until it has loaded. Pages never sleep while on screen, while an AI in them is working, waiting or has unseen news, while they play sound or video, with text you haven't sent, during a sign-in or with a sign-in popup open, or when the pane is set to *Keep Pane Awake* (palette or Deck menu; a cup mark on its card). Settings turns it off or changes the time (10, 30, 60 or 120 minutes). Sites that scroll inside their own panel (most chat apps) reopen at their usual position.
 - **Settings** (gear, `⌘,`): language (日本語, English, 简体中文, 繁體中文, 한국어, Español, Français, Deutsch, Português), the layout new sets start in, AI status (on/off, notifications, sound, per site), sleeping panes, sign-in, paste and import, updates.
 - The collapsed sidebar is a rail with each window's site icon, name and hosts. Clicking a hidden window shows and focuses it.
-- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). *File → Sign in to → Google / GitHub / Vercel* (also in the palette and Settings) opens that sign-in in a window of its own and reloads the matching panes when it's done. Sign-in popups ("Continue with GitHub" and the like) open as small windows in front of the deck and report back to the page that opened them.
+- Logins are kept in one persistent session shared by all panes, so one sign-in covers every pane and survives a restart. Google sign-in opens in a small window of its own on the same session; when it finishes, the page that asked continues and the other Google panes reload (see *How it works*). The browser account prompt (FedCM) is off: Electron has no such prompt, and Vercel's "Continue with Google" or opening Gmail quit the whole app when it tried to show one. Those buttons open a normal popup instead. *File → Sign in to → Google / GitHub / Vercel* (also in the palette and Settings) opens that sign-in in a window of its own and reloads the matching panes when it's done. Sign-in popups ("Continue with GitHub" and the like) open as small windows in front of the deck and report back to the page that opened them.
 - **Passkeys don't work inside the app** (Electron has no passkey support: no Touch ID, iCloud Keychain or phone sign-in), so a page that asks for one waits forever. The deck now says so in the title bar. On GitHub, sign in with your password and pick *More options* → authenticator app, GitHub Mobile or SMS for the second step. Password manager extensions don't run in the app either; copy from the 1Password or Passwords app.
 - **Mobile preview**: the phone button in a pane's title bar shows the page as a phone or tablet does, in a device frame. The bar under the title switches the model from a list grouped by maker (iPhone, iPad, Pixel, Galaxy, Xperia, AQUOS, OPPO, Xiaomi, Android tablets) with a search box (name, maker, year, `390x844`, "fold", "tablet", …) and the last five devices used at the top; Settings uses the same list. It also rotates the device, and adds another pane with the same page on the next device, so several devices sit side by side. Each window keeps its own device and orientation, also while the preview is off, and undo covers them. Settings only picks the first device for a window that has never been previewed; changing it never touches existing windows. `⌘⇧M` toggles the preview on the focused pane.
 
@@ -159,17 +159,22 @@ applies an update signed by the same Developer ID, so every release must be sign
   accelerators and the palette (`src/lib/palette.js`) both read it, so they can't drift apart.
 - Google sign-in: a click that leads a pane to `accounts.google.com` opens a dedicated
   `BrowserWindow` on the same `persist:deck` partition, so the cookies it sets are the panes'
-  cookies. When Google leaves its sign-in flow, the window closes and the pane loads where Google
+  cookies. The window is not a child of the deck window, and it is created after the
+  navigation event returns; doing either during the navigation segfaulted the app.
+  FedCM (`FedCm`, `FedCmButtonMode`) is disabled before startup (`electron/crash-guards.cjs`),
+  so a "Continue with Google" button falls back to that popup instead of a dialog Electron
+  cannot show. When Google leaves its sign-in flow, the window closes and the pane loads where Google
   was heading. If Google answers "This browser may not be secure", the window retries once with a
   Firefox identity and remembers what worked. A watcher on the `SID` cookie reloads other Google
   panes after sign-in or sign-out. Signing in in Safari or Chrome can't help: their cookies live in
   another browser's store, which the app can't read.
 - Popups (`electron/popups.cjs`): a `window.open` with size features, a blank `window.open()`,
   or one that goes to a sign-in or OAuth page (GitHub, Vercel, Google, Apple, Microsoft, Auth0,
-  Okta, Clerk, any `/oauth/authorize`…) opens a real child window of the deck window on the same
-  session, so `window.opener` and `postMessage` work and the popup can close itself. Other
-  `target=_blank` links load in the pane. When a popup has been through a sign-in page and reached
-  the opener's site, closing it reloads the opener if the opener didn't move by itself.
+  Okta, Clerk, any `/oauth/authorize`…) opens a real window on the same session, so
+  `window.opener` and `postMessage` work and the popup can close itself. It is not a child of
+  the deck window. Other `target=_blank` links load in the pane. When a popup has been through
+  a sign-in page and reached the opener's site, closing it reloads the opener if the opener
+  didn't move by itself.
 - *File → Sign in to → GitHub / Vercel* opens the provider's login in its own window. Google's
   pages inside it go to the Google window and come back. The window closes once it reaches the
   provider's own pages signed in (GitHub: the `logged_in` cookie), then pages on that site reload,
