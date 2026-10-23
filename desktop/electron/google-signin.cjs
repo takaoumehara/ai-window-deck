@@ -87,7 +87,22 @@ function nextStrategy(current) {
   return at >= 0 && at < SIGN_IN_STRATEGIES.length - 1 ? SIGN_IN_STRATEGIES[at + 1] : null;
 }
 
+// True when the active tab is a URL the user just added (＋, or a second copy
+// of an address already open). Switching to a tab that was already in the list
+// is not an open, so a saved Gmail tab can be shown without starting sign-in.
+function userJustOpened(previousUrls, nextUrls, activeTab) {
+  if (!Array.isArray(previousUrls) || !Array.isArray(nextUrls) || nextUrls.length <= previousUrls.length) return false;
+  const remaining = previousUrls.slice();
+  const added = [];
+  for (const url of nextUrls) {
+    const at = remaining.indexOf(url);
+    if (at >= 0) remaining.splice(at, 1);
+    else added.push(url);
+  }
+  return added.includes(nextUrls[activeTab]);
+}
+
 module.exports = {
   isGoogleHost, isSignInFlow, isSignInPage, isRejected, reloadsWithGoogleSession, isSessionCookie,
-  SIGN_IN_STRATEGIES, firefoxIdentity, nextStrategy,
+  SIGN_IN_STRATEGIES, firefoxIdentity, nextStrategy, userJustOpened,
 };

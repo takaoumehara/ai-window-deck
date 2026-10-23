@@ -32,6 +32,9 @@ test("the DevTools identity override waits until the redirect callback has retur
 
 test("a Google sign-in window is not created inside a navigation, and no window is parented to the deck", () => {
   assert.match(main, /function scheduleSignInWindow\(target, paneId, url, strategy, into = null\)/);
+  assert.match(main, /view\.interacted \|\| view\.openedByUser/);
+  assert.match(main, /!firstSync && google\.userJustOpened\(previousUrls, pane\.urls, pane\.activeTab\)/);
+  assert.match(main, /if \(view\) view\.openedByUser = true;/);
   assert.match(main, /event\.preventDefault\(\);\s*scheduleSignInWindow\(target, paneId, event\.url\);/);
   assert.match(main, /event\.preventDefault\(\);\s*scheduleSignInWindow\(target, null, event\.url, undefined, contents\);/);
   assert.equal(main.includes("parent:"), false);

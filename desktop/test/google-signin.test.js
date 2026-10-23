@@ -24,6 +24,14 @@ test("Google hosts, the sign-in flow and the pages that move to the sign-in wind
   assert.ok(!google.isSignInPage("https://accounts.google.com/o/oauth2/v2/auth?client_id=x"));
   assert.ok(!google.isSignInPage("https://myaccount.google.com/"));
 
+  const gmail = "https://gmail.com";
+  const claude = "https://claude.ai";
+  assert.equal(google.userJustOpened([claude], [claude, gmail], 1), true);
+  assert.equal(google.userJustOpened([gmail], [gmail, gmail], 1), true);
+  assert.equal(google.userJustOpened([claude, gmail], [claude, gmail], 1), false);
+  assert.equal(google.userJustOpened([claude, gmail], [gmail, claude], 0), false);
+  assert.equal(google.userJustOpened([], [gmail], 0), true);
+
   assert.ok(google.isRejected("https://accounts.google.com/v3/signin/rejected?x"));
   assert.ok(google.isRejected("https://accounts.google.com/signin/v2/deniedsigninrejected"));
   assert.ok(!google.isRejected("https://accounts.google.com/v3/signin/challenge/pwd"));

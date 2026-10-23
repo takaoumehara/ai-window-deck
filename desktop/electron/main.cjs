@@ -742,7 +742,7 @@ function publishAi(target, notify = null) {
   app.setBadgeCount?.(waiting);
 }
 
-function createTabView(target, paneId, url) {
+function createTabView(target, paneId, url, openedByUser = false) {
   const view = new WebContentsView({
     webPreferences: {
       partition: PARTITION,
@@ -759,11 +759,12 @@ function createTabView(target, paneId, url) {
   contents.setWindowOpenHandler(popupHandler(target, contents, (link) => contents.loadURL(link).catch(() => {})));
   watchPopups(target, contents);
   watchAi(target, paneId, view);
-  // Once the user has clicked or typed in this page, its way into Google's
-  // sign-in goes to the sign-in window. A page that redirects there by itself
-  // as the deck starts (a saved accounts.google.com tab) doesn't pop one up.
+  // A click in the page, or a tab the user just opened, sends Google's sign-in
+  // to its own window. A tab restored when the deck starts is left alone, so a
+  // saved accounts.google.com page doesn't pop a window on launch.
+  view.openedByUser = openedByUser;
   const toSignInWindow = (event) => {
-    if (!event.isMainFrame || !view.interacted || !google.isSignInPage(event.url)) return;
+    if (!event.isMainFrame || !(view.interacted || view.openedByUser) || !google.isSignInPage(event.url)) return;
     event.preventDefault();
     scheduleSignInWindow(target, paneId, event.url);
   };
@@ -900,6 +901,7 @@ function applyAll(target) {
 }
 
 function syncPanes(target, nextPanes) {
+  const firstSync = !target.panesSynced;
   const { panes } = target;
   const seen = new Set();
   for (const next of nextPanes) {
@@ -931,6 +933,7 @@ function syncPanes(target, nextPanes) {
     for (const leftovers of pool.values()) leftovers.forEach((view) => destroyView(target, view));
     const moved = [...views].some(([tabIndex, view]) => pane.views.get(tabIndex) !== view);
     const sleepingBefore = [...pane.sleeping.keys()].join();
+    const previousUrls = pane.urls;
     pane.sleeping = paneSleep.regroupSleeping(pane.sleeping, pane.urls, next.urls, new Set(views.keys()));
     pane.views = views;
     pane.urls = next.urls;
@@ -940,7 +943,8 @@ function syncPanes(target, nextPanes) {
     if (next.bounds) pane.bounds = next.bounds;
     const url = pane.urls[pane.activeTab];
     if (url && !pane.views.has(pane.activeTab)) {
-      if (!pane.sleeping.has(pane.activeTab)) pane.views.set(pane.activeTab, createTabView(target, next.id, url));
+      const openedByUser = !firstSync && google.userJustOpened(previousUrls, pane.urls, pane.activeTab);
+      if (!pane.sleeping.has(pane.activeTab)) pane.views.set(pane.activeTab, createTabView(target, next.id, url, openedByUser));
       else if (pane.visible && !target.win.isMinimized()) pane.views.set(pane.activeTab, wakeTab(target, next.id, pane, pane.activeTab));
     }
     if ([...pane.sleeping.keys()].join() !== sleepingBefore) sendSleep(target, next.id);
@@ -961,6 +965,7 @@ function syncPanes(target, nextPanes) {
   }
   markSeen(target, target.focusedPaneId);
   publishAi(target);
+  target.panesSynced = true;
 }
 
 // Pane sleep (pane-sleep.cjs). A page that has been out of sight and untouched
@@ -1489,7 +1494,12 @@ ipcMain.on("pane:navigate", (event, { paneId, action, url }) => {
   else if (action === "reload") contents.reload();
   else if (action === "reload-hard") contents.reloadIgnoringCache();
   else if (action === "load" && url && google.isSignInPage(url)) openSignInWindow(target, paneId, url);
-  else if (action === "load" && url) contents.loadURL(url).catch(() => {});
+  else if (action === "load" && url) {
+    const pane = target.panes.get(paneId);
+    const view = pane?.views.get(pane.activeTab);
+    if (view) view.openedByUser = true;
+    contents.loadURL(url).catch(() => {});
+  }
   else if (action === "home") {
     const pane = target.panes.get(paneId);
     contents.loadURL(pane.urls[pane.activeTab]).catch(() => {});
