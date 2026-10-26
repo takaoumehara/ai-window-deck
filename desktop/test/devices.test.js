@@ -6,7 +6,7 @@ import { bezelOf, deviceForPane, deviceMetrics, deviceViewport, findDevice, fitD
 
 const require = createRequire(import.meta.url);
 const { normalizeCatalog, normalizeDevice, mergeCatalogs, isNewer } = require("../electron/devices.cjs");
-const { deviceIdentity, clientHintHeaders } = require("../electron/identity.cjs");
+const { deviceIdentity, clientHintHeaders, signInVariant } = require("../electron/identity.cjs");
 
 const bundledRaw = JSON.parse(readFileSync(new URL("../electron/devices.json", import.meta.url), "utf8"));
 const siteRaw = JSON.parse(readFileSync(new URL("../../site/devices.json", import.meta.url), "utf8"));
@@ -64,21 +64,36 @@ test("a newer remote catalog adds and retires devices, and keeps ones only the a
   assert.equal(mergeCatalogs(null, null), null);
 });
 
-test("device identities: Safari without client hints, Android as mobile Chrome", () => {
-  const iphone = deviceIdentity(findDevice(bundled.devices, "iphone-17-pro"), { chromeVersion: "140.0.7339.249" });
-  assert.match(iphone.userAgent, /iPhone; CPU iPhone OS .* Mobile\/15E148 Safari\/604\.1$/);
-  assert.equal(iphone.platform, "iPhone");
-  assert.equal(iphone.metadata, null);
-  assert.deepEqual(clientHintHeaders(iphone.metadata), {});
-  const pixel = deviceIdentity(findDevice(bundled.devices, "pixel-9"), { chromeVersion: "140.0.7339.249" });
+test("device identities are Chrome with matching client hints, including iPhone and iPad", () => {
+  const version = { chromeVersion: "140.0.7339.249" };
+  const iphone = deviceIdentity(findDevice(bundled.devices, "iphone-17-pro"), version);
+  assert.equal(iphone.userAgent, "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36");
+  assert.equal(iphone.platform, "Linux armv8l");
+  assert.equal(iphone.metadata.mobile, true);
+  assert.equal(iphone.metadata.platform, "Android");
+  assert.equal(iphone.metadata.formFactors[0], "Mobile");
+  const iphoneHints = clientHintHeaders(iphone.metadata);
+  assert.equal(iphoneHints["sec-ch-ua-mobile"], "?1");
+  assert.equal(iphoneHints["sec-ch-ua-platform"], '"Android"');
+  assert.match(iphoneHints["sec-ch-ua"], /"Google Chrome";v="140"/);
+  assert.doesNotMatch(iphone.userAgent, /Safari\/604/);
+  const pixel = deviceIdentity(findDevice(bundled.devices, "pixel-9"), version);
   assert.equal(pixel.userAgent, "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36");
+  assert.equal(pixel.platform, "Linux armv8l");
   const hints = clientHintHeaders(pixel.metadata);
   assert.equal(hints["sec-ch-ua-mobile"], "?1");
   assert.equal(hints["sec-ch-ua-platform"], '"Android"');
   assert.equal(hints["sec-ch-ua-model"], '"Pixel 9"');
   assert.match(hints["sec-ch-ua"], /"Google Chrome";v="140"/);
-  const ipad = deviceIdentity(findDevice(bundled.devices, "ipad-air-11"), { chromeVersion: "140.0.7339.249" });
-  assert.equal(ipad.platform, "MacIntel");
+  const ipad = deviceIdentity(findDevice(bundled.devices, "ipad-air-11"), version);
+  assert.equal(ipad.userAgent, "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36");
+  assert.equal(ipad.platform, "Linux armv8l");
+  assert.equal(ipad.metadata.mobile, false);
+  assert.equal(ipad.metadata.formFactors[0], "Tablet");
+  assert.equal(clientHintHeaders(ipad.metadata)["sec-ch-ua-mobile"], "?0");
+  const signIn = signInVariant(iphone);
+  assert.equal(signIn.userAgent, "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Mobile Safari/537.36");
+  assert.equal(signIn.metadata, null);
 });
 
 test("rotating swaps the viewport and turns the bezel with it", () => {

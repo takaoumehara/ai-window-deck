@@ -156,7 +156,7 @@ export default {
   deviceExit: "Revenir à l’affichage bureau",
   deviceModel: "Appareil",
   deviceApprox: "approx.",
-  deviceAccuracy: "Aussi précis que le mode appareil de Chrome : taille d’écran, densité de pixels, agent utilisateur et tactile de l’appareil, mais rendu par Chrome et non par Safari.",
+  deviceAccuracy: "La taille d’écran, la densité de pixels et le tactile correspondent à l’appareil. Chrome dessine la page et se présente comme Chrome, afin que la vérification à la connexion puisse aboutir.",
   devicePortrait: "Passer en portrait",
   deviceLandscape: "Passer en paysage",
   deviceAddAnother: "Afficher aussi cette page sur un autre appareil",

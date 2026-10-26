@@ -156,7 +156,7 @@ export default {
   deviceExit: "Zurück zur Desktop-Ansicht",
   deviceModel: "Gerät",
   deviceApprox: "ca.",
-  deviceAccuracy: "So genau wie der Gerätemodus von Chrome: Bildschirmgröße, Pixeldichte, User-Agent und Touch des Geräts, aber von Chrome statt von Safari dargestellt.",
+  deviceAccuracy: "Bildschirmgröße, Pixeldichte und Touch entsprechen dem Gerät. Chrome zeichnet die Seite und gibt sich als Chrome zu erkennen, damit die Prüfung bei der Anmeldung durchgehen kann.",
   devicePortrait: "Ins Hochformat drehen",
   deviceLandscape: "Ins Querformat drehen",
   deviceAddAnother: "Diese Seite auch auf einem anderen Gerät zeigen",

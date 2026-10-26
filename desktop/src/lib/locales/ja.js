@@ -156,7 +156,7 @@ export default {
   deviceExit: "デスクトップ表示に戻す",
   deviceModel: "機種",
   deviceApprox: "近似",
-  deviceAccuracy: "Chrome のデバイスモードと同じ精度です。画面サイズ・画素密度・ユーザーエージェント・タッチは実機どおりで、表示エンジンは Safari ではなく Chrome です。",
+  deviceAccuracy: "画面サイズ・画素密度・タッチは機種どおりです。表示は Chrome で、ブラウザの識別も Chrome に合わせてあります。サインインの本人確認が、ブラウザの食い違いで止まらないようにするためです。",
   devicePortrait: "縦向きにする",
   deviceLandscape: "横向きにする",
   deviceAddAnother: "このページを別の機種でも並べて表示",

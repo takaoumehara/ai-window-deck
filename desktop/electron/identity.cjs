@@ -66,21 +66,37 @@ function desktopIdentity({ chromeVersion, platform, arch, systemVersion }) {
   };
 }
 
-const NAVIGATOR_PLATFORMS = { ios: "iPhone", ipados: "MacIntel", android: "Linux armv81" };
+// Chrome on Android reports this platform string. The last character is the
+// letter l, matching Chromium; a digit there is a different platform.
+const ANDROID_PLATFORM = "Linux armv8l";
 
 /**
- * A device from the catalog (electron/devices.cjs) as pages see it. Safari
- * has no client hints, so iOS and iPadOS identities carry none; Android ones
- * are mobile Chrome's.
+ * A device from the catalog (electron/devices.cjs) as pages see it.
+ *
+ * The preview is Chromium even when the frame is an iPhone or iPad. Sending
+ * the catalog's Safari user agent (no Chrome token, no client hints) makes
+ * Cloudflare Turnstile reject the sign-in: the widget sees Blink and
+ * navigator.vendor "Google Inc." while the page claims to be Safari, and the
+ * form comes back "the check that you're a person didn't go through"
+ * (error code Turnstile). Phones therefore present mobile Chrome, and tablets
+ * present Chrome without the Mobile token, with client hints that match.
+ * Android catalog entries already carry that Chrome user agent; a Safari
+ * string in the catalog is not what the page sends.
  */
 function deviceIdentity(device, { chromeVersion }) {
   const fullVersion = String(chromeVersion);
   const major = parseInt(fullVersion, 10);
-  const userAgent = device.ua.replace(/\{chrome\}/g, String(major));
-  if (device.os !== "android") return { userAgent, platform: NAVIGATOR_PLATFORMS[device.os] ?? "iPhone", metadata: null };
+  const catalogUa = device.ua.replace(/\{chrome\}/g, String(major));
+  const chromeUa = /Chrome\/\d/.test(catalogUa) && !/CriOS\//.test(catalogUa);
+  const tablet = device.type === "tablet";
+  const userAgent = chromeUa
+    ? catalogUa
+    : tablet
+      ? `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${major}.0.0.0 Safari/537.36`
+      : `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${major}.0.0.0 Mobile Safari/537.36`;
   return {
     userAgent,
-    platform: NAVIGATOR_PLATFORMS.android,
+    platform: ANDROID_PLATFORM,
     metadata: {
       brands: brandList(major),
       fullVersionList: brandList(major, fullVersion),
@@ -89,10 +105,10 @@ function deviceIdentity(device, { chromeVersion }) {
       platformVersion: "15.0.0",
       architecture: "",
       model: device.model || "",
-      mobile: device.type !== "tablet",
+      mobile: !tablet,
       bitness: "",
       wow64: false,
-      formFactors: [device.type === "tablet" ? "Tablet" : "Mobile"],
+      formFactors: [tablet ? "Tablet" : "Mobile"],
     },
   };
 }

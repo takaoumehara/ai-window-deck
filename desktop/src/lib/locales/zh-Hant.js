@@ -156,7 +156,7 @@ export default {
   deviceExit: "返回桌面檢視",
   deviceModel: "機型",
   deviceApprox: "近似",
-  deviceAccuracy: "精確度與 Chrome 的裝置模式相同：螢幕尺寸、像素比、使用者代理程式和觸控與實機一致，但由 Chrome 而非 Safari 繪製。",
+  deviceAccuracy: "螢幕尺寸、像素比和觸控與裝置一致。頁面由 Chrome 繪製，瀏覽器也表明自己是 Chrome，這樣登入時的人機驗證可以通過。",
   devicePortrait: "旋轉為直向",
   deviceLandscape: "旋轉為橫向",
   deviceAddAnother: "也在其他機型上並排顯示此頁面",

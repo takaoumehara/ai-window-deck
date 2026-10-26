@@ -156,7 +156,7 @@ export default {
   deviceExit: "Back to the desktop view",
   deviceModel: "Device",
   deviceApprox: "approx.",
-  deviceAccuracy: "As accurate as Chrome's device mode: the device's screen size, pixel ratio, user agent and touch, drawn by Chrome rather than Safari.",
+  deviceAccuracy: "Screen size, pixel ratio and touch match the device. Chrome draws the page and identifies itself as Chrome, so a sign-in check can complete.",
   devicePortrait: "Rotate to portrait",
   deviceLandscape: "Rotate to landscape",
   deviceAddAnother: "Show this page on another device too",
