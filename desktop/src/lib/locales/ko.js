@@ -156,7 +156,7 @@ export default {
   deviceExit: "데스크톱 보기로 돌아가기",
   deviceModel: "기기",
   deviceApprox: "근사치",
-  deviceAccuracy: "Chrome 기기 모드와 같은 정확도입니다. 화면 크기, 픽셀 비율, 사용자 에이전트, 터치는 실제 기기와 같지만 Safari가 아닌 Chrome으로 그립니다.",
+  deviceAccuracy: "화면 크기, 픽셀 비율, 터치는 기기와 같습니다. 페이지는 Chrome이 그리고 브라우저도 Chrome으로 알려서, 로그인 확인이 통과할 수 있습니다.",
   devicePortrait: "세로로 회전",
   deviceLandscape: "가로로 회전",
   deviceAddAnother: "이 페이지를 다른 기기에서도 나란히 보기",

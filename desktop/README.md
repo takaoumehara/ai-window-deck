@@ -126,11 +126,14 @@ applies an update signed by the same Developer ID, so every release must be sign
   (`accounts.google.com`) rejects any Electron that claims Chrome, so there the page sees the
   same user agent without the `Chrome/` token and no Chrome client hints.
 - Mobile preview is Chrome DevTools' device mode on a pane's page: the device's viewport, pixel
-  ratio, orientation, touch, user agent and client hints, scaled down to the screen of a frame
-  drawn by the shell (`src/components/DeviceStage.jsx`). It is still Chromium, so it shows the
-  layout sites serve to that device, not Safari's or a real device's rendering. Devices come
-  from `electron/devices.json`, and the app also fetches `site/devices.json` from the website
-  (twice a day, cached) so new models arrive without an app update; the newer list wins.
+  ratio, orientation and touch, scaled down to the screen of a frame drawn by the shell
+  (`src/components/DeviceStage.jsx`). The page is still Chromium, and it identifies itself as
+  Chrome (mobile Chrome in a phone frame, Chrome without the Mobile token in a tablet frame),
+  with matching client hints. A Safari user agent in this engine fails bot checks such as
+  Cloudflare Turnstile, so an email sign-in stops with "the check that you're a person didn't
+  go through". It shows the layout sites serve to that viewport, not Safari's rendering.
+  Devices come from `electron/devices.json`, and the app also fetches `site/devices.json` from
+  the website (twice a day, cached) so new models arrive without an app update; the newer list wins.
 - Shortcuts are matched in `before-input-event` on every web contents (`electron/commands.cjs`),
   by key code, so macOS Option characters (`⌥X` = `≈`) don't get in the way.
 - Data is saved to `deck.json` in the app's user-data folder. The main process owns it

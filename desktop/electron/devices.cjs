@@ -5,7 +5,9 @@
 //   { version, updated, devices: [{ id, name, os, type, width, height, dpr,
 //     ua, cutout?, radius?, model?, approx?, hidden? }] }
 // width and height are the portrait viewport in CSS pixels. "{chrome}" in a
-// user agent stands for the Chromium major version the app runs.
+// user agent stands for the Chromium major version the app runs. The string
+// is what that device's own browser sends. identity.cjs presents Chrome
+// instead when this string is Safari, so the engine and the user agent agree.
 
 const OS = new Set(["ios", "ipados", "android"]);
 const TYPES = new Set(["phone", "tablet", "foldable"]);

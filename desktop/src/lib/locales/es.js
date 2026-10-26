@@ -156,7 +156,7 @@ export default {
   deviceExit: "Volver a la vista de escritorio",
   deviceModel: "Dispositivo",
   deviceApprox: "aprox.",
-  deviceAccuracy: "Tan precisa como el modo dispositivo de Chrome: tamaño de pantalla, densidad de píxeles, agente de usuario y toque del dispositivo, pero dibujado por Chrome, no por Safari.",
+  deviceAccuracy: "El tamaño de pantalla, la densidad de píxeles y el toque coinciden con el dispositivo. Chrome dibuja la página y se identifica como Chrome, para que la comprobación al iniciar sesión pueda completarse.",
   devicePortrait: "Girar a vertical",
   deviceLandscape: "Girar a horizontal",
   deviceAddAnother: "Mostrar también esta página en otro dispositivo",
